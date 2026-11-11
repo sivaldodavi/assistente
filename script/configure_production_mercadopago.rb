@@ -22,10 +22,20 @@ module ProductionMercadoPagoSetup
     if not required.issubset(existing):
         raise SystemExit("existing production secrets are incomplete")
 
-    for name in required:
+    expected_permissions = {
+        "rails.env": (0, 0, 0o600),
+        "deepseek_api_key": (1000, 1000, 0o400),
+        "typesafe_api_key": (1000, 1000, 0o400),
+    }
+    for name, (uid, gid, mode) in expected_permissions.items():
         path = os.path.join(directory, name)
         item = os.stat(path, follow_symlinks=False)
-        if not stat.S_ISREG(item.st_mode) or item.st_uid != 0 or stat.S_IMODE(item.st_mode) != 0o600:
+        if (
+            not stat.S_ISREG(item.st_mode)
+            or item.st_uid != uid
+            or item.st_gid != gid
+            or stat.S_IMODE(item.st_mode) != mode
+        ):
             raise SystemExit("an existing production secret has unexpected owner or permissions")
 
     names = {
@@ -55,8 +65,8 @@ module ProductionMercadoPagoSetup
                 0o600,
             )
             created.append(path)
-            os.fchown(descriptor, 0, 0)
-            os.fchmod(descriptor, 0o600)
+            os.fchown(descriptor, 1000, 1000)
+            os.fchmod(descriptor, 0o400)
             with os.fdopen(descriptor, "w", encoding="utf-8") as secret_file:
                 secret_file.write(values[field] + "\n")
                 secret_file.flush()
@@ -69,7 +79,7 @@ module ProductionMercadoPagoSetup
                 pass
         raise
 
-    print("Production Mercado Pago files installed with root-only permissions.")
+    print("Production Mercado Pago files installed for app UID 1000 with mode 0400.")
   PYTHON
 
   def self.run(input: $stdin, output: $stdout, transfer: nil)
