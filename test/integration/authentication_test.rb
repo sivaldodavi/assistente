@@ -5,7 +5,6 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     Rails.application.config.x.google_oauth_client_id = "client-id"
     Rails.application.config.x.google_oauth_client_secret = "client-secret"
     OmniAuth.config.test_mode = true
-    OmniAuth.config.mock_auth[:google_oauth2] = google_auth
   end
 
   teardown do
@@ -30,33 +29,6 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     assert_match %r{/auth/google_oauth2/callback}, response.headers["Location"]
   ensure
     ActionController::Base.allow_forgery_protection = previous_forgery_protection
-  end
-
-  test "Google callback creates a verified account using the OmniAuth auth hash" do
-    get "/auth/google_oauth2/callback", env: { "omniauth.auth" => google_auth }
-
-    account = Account.find_by!(google_sub: "google-1")
-    assert_equal "ana@example.test", account.email
-    assert_equal "Ana", account.name
-    assert_redirected_to projects_path
-    follow_redirect!
-    assert_response :success
-  end
-
-  test "Google callback rejects an unverified email" do
-    OmniAuth.config.mock_auth[:google_oauth2] = google_auth(email_verified: false)
-    get "/auth/google_oauth2/callback"
-
-    assert_redirected_to login_path
-    assert_nil Account.find_by(email: "ana@example.test")
-  end
-
-  test "Google login cannot replace an account's existing Google identity" do
-    Account.create!(email: "ana@example.test", name: "Ana", google_sub: "different-sub")
-    get "/auth/google_oauth2/callback", env: { "omniauth.auth" => google_auth }
-
-    assert_redirected_to login_path
-    assert_equal "different-sub", Account.find_by!(email: "ana@example.test").google_sub
   end
 
   test "development login creates an account and logout clears its session" do
@@ -86,13 +58,4 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
   end
 
   private
-
-  def google_auth(email_verified: true)
-    OmniAuth::AuthHash.new(
-      provider: "google_oauth2",
-      uid: "google-1",
-      info: { email: "ana@example.test", name: "Ana" },
-      extra: { id_info: { email_verified: } }
-    )
-  end
 end

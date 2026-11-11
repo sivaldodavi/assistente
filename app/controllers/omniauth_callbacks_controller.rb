@@ -39,13 +39,33 @@ class OmniauthCallbacksController < ApplicationController
   private
 
   def valid_google_auth?(auth)
-    auth.respond_to?(:provider) &&
-      auth.provider == "google_oauth2" &&
+    return false unless auth.respond_to?(:provider)
+
+    state = request.params["state"].to_s
+    expected_nonce = consume_google_nonce(state)
+    actual_nonce = auth.extra&.id_info&.nonce
+
+    auth.provider == "google_oauth2" &&
       auth.uid.is_a?(String) &&
       auth.uid.present? &&
       auth.uid.bytesize <= 255 &&
       auth.info&.email.is_a?(String) &&
       auth.info.email.present? &&
-      auth.extra&.id_info&.email_verified == true
+      auth.extra&.id_info&.email_verified == true &&
+      expected_nonce.is_a?(String) &&
+      actual_nonce.is_a?(String) &&
+      expected_nonce.bytesize == actual_nonce.bytesize &&
+      ActiveSupport::SecurityUtils.secure_compare(expected_nonce, actual_nonce)
+  end
+
+  def consume_google_nonce(state)
+    return if state.blank?
+
+    nonces = session[OmniAuth::Strategies::GoogleOauth2WithNonce::NONCE_SESSION_KEY]
+    return unless nonces.is_a?(Hash)
+
+    expected_nonce = nonces.delete(state)
+    session[OmniAuth::Strategies::GoogleOauth2WithNonce::NONCE_SESSION_KEY] = nonces
+    expected_nonce
   end
 end
