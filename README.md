@@ -1,6 +1,6 @@
 # Assistente Acadêmico
 
-Reconstrução Rails do Assistente Acadêmico a partir do código original preservado em `recovery/original-zip`. O desenvolvimento segue na branch `feat/rails-rebuild`; não houve publicação nem integração em `main`.
+Reconstrução Rails do Assistente Acadêmico a partir do código original preservado em `recovery/original-zip`. O código validado segue para `main` por fast-forward; o staging fica em `feat/rails-staging` e publica somente o webhook do Mercado Pago. O site completo não está liberado para acesso público.
 
 ## Stack
 
@@ -38,7 +38,7 @@ bin/rails runner script/configure_credentials.rb
 
 O script preserva entradas existentes como `secret_key_base`, aceita valores em branco para manter ou pular campos e exige confirmação digitando `SIM`. A digitação aparece no terminal e no histórico visual da sessão; use apenas em uma máquina confiável e não compartilhe a tela. `config/master.key` existe neste checkout e é ignorado pelo Git; mantenha-o protegido. No servidor, forneça a chave mestra como `RAILS_MASTER_KEY` e injete os segredos por ambiente ou arquivos Docker em `/run/secrets`. Este projeto não carrega `.env` automaticamente.
 
-**O site permanece bloqueado:** `config.x.authentication_ready` continua `false`; as páginas da aplicação retornam `503` até que autenticação, autorização e operações sejam validadas. O serviço de staging encaminha publicamente apenas os caminhos de webhook do Mercado Pago; não libera login, páginas ou criação de pagamentos.
+**O site permanece bloqueado por padrão:** `AUTHENTICATION_READY` ausente ou diferente de `true` mantém as páginas da aplicação em `503`. No staging, ele é fixado em `false` e o Caddy encaminha publicamente apenas os caminhos de webhook. Só habilite `AUTHENTICATION_READY=true` depois de configurar e validar OAuth Google de produção, autorização, pagamentos e operações; essa variável não substitui esses testes.
 
 ## Roteiros
 
@@ -73,6 +73,8 @@ O port da matriz de testes da fonte original ainda está em andamento. Google, D
 O SQLite de desenvolvimento fica em `storage/development.sqlite3`; testes usam `storage/test.sqlite3`. Em produção, `DATABASE_PATH` define o arquivo; o padrão é `storage/production.sqlite3`. O compose `deploy/staging/docker-compose.yml` monta um volume durável e se conecta à rede externa `servidor_default`. Ele espera `SECRET_KEY_BASE` em `/opt/servidor/secrets/assistente-academico/rails.env` e os arquivos `mercadopago_access_token` e `mercadopago_webhook_secret` nesse diretório. Mantenha-os fora do Git e restrinja as permissões.
 
 Esse compose mantém o gate de autenticação fechado e injeta apenas credenciais sandbox do Mercado Pago. O Caddy deve encaminhar somente `POST /api/mercadopago/webhook` e `POST /webhooks/mercadopago` para o container de staging. Não exponha a porta do Rails no host, nem habilite tráfego público para as páginas antes de validar autenticação.
+
+Para produção, use o callback Google `https://trab.sivaldodavi.com.br/auth/google_oauth2/callback`, credenciais OAuth/MP específicas de produção e segredos fora do Git. O segredo de assinatura do webhook de produção é distinto do sandbox. Revise os textos legais, valide login e autorização, configure backup/restore e só então habilite `AUTHENTICATION_READY=true` e amplie as rotas do Caddy.
 
 O arquivo do banco nunca deve ser commitado. Faça backups consistentes em destino protegido, confirme permissões e teste a restauração em ambiente isolado.
 

@@ -8,6 +8,7 @@ services:
     env_file:
       - /opt/servidor/secrets/assistente-academico/rails.env
     environment:
+      AUTHENTICATION_READY: "false"
       DATABASE_PATH: /rails/storage/production.sqlite3
       GOOGLE_CLIENT_ID: staging-disabled
       GOOGLE_CLIENT_SECRET: staging-disabled
@@ -25,7 +26,7 @@ services:
       - mercadopago_access_token
       - mercadopago_webhook_secret
     healthcheck:
-      test: ["CMD-SHELL", "curl -fsS -H 'X-Forwarded-Proto: https' http://127.0.0.1/up >/dev/null || exit 1"]
+      test: ["CMD-SHELL", "curl -fsS -H 'Host: trab.sivaldodavi.com.br' -H 'X-Forwarded-Proto: https' http://127.0.0.1/up >/dev/null || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 3
