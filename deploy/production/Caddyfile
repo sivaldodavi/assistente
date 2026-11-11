@@ -1,0 +1,21 @@
+trab.sivaldodavi.com.br {
+	@mercadopago_production {
+		method POST
+		path /webhooks/mercadopago
+	}
+	handle @mercadopago_production {
+		reverse_proxy assistente-academico-production:80
+	}
+
+	@public_pages {
+		method GET HEAD
+		path / /planos /plans /termos /privacidade /ajuda-ia /assets/* /icon.png /icon.svg /favicon.ico /robots.txt
+	}
+	handle @public_pages {
+		reverse_proxy assistente-academico-production:80
+	}
+
+	handle {
+		respond "Not Found" 404
+	}
+}

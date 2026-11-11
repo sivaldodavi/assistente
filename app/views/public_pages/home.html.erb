@@ -1,0 +1,40 @@
+<% content_for :title, "Assistente Acadêmico — organização para trabalhos acadêmicos" %>
+
+<header class="site-header">
+  <%= link_to "Assistente Acadêmico", root_path, class: "brand" %>
+  <nav class="header-actions" aria-label="Navegação principal">
+    <%= link_to "Pacotes", plans_path, class: "header-link" %>
+    <%= link_to "Termos", terms_path, class: "header-link" %>
+  </nav>
+</header>
+
+<main class="page-shell">
+  <section class="hero">
+    <p class="eyebrow">Assistente Acadêmico</p>
+    <h1>Organize seu trabalho acadêmico, etapa por etapa.</h1>
+    <p>Roteiros guiados ajudam a estruturar estudos de caso e projetos de paper, com espaço para referências, planejamento e exportação.</p>
+    <%= link_to "Conheça os pacotes", plans_path, class: "button button-primary" %>
+  </section>
+
+  <section class="project-list">
+    <div class="section-heading">
+      <h2>Um espaço para desenvolver suas ideias</h2>
+    </div>
+    <div class="project-grid">
+      <article class="project-card">
+        <h3>Roteiros guiados</h3>
+        <p>Desenvolva seu trabalho por etapas, acompanhando perguntas e orientações de cada roteiro.</p>
+      </article>
+      <article class="project-card">
+        <h3>Referências organizadas</h3>
+        <p>Reúna fontes e fichamentos para apoiar a pesquisa e o desenvolvimento do projeto.</p>
+      </article>
+      <article class="project-card">
+        <h3>Revisão sob seu controle</h3>
+        <p>Recursos de assistência são opcionais. Confira fontes e orientações da sua instituição antes de usar qualquer sugestão.</p>
+      </article>
+    </div>
+  </section>
+
+  <p class="field-hint">O acesso a contas e compras está temporariamente indisponível enquanto o serviço é preparado. Leia também a <%= link_to "política de privacidade", privacy_path %> e <%= link_to "como funciona a assistência de IA", ai_help_path %>.</p>
+</main>

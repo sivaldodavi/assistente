@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
-  root "projects#index"
+  root "public_pages#home"
   get "/login", to: "sessions#new", as: :login
   delete "/logout", to: "sessions#destroy", as: :logout
   get "/auth/google_oauth2/callback", to: "omniauth_callbacks#google_oauth2"

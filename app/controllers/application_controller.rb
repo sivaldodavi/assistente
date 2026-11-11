@@ -1,8 +1,13 @@
 class ApplicationController < ActionController::Base
+  PUBLIC_SHELL_ACTIONS = {
+    "public_pages" => %w[home terms privacy ai_help],
+    "payments" => %w[plans]
+  }.freeze
+
   protect_from_forgery with: :exception
   before_action :block_production_until_authentication
   before_action :load_current_account
-  helper_method :current_account, :google_oauth_configured?
+  helper_method :current_account, :google_oauth_configured?, :public_shell_only?
 
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
@@ -19,6 +24,10 @@ class ApplicationController < ActionController::Base
   def google_oauth_configured?
     Rails.application.config.x.google_oauth_client_id.present? &&
       Rails.application.config.x.google_oauth_client_secret.present?
+  end
+
+  def public_shell_only?
+    Rails.env.production? && !Rails.configuration.x.authentication_ready
   end
 
   def load_current_account
@@ -38,8 +47,15 @@ class ApplicationController < ActionController::Base
   end
 
   def block_production_until_authentication
-    return unless Rails.env.production? && !Rails.configuration.x.authentication_ready
+    return unless public_shell_only?
+    return if public_shell_request?
 
     head :service_unavailable
+  end
+
+  def public_shell_request?
+    return false unless request.get? || request.head?
+
+    PUBLIC_SHELL_ACTIONS.fetch(controller_name, []).include?(action_name)
   end
 end

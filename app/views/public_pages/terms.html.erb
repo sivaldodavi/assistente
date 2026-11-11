@@ -2,7 +2,7 @@
 
 <header class="site-header">
   <%= link_to "Assistente Acadêmico", root_path, class: "brand" %>
-  <div class="header-actions"><%= link_to "Pacotes", plans_path, class: "header-link" %><%= link_to "Entrar", login_path, class: "header-link" %></div>
+  <div class="header-actions"><%= link_to "Pacotes", plans_path, class: "header-link" %><% if public_shell_only? %><span class="header-link">Acesso em preparação</span><% else %><%= link_to "Entrar", login_path, class: "header-link" %><% end %></div>
 </header>
 
 <main class="page-shell narrow-shell">
@@ -12,16 +12,16 @@
     <p>O serviço organiza roteiros, projetos acadêmicos, referências e exportação de documentos. Ele não representa uma instituição de ensino e não garante aprovação, nota ou adequação às regras específicas de uma disciplina.</p>
 
     <h2>Conta e conteúdo</h2>
-    <p>O acesso usa sua conta Google. Você é responsável pelas informações inseridas, por preservar cópias do seu trabalho e por conferir citações, fontes, normas acadêmicas e instruções do professor. Seus projetos e fichamentos são privados e vinculados à sua conta.</p>
+    <p>O acesso autenticado usa sua conta Google quando essa funcionalidade estiver disponível. No modo público informativo, não é possível entrar nem criar uma conta. Quando habilitada, você será responsável pelas informações inseridas, por preservar cópias do seu trabalho e por conferir citações, fontes, normas acadêmicas e instruções do professor. Projetos e fichamentos são privados e vinculados à conta.</p>
 
     <h2>Assistência de IA</h2>
-    <p>O uso da IA é opcional e depende de consentimento separado nas configurações da conta. DeepSeek oferece sugestões de escrita e o JEV TypeSafe faz avaliações formativas por rubrica. As respostas podem conter erros, não são nota oficial nem parecer jurídico e não alteram seu trabalho automaticamente. Você decide se utiliza qualquer sugestão. <%= link_to "Leia como a IA funciona", ai_help_path %>.</p>
+    <p>O uso da IA será opcional e dependerá de consentimento separado nas configurações da conta, quando a área autenticada estiver disponível. DeepSeek oferece sugestões de escrita e o JEV TypeSafe faz avaliações formativas por rubrica. As respostas podem conter erros, não são nota oficial nem parecer jurídico e não alteram seu trabalho automaticamente. Você decide se utiliza qualquer sugestão. <%= link_to "Leia como a IA funciona", ai_help_path %>.</p>
 
     <h2>Pagamentos</h2>
-    <p>Os pacotes são compras únicas por Pix. O preço e os créditos são calculados pelo servidor e liberados após confirmação do pagamento pelo Mercado Pago. Não há assinatura, cartão, promoção ou desconto nesta aplicação.</p>
+    <p>Compras por Pix estão temporariamente indisponíveis no modo público informativo. Quando habilitadas, os pacotes serão compras únicas, com preço e créditos calculados pelo servidor e liberados após confirmação do pagamento pelo Mercado Pago.</p>
 
     <h2>Exclusão da conta</h2>
-    <p>Você pode solicitar a exclusão da conta e dos dados associados nas configurações. A exclusão remove os projetos, revisões e fontes guardados nesta aplicação. O Mercado Pago pode manter registros próprios conforme suas regras e obrigações legais.</p>
+    <p>A gestão e a exclusão de contas não estão disponíveis no modo público informativo. Quando a área autenticada estiver habilitada, será possível solicitar a exclusão da conta e dos dados associados nas configurações. O Mercado Pago pode manter registros próprios conforme suas regras e obrigações legais.</p>
 
     <p>Ao usar a conta, você confirma que leu também a <%= link_to "Política de Privacidade", privacy_path %>.</p>
   </article>
