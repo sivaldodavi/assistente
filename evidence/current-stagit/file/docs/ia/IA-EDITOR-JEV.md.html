@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>IA-EDITOR-JEV.md - assistente-academico - Assistente Acadêmico v2
+</title>
+<link rel="icon" type="image/png" href="../../../favicon.png" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed" href="../../../atom.xml" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed (tags)" href="../../../tags.xml" />
+<link rel="stylesheet" type="text/css" href="../../../style.css" />
+</head>
+<body>
+<table><tr><td><a href="../../../../"><img src="../../../logo.png" alt="" width="32" height="32" /></a></td><td><h1>assistente-academico</h1><span class="desc">Assistente Acadêmico v2
+</span></td></tr><tr class="url"><td></td><td>git clone <a href="git://git.sivaldodavi.com.br/assistente-academico.git">git://git.sivaldodavi.com.br/assistente-academico.git</a></td></tr><tr><td></td><td>
+<a href="../../../log.html">Log</a> | <a href="../../../files.html">Files</a> | <a href="../../../refs.html">Refs</a> | <a href="../../../file/README.md.html">README</a></td></tr></table>
+<hr/>
+<div id="content">
+<p> IA-EDITOR-JEV.md (4772B)</p><hr/><pre id="blob">
+<a href="#l1" class="line" id="l1">      1</a> # IA dentro do editor
+<a href="#l2" class="line" id="l2">      2</a> 
+<a href="#l3" class="line" id="l3">      3</a> ## Regra de experiência
+<a href="#l4" class="line" id="l4">      4</a> 
+<a href="#l5" class="line" id="l5">      5</a> A assistência aparece dentro da etapa que está sendo preenchida. Não existe um painel genérico separado para escolher qualquer campo. O usuário pede uma ação, o servidor salva a revisão atual, monta o contexto permitido e devolve uma resposta estruturada. Nenhuma resposta altera o projeto sozinha.
+<a href="#l6" class="line" id="l6">      6</a> 
+<a href="#l7" class="line" id="l7">      7</a> ## Ações do editor
+<a href="#l8" class="line" id="l8">      8</a> 
+<a href="#l9" class="line" id="l9">      9</a> `review` revisa um campo visível e pode devolver uma explicação ou uma reescrita opcional. `chat` responde a uma pergunta sem editar campos. `suggest_problem` sugere uma pergunta-problema. `suggest_theses` sugere teses ou hipóteses possíveis. `case_structure` orienta a organização do Case. `review_criteria` revisa critérios e valores. `review_references` revisa referências pessoais selecionadas. `review_development` orienta tópicos de desenvolvimento. `checklist` lê as conferências da etapa. `debate_coach` apoia a preparação do debate do Case.
+<a href="#l10" class="line" id="l10">     10</a> 
+<a href="#l11" class="line" id="l11">     11</a> As ações são mostradas nos painéis das etapas de descrição, decisões, teses, critérios, fontes e revisão. A pesquisa jurídica contextual é uma ação própria de fundamentação: consulta o catálogo real e separa Lei, Jurisprudência e Doutrina antes de a IA justificar pertinência.
+<a href="#l12" class="line" id="l12">     12</a> 
+<a href="#l13" class="line" id="l13">     13</a> ## JEV e nota orientativa
+<a href="#l14" class="line" id="l14">     14</a> 
+<a href="#l15" class="line" id="l15">     15</a> O botão JEV de uma etapa usa as checklists do Case em `app/domain/case_rubric.py`. O relatório completo usa os três critérios de conteúdo e uma faixa provável de pontos. Cada item mostra score de 0 a 3, probabilidades e observação textual. O resultado é formativo, não é nota oficial e não afirma que uma lei, jurisprudência ou doutrina está juridicamente correta.
+<a href="#l16" class="line" id="l16">     16</a> 
+<a href="#l17" class="line" id="l17">     17</a> Cada observação pode pedir uma explicação adicional. A explicação volta pelo DeepSeek/Gemini, considera a evidência do projeto e informa o que conferir; não substitui a observação nem redige o trabalho.
+<a href="#l18" class="line" id="l18">     18</a> 
+<a href="#l19" class="line" id="l19">     19</a> ## Provedores
+<a href="#l20" class="line" id="l20">     20</a> 
+<a href="#l21" class="line" id="l21">     21</a> DeepSeek é a primeira tentativa para ações estruturadas e revisão inline. Gemini é chamado uma única vez quando o primário está indisponível, a chave foi recusada, não há crédito, o secret não está carregado ou a resposta estrutural é inválida. Ausência de consentimento e erro de regra não disparam fallback. JEV/Typesafe permanece como avaliador separado.
+<a href="#l22" class="line" id="l22">     22</a> 
+<a href="#l23" class="line" id="l23">     23</a> Os adaptadores estão em `app/services/providers.py`; composição de contexto e validação estão em `app/services/ai_workflows.py`; limites de campos e IDs dinâmicos estão em `app/services/ai_support.py`. A interação do editor fica em `static/js/project-ai.js`, recebendo o autosave e a navegação por injeção de dependências simples. Os testes usam transportes falsos e não chamam serviços externos.
+<a href="#l24" class="line" id="l24">     24</a> 
+<a href="#l25" class="line" id="l25">     25</a> ### Timeouts configuráveis (Fase 2)
+<a href="#l26" class="line" id="l26">     26</a> 
+<a href="#l27" class="line" id="l27">     27</a> Os timeouts dos provedores são agora configuráveis via variáveis de ambiente:
+<a href="#l28" class="line" id="l28">     28</a> - `PROVIDER_TIMEOUT` (padrão 30s) - timeout base para todos os provedores
+<a href="#l29" class="line" id="l29">     29</a> - `DEEPSEEK_TIMEOUT` (padrão 30s) - timeout específico do DeepSeek
+<a href="#l30" class="line" id="l30">     30</a> - `GEMINI_TIMEOUT` (padrão 30s) - timeout específico do Gemini
+<a href="#l31" class="line" id="l31">     31</a> - `JEV_TIMEOUT` (padrão 60s) - timeout específico do JEV/Typesafe
+<a href="#l32" class="line" id="l32">     32</a> 
+<a href="#l33" class="line" id="l33">     33</a> ### AbortController no frontend (Fase 2)
+<a href="#l34" class="line" id="l34">     34</a> 
+<a href="#l35" class="line" id="l35">     35</a> As requisições de IA no frontend agora suportam `AbortController`:
+<a href="#l36" class="line" id="l36">     36</a> - Requisições em andamento podem ser canceladas pelo usuário
+<a href="#l37" class="line" id="l37">     37</a> - Apenas uma requisição de IA ativa por vez (novas cancelam a anterior)
+<a href="#l38" class="line" id="l38">     38</a> - Indicador visual de loading com spinner animado
+<a href="#l39" class="line" id="l39">     39</a> - Tratamento gracioso de `AbortError` (não mostra erro ao usuário)
+<a href="#l40" class="line" id="l40">     40</a> 
+<a href="#l41" class="line" id="l41">     41</a> ## Contratos de tipos (Fase 3)
+<a href="#l42" class="line" id="l42">     42</a> 
+<a href="#l43" class="line" id="l43">     43</a> Todos os modelos de dados da IA são agora tipados com `TypedDict` em `app/domain/types.py`:
+<a href="#l44" class="line" id="l44">     44</a> - `AIContext` - contexto completo enviado aos provedores
+<a href="#l45" class="line" id="l45">     45</a> - `AIResponse` - resposta estruturada das ações de assistência
+<a href="#l46" class="line" id="l46">     46</a> - `AISuggestionItem` / `AIChecklistItem` - itens de sugestão e checklist
+<a href="#l47" class="line" id="l47">     47</a> - `JEVSectionResult`, `JEVReportResult`, `JEVValidationResult` - resultados JEV
+<a href="#l48" class="line" id="l48">     48</a> - `JEVExplanation` - explicações de critérios JEV
+<a href="#l49" class="line" id="l49">     49</a> - `ProviderResponse` - resposta unificada dos provedores
+<a href="#l50" class="line" id="l50">     50</a> 
+<a href="#l51" class="line" id="l51">     51</a> ## Configuração centralizada (Fase 3)
+<a href="#l52" class="line" id="l52">     52</a> 
+<a href="#l53" class="line" id="l53">     53</a> Todas as constantes mágicas foram extraídas para `app/config.py`:
+<a href="#l54" class="line" id="l54">     54</a> - Limites de campos, contagens máximas, timeouts
+<a href="#l55" class="line" id="l55">     55</a> - Endpoints de API, limites de tokens
+<a href="#l56" class="line" id="l56">     56</a> - Níveis de score JEV, faixas de nota
+<a href="#l57" class="line" id="l57">     57</a> - Configuração de rate limiting (`RATE_LIMITS`, `RATE_LIMIT_WINDOW_SECONDS`)
+<a href="#l58" class="line" id="l58">     58</a> - Headers de segurança, constantes OAuth
+<a href="#l59" class="line" id="l59">     59</a> - Limites de planos, catálogo jurídico
+<a href="#l60" class="line" id="l60">     60</a> - Retenção de revisões, exclusão de conta, paginação
+<a href="#l61" class="line" id="l61">     61</a> 
+<a href="#l62" class="line" id="l62">     62</a> ## Modelos públicos
+<a href="#l63" class="line" id="l63">     63</a> 
+<a href="#l64" class="line" id="l64">     64</a> A vitrine usa `app/domain/public-models.json`, extraído do conteúdo preenchido e anonimizado do legado. `static/js/app.js` apresenta dois modos distintos: o modelo preenchido mostra metadados e prévias por etapa; o documento completo mostra todas as seções, citações e referências disponíveis. Não reduzir o catálogo a placeholders.
+</pre>
+</div>
+</body>
+</html>

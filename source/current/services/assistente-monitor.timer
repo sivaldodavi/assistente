@@ -1,0 +1,12 @@
+[Unit]
+Description=Verificação periódica do Assistente Acadêmico
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=5min
+RandomizedDelaySec=30s
+Persistent=true
+Unit=assistente-monitor.service
+
+[Install]
+WantedBy=timers.target

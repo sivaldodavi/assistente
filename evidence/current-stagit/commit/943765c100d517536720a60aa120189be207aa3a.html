@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>feat: alertar administrador sobre novos logins - assistente-academico - Assistente Acadêmico v2
+</title>
+<link rel="icon" type="image/png" href="../favicon.png" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed" href="../atom.xml" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed (tags)" href="../tags.xml" />
+<link rel="stylesheet" type="text/css" href="../style.css" />
+</head>
+<body>
+<table><tr><td><a href="../../"><img src="../logo.png" alt="" width="32" height="32" /></a></td><td><h1>assistente-academico</h1><span class="desc">Assistente Acadêmico v2
+</span></td></tr><tr class="url"><td></td><td>git clone <a href="git://git.sivaldodavi.com.br/assistente-academico.git">git://git.sivaldodavi.com.br/assistente-academico.git</a></td></tr><tr><td></td><td>
+<a href="../log.html">Log</a> | <a href="../files.html">Files</a> | <a href="../refs.html">Refs</a> | <a href="../file/README.md.html">README</a></td></tr></table>
+<hr/>
+<div id="content">
+<pre><b>commit</b> <a href="../commit/943765c100d517536720a60aa120189be207aa3a.html">943765c100d517536720a60aa120189be207aa3a</a>
+<b>parent</b> <a href="../commit/923becae1aa2457ec1d73f035b6ee1bd10ac4d81.html">923becae1aa2457ec1d73f035b6ee1bd10ac4d81</a>
+<b>Author:</b> Sivaldo Davi &lt;<span class="offview">g<span>x</span>i<span>x</span>t<span>x</span>@<span>x</span>s<span>x</span>i<span>x</span>v<span>x</span>a<span>x</span>l<span>x</span>d<span>x</span>o<span>x</span>d<span>x</span>a<span>x</span>v<span>x</span>i<span>x</span>.<span>x</span>c<span>x</span>o<span>x</span>m</span>&gt;
+<b>Date:</b>   Mon, 26 Oct 2026 16:35:28 +0000
+
+feat: alertar administrador sobre novos logins
+
+<b>Diffstat:</b>
+<table><tr><td class="M">M</td><td><a href="#h0">app/routes/auth.py</a></td><td> | </td><td class="num">5</td><td><span class="i">++++</span><span class="d">-</span></td></tr>
+<tr><td class="M">M</td><td><a href="#h1">app/routes/oauth.py</a></td><td> | </td><td class="num">2</td><td><span class="i">++</span><span class="d"></span></td></tr>
+<tr><td class="M">M</td><td><a href="#h2">app/store/notifications.py</a></td><td> | </td><td class="num">20</td><td><span class="i">++++++++++++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="M">M</td><td><a href="#h3">docs/ia/WHATSAPP.md</a></td><td> | </td><td class="num">2</td><td><span class="i">+</span><span class="d">-</span></td></tr>
+<tr><td class="M">M</td><td><a href="#h4">tests/test_notifications.py</a></td><td> | </td><td class="num">16</td><td><span class="i">++++++++++++++</span><span class="d">--</span></td></tr>
+</table></pre><pre>5 files changed, 41 insertions(+), 4 deletions(-)
+<hr/><b>diff --git a/<a id="h0" href="../file/app/routes/auth.py.html">app/routes/auth.py</a> b/<a href="../file/app/routes/auth.py.html">app/routes/auth.py</a></b>
+<a href="#h0-0" id="h0-0" class="h">@@ -4,6 +4,7 @@ from flask import Blueprint, abort, current_app, redirect, request, session, url
+</a> 
+ from ..auth import csrf_token, require_csrf
+ from ..store.db import get_db
+<a href="#h0-0-3" id="h0-0-3" class="i">+from ..store.notifications import queue_admin_login_alert
+</a> 
+ 
+ auth_bp = Blueprint(&quot;auth&quot;, __name__, url_prefix=&quot;/auth&quot;)
+<a href="#h0-1" id="h0-1" class="h">@@ -23,8 +24,10 @@ def dev_login():
+</a>             (account_id, email, name),
+         )
+         get_db().commit()
+<a href="#h0-1-3" id="h0-1-3" class="i">+    resolved_account_id = account_id if isinstance(account_id, str) else account_id[&quot;id&quot;]
+</a><a href="#h0-1-4" id="h0-1-4" class="i">+    queue_admin_login_alert(resolved_account_id)
+</a>     session.clear()
+<a href="#h0-1-6" id="h0-1-6" class="d">-    session[&quot;account_id&quot;] = account_id if isinstance(account_id, str) else account_id[&quot;id&quot;]
+</a><a href="#h0-1-7" id="h0-1-7" class="i">+    session[&quot;account_id&quot;] = resolved_account_id
+</a>     csrf_token()
+     return redirect(url_for(&quot;projects.account&quot;))
+ 
+<b>diff --git a/<a id="h1" href="../file/app/routes/oauth.py.html">app/routes/oauth.py</a> b/<a href="../file/app/routes/oauth.py.html">app/routes/oauth.py</a></b>
+<a href="#h1-0" id="h1-0" class="h">@@ -12,6 +12,7 @@ from ..services.google_oauth import (
+</a>     new_state,
+ )
+ from ..store.accounts import upsert_google_account
+<a href="#h1-0-3" id="h1-0-3" class="i">+from ..store.notifications import queue_admin_login_alert
+</a> 
+ 
+ oauth_bp = Blueprint(&quot;oauth&quot;, __name__)
+<a href="#h1-1" id="h1-1" class="h">@@ -57,6 +58,7 @@ def google_callback():
+</a>     try:
+         claims = _client().exchange_code(code, str(flow[&quot;code_verifier&quot;]), str(flow[&quot;nonce&quot;]))
+         account_id = upsert_google_account(claims)
+<a href="#h1-1-3" id="h1-1-3" class="i">+        queue_admin_login_alert(account_id)
+</a>     except (GoogleOAuthError, KeyError, TypeError, ValueError):
+         return redirect(url_for(&quot;public.home&quot;, google_login=&quot;failed&quot;))
+     session.clear()
+<b>diff --git a/<a id="h2" href="../file/app/store/notifications.py.html">app/store/notifications.py</a> b/<a href="../file/app/store/notifications.py.html">app/store/notifications.py</a></b>
+<a href="#h2-0" id="h2-0" class="h">@@ -1,12 +1,32 @@
+</a> import time
+ from uuid import uuid4
+ 
+<a href="#h2-0-3" id="h2-0-3" class="i">+from flask import current_app
+</a><a href="#h2-0-4" id="h2-0-4" class="i">+
+</a> from ..domain.contact import normalize_whatsapp_phone
+ from .db import get_db
+ 
+ WELCOME_TEXT = &quot;Bem-vindo ao Assistente Acadêmico. Você receberá somente mensagens úteis sobre seus próprios trabalhos e prazos.&quot;
+ 
+ 
+<a href="#h2-0-11" id="h2-0-11" class="i">+def queue_admin_login_alert(account_id: str) -&gt; int:
+</a><a href="#h2-0-12" id="h2-0-12" class="i">+    account = get_db().execute(&quot;SELECT email, name FROM accounts WHERE id = ?&quot;, (account_id,)).fetchone()
+</a><a href="#h2-0-13" id="h2-0-13" class="i">+    if account is None:
+</a><a href="#h2-0-14" id="h2-0-14" class="i">+        return 0
+</a><a href="#h2-0-15" id="h2-0-15" class="i">+    admin_emails = current_app.config.get(&quot;ADMIN_EMAILS&quot;, set())
+</a><a href="#h2-0-16" id="h2-0-16" class="i">+    targets = get_db().execute(&quot;SELECT id, whatsapp_phone FROM accounts WHERE whatsapp_opt_in = 1 AND whatsapp_phone &lt;&gt; &#39;&#39;&quot;).fetchall()
+</a><a href="#h2-0-17" id="h2-0-17" class="i">+    text = f&quot;Novo login no Assistente Acadêmico: {account[&#39;name&#39;] or &#39;conta sem nome&#39;} ({account[&#39;email&#39;]}).&quot;
+</a><a href="#h2-0-18" id="h2-0-18" class="i">+    queued = 0
+</a><a href="#h2-0-19" id="h2-0-19" class="i">+    for target in targets:
+</a><a href="#h2-0-20" id="h2-0-20" class="i">+        target_account = get_db().execute(&quot;SELECT email FROM accounts WHERE id = ?&quot;, (target[&quot;id&quot;],)).fetchone()
+</a><a href="#h2-0-21" id="h2-0-21" class="i">+        if not target_account or target_account[&quot;email&quot;].lower() not in admin_emails or target[&quot;id&quot;] == account_id:
+</a><a href="#h2-0-22" id="h2-0-22" class="i">+            continue
+</a><a href="#h2-0-23" id="h2-0-23" class="i">+        enqueue_notification(account_id=target[&quot;id&quot;], destination=target[&quot;whatsapp_phone&quot;], kind=&quot;admin_login&quot;, text=text, idempotency_key=f&quot;admin-login-{target[&#39;id&#39;]}-{account_id}-{int(time.time())}&quot;, commit=False)
+</a><a href="#h2-0-24" id="h2-0-24" class="i">+        queued += 1
+</a><a href="#h2-0-25" id="h2-0-25" class="i">+    get_db().commit()
+</a><a href="#h2-0-26" id="h2-0-26" class="i">+    return queued
+</a><a href="#h2-0-27" id="h2-0-27" class="i">+
+</a><a href="#h2-0-28" id="h2-0-28" class="i">+
+</a> def save_whatsapp_preferences(account_id: str, phone: str, opt_in: bool) -&gt; dict:
+     normalized = normalize_whatsapp_phone(phone) if phone else &quot;&quot;
+     if opt_in and not normalized:
+<b>diff --git a/<a id="h3" href="../file/docs/ia/WHATSAPP.md.html">docs/ia/WHATSAPP.md</a> b/<a href="../file/docs/ia/WHATSAPP.md.html">docs/ia/WHATSAPP.md</a></b>
+<a href="#h3-0" id="h3-0" class="h">@@ -2,7 +2,7 @@
+</a> 
+ ## Escopo
+ 
+<a href="#h3-0-3" id="h3-0-3" class="d">-O WhatsApp envia somente mensagens úteis para a própria conta: boas-vindas após opt-in e, futuramente, lembretes de prazos dos projetos. O monitor técnico, saúde do banco, disco, fila e gateway nunca envia alertas por este canal.
+</a><a href="#h3-0-4" id="h3-0-4" class="i">+O WhatsApp envia somente mensagens úteis: boas-vindas e lembretes para a própria conta e alerta de novo login para administradores explicitamente configurados e com opt-in. O monitor técnico, saúde do banco, disco, fila e gateway nunca envia alertas por este canal.
+</a> 
+ ## Consentimento
+ 
+<b>diff --git a/<a id="h4" href="../file/tests/test_notifications.py.html">tests/test_notifications.py</a> b/<a href="../file/tests/test_notifications.py.html">tests/test_notifications.py</a></b>
+<a href="#h4-0" id="h4-0" class="h">@@ -4,8 +4,8 @@ from app.store.notifications import enqueue_notification
+</a> from workers.notification_worker import run_once
+ 
+ 
+<a href="#h4-0-3" id="h4-0-3" class="d">-def login(client):
+</a><a href="#h4-0-4" id="h4-0-4" class="d">-    client.post(&quot;/auth/dev-login&quot;, data={&quot;email&quot;: &quot;whatsapp@example.test&quot;, &quot;name&quot;: &quot;WhatsApp&quot;})
+</a><a href="#h4-0-5" id="h4-0-5" class="i">+def login(client, email=&quot;whatsapp@example.test&quot;):
+</a><a href="#h4-0-6" id="h4-0-6" class="i">+    client.post(&quot;/auth/dev-login&quot;, data={&quot;email&quot;: email, &quot;name&quot;: email.split(&quot;@&quot;)[0]})
+</a>     with client.session_transaction() as session:
+         return session[&quot;csrf_token&quot;]
+ 
+<a href="#h4-1" id="h4-1" class="h">@@ -66,3 +66,15 @@ def test_worker_queues_deadline_reminder_for_opted_in_account(client):
+</a>     sent_kinds = []
+     run_once(client.application, sender=lambda destination, text, key: sent_kinds.append(text) or True)
+     assert any(&quot;entrega do relatório&quot; in text for text in sent_kinds)
+<a href="#h4-1-3" id="h4-1-3" class="i">+
+</a><a href="#h4-1-4" id="h4-1-4" class="i">+
+</a><a href="#h4-1-5" id="h4-1-5" class="i">+def test_new_user_login_queues_admin_alert_only_for_opted_in_admin(client):
+</a><a href="#h4-1-6" id="h4-1-6" class="i">+    client.application.config[&quot;ADMIN_EMAILS&quot;] = {&quot;admin@example.test&quot;}
+</a><a href="#h4-1-7" id="h4-1-7" class="i">+    admin_token = login(client, &quot;admin@example.test&quot;)
+</a><a href="#h4-1-8" id="h4-1-8" class="i">+    client.post(&quot;/account/settings/profile&quot;, data={&quot;csrf_token&quot;: admin_token, &quot;whatsapp_phone&quot;: &quot;5598981417363&quot;, &quot;whatsapp_opt_in&quot;: &quot;on&quot;})
+</a><a href="#h4-1-9" id="h4-1-9" class="i">+    login(client, &quot;new-user@example.test&quot;)
+</a><a href="#h4-1-10" id="h4-1-10" class="i">+    with client.application.app_context():
+</a><a href="#h4-1-11" id="h4-1-11" class="i">+        from app.store.db import get_db
+</a><a href="#h4-1-12" id="h4-1-12" class="i">+        row = get_db().execute(&quot;SELECT kind, text FROM notification_outbox WHERE kind = &#39;admin_login&#39; ORDER BY created_at DESC LIMIT 1&quot;).fetchone()
+</a><a href="#h4-1-13" id="h4-1-13" class="i">+    assert row is not None
+</a><a href="#h4-1-14" id="h4-1-14" class="i">+    assert &quot;@example.test&quot; in row[&quot;text&quot;]
+</a></pre>
+</div>
+</body>
+</html>

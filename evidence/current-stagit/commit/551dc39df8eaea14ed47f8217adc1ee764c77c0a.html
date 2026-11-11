@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>docs: registrar remoto v2 e operacao do stagit - assistente-academico - Assistente Acadêmico v2
+</title>
+<link rel="icon" type="image/png" href="../favicon.png" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed" href="../atom.xml" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed (tags)" href="../tags.xml" />
+<link rel="stylesheet" type="text/css" href="../style.css" />
+</head>
+<body>
+<table><tr><td><a href="../../"><img src="../logo.png" alt="" width="32" height="32" /></a></td><td><h1>assistente-academico</h1><span class="desc">Assistente Acadêmico v2
+</span></td></tr><tr class="url"><td></td><td>git clone <a href="git://git.sivaldodavi.com.br/assistente-academico.git">git://git.sivaldodavi.com.br/assistente-academico.git</a></td></tr><tr><td></td><td>
+<a href="../log.html">Log</a> | <a href="../files.html">Files</a> | <a href="../refs.html">Refs</a> | <a href="../file/README.md.html">README</a></td></tr></table>
+<hr/>
+<div id="content">
+<pre><b>commit</b> <a href="../commit/551dc39df8eaea14ed47f8217adc1ee764c77c0a.html">551dc39df8eaea14ed47f8217adc1ee764c77c0a</a>
+<b>parent</b> <a href="../commit/d6a3677b1a593ca7a5f193d05839f9cfade26caa.html">d6a3677b1a593ca7a5f193d05839f9cfade26caa</a>
+<b>Author:</b> Sivaldo Davi &lt;<span class="offview">g<span>x</span>i<span>x</span>t<span>x</span>@<span>x</span>s<span>x</span>i<span>x</span>v<span>x</span>a<span>x</span>l<span>x</span>d<span>x</span>o<span>x</span>d<span>x</span>a<span>x</span>v<span>x</span>i<span>x</span>.<span>x</span>c<span>x</span>o<span>x</span>m</span>&gt;
+<b>Date:</b>   Mon, 26 Oct 2026 16:09:32 +0000
+
+docs: registrar remoto v2 e operacao do stagit
+
+<b>Diffstat:</b>
+<table><tr><td class="A">A</td><td><a href="#h0">docs/ia/OPERACAO-GIT-VPS.md</a></td><td> | </td><td class="num">48</td><td><span class="i">++++++++++++++++++++++++++++++++++++++++++++++++</span><span class="d"></span></td></tr>
+</table></pre><pre>1 file changed, 48 insertions(+), 0 deletions(-)
+<hr/><b>diff --git a/<a id="h0" href="../file/docs/ia/OPERACAO-GIT-VPS.md.html">docs/ia/OPERACAO-GIT-VPS.md</a> b/<a href="../file/docs/ia/OPERACAO-GIT-VPS.md.html">docs/ia/OPERACAO-GIT-VPS.md</a></b>
+<a href="#h0-0" id="h0-0" class="h">@@ -0,0 +1,48 @@
+</a><a href="#h0-0-0" id="h0-0-0" class="i">+# Git e stagit da v2 no VPS
+</a><a href="#h0-0-1" id="h0-0-1" class="i">+
+</a><a href="#h0-0-2" id="h0-0-2" class="i">+## Repositório
+</a><a href="#h0-0-3" id="h0-0-3" class="i">+
+</a><a href="#h0-0-4" id="h0-0-4" class="i">+A v2 usa o bare repository:
+</a><a href="#h0-0-5" id="h0-0-5" class="i">+
+</a><a href="#h0-0-6" id="h0-0-6" class="i">+```text
+</a><a href="#h0-0-7" id="h0-0-7" class="i">+/home/git/repos/assistente-academico-v2.git
+</a><a href="#h0-0-8" id="h0-0-8" class="i">+```
+</a><a href="#h0-0-9" id="h0-0-9" class="i">+
+</a><a href="#h0-0-10" id="h0-0-10" class="i">+O remoto de desenvolvimento é chamado `vps`:
+</a><a href="#h0-0-11" id="h0-0-11" class="i">+
+</a><a href="#h0-0-12" id="h0-0-12" class="i">+```text
+</a><a href="#h0-0-13" id="h0-0-13" class="i">+ssh://root@159.223.136.31/home/git/repos/assistente-academico-v2.git
+</a><a href="#h0-0-14" id="h0-0-14" class="i">+```
+</a><a href="#h0-0-15" id="h0-0-15" class="i">+
+</a><a href="#h0-0-16" id="h0-0-16" class="i">+A URL de navegação Git é:
+</a><a href="#h0-0-17" id="h0-0-17" class="i">+
+</a><a href="#h0-0-18" id="h0-0-18" class="i">+```text
+</a><a href="#h0-0-19" id="h0-0-19" class="i">+git://git.sivaldodavi.com/assistente-academico-v2.git
+</a><a href="#h0-0-20" id="h0-0-20" class="i">+```
+</a><a href="#h0-0-21" id="h0-0-21" class="i">+
+</a><a href="#h0-0-22" id="h0-0-22" class="i">+## O que um push faz
+</a><a href="#h0-0-23" id="h0-0-23" class="i">+
+</a><a href="#h0-0-24" id="h0-0-24" class="i">+O hook `post-receive` da v2 chama somente o gerador do stagit para atualizar a página do histórico. O push não publica a aplicação, não cria imagem Docker, não muda Caddy, não reinicia serviço e não toca em banco ou secrets.
+</a><a href="#h0-0-25" id="h0-0-25" class="i">+
+</a><a href="#h0-0-26" id="h0-0-26" class="i">+O histórico gerado fica em `/opt/servidor/data/stagit/assistente-academico-v2/`.
+</a><a href="#h0-0-27" id="h0-0-27" class="i">+
+</a><a href="#h0-0-28" id="h0-0-28" class="i">+## Fluxo normal
+</a><a href="#h0-0-29" id="h0-0-29" class="i">+
+</a><a href="#h0-0-30" id="h0-0-30" class="i">+```sh
+</a><a href="#h0-0-31" id="h0-0-31" class="i">+git status --short --branch
+</a><a href="#h0-0-32" id="h0-0-32" class="i">+python3 -m pytest -q
+</a><a href="#h0-0-33" id="h0-0-33" class="i">+git push vps main
+</a><a href="#h0-0-34" id="h0-0-34" class="i">+```
+</a><a href="#h0-0-35" id="h0-0-35" class="i">+
+</a><a href="#h0-0-36" id="h0-0-36" class="i">+Depois do push, confirme o commit remoto:
+</a><a href="#h0-0-37" id="h0-0-37" class="i">+
+</a><a href="#h0-0-38" id="h0-0-38" class="i">+```sh
+</a><a href="#h0-0-39" id="h0-0-39" class="i">+ssh root@159.223.136.31 \
+</a><a href="#h0-0-40" id="h0-0-40" class="i">+  &#39;git --git-dir=/home/git/repos/assistente-academico-v2.git rev-parse --short refs/heads/main&#39;
+</a><a href="#h0-0-41" id="h0-0-41" class="i">+```
+</a><a href="#h0-0-42" id="h0-0-42" class="i">+
+</a><a href="#h0-0-43" id="h0-0-43" class="i">+## Regra de publicação
+</a><a href="#h0-0-44" id="h0-0-44" class="i">+
+</a><a href="#h0-0-45" id="h0-0-45" class="i">+A v2 só será publicada no domínio quando houver decisão explícita e checklist de pré-produção. O bare repo do stagit não é o checkout de build e não deve ser usado como diretório de execução.
+</a><a href="#h0-0-46" id="h0-0-46" class="i">+
+</a><a href="#h0-0-47" id="h0-0-47" class="i">+Para publicar no futuro, será criado um checkout/staging operacional próprio da v2, com volume de dados novo e serviço separado. O deploy não reutilizará o hook do repositório legado, que possui comportamento específico de publicação do Assistente atual.
+</a></pre>
+</div>
+</body>
+</html>

@@ -1,0 +1,1543 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>feat: portar a vitrine publica para a v2 - assistente-academico - Assistente Acadêmico v2
+</title>
+<link rel="icon" type="image/png" href="../favicon.png" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed" href="../atom.xml" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed (tags)" href="../tags.xml" />
+<link rel="stylesheet" type="text/css" href="../style.css" />
+</head>
+<body>
+<table><tr><td><a href="../../"><img src="../logo.png" alt="" width="32" height="32" /></a></td><td><h1>assistente-academico</h1><span class="desc">Assistente Acadêmico v2
+</span></td></tr><tr class="url"><td></td><td>git clone <a href="git://git.sivaldodavi.com.br/assistente-academico.git">git://git.sivaldodavi.com.br/assistente-academico.git</a></td></tr><tr><td></td><td>
+<a href="../log.html">Log</a> | <a href="../files.html">Files</a> | <a href="../refs.html">Refs</a> | <a href="../file/README.md.html">README</a></td></tr></table>
+<hr/>
+<div id="content">
+<pre><b>commit</b> <a href="../commit/af3e4120754b4f2e3f6d5f1455211b349d341a10.html">af3e4120754b4f2e3f6d5f1455211b349d341a10</a>
+<b>parent</b> <a href="../commit/eb949e6414b4ccefc7faf6d9da1bd02f7b28b3da.html">eb949e6414b4ccefc7faf6d9da1bd02f7b28b3da</a>
+<b>Author:</b> Sivaldo Davi &lt;<span class="offview">g<span>x</span>i<span>x</span>t<span>x</span>@<span>x</span>s<span>x</span>i<span>x</span>v<span>x</span>a<span>x</span>l<span>x</span>d<span>x</span>o<span>x</span>d<span>x</span>a<span>x</span>v<span>x</span>i<span>x</span>.<span>x</span>c<span>x</span>o<span>x</span>m</span>&gt;
+<b>Date:</b>   Mon, 26 Oct 2026 15:59:29 +0000
+
+feat: portar a vitrine publica para a v2
+
+<b>Diffstat:</b>
+<table><tr><td class="M">M</td><td><a href="#h0">static/css/app.css</a></td><td> | </td><td class="num">42</td><td><span class="i">++++++++++++++++++++++++++++++++</span><span class="d">----------</span></td></tr>
+<tr><td class="A">A</td><td><a href="#h1">static/css/marketing.css</a></td><td> | </td><td class="num">1205</td><td><span class="i">+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="M">M</td><td><a href="#h2">templates/base.html</a></td><td> | </td><td class="num">9</td><td><span class="i">++</span><span class="d">-------</span></td></tr>
+<tr><td class="M">M</td><td><a href="#h3">templates/public/home.html</a></td><td> | </td><td class="num">204</td><td><span class="i">++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</span><span class="d">-----</span></td></tr>
+<tr><td class="M">M</td><td><a href="#h4">tests/test_smoke.py</a></td><td> | </td><td class="num">4</td><td><span class="i">++</span><span class="d">--</span></td></tr>
+</table></pre><pre>5 files changed, 1432 insertions(+), 32 deletions(-)
+<hr/><b>diff --git a/<a id="h0" href="../file/static/css/app.css.html">static/css/app.css</a> b/<a href="../file/static/css/app.css.html">static/css/app.css</a></b>
+<a href="#h0-0" id="h0-0" class="h">@@ -1,25 +1,47 @@
+</a> 
+<a href="#h0-0-1" id="h0-0-1" class="d">-.page-heading { max-width: 760px; margin-bottom: 2rem; }
+</a><a href="#h0-0-2" id="h0-0-2" class="i">+:root {
+</a><a href="#h0-0-3" id="h0-0-3" class="i">+  color-scheme: dark;
+</a><a href="#h0-0-4" id="h0-0-4" class="i">+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;
+</a><a href="#h0-0-5" id="h0-0-5" class="i">+  color: #f2f2f2;
+</a><a href="#h0-0-6" id="h0-0-6" class="i">+  background: #090909;
+</a><a href="#h0-0-7" id="h0-0-7" class="i">+  --ink: #f2f2f2;
+</a><a href="#h0-0-8" id="h0-0-8" class="i">+  --muted: #a0a0a0;
+</a><a href="#h0-0-9" id="h0-0-9" class="i">+  --line: #303030;
+</a><a href="#h0-0-10" id="h0-0-10" class="i">+  --paper: #121212;
+</a><a href="#h0-0-11" id="h0-0-11" class="i">+  --soft: #1c1c1c;
+</a><a href="#h0-0-12" id="h0-0-12" class="i">+  --accent: #ededed;
+</a><a href="#h0-0-13" id="h0-0-13" class="i">+  --accent-soft: #262626;
+</a><a href="#h0-0-14" id="h0-0-14" class="i">+}
+</a><a href="#h0-0-15" id="h0-0-15" class="i">+* { box-sizing: border-box; }
+</a><a href="#h0-0-16" id="h0-0-16" class="i">+body { min-width: 320px; min-height: 100vh; margin: 0; background: #090909; color: var(--ink); }
+</a><a href="#h0-0-17" id="h0-0-17" class="i">+button, input, textarea, select { font: inherit; color-scheme: dark; }
+</a><a href="#h0-0-18" id="h0-0-18" class="i">+:focus-visible { outline: 2px solid #cfcfcf; outline-offset: 3px; }
+</a><a href="#h0-0-19" id="h0-0-19" class="i">+.topbar { display: flex; align-items: center; justify-content: space-between; padding: 0 5vw; border-bottom: 1px solid var(--line); background: rgba(15, 15, 15, .92); }
+</a><a href="#h0-0-20" id="h0-0-20" class="i">+.brand { color: var(--ink); text-decoration: none; }
+</a><a href="#h0-0-21" id="h0-0-21" class="i">+.topbar-actions { display: flex; align-items: center; gap: 14px; }
+</a><a href="#h0-0-22" id="h0-0-22" class="i">+.button { display: inline-flex; align-items: center; justify-content: center; min-height: 38px; padding: 9px 13px; border: 1px solid var(--line); border-radius: 5px; background: var(--control, #101010); color: var(--ink); text-decoration: none; cursor: pointer; }
+</a><a href="#h0-0-23" id="h0-0-23" class="i">+.button:hover { border-color: #666; background: var(--control-hover, #272727); }
+</a><a href="#h0-0-24" id="h0-0-24" class="i">+.button-primary { border-color: #ddd; background: #ededed; color: #111; }
+</a><a href="#h0-0-25" id="h0-0-25" class="i">+.v2-private-note { position: fixed; right: 10px; bottom: 10px; z-index: 50; padding: 4px 8px; color: #737373; font-size: 10px; opacity: .45; }
+</a><a href="#h0-0-26" id="h0-0-26" class="i">+.page-heading, .editor-form, .create-form { color: var(--ink); }
+</a><a href="#h0-0-27" id="h0-0-27" class="i">+.page-heading { max-width: 760px; margin: 0 auto 2rem; }
+</a> .page-heading h1 { font-size: clamp(2rem, 5vw, 3.5rem); }
+ .back-link { color: var(--accent); text-decoration: none; }
+ .project-list { border-top: 1px solid var(--line); }
+ .project-row { display: flex; justify-content: space-between; gap: 1rem; padding: 1rem 0; color: var(--ink); border-bottom: 1px solid var(--line); text-decoration: none; }
+ .project-row small { display: block; margin-top: .3rem; color: var(--muted); }
+ .empty-state, .field-help { color: var(--muted); }
+<a href="#h0-0-34" id="h0-0-34" class="d">-.create-form, .editor-form { display: grid; gap: 1rem; max-width: 900px; margin-top: 2rem; }
+</a><a href="#h0-0-35" id="h0-0-35" class="i">+.create-form, .editor-form { display: grid; gap: 1rem; max-width: 900px; margin: 2rem auto 0; padding: 0 4vw; }
+</a> label { display: grid; gap: .4rem; color: var(--ink); font-weight: 650; }
+<a href="#h0-0-37" id="h0-0-37" class="d">-input, select, button { min-height: 44px; font: inherit; }
+</a><a href="#h0-0-38" id="h0-0-38" class="d">-input, select { width: 100%; padding: .65rem .75rem; border: 1px solid var(--line); background: #fff; color: var(--ink); }
+</a><a href="#h0-0-39" id="h0-0-39" class="d">-button { width: fit-content; padding: .65rem 1rem; border: 1px solid var(--accent); background: var(--accent); color: #fff; cursor: pointer; }
+</a><a href="#h0-0-40" id="h0-0-40" class="d">-.quiet-button { border-color: var(--line); background: transparent; color: var(--accent); }
+</a><a href="#h0-0-41" id="h0-0-41" class="d">-.danger { color: #8a3d35; border-color: #d6aaa4; }
+</a><a href="#h0-0-42" id="h0-0-42" class="i">+input, select { width: 100%; min-height: 44px; padding: .65rem .75rem; border: 1px solid var(--line); background: #101010; color: var(--ink); }
+</a> .timeline-editor { margin-top: 1rem; padding-top: 1.5rem; border-top: 1px solid var(--line); }
+ .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 1rem; }
+ .section-heading h2 { margin: 0; }
+<a href="#h0-0-46" id="h0-0-46" class="d">-.fact-card { display: grid; gap: 1rem; margin: 1rem 0; padding: 1rem; border: 1px solid var(--line); background: #fbfaf5; }
+</a><a href="#h0-0-47" id="h0-0-47" class="i">+.fact-card { display: grid; gap: 1rem; margin: 1rem 0; padding: 1rem; border: 1px solid var(--line); background: #151515; }
+</a> .fact-card legend { padding: 0 .35rem; color: var(--accent); font-weight: 700; }
+ .fact-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+<a href="#h0-0-50" id="h0-0-50" class="d">-.optional-field { color: var(--muted); }
+</a><a href="#h0-0-51" id="h0-0-51" class="i">+.quiet-button { min-height: 44px; padding: .65rem 1rem; border: 1px solid var(--line); background: transparent; color: var(--accent); cursor: pointer; }
+</a><a href="#h0-0-52" id="h0-0-52" class="i">+.danger { color: #f08a8a; border-color: #713b3b; }
+</a> .editor-actions { display: flex; align-items: center; gap: 1rem; padding: 1rem 0 3rem; }
+ [data-save-state] { color: var(--muted); font-size: .9rem; }
+<a href="#h0-0-55" id="h0-0-55" class="d">-@media (max-width: 640px) { .page-shell { padding: 2rem 0; } .section-heading, .editor-actions { align-items: stretch; flex-direction: column; } .fact-grid { grid-template-columns: 1fr; } }
+</a><a href="#h0-0-56" id="h0-0-56" class="i">+@media (max-width: 640px) { .section-heading, .editor-actions { align-items: stretch; flex-direction: column; } .fact-grid { grid-template-columns: 1fr; } }
+</a><b>diff --git a/<a id="h1" href="../file/static/css/marketing.css.html">static/css/marketing.css</a> b/<a href="../file/static/css/marketing.css.html">static/css/marketing.css</a></b>
+<a href="#h1-0" id="h1-0" class="h">@@ -0,0 +1,1205 @@
+</a><a href="#h1-0-0" id="h1-0-0" class="i">+.sales-shell {
+</a><a href="#h1-0-1" id="h1-0-1" class="i">+  width: min(1100px, 92vw);
+</a><a href="#h1-0-2" id="h1-0-2" class="i">+  margin: 0 auto;
+</a><a href="#h1-0-3" id="h1-0-3" class="i">+  color: #f2f2f2;
+</a><a href="#h1-0-4" id="h1-0-4" class="i">+}
+</a><a href="#h1-0-5" id="h1-0-5" class="i">+
+</a><a href="#h1-0-6" id="h1-0-6" class="i">+.sales-page {
+</a><a href="#h1-0-7" id="h1-0-7" class="i">+  --sales-bg: #090909;
+</a><a href="#h1-0-8" id="h1-0-8" class="i">+  --sales-paper: #121212;
+</a><a href="#h1-0-9" id="h1-0-9" class="i">+  --sales-soft: #1a1a1a;
+</a><a href="#h1-0-10" id="h1-0-10" class="i">+  --sales-line: #303030;
+</a><a href="#h1-0-11" id="h1-0-11" class="i">+  --sales-line-strong: #4a4a4a;
+</a><a href="#h1-0-12" id="h1-0-12" class="i">+  --sales-ink: #f2f2f2;
+</a><a href="#h1-0-13" id="h1-0-13" class="i">+  --sales-muted: #a0a0a0;
+</a><a href="#h1-0-14" id="h1-0-14" class="i">+  --sales-dim: #737373;
+</a><a href="#h1-0-15" id="h1-0-15" class="i">+  --sales-radius: 8px;
+</a><a href="#h1-0-16" id="h1-0-16" class="i">+  max-width: 1100px;
+</a><a href="#h1-0-17" id="h1-0-17" class="i">+  margin: 0 auto;
+</a><a href="#h1-0-18" id="h1-0-18" class="i">+  padding: 0 0 46px;
+</a><a href="#h1-0-19" id="h1-0-19" class="i">+  color: var(--sales-ink);
+</a><a href="#h1-0-20" id="h1-0-20" class="i">+  font-size: 14px;
+</a><a href="#h1-0-21" id="h1-0-21" class="i">+  line-height: 1.58;
+</a><a href="#h1-0-22" id="h1-0-22" class="i">+}
+</a><a href="#h1-0-23" id="h1-0-23" class="i">+
+</a><a href="#h1-0-24" id="h1-0-24" class="i">+.sales-page *,
+</a><a href="#h1-0-25" id="h1-0-25" class="i">+.sales-page *::before,
+</a><a href="#h1-0-26" id="h1-0-26" class="i">+.sales-page *::after {
+</a><a href="#h1-0-27" id="h1-0-27" class="i">+  box-sizing: border-box;
+</a><a href="#h1-0-28" id="h1-0-28" class="i">+}
+</a><a href="#h1-0-29" id="h1-0-29" class="i">+
+</a><a href="#h1-0-30" id="h1-0-30" class="i">+.sales-page h1,
+</a><a href="#h1-0-31" id="h1-0-31" class="i">+.sales-page h2,
+</a><a href="#h1-0-32" id="h1-0-32" class="i">+.sales-page h3,
+</a><a href="#h1-0-33" id="h1-0-33" class="i">+.sales-page p {
+</a><a href="#h1-0-34" id="h1-0-34" class="i">+  margin-top: 0;
+</a><a href="#h1-0-35" id="h1-0-35" class="i">+}
+</a><a href="#h1-0-36" id="h1-0-36" class="i">+
+</a><a href="#h1-0-37" id="h1-0-37" class="i">+.sales-page h1,
+</a><a href="#h1-0-38" id="h1-0-38" class="i">+.sales-page h2,
+</a><a href="#h1-0-39" id="h1-0-39" class="i">+.sales-page h3,
+</a><a href="#h1-0-40" id="h1-0-40" class="i">+.sales-page strong {
+</a><a href="#h1-0-41" id="h1-0-41" class="i">+  color: var(--sales-ink);
+</a><a href="#h1-0-42" id="h1-0-42" class="i">+}
+</a><a href="#h1-0-43" id="h1-0-43" class="i">+
+</a><a href="#h1-0-44" id="h1-0-44" class="i">+.sales-page h1,
+</a><a href="#h1-0-45" id="h1-0-45" class="i">+.sales-page h2,
+</a><a href="#h1-0-46" id="h1-0-46" class="i">+.sales-page h3 {
+</a><a href="#h1-0-47" id="h1-0-47" class="i">+  letter-spacing: -0.045em;
+</a><a href="#h1-0-48" id="h1-0-48" class="i">+}
+</a><a href="#h1-0-49" id="h1-0-49" class="i">+
+</a><a href="#h1-0-50" id="h1-0-50" class="i">+.sales-page h2 {
+</a><a href="#h1-0-51" id="h1-0-51" class="i">+  max-width: 650px;
+</a><a href="#h1-0-52" id="h1-0-52" class="i">+  margin-bottom: 14px;
+</a><a href="#h1-0-53" id="h1-0-53" class="i">+  font-size: clamp(28px, 3.1vw, 43px);
+</a><a href="#h1-0-54" id="h1-0-54" class="i">+  font-weight: 560;
+</a><a href="#h1-0-55" id="h1-0-55" class="i">+  line-height: 1.06;
+</a><a href="#h1-0-56" id="h1-0-56" class="i">+}
+</a><a href="#h1-0-57" id="h1-0-57" class="i">+
+</a><a href="#h1-0-58" id="h1-0-58" class="i">+.sales-page h3 {
+</a><a href="#h1-0-59" id="h1-0-59" class="i">+  font-size: 17px;
+</a><a href="#h1-0-60" id="h1-0-60" class="i">+  font-weight: 580;
+</a><a href="#h1-0-61" id="h1-0-61" class="i">+  line-height: 1.2;
+</a><a href="#h1-0-62" id="h1-0-62" class="i">+}
+</a><a href="#h1-0-63" id="h1-0-63" class="i">+
+</a><a href="#h1-0-64" id="h1-0-64" class="i">+.sales-page p {
+</a><a href="#h1-0-65" id="h1-0-65" class="i">+  max-width: 650px;
+</a><a href="#h1-0-66" id="h1-0-66" class="i">+}
+</a><a href="#h1-0-67" id="h1-0-67" class="i">+
+</a><a href="#h1-0-68" id="h1-0-68" class="i">+.sales-page a {
+</a><a href="#h1-0-69" id="h1-0-69" class="i">+  color: var(--sales-ink);
+</a><a href="#h1-0-70" id="h1-0-70" class="i">+  text-underline-offset: 4px;
+</a><a href="#h1-0-71" id="h1-0-71" class="i">+}
+</a><a href="#h1-0-72" id="h1-0-72" class="i">+
+</a><a href="#h1-0-73" id="h1-0-73" class="i">+.sales-page a:hover {
+</a><a href="#h1-0-74" id="h1-0-74" class="i">+  color: #fff;
+</a><a href="#h1-0-75" id="h1-0-75" class="i">+}
+</a><a href="#h1-0-76" id="h1-0-76" class="i">+
+</a><a href="#h1-0-77" id="h1-0-77" class="i">+.sales-kicker {
+</a><a href="#h1-0-78" id="h1-0-78" class="i">+  margin-bottom: 14px;
+</a><a href="#h1-0-79" id="h1-0-79" class="i">+  color: var(--sales-muted);
+</a><a href="#h1-0-80" id="h1-0-80" class="i">+  font-size: 11px;
+</a><a href="#h1-0-81" id="h1-0-81" class="i">+  font-weight: 600;
+</a><a href="#h1-0-82" id="h1-0-82" class="i">+  letter-spacing: 0.12em;
+</a><a href="#h1-0-83" id="h1-0-83" class="i">+  line-height: 1.35;
+</a><a href="#h1-0-84" id="h1-0-84" class="i">+  text-transform: uppercase;
+</a><a href="#h1-0-85" id="h1-0-85" class="i">+}
+</a><a href="#h1-0-86" id="h1-0-86" class="i">+
+</a><a href="#h1-0-87" id="h1-0-87" class="i">+.sales-hero {
+</a><a href="#h1-0-88" id="h1-0-88" class="i">+  display: grid;
+</a><a href="#h1-0-89" id="h1-0-89" class="i">+  grid-template-columns: minmax(0, 1.06fr) minmax(300px, 0.94fr);
+</a><a href="#h1-0-90" id="h1-0-90" class="i">+  align-items: center;
+</a><a href="#h1-0-91" id="h1-0-91" class="i">+  gap: clamp(34px, 6vw, 74px);
+</a><a href="#h1-0-92" id="h1-0-92" class="i">+  min-height: 0;
+</a><a href="#h1-0-93" id="h1-0-93" class="i">+  padding: 62px 0 46px;
+</a><a href="#h1-0-94" id="h1-0-94" class="i">+}
+</a><a href="#h1-0-95" id="h1-0-95" class="i">+
+</a><a href="#h1-0-96" id="h1-0-96" class="i">+.sales-hero-copy {
+</a><a href="#h1-0-97" id="h1-0-97" class="i">+  min-width: 0;
+</a><a href="#h1-0-98" id="h1-0-98" class="i">+}
+</a><a href="#h1-0-99" id="h1-0-99" class="i">+
+</a><a href="#h1-0-100" id="h1-0-100" class="i">+.sales-hero h1 {
+</a><a href="#h1-0-101" id="h1-0-101" class="i">+  max-width: 680px;
+</a><a href="#h1-0-102" id="h1-0-102" class="i">+  margin-bottom: 23px;
+</a><a href="#h1-0-103" id="h1-0-103" class="i">+  font-size: clamp(34px, 5vw, 65px);
+</a><a href="#h1-0-104" id="h1-0-104" class="i">+  font-weight: 560;
+</a><a href="#h1-0-105" id="h1-0-105" class="i">+  letter-spacing: -0.065em;
+</a><a href="#h1-0-106" id="h1-0-106" class="i">+  line-height: 0.99;
+</a><a href="#h1-0-107" id="h1-0-107" class="i">+}
+</a><a href="#h1-0-108" id="h1-0-108" class="i">+
+</a><a href="#h1-0-109" id="h1-0-109" class="i">+.sales-lede {
+</a><a href="#h1-0-110" id="h1-0-110" class="i">+  max-width: 580px;
+</a><a href="#h1-0-111" id="h1-0-111" class="i">+  margin-bottom: 28px;
+</a><a href="#h1-0-112" id="h1-0-112" class="i">+  color: #c0c0c0;
+</a><a href="#h1-0-113" id="h1-0-113" class="i">+  font-size: 16px;
+</a><a href="#h1-0-114" id="h1-0-114" class="i">+  line-height: 1.65;
+</a><a href="#h1-0-115" id="h1-0-115" class="i">+}
+</a><a href="#h1-0-116" id="h1-0-116" class="i">+
+</a><a href="#h1-0-117" id="h1-0-117" class="i">+.sales-message {
+</a><a href="#h1-0-118" id="h1-0-118" class="i">+  margin: 0 0 20px;
+</a><a href="#h1-0-119" id="h1-0-119" class="i">+  padding: 11px 13px;
+</a><a href="#h1-0-120" id="h1-0-120" class="i">+  border-left: 2px solid var(--sales-line-strong);
+</a><a href="#h1-0-121" id="h1-0-121" class="i">+  background: var(--sales-paper);
+</a><a href="#h1-0-122" id="h1-0-122" class="i">+  color: var(--sales-ink);
+</a><a href="#h1-0-123" id="h1-0-123" class="i">+  font-size: 13px;
+</a><a href="#h1-0-124" id="h1-0-124" class="i">+}
+</a><a href="#h1-0-125" id="h1-0-125" class="i">+
+</a><a href="#h1-0-126" id="h1-0-126" class="i">+.sales-hero-actions,
+</a><a href="#h1-0-127" id="h1-0-127" class="i">+.sales-window-actions,
+</a><a href="#h1-0-128" id="h1-0-128" class="i">+.sales-contact-links,
+</a><a href="#h1-0-129" id="h1-0-129" class="i">+.sales-support-card {
+</a><a href="#h1-0-130" id="h1-0-130" class="i">+  display: flex;
+</a><a href="#h1-0-131" id="h1-0-131" class="i">+  flex-wrap: wrap;
+</a><a href="#h1-0-132" id="h1-0-132" class="i">+  align-items: center;
+</a><a href="#h1-0-133" id="h1-0-133" class="i">+  gap: 10px;
+</a><a href="#h1-0-134" id="h1-0-134" class="i">+}
+</a><a href="#h1-0-135" id="h1-0-135" class="i">+
+</a><a href="#h1-0-136" id="h1-0-136" class="i">+.sales-page .sales-hero-actions .button,
+</a><a href="#h1-0-137" id="h1-0-137" class="i">+.sales-page .sales-support-card .button {
+</a><a href="#h1-0-138" id="h1-0-138" class="i">+  min-height: 42px;
+</a><a href="#h1-0-139" id="h1-0-139" class="i">+  padding: 10px 15px;
+</a><a href="#h1-0-140" id="h1-0-140" class="i">+}
+</a><a href="#h1-0-141" id="h1-0-141" class="i">+
+</a><a href="#h1-0-142" id="h1-0-142" class="i">+.sales-hero-microcopy {
+</a><a href="#h1-0-143" id="h1-0-143" class="i">+  margin: 19px 0 0;
+</a><a href="#h1-0-144" id="h1-0-144" class="i">+  color: var(--sales-muted);
+</a><a href="#h1-0-145" id="h1-0-145" class="i">+  font-size: 12px;
+</a><a href="#h1-0-146" id="h1-0-146" class="i">+}
+</a><a href="#h1-0-147" id="h1-0-147" class="i">+
+</a><a href="#h1-0-148" id="h1-0-148" class="i">+.sales-hero-visual {
+</a><a href="#h1-0-149" id="h1-0-149" class="i">+  min-width: 0;
+</a><a href="#h1-0-150" id="h1-0-150" class="i">+}
+</a><a href="#h1-0-151" id="h1-0-151" class="i">+
+</a><a href="#h1-0-152" id="h1-0-152" class="i">+.sales-product-window {
+</a><a href="#h1-0-153" id="h1-0-153" class="i">+  overflow: hidden;
+</a><a href="#h1-0-154" id="h1-0-154" class="i">+  border: 1px solid var(--sales-line);
+</a><a href="#h1-0-155" id="h1-0-155" class="i">+  border-radius: var(--sales-radius);
+</a><a href="#h1-0-156" id="h1-0-156" class="i">+  background: #0d0d0d;
+</a><a href="#h1-0-157" id="h1-0-157" class="i">+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.28);
+</a><a href="#h1-0-158" id="h1-0-158" class="i">+}
+</a><a href="#h1-0-159" id="h1-0-159" class="i">+
+</a><a href="#h1-0-160" id="h1-0-160" class="i">+.sales-window-chrome {
+</a><a href="#h1-0-161" id="h1-0-161" class="i">+  display: flex;
+</a><a href="#h1-0-162" id="h1-0-162" class="i">+  align-items: center;
+</a><a href="#h1-0-163" id="h1-0-163" class="i">+  gap: 6px;
+</a><a href="#h1-0-164" id="h1-0-164" class="i">+  min-height: 35px;
+</a><a href="#h1-0-165" id="h1-0-165" class="i">+  padding: 0 13px;
+</a><a href="#h1-0-166" id="h1-0-166" class="i">+  border-bottom: 1px solid var(--sales-line);
+</a><a href="#h1-0-167" id="h1-0-167" class="i">+  color: var(--sales-dim);
+</a><a href="#h1-0-168" id="h1-0-168" class="i">+  font-size: 10px;
+</a><a href="#h1-0-169" id="h1-0-169" class="i">+}
+</a><a href="#h1-0-170" id="h1-0-170" class="i">+
+</a><a href="#h1-0-171" id="h1-0-171" class="i">+.sales-window-dot {
+</a><a href="#h1-0-172" id="h1-0-172" class="i">+  width: 6px;
+</a><a href="#h1-0-173" id="h1-0-173" class="i">+  height: 6px;
+</a><a href="#h1-0-174" id="h1-0-174" class="i">+  border: 1px solid #555;
+</a><a href="#h1-0-175" id="h1-0-175" class="i">+  border-radius: 50%;
+</a><a href="#h1-0-176" id="h1-0-176" class="i">+}
+</a><a href="#h1-0-177" id="h1-0-177" class="i">+
+</a><a href="#h1-0-178" id="h1-0-178" class="i">+.sales-window-route {
+</a><a href="#h1-0-179" id="h1-0-179" class="i">+  overflow: hidden;
+</a><a href="#h1-0-180" id="h1-0-180" class="i">+  margin-left: 8px;
+</a><a href="#h1-0-181" id="h1-0-181" class="i">+  text-overflow: ellipsis;
+</a><a href="#h1-0-182" id="h1-0-182" class="i">+  white-space: nowrap;
+</a><a href="#h1-0-183" id="h1-0-183" class="i">+}
+</a><a href="#h1-0-184" id="h1-0-184" class="i">+
+</a><a href="#h1-0-185" id="h1-0-185" class="i">+.sales-window-body {
+</a><a href="#h1-0-186" id="h1-0-186" class="i">+  padding: clamp(20px, 3vw, 31px);
+</a><a href="#h1-0-187" id="h1-0-187" class="i">+}
+</a><a href="#h1-0-188" id="h1-0-188" class="i">+
+</a><a href="#h1-0-189" id="h1-0-189" class="i">+.sales-window-topline,
+</a><a href="#h1-0-190" id="h1-0-190" class="i">+.sales-window-progress,
+</a><a href="#h1-0-191" id="h1-0-191" class="i">+.sales-chart-header,
+</a><a href="#h1-0-192" id="h1-0-192" class="i">+.sales-plan-heading,
+</a><a href="#h1-0-193" id="h1-0-193" class="i">+.sales-journey-list li,
+</a><a href="#h1-0-194" id="h1-0-194" class="i">+.sales-footer,
+</a><a href="#h1-0-195" id="h1-0-195" class="i">+.sales-support-section,
+</a><a href="#h1-0-196" id="h1-0-196" class="i">+.sales-pricing-notes,
+</a><a href="#h1-0-197" id="h1-0-197" class="i">+.sales-chart-axis {
+</a><a href="#h1-0-198" id="h1-0-198" class="i">+  display: flex;
+</a><a href="#h1-0-199" id="h1-0-199" class="i">+  justify-content: space-between;
+</a><a href="#h1-0-200" id="h1-0-200" class="i">+  gap: 16px;
+</a><a href="#h1-0-201" id="h1-0-201" class="i">+}
+</a><a href="#h1-0-202" id="h1-0-202" class="i">+
+</a><a href="#h1-0-203" id="h1-0-203" class="i">+.sales-window-topline {
+</a><a href="#h1-0-204" id="h1-0-204" class="i">+  margin-bottom: 28px;
+</a><a href="#h1-0-205" id="h1-0-205" class="i">+  color: var(--sales-muted);
+</a><a href="#h1-0-206" id="h1-0-206" class="i">+  font-size: 11px;
+</a><a href="#h1-0-207" id="h1-0-207" class="i">+  letter-spacing: 0.08em;
+</a><a href="#h1-0-208" id="h1-0-208" class="i">+  text-transform: uppercase;
+</a><a href="#h1-0-209" id="h1-0-209" class="i">+}
+</a><a href="#h1-0-210" id="h1-0-210" class="i">+
+</a><a href="#h1-0-211" id="h1-0-211" class="i">+.sales-readonly {
+</a><a href="#h1-0-212" id="h1-0-212" class="i">+  color: var(--sales-ink);
+</a><a href="#h1-0-213" id="h1-0-213" class="i">+}
+</a><a href="#h1-0-214" id="h1-0-214" class="i">+
+</a><a href="#h1-0-215" id="h1-0-215" class="i">+.sales-window-body .sales-kicker {
+</a><a href="#h1-0-216" id="h1-0-216" class="i">+  margin-bottom: 7px;
+</a><a href="#h1-0-217" id="h1-0-217" class="i">+  font-size: 10px;
+</a><a href="#h1-0-218" id="h1-0-218" class="i">+}
+</a><a href="#h1-0-219" id="h1-0-219" class="i">+
+</a><a href="#h1-0-220" id="h1-0-220" class="i">+.sales-window-body h3 {
+</a><a href="#h1-0-221" id="h1-0-221" class="i">+  max-width: 340px;
+</a><a href="#h1-0-222" id="h1-0-222" class="i">+  margin-bottom: 23px;
+</a><a href="#h1-0-223" id="h1-0-223" class="i">+  font-size: clamp(21px, 2.4vw, 30px);
+</a><a href="#h1-0-224" id="h1-0-224" class="i">+}
+</a><a href="#h1-0-225" id="h1-0-225" class="i">+
+</a><a href="#h1-0-226" id="h1-0-226" class="i">+.sales-model-fields {
+</a><a href="#h1-0-227" id="h1-0-227" class="i">+  display: grid;
+</a><a href="#h1-0-228" id="h1-0-228" class="i">+  grid-template-columns: repeat(2, minmax(0, 1fr));
+</a><a href="#h1-0-229" id="h1-0-229" class="i">+  gap: 1px;
+</a><a href="#h1-0-230" id="h1-0-230" class="i">+  margin: 0 0 25px;
+</a><a href="#h1-0-231" id="h1-0-231" class="i">+  border: 1px solid var(--sales-line);
+</a><a href="#h1-0-232" id="h1-0-232" class="i">+  background: var(--sales-line);
+</a><a href="#h1-0-233" id="h1-0-233" class="i">+}
+</a><a href="#h1-0-234" id="h1-0-234" class="i">+
+</a><a href="#h1-0-235" id="h1-0-235" class="i">+.sales-model-fields span {
+</a><a href="#h1-0-236" id="h1-0-236" class="i">+  min-width: 0;
+</a><a href="#h1-0-237" id="h1-0-237" class="i">+  padding: 11px 12px;
+</a><a href="#h1-0-238" id="h1-0-238" class="i">+  background: var(--sales-paper);
+</a><a href="#h1-0-239" id="h1-0-239" class="i">+  color: #d4d4d4;
+</a><a href="#h1-0-240" id="h1-0-240" class="i">+  font-size: 12px;
+</a><a href="#h1-0-241" id="h1-0-241" class="i">+  overflow-wrap: anywhere;
+</a><a href="#h1-0-242" id="h1-0-242" class="i">+}
+</a><a href="#h1-0-243" id="h1-0-243" class="i">+
+</a><a href="#h1-0-244" id="h1-0-244" class="i">+.sales-model-fields small {
+</a><a href="#h1-0-245" id="h1-0-245" class="i">+  display: block;
+</a><a href="#h1-0-246" id="h1-0-246" class="i">+  margin-bottom: 3px;
+</a><a href="#h1-0-247" id="h1-0-247" class="i">+  color: var(--sales-muted);
+</a><a href="#h1-0-248" id="h1-0-248" class="i">+  font-size: 10px;
+</a><a href="#h1-0-249" id="h1-0-249" class="i">+  letter-spacing: 0.06em;
+</a><a href="#h1-0-250" id="h1-0-250" class="i">+  text-transform: uppercase;
+</a><a href="#h1-0-251" id="h1-0-251" class="i">+}
+</a><a href="#h1-0-252" id="h1-0-252" class="i">+
+</a><a href="#h1-0-253" id="h1-0-253" class="i">+.sales-model-progress {
+</a><a href="#h1-0-254" id="h1-0-254" class="i">+  color: var(--sales-muted);
+</a><a href="#h1-0-255" id="h1-0-255" class="i">+  font-size: 11px;
+</a><a href="#h1-0-256" id="h1-0-256" class="i">+}
+</a><a href="#h1-0-257" id="h1-0-257" class="i">+
+</a><a href="#h1-0-258" id="h1-0-258" class="i">+.sales-model-progress-track {
+</a><a href="#h1-0-259" id="h1-0-259" class="i">+  height: 5px;
+</a><a href="#h1-0-260" id="h1-0-260" class="i">+  margin: 8px 0 16px;
+</a><a href="#h1-0-261" id="h1-0-261" class="i">+  overflow: hidden;
+</a><a href="#h1-0-262" id="h1-0-262" class="i">+  background: var(--sales-soft);
+</a><a href="#h1-0-263" id="h1-0-263" class="i">+}
+</a><a href="#h1-0-264" id="h1-0-264" class="i">+
+</a><a href="#h1-0-265" id="h1-0-265" class="i">+.sales-model-progress-track span {
+</a><a href="#h1-0-266" id="h1-0-266" class="i">+  display: block;
+</a><a href="#h1-0-267" id="h1-0-267" class="i">+  width: 68%;
+</a><a href="#h1-0-268" id="h1-0-268" class="i">+  height: 100%;
+</a><a href="#h1-0-269" id="h1-0-269" class="i">+  background: #d5d5d5;
+</a><a href="#h1-0-270" id="h1-0-270" class="i">+}
+</a><a href="#h1-0-271" id="h1-0-271" class="i">+
+</a><a href="#h1-0-272" id="h1-0-272" class="i">+.sales-window-note,
+</a><a href="#h1-0-273" id="h1-0-273" class="i">+.sales-demo-note {
+</a><a href="#h1-0-274" id="h1-0-274" class="i">+  margin: 0 0 19px;
+</a><a href="#h1-0-275" id="h1-0-275" class="i">+  color: var(--sales-muted);
+</a><a href="#h1-0-276" id="h1-0-276" class="i">+  font-size: 12px;
+</a><a href="#h1-0-277" id="h1-0-277" class="i">+  line-height: 1.55;
+</a><a href="#h1-0-278" id="h1-0-278" class="i">+}
+</a><a href="#h1-0-279" id="h1-0-279" class="i">+
+</a><a href="#h1-0-280" id="h1-0-280" class="i">+.sales-window-actions .button {
+</a><a href="#h1-0-281" id="h1-0-281" class="i">+  min-height: 35px;
+</a><a href="#h1-0-282" id="h1-0-282" class="i">+  padding: 8px 10px;
+</a><a href="#h1-0-283" id="h1-0-283" class="i">+  font-size: 12px;
+</a><a href="#h1-0-284" id="h1-0-284" class="i">+}
+</a><a href="#h1-0-285" id="h1-0-285" class="i">+
+</a><a href="#h1-0-286" id="h1-0-286" class="i">+.sales-highlight-rail {
+</a><a href="#h1-0-287" id="h1-0-287" class="i">+  display: grid;
+</a><a href="#h1-0-288" id="h1-0-288" class="i">+  grid-template-columns: repeat(4, minmax(0, 1fr));
+</a><a href="#h1-0-289" id="h1-0-289" class="i">+  margin: 0 0 30px;
+</a><a href="#h1-0-290" id="h1-0-290" class="i">+  border-top: 1px solid var(--sales-line);
+</a><a href="#h1-0-291" id="h1-0-291" class="i">+  border-bottom: 1px solid var(--sales-line);
+</a><a href="#h1-0-292" id="h1-0-292" class="i">+}
+</a><a href="#h1-0-293" id="h1-0-293" class="i">+
+</a><a href="#h1-0-294" id="h1-0-294" class="i">+.sales-highlight-rail &gt; div {
+</a><a href="#h1-0-295" id="h1-0-295" class="i">+  min-width: 0;
+</a><a href="#h1-0-296" id="h1-0-296" class="i">+  padding: 18px 20px 20px 0;
+</a><a href="#h1-0-297" id="h1-0-297" class="i">+}
+</a><a href="#h1-0-298" id="h1-0-298" class="i">+
+</a><a href="#h1-0-299" id="h1-0-299" class="i">+.sales-highlight-rail &gt; div + div {
+</a><a href="#h1-0-300" id="h1-0-300" class="i">+  padding-left: 20px;
+</a><a href="#h1-0-301" id="h1-0-301" class="i">+  border-left: 1px solid var(--sales-line);
+</a><a href="#h1-0-302" id="h1-0-302" class="i">+}
+</a><a href="#h1-0-303" id="h1-0-303" class="i">+
+</a><a href="#h1-0-304" id="h1-0-304" class="i">+.sales-highlight-rail strong,
+</a><a href="#h1-0-305" id="h1-0-305" class="i">+.sales-highlight-rail span {
+</a><a href="#h1-0-306" id="h1-0-306" class="i">+  display: block;
+</a><a href="#h1-0-307" id="h1-0-307" class="i">+}
+</a><a href="#h1-0-308" id="h1-0-308" class="i">+
+</a><a href="#h1-0-309" id="h1-0-309" class="i">+.sales-highlight-rail strong {
+</a><a href="#h1-0-310" id="h1-0-310" class="i">+  margin-bottom: 5px;
+</a><a href="#h1-0-311" id="h1-0-311" class="i">+  font-size: 14px;
+</a><a href="#h1-0-312" id="h1-0-312" class="i">+  font-weight: 600;
+</a><a href="#h1-0-313" id="h1-0-313" class="i">+}
+</a><a href="#h1-0-314" id="h1-0-314" class="i">+
+</a><a href="#h1-0-315" id="h1-0-315" class="i">+.sales-highlight-rail span {
+</a><a href="#h1-0-316" id="h1-0-316" class="i">+  color: var(--sales-muted);
+</a><a href="#h1-0-317" id="h1-0-317" class="i">+  font-size: 12px;
+</a><a href="#h1-0-318" id="h1-0-318" class="i">+  line-height: 1.45;
+</a><a href="#h1-0-319" id="h1-0-319" class="i">+}
+</a><a href="#h1-0-320" id="h1-0-320" class="i">+
+</a><a href="#h1-0-321" id="h1-0-321" class="i">+.sales-section {
+</a><a href="#h1-0-322" id="h1-0-322" class="i">+  margin: 0;
+</a><a href="#h1-0-323" id="h1-0-323" class="i">+  padding: 56px 0 0;
+</a><a href="#h1-0-324" id="h1-0-324" class="i">+  scroll-margin-top: 25px;
+</a><a href="#h1-0-325" id="h1-0-325" class="i">+}
+</a><a href="#h1-0-326" id="h1-0-326" class="i">+
+</a><a href="#h1-0-327" id="h1-0-327" class="i">+.sales-section-heading {
+</a><a href="#h1-0-328" id="h1-0-328" class="i">+  max-width: 700px;
+</a><a href="#h1-0-329" id="h1-0-329" class="i">+  margin-bottom: 31px;
+</a><a href="#h1-0-330" id="h1-0-330" class="i">+}
+</a><a href="#h1-0-331" id="h1-0-331" class="i">+
+</a><a href="#h1-0-332" id="h1-0-332" class="i">+.sales-section-heading &gt; p:last-child,
+</a><a href="#h1-0-333" id="h1-0-333" class="i">+.sales-section-intro &gt; p:not(.sales-kicker),
+</a><a href="#h1-0-334" id="h1-0-334" class="i">+.sales-support-section &gt; div:first-child &gt; p:not(.sales-kicker) {
+</a><a href="#h1-0-335" id="h1-0-335" class="i">+  color: var(--sales-muted);
+</a><a href="#h1-0-336" id="h1-0-336" class="i">+  font-size: 15px;
+</a><a href="#h1-0-337" id="h1-0-337" class="i">+  line-height: 1.68;
+</a><a href="#h1-0-338" id="h1-0-338" class="i">+}
+</a><a href="#h1-0-339" id="h1-0-339" class="i">+
+</a><a href="#h1-0-340" id="h1-0-340" class="i">+.sales-product-section {
+</a><a href="#h1-0-341" id="h1-0-341" class="i">+  display: grid;
+</a><a href="#h1-0-342" id="h1-0-342" class="i">+  grid-template-columns: minmax(0, 1.1fr) minmax(250px, 0.9fr);
+</a><a href="#h1-0-343" id="h1-0-343" class="i">+  gap: clamp(32px, 8vw, 96px);
+</a><a href="#h1-0-344" id="h1-0-344" class="i">+  align-items: end;
+</a><a href="#h1-0-345" id="h1-0-345" class="i">+  padding-top: 65px;
+</a><a href="#h1-0-346" id="h1-0-346" class="i">+}
+</a><a href="#h1-0-347" id="h1-0-347" class="i">+
+</a><a href="#h1-0-348" id="h1-0-348" class="i">+.sales-product-summary {
+</a><a href="#h1-0-349" id="h1-0-349" class="i">+  padding-bottom: 3px;
+</a><a href="#h1-0-350" id="h1-0-350" class="i">+  border-top: 1px solid var(--sales-line);
+</a><a href="#h1-0-351" id="h1-0-351" class="i">+}
+</a><a href="#h1-0-352" id="h1-0-352" class="i">+
+</a><a href="#h1-0-353" id="h1-0-353" class="i">+.sales-summary-line {
+</a><a href="#h1-0-354" id="h1-0-354" class="i">+  display: flex;
+</a><a href="#h1-0-355" id="h1-0-355" class="i">+  flex-wrap: wrap;
+</a><a href="#h1-0-356" id="h1-0-356" class="i">+  align-items: baseline;
+</a><a href="#h1-0-357" id="h1-0-357" class="i">+  gap: 8px;
+</a><a href="#h1-0-358" id="h1-0-358" class="i">+  padding: 18px 0 12px;
+</a><a href="#h1-0-359" id="h1-0-359" class="i">+  font-size: clamp(17px, 2vw, 23px);
+</a><a href="#h1-0-360" id="h1-0-360" class="i">+  letter-spacing: -0.035em;
+</a><a href="#h1-0-361" id="h1-0-361" class="i">+}
+</a><a href="#h1-0-362" id="h1-0-362" class="i">+
+</a><a href="#h1-0-363" id="h1-0-363" class="i">+.sales-summary-line i {
+</a><a href="#h1-0-364" id="h1-0-364" class="i">+  color: var(--sales-muted);
+</a><a href="#h1-0-365" id="h1-0-365" class="i">+  font-style: normal;
+</a><a href="#h1-0-366" id="h1-0-366" class="i">+}
+</a><a href="#h1-0-367" id="h1-0-367" class="i">+
+</a><a href="#h1-0-368" id="h1-0-368" class="i">+.sales-product-summary p {
+</a><a href="#h1-0-369" id="h1-0-369" class="i">+  margin: 0;
+</a><a href="#h1-0-370" id="h1-0-370" class="i">+  color: var(--sales-muted);
+</a><a href="#h1-0-371" id="h1-0-371" class="i">+  font-size: 12px;
+</a><a href="#h1-0-372" id="h1-0-372" class="i">+  line-height: 1.6;
+</a><a href="#h1-0-373" id="h1-0-373" class="i">+}
+</a><a href="#h1-0-374" id="h1-0-374" class="i">+
+</a><a href="#h1-0-375" id="h1-0-375" class="i">+.sales-inline-link {
+</a><a href="#h1-0-376" id="h1-0-376" class="i">+  display: inline-block;
+</a><a href="#h1-0-377" id="h1-0-377" class="i">+  margin-top: 10px;
+</a><a href="#h1-0-378" id="h1-0-378" class="i">+  color: var(--sales-ink);
+</a><a href="#h1-0-379" id="h1-0-379" class="i">+  font-size: 13px;
+</a><a href="#h1-0-380" id="h1-0-380" class="i">+  text-underline-offset: 4px;
+</a><a href="#h1-0-381" id="h1-0-381" class="i">+}
+</a><a href="#h1-0-382" id="h1-0-382" class="i">+
+</a><a href="#h1-0-383" id="h1-0-383" class="i">+.sales-resource-rail {
+</a><a href="#h1-0-384" id="h1-0-384" class="i">+  display: grid;
+</a><a href="#h1-0-385" id="h1-0-385" class="i">+  grid-template-columns: repeat(3, minmax(0, 1fr));
+</a><a href="#h1-0-386" id="h1-0-386" class="i">+  border-top: 1px solid var(--sales-line);
+</a><a href="#h1-0-387" id="h1-0-387" class="i">+}
+</a><a href="#h1-0-388" id="h1-0-388" class="i">+
+</a><a href="#h1-0-389" id="h1-0-389" class="i">+.sales-resource-rail article {
+</a><a href="#h1-0-390" id="h1-0-390" class="i">+  min-width: 0;
+</a><a href="#h1-0-391" id="h1-0-391" class="i">+  padding: 21px 23px 0 0;
+</a><a href="#h1-0-392" id="h1-0-392" class="i">+}
+</a><a href="#h1-0-393" id="h1-0-393" class="i">+
+</a><a href="#h1-0-394" id="h1-0-394" class="i">+.sales-resource-rail article + article {
+</a><a href="#h1-0-395" id="h1-0-395" class="i">+  padding-left: 23px;
+</a><a href="#h1-0-396" id="h1-0-396" class="i">+  border-left: 1px solid var(--sales-line);
+</a><a href="#h1-0-397" id="h1-0-397" class="i">+}
+</a><a href="#h1-0-398" id="h1-0-398" class="i">+
+</a><a href="#h1-0-399" id="h1-0-399" class="i">+.sales-resource-number {
+</a><a href="#h1-0-400" id="h1-0-400" class="i">+  display: block;
+</a><a href="#h1-0-401" id="h1-0-401" class="i">+  margin-bottom: 24px;
+</a><a href="#h1-0-402" id="h1-0-402" class="i">+  color: var(--sales-muted);
+</a><a href="#h1-0-403" id="h1-0-403" class="i">+  font-size: 11px;
+</a><a href="#h1-0-404" id="h1-0-404" class="i">+}
+</a><a href="#h1-0-405" id="h1-0-405" class="i">+
+</a><a href="#h1-0-406" id="h1-0-406" class="i">+.sales-resource-rail h3 {
+</a><a href="#h1-0-407" id="h1-0-407" class="i">+  margin-bottom: 9px;
+</a><a href="#h1-0-408" id="h1-0-408" class="i">+}
+</a><a href="#h1-0-409" id="h1-0-409" class="i">+
+</a><a href="#h1-0-410" id="h1-0-410" class="i">+.sales-resource-rail p {
+</a><a href="#h1-0-411" id="h1-0-411" class="i">+  margin: 0;
+</a><a href="#h1-0-412" id="h1-0-412" class="i">+  color: var(--sales-muted);
+</a><a href="#h1-0-413" id="h1-0-413" class="i">+  font-size: 13px;
+</a><a href="#h1-0-414" id="h1-0-414" class="i">+  line-height: 1.6;
+</a><a href="#h1-0-415" id="h1-0-415" class="i">+}
+</a><a href="#h1-0-416" id="h1-0-416" class="i">+
+</a><a href="#h1-0-417" id="h1-0-417" class="i">+.sales-planning-section {
+</a><a href="#h1-0-418" id="h1-0-418" class="i">+  border-top: 1px solid var(--sales-line);
+</a><a href="#h1-0-419" id="h1-0-419" class="i">+}
+</a><a href="#h1-0-420" id="h1-0-420" class="i">+
+</a><a href="#h1-0-421" id="h1-0-421" class="i">+.sales-planning-section .sales-section-heading {
+</a><a href="#h1-0-422" id="h1-0-422" class="i">+  max-width: 760px;
+</a><a href="#h1-0-423" id="h1-0-423" class="i">+}
+</a><a href="#h1-0-424" id="h1-0-424" class="i">+
+</a><a href="#h1-0-425" id="h1-0-425" class="i">+.sales-planning-note {
+</a><a href="#h1-0-426" id="h1-0-426" class="i">+  max-width: 740px;
+</a><a href="#h1-0-427" id="h1-0-427" class="i">+  margin: 20px 0 0;
+</a><a href="#h1-0-428" id="h1-0-428" class="i">+  color: var(--sales-muted);
+</a><a href="#h1-0-429" id="h1-0-429" class="i">+  font-size: 12px;
+</a><a href="#h1-0-430" id="h1-0-430" class="i">+  line-height: 1.6;
+</a><a href="#h1-0-431" id="h1-0-431" class="i">+}
+</a><a href="#h1-0-432" id="h1-0-432" class="i">+
+</a><a href="#h1-0-433" id="h1-0-433" class="i">+.sales-journey-list {
+</a><a href="#h1-0-434" id="h1-0-434" class="i">+  display: grid;
+</a><a href="#h1-0-435" id="h1-0-435" class="i">+  grid-template-columns: repeat(3, minmax(0, 1fr));
+</a><a href="#h1-0-436" id="h1-0-436" class="i">+  gap: 0 22px;
+</a><a href="#h1-0-437" id="h1-0-437" class="i">+  margin: 0;
+</a><a href="#h1-0-438" id="h1-0-438" class="i">+  padding: 0;
+</a><a href="#h1-0-439" id="h1-0-439" class="i">+  list-style: none;
+</a><a href="#h1-0-440" id="h1-0-440" class="i">+  border-top: 1px solid var(--sales-line);
+</a><a href="#h1-0-441" id="h1-0-441" class="i">+}
+</a><a href="#h1-0-442" id="h1-0-442" class="i">+
+</a><a href="#h1-0-443" id="h1-0-443" class="i">+.sales-journey-list li {
+</a><a href="#h1-0-444" id="h1-0-444" class="i">+  min-width: 0;
+</a><a href="#h1-0-445" id="h1-0-445" class="i">+  align-items: flex-start;
+</a><a href="#h1-0-446" id="h1-0-446" class="i">+  justify-content: flex-start;
+</a><a href="#h1-0-447" id="h1-0-447" class="i">+  gap: 14px;
+</a><a href="#h1-0-448" id="h1-0-448" class="i">+  min-height: 130px;
+</a><a href="#h1-0-449" id="h1-0-449" class="i">+  padding: 20px 0 22px;
+</a><a href="#h1-0-450" id="h1-0-450" class="i">+  border-bottom: 1px solid var(--sales-line);
+</a><a href="#h1-0-451" id="h1-0-451" class="i">+}
+</a><a href="#h1-0-452" id="h1-0-452" class="i">+
+</a><a href="#h1-0-453" id="h1-0-453" class="i">+.sales-journey-number {
+</a><a href="#h1-0-454" id="h1-0-454" class="i">+  flex: 0 0 auto;
+</a><a href="#h1-0-455" id="h1-0-455" class="i">+  color: var(--sales-muted);
+</a><a href="#h1-0-456" id="h1-0-456" class="i">+  font-size: 11px;
+</a><a href="#h1-0-457" id="h1-0-457" class="i">+  font-variant-numeric: tabular-nums;
+</a><a href="#h1-0-458" id="h1-0-458" class="i">+}
+</a><a href="#h1-0-459" id="h1-0-459" class="i">+
+</a><a href="#h1-0-460" id="h1-0-460" class="i">+.sales-journey-list h3 {
+</a><a href="#h1-0-461" id="h1-0-461" class="i">+  margin-bottom: 7px;
+</a><a href="#h1-0-462" id="h1-0-462" class="i">+  font-size: 15px;
+</a><a href="#h1-0-463" id="h1-0-463" class="i">+  letter-spacing: -0.02em;
+</a><a href="#h1-0-464" id="h1-0-464" class="i">+}
+</a><a href="#h1-0-465" id="h1-0-465" class="i">+
+</a><a href="#h1-0-466" id="h1-0-466" class="i">+.sales-journey-list p {
+</a><a href="#h1-0-467" id="h1-0-467" class="i">+  margin: 0;
+</a><a href="#h1-0-468" id="h1-0-468" class="i">+  color: var(--sales-muted);
+</a><a href="#h1-0-469" id="h1-0-469" class="i">+  font-size: 12px;
+</a><a href="#h1-0-470" id="h1-0-470" class="i">+  line-height: 1.55;
+</a><a href="#h1-0-471" id="h1-0-471" class="i">+}
+</a><a href="#h1-0-472" id="h1-0-472" class="i">+
+</a><a href="#h1-0-473" id="h1-0-473" class="i">+.sales-decision-strip {
+</a><a href="#h1-0-474" id="h1-0-474" class="i">+  display: flex;
+</a><a href="#h1-0-475" id="h1-0-475" class="i">+  flex-wrap: wrap;
+</a><a href="#h1-0-476" id="h1-0-476" class="i">+  align-items: center;
+</a><a href="#h1-0-477" id="h1-0-477" class="i">+  gap: 9px;
+</a><a href="#h1-0-478" id="h1-0-478" class="i">+  margin-top: 25px;
+</a><a href="#h1-0-479" id="h1-0-479" class="i">+  color: var(--sales-muted);
+</a><a href="#h1-0-480" id="h1-0-480" class="i">+  font-size: 13px;
+</a><a href="#h1-0-481" id="h1-0-481" class="i">+}
+</a><a href="#h1-0-482" id="h1-0-482" class="i">+
+</a><a href="#h1-0-483" id="h1-0-483" class="i">+.sales-decision-strip strong {
+</a><a href="#h1-0-484" id="h1-0-484" class="i">+  color: var(--sales-ink);
+</a><a href="#h1-0-485" id="h1-0-485" class="i">+  font-weight: 600;
+</a><a href="#h1-0-486" id="h1-0-486" class="i">+}
+</a><a href="#h1-0-487" id="h1-0-487" class="i">+
+</a><a href="#h1-0-488" id="h1-0-488" class="i">+.sales-demo-section .sales-section-heading {
+</a><a href="#h1-0-489" id="h1-0-489" class="i">+  margin-bottom: 25px;
+</a><a href="#h1-0-490" id="h1-0-490" class="i">+}
+</a><a href="#h1-0-491" id="h1-0-491" class="i">+
+</a><a href="#h1-0-492" id="h1-0-492" class="i">+.sales-product-window-demo {
+</a><a href="#h1-0-493" id="h1-0-493" class="i">+  max-width: 780px;
+</a><a href="#h1-0-494" id="h1-0-494" class="i">+  margin: 0 auto;
+</a><a href="#h1-0-495" id="h1-0-495" class="i">+}
+</a><a href="#h1-0-496" id="h1-0-496" class="i">+
+</a><a href="#h1-0-497" id="h1-0-497" class="i">+.sales-demo-note {
+</a><a href="#h1-0-498" id="h1-0-498" class="i">+  max-width: 780px;
+</a><a href="#h1-0-499" id="h1-0-499" class="i">+  margin: 15px auto 0;
+</a><a href="#h1-0-500" id="h1-0-500" class="i">+}
+</a><a href="#h1-0-501" id="h1-0-501" class="i">+
+</a><a href="#h1-0-502" id="h1-0-502" class="i">+.sales-pricing {
+</a><a href="#h1-0-503" id="h1-0-503" class="i">+  margin-top: 56px;
+</a><a href="#h1-0-504" id="h1-0-504" class="i">+  padding: clamp(27px, 4vw, 48px);
+</a><a href="#h1-0-505" id="h1-0-505" class="i">+  border: 1px solid var(--sales-line);
+</a><a href="#h1-0-506" id="h1-0-506" class="i">+  border-radius: var(--sales-radius);
+</a><a href="#h1-0-507" id="h1-0-507" class="i">+  background: var(--sales-paper);
+</a><a href="#h1-0-508" id="h1-0-508" class="i">+  scroll-margin-top: 25px;
+</a><a href="#h1-0-509" id="h1-0-509" class="i">+}
+</a><a href="#h1-0-510" id="h1-0-510" class="i">+
+</a><a href="#h1-0-511" id="h1-0-511" class="i">+.sales-pricing .sales-section-heading {
+</a><a href="#h1-0-512" id="h1-0-512" class="i">+  max-width: 680px;
+</a><a href="#h1-0-513" id="h1-0-513" class="i">+  margin-bottom: 33px;
+</a><a href="#h1-0-514" id="h1-0-514" class="i">+}
+</a><a href="#h1-0-515" id="h1-0-515" class="i">+
+</a><a href="#h1-0-516" id="h1-0-516" class="i">+.sales-pricing .sales-section-heading &gt; p:last-child {
+</a><a href="#h1-0-517" id="h1-0-517" class="i">+  margin-bottom: 0;
+</a><a href="#h1-0-518" id="h1-0-518" class="i">+  color: var(--sales-muted);
+</a><a href="#h1-0-519" id="h1-0-519" class="i">+  font-size: 15px;
+</a><a href="#h1-0-520" id="h1-0-520" class="i">+}
+</a><a href="#h1-0-521" id="h1-0-521" class="i">+
+</a><a href="#h1-0-522" id="h1-0-522" class="i">+.sales-plans-list {
+</a><a href="#h1-0-523" id="h1-0-523" class="i">+  display: grid;
+</a><a href="#h1-0-524" id="h1-0-524" class="i">+  grid-template-columns: repeat(3, minmax(0, 1fr));
+</a><a href="#h1-0-525" id="h1-0-525" class="i">+  gap: 11px;
+</a><a href="#h1-0-526" id="h1-0-526" class="i">+  align-items: stretch;
+</a><a href="#h1-0-527" id="h1-0-527" class="i">+}
+</a><a href="#h1-0-528" id="h1-0-528" class="i">+
+</a><a href="#h1-0-529" id="h1-0-529" class="i">+.sales-plan-card {
+</a><a href="#h1-0-530" id="h1-0-530" class="i">+  display: flex;
+</a><a href="#h1-0-531" id="h1-0-531" class="i">+  min-width: 0;
+</a><a href="#h1-0-532" id="h1-0-532" class="i">+  flex-direction: column;
+</a><a href="#h1-0-533" id="h1-0-533" class="i">+  padding: 22px 19px 19px;
+</a><a href="#h1-0-534" id="h1-0-534" class="i">+  border: 1px solid var(--sales-line);
+</a><a href="#h1-0-535" id="h1-0-535" class="i">+  background: #0f0f0f;
+</a><a href="#h1-0-536" id="h1-0-536" class="i">+}
+</a><a href="#h1-0-537" id="h1-0-537" class="i">+
+</a><a href="#h1-0-538" id="h1-0-538" class="i">+.sales-plan-heading {
+</a><a href="#h1-0-539" id="h1-0-539" class="i">+  align-items: flex-start;
+</a><a href="#h1-0-540" id="h1-0-540" class="i">+  margin-bottom: 16px;
+</a><a href="#h1-0-541" id="h1-0-541" class="i">+}
+</a><a href="#h1-0-542" id="h1-0-542" class="i">+
+</a><a href="#h1-0-543" id="h1-0-543" class="i">+.sales-plan-index {
+</a><a href="#h1-0-544" id="h1-0-544" class="i">+  margin: 0 0 8px;
+</a><a href="#h1-0-545" id="h1-0-545" class="i">+  color: var(--sales-muted);
+</a><a href="#h1-0-546" id="h1-0-546" class="i">+  font-size: 10px;
+</a><a href="#h1-0-547" id="h1-0-547" class="i">+  font-variant-numeric: tabular-nums;
+</a><a href="#h1-0-548" id="h1-0-548" class="i">+}
+</a><a href="#h1-0-549" id="h1-0-549" class="i">+
+</a><a href="#h1-0-550" id="h1-0-550" class="i">+.sales-plan-heading h3 {
+</a><a href="#h1-0-551" id="h1-0-551" class="i">+  margin: 0;
+</a><a href="#h1-0-552" id="h1-0-552" class="i">+  font-size: 22px;
+</a><a href="#h1-0-553" id="h1-0-553" class="i">+}
+</a><a href="#h1-0-554" id="h1-0-554" class="i">+
+</a><a href="#h1-0-555" id="h1-0-555" class="i">+.sales-plan-description {
+</a><a href="#h1-0-556" id="h1-0-556" class="i">+  min-height: 60px;
+</a><a href="#h1-0-557" id="h1-0-557" class="i">+  margin: 0 0 18px;
+</a><a href="#h1-0-558" id="h1-0-558" class="i">+  color: var(--sales-muted);
+</a><a href="#h1-0-559" id="h1-0-559" class="i">+  font-size: 13px;
+</a><a href="#h1-0-560" id="h1-0-560" class="i">+  line-height: 1.55;
+</a><a href="#h1-0-561" id="h1-0-561" class="i">+}
+</a><a href="#h1-0-562" id="h1-0-562" class="i">+
+</a><a href="#h1-0-563" id="h1-0-563" class="i">+.sales-price-stack {
+</a><a href="#h1-0-564" id="h1-0-564" class="i">+  display: grid;
+</a><a href="#h1-0-565" id="h1-0-565" class="i">+  gap: 3px;
+</a><a href="#h1-0-566" id="h1-0-566" class="i">+  margin-bottom: 3px;
+</a><a href="#h1-0-567" id="h1-0-567" class="i">+}
+</a><a href="#h1-0-568" id="h1-0-568" class="i">+
+</a><a href="#h1-0-569" id="h1-0-569" class="i">+.sales-current-price {
+</a><a href="#h1-0-570" id="h1-0-570" class="i">+  font-size: 24px;
+</a><a href="#h1-0-571" id="h1-0-571" class="i">+  font-weight: 620;
+</a><a href="#h1-0-572" id="h1-0-572" class="i">+  letter-spacing: -0.045em;
+</a><a href="#h1-0-573" id="h1-0-573" class="i">+  line-height: 1.1;
+</a><a href="#h1-0-574" id="h1-0-574" class="i">+}
+</a><a href="#h1-0-575" id="h1-0-575" class="i">+
+</a><a href="#h1-0-576" id="h1-0-576" class="i">+.sales-plan-benefits {
+</a><a href="#h1-0-577" id="h1-0-577" class="i">+  display: grid;
+</a><a href="#h1-0-578" id="h1-0-578" class="i">+  gap: 9px;
+</a><a href="#h1-0-579" id="h1-0-579" class="i">+  margin: 0 0 22px;
+</a><a href="#h1-0-580" id="h1-0-580" class="i">+  padding: 17px 0 0;
+</a><a href="#h1-0-581" id="h1-0-581" class="i">+  border-top: 1px solid var(--sales-line);
+</a><a href="#h1-0-582" id="h1-0-582" class="i">+  list-style: none;
+</a><a href="#h1-0-583" id="h1-0-583" class="i">+}
+</a><a href="#h1-0-584" id="h1-0-584" class="i">+
+</a><a href="#h1-0-585" id="h1-0-585" class="i">+.sales-plan-benefits li {
+</a><a href="#h1-0-586" id="h1-0-586" class="i">+  display: grid;
+</a><a href="#h1-0-587" id="h1-0-587" class="i">+  gap: 1px;
+</a><a href="#h1-0-588" id="h1-0-588" class="i">+  min-width: 0;
+</a><a href="#h1-0-589" id="h1-0-589" class="i">+}
+</a><a href="#h1-0-590" id="h1-0-590" class="i">+
+</a><a href="#h1-0-591" id="h1-0-591" class="i">+.sales-plan-benefits strong {
+</a><a href="#h1-0-592" id="h1-0-592" class="i">+  font-size: 13px;
+</a><a href="#h1-0-593" id="h1-0-593" class="i">+  font-weight: 570;
+</a><a href="#h1-0-594" id="h1-0-594" class="i">+}
+</a><a href="#h1-0-595" id="h1-0-595" class="i">+
+</a><a href="#h1-0-596" id="h1-0-596" class="i">+.sales-plan-benefits span {
+</a><a href="#h1-0-597" id="h1-0-597" class="i">+  color: var(--sales-muted);
+</a><a href="#h1-0-598" id="h1-0-598" class="i">+  font-size: 12px;
+</a><a href="#h1-0-599" id="h1-0-599" class="i">+  line-height: 1.45;
+</a><a href="#h1-0-600" id="h1-0-600" class="i">+}
+</a><a href="#h1-0-601" id="h1-0-601" class="i">+
+</a><a href="#h1-0-602" id="h1-0-602" class="i">+.sales-plan-card .pix-payment {
+</a><a href="#h1-0-603" id="h1-0-603" class="i">+  margin-top: auto;
+</a><a href="#h1-0-604" id="h1-0-604" class="i">+  padding-top: 15px;
+</a><a href="#h1-0-605" id="h1-0-605" class="i">+  border-top: 1px solid var(--sales-line);
+</a><a href="#h1-0-606" id="h1-0-606" class="i">+}
+</a><a href="#h1-0-607" id="h1-0-607" class="i">+
+</a><a href="#h1-0-608" id="h1-0-608" class="i">+.sales-pricing .pix-payment &gt; summary,
+</a><a href="#h1-0-609" id="h1-0-609" class="i">+.sales-pricing .pix-code &gt; summary {
+</a><a href="#h1-0-610" id="h1-0-610" class="i">+  color: var(--sales-ink);
+</a><a href="#h1-0-611" id="h1-0-611" class="i">+  cursor: pointer;
+</a><a href="#h1-0-612" id="h1-0-612" class="i">+  font-size: 12px;
+</a><a href="#h1-0-613" id="h1-0-613" class="i">+  line-height: 1.45;
+</a><a href="#h1-0-614" id="h1-0-614" class="i">+  text-decoration: underline;
+</a><a href="#h1-0-615" id="h1-0-615" class="i">+  text-underline-offset: 4px;
+</a><a href="#h1-0-616" id="h1-0-616" class="i">+}
+</a><a href="#h1-0-617" id="h1-0-617" class="i">+
+</a><a href="#h1-0-618" id="h1-0-618" class="i">+.sales-pricing .pix-payment-body {
+</a><a href="#h1-0-619" id="h1-0-619" class="i">+  display: flex;
+</a><a href="#h1-0-620" id="h1-0-620" class="i">+  min-width: 0;
+</a><a href="#h1-0-621" id="h1-0-621" class="i">+  flex-direction: column;
+</a><a href="#h1-0-622" id="h1-0-622" class="i">+  align-items: flex-start;
+</a><a href="#h1-0-623" id="h1-0-623" class="i">+  gap: 10px;
+</a><a href="#h1-0-624" id="h1-0-624" class="i">+  margin-top: 16px;
+</a><a href="#h1-0-625" id="h1-0-625" class="i">+}
+</a><a href="#h1-0-626" id="h1-0-626" class="i">+
+</a><a href="#h1-0-627" id="h1-0-627" class="i">+.sales-pricing .pix-qr {
+</a><a href="#h1-0-628" id="h1-0-628" class="i">+  display: block;
+</a><a href="#h1-0-629" id="h1-0-629" class="i">+  width: min(168px, 100%);
+</a><a href="#h1-0-630" id="h1-0-630" class="i">+  height: auto;
+</a><a href="#h1-0-631" id="h1-0-631" class="i">+  padding: 7px;
+</a><a href="#h1-0-632" id="h1-0-632" class="i">+  border: 1px solid #e4e4e4;
+</a><a href="#h1-0-633" id="h1-0-633" class="i">+  background: #fff;
+</a><a href="#h1-0-634" id="h1-0-634" class="i">+}
+</a><a href="#h1-0-635" id="h1-0-635" class="i">+
+</a><a href="#h1-0-636" id="h1-0-636" class="i">+.sales-pricing .pix-payment .button {
+</a><a href="#h1-0-637" id="h1-0-637" class="i">+  padding: 8px 10px;
+</a><a href="#h1-0-638" id="h1-0-638" class="i">+  font-size: 12px;
+</a><a href="#h1-0-639" id="h1-0-639" class="i">+}
+</a><a href="#h1-0-640" id="h1-0-640" class="i">+
+</a><a href="#h1-0-641" id="h1-0-641" class="i">+.sales-pricing .pix-payment [data-pix-status] {
+</a><a href="#h1-0-642" id="h1-0-642" class="i">+  min-height: 1.25em;
+</a><a href="#h1-0-643" id="h1-0-643" class="i">+  color: var(--sales-muted);
+</a><a href="#h1-0-644" id="h1-0-644" class="i">+  font-size: 11px;
+</a><a href="#h1-0-645" id="h1-0-645" class="i">+}
+</a><a href="#h1-0-646" id="h1-0-646" class="i">+
+</a><a href="#h1-0-647" id="h1-0-647" class="i">+.sales-pricing .pix-code {
+</a><a href="#h1-0-648" id="h1-0-648" class="i">+  min-width: 0;
+</a><a href="#h1-0-649" id="h1-0-649" class="i">+  max-width: 100%;
+</a><a href="#h1-0-650" id="h1-0-650" class="i">+}
+</a><a href="#h1-0-651" id="h1-0-651" class="i">+
+</a><a href="#h1-0-652" id="h1-0-652" class="i">+.sales-pricing .pix-payload {
+</a><a href="#h1-0-653" id="h1-0-653" class="i">+  display: block;
+</a><a href="#h1-0-654" id="h1-0-654" class="i">+  max-width: 100%;
+</a><a href="#h1-0-655" id="h1-0-655" class="i">+  margin-top: 9px;
+</a><a href="#h1-0-656" id="h1-0-656" class="i">+  padding: 9px;
+</a><a href="#h1-0-657" id="h1-0-657" class="i">+  border: 1px solid var(--sales-line);
+</a><a href="#h1-0-658" id="h1-0-658" class="i">+  color: var(--sales-muted);
+</a><a href="#h1-0-659" id="h1-0-659" class="i">+  font-size: 10px;
+</a><a href="#h1-0-660" id="h1-0-660" class="i">+  line-height: 1.55;
+</a><a href="#h1-0-661" id="h1-0-661" class="i">+  overflow-wrap: anywhere;
+</a><a href="#h1-0-662" id="h1-0-662" class="i">+  white-space: pre-wrap;
+</a><a href="#h1-0-663" id="h1-0-663" class="i">+}
+</a><a href="#h1-0-664" id="h1-0-664" class="i">+
+</a><a href="#h1-0-665" id="h1-0-665" class="i">+.sales-cost-chart {
+</a><a href="#h1-0-666" id="h1-0-666" class="i">+  max-width: 790px;
+</a><a href="#h1-0-667" id="h1-0-667" class="i">+  margin: 41px 0 0;
+</a><a href="#h1-0-668" id="h1-0-668" class="i">+  padding-top: 24px;
+</a><a href="#h1-0-669" id="h1-0-669" class="i">+  border-top: 1px solid var(--sales-line);
+</a><a href="#h1-0-670" id="h1-0-670" class="i">+}
+</a><a href="#h1-0-671" id="h1-0-671" class="i">+
+</a><a href="#h1-0-672" id="h1-0-672" class="i">+.sales-chart-header {
+</a><a href="#h1-0-673" id="h1-0-673" class="i">+  align-items: baseline;
+</a><a href="#h1-0-674" id="h1-0-674" class="i">+  margin-bottom: 20px;
+</a><a href="#h1-0-675" id="h1-0-675" class="i">+}
+</a><a href="#h1-0-676" id="h1-0-676" class="i">+
+</a><a href="#h1-0-677" id="h1-0-677" class="i">+.sales-chart-header .sales-kicker {
+</a><a href="#h1-0-678" id="h1-0-678" class="i">+  margin-bottom: 5px;
+</a><a href="#h1-0-679" id="h1-0-679" class="i">+}
+</a><a href="#h1-0-680" id="h1-0-680" class="i">+
+</a><a href="#h1-0-681" id="h1-0-681" class="i">+.sales-chart-header h3 {
+</a><a href="#h1-0-682" id="h1-0-682" class="i">+  margin: 0;
+</a><a href="#h1-0-683" id="h1-0-683" class="i">+  font-size: 18px;
+</a><a href="#h1-0-684" id="h1-0-684" class="i">+}
+</a><a href="#h1-0-685" id="h1-0-685" class="i">+
+</a><a href="#h1-0-686" id="h1-0-686" class="i">+.sales-chart-header &gt; span {
+</a><a href="#h1-0-687" id="h1-0-687" class="i">+  color: var(--sales-muted);
+</a><a href="#h1-0-688" id="h1-0-688" class="i">+  font-size: 11px;
+</a><a href="#h1-0-689" id="h1-0-689" class="i">+}
+</a><a href="#h1-0-690" id="h1-0-690" class="i">+
+</a><a href="#h1-0-691" id="h1-0-691" class="i">+.sales-chart-list {
+</a><a href="#h1-0-692" id="h1-0-692" class="i">+  display: grid;
+</a><a href="#h1-0-693" id="h1-0-693" class="i">+  gap: 13px;
+</a><a href="#h1-0-694" id="h1-0-694" class="i">+  margin: 0;
+</a><a href="#h1-0-695" id="h1-0-695" class="i">+  padding: 0;
+</a><a href="#h1-0-696" id="h1-0-696" class="i">+  list-style: none;
+</a><a href="#h1-0-697" id="h1-0-697" class="i">+}
+</a><a href="#h1-0-698" id="h1-0-698" class="i">+
+</a><a href="#h1-0-699" id="h1-0-699" class="i">+.sales-chart-row {
+</a><a href="#h1-0-700" id="h1-0-700" class="i">+  display: grid;
+</a><a href="#h1-0-701" id="h1-0-701" class="i">+  grid-template-columns: minmax(70px, 0.75fr) minmax(0, 2fr) minmax(49px, auto);
+</a><a href="#h1-0-702" id="h1-0-702" class="i">+  align-items: center;
+</a><a href="#h1-0-703" id="h1-0-703" class="i">+  gap: 10px;
+</a><a href="#h1-0-704" id="h1-0-704" class="i">+  min-width: 0;
+</a><a href="#h1-0-705" id="h1-0-705" class="i">+}
+</a><a href="#h1-0-706" id="h1-0-706" class="i">+
+</a><a href="#h1-0-707" id="h1-0-707" class="i">+.sales-chart-label {
+</a><a href="#h1-0-708" id="h1-0-708" class="i">+  color: #d7d7d7;
+</a><a href="#h1-0-709" id="h1-0-709" class="i">+  font-size: 12px;
+</a><a href="#h1-0-710" id="h1-0-710" class="i">+}
+</a><a href="#h1-0-711" id="h1-0-711" class="i">+
+</a><a href="#h1-0-712" id="h1-0-712" class="i">+.sales-chart-track {
+</a><a href="#h1-0-713" id="h1-0-713" class="i">+  display: block;
+</a><a href="#h1-0-714" id="h1-0-714" class="i">+  min-width: 0;
+</a><a href="#h1-0-715" id="h1-0-715" class="i">+  height: 12px;
+</a><a href="#h1-0-716" id="h1-0-716" class="i">+  background: #252525;
+</a><a href="#h1-0-717" id="h1-0-717" class="i">+}
+</a><a href="#h1-0-718" id="h1-0-718" class="i">+
+</a><a href="#h1-0-719" id="h1-0-719" class="i">+.sales-chart-bar {
+</a><a href="#h1-0-720" id="h1-0-720" class="i">+  display: block;
+</a><a href="#h1-0-721" id="h1-0-721" class="i">+  width: var(--bar-width);
+</a><a href="#h1-0-722" id="h1-0-722" class="i">+  height: 100%;
+</a><a href="#h1-0-723" id="h1-0-723" class="i">+  background: #e1e1e1;
+</a><a href="#h1-0-724" id="h1-0-724" class="i">+}
+</a><a href="#h1-0-725" id="h1-0-725" class="i">+
+</a><a href="#h1-0-726" id="h1-0-726" class="i">+.sales-chart-value {
+</a><a href="#h1-0-727" id="h1-0-727" class="i">+  color: var(--sales-ink);
+</a><a href="#h1-0-728" id="h1-0-728" class="i">+  font-size: 12px;
+</a><a href="#h1-0-729" id="h1-0-729" class="i">+  font-variant-numeric: tabular-nums;
+</a><a href="#h1-0-730" id="h1-0-730" class="i">+  font-weight: 560;
+</a><a href="#h1-0-731" id="h1-0-731" class="i">+  text-align: right;
+</a><a href="#h1-0-732" id="h1-0-732" class="i">+  white-space: nowrap;
+</a><a href="#h1-0-733" id="h1-0-733" class="i">+}
+</a><a href="#h1-0-734" id="h1-0-734" class="i">+
+</a><a href="#h1-0-735" id="h1-0-735" class="i">+.sales-chart-axis {
+</a><a href="#h1-0-736" id="h1-0-736" class="i">+  margin: 8px 58px 0 calc(0.75 * 100% / 3.75 + 10px);
+</a><a href="#h1-0-737" id="h1-0-737" class="i">+  color: var(--sales-muted);
+</a><a href="#h1-0-738" id="h1-0-738" class="i">+  font-size: 10px;
+</a><a href="#h1-0-739" id="h1-0-739" class="i">+}
+</a><a href="#h1-0-740" id="h1-0-740" class="i">+
+</a><a href="#h1-0-741" id="h1-0-741" class="i">+.sales-cost-chart figcaption {
+</a><a href="#h1-0-742" id="h1-0-742" class="i">+  margin-top: 13px;
+</a><a href="#h1-0-743" id="h1-0-743" class="i">+  color: var(--sales-muted);
+</a><a href="#h1-0-744" id="h1-0-744" class="i">+  font-size: 11px;
+</a><a href="#h1-0-745" id="h1-0-745" class="i">+  line-height: 1.5;
+</a><a href="#h1-0-746" id="h1-0-746" class="i">+}
+</a><a href="#h1-0-747" id="h1-0-747" class="i">+
+</a><a href="#h1-0-748" id="h1-0-748" class="i">+.sales-pricing-notes {
+</a><a href="#h1-0-749" id="h1-0-749" class="i">+  display: grid;
+</a><a href="#h1-0-750" id="h1-0-750" class="i">+  align-items: start;
+</a><a href="#h1-0-751" id="h1-0-751" class="i">+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+</a><a href="#h1-0-752" id="h1-0-752" class="i">+  margin-top: 34px;
+</a><a href="#h1-0-753" id="h1-0-753" class="i">+  padding-top: 21px;
+</a><a href="#h1-0-754" id="h1-0-754" class="i">+  border-top: 1px solid var(--sales-line);
+</a><a href="#h1-0-755" id="h1-0-755" class="i">+}
+</a><a href="#h1-0-756" id="h1-0-756" class="i">+
+</a><a href="#h1-0-757" id="h1-0-757" class="i">+.sales-pricing-notes p {
+</a><a href="#h1-0-758" id="h1-0-758" class="i">+  margin: 0;
+</a><a href="#h1-0-759" id="h1-0-759" class="i">+  color: var(--sales-muted);
+</a><a href="#h1-0-760" id="h1-0-760" class="i">+  font-size: 12px;
+</a><a href="#h1-0-761" id="h1-0-761" class="i">+  line-height: 1.6;
+</a><a href="#h1-0-762" id="h1-0-762" class="i">+}
+</a><a href="#h1-0-763" id="h1-0-763" class="i">+
+</a><a href="#h1-0-764" id="h1-0-764" class="i">+.sales-pricing-notes p:first-child {
+</a><a href="#h1-0-765" id="h1-0-765" class="i">+  color: #d5d5d5;
+</a><a href="#h1-0-766" id="h1-0-766" class="i">+}
+</a><a href="#h1-0-767" id="h1-0-767" class="i">+
+</a><a href="#h1-0-768" id="h1-0-768" class="i">+.sales-pricing-notes .sales-contact-links {
+</a><a href="#h1-0-769" id="h1-0-769" class="i">+  grid-column: 1 / -1;
+</a><a href="#h1-0-770" id="h1-0-770" class="i">+  margin-top: 15px;
+</a><a href="#h1-0-771" id="h1-0-771" class="i">+}
+</a><a href="#h1-0-772" id="h1-0-772" class="i">+
+</a><a href="#h1-0-773" id="h1-0-773" class="i">+.sales-contact-links a {
+</a><a href="#h1-0-774" id="h1-0-774" class="i">+  color: var(--sales-ink);
+</a><a href="#h1-0-775" id="h1-0-775" class="i">+  font-size: 12px;
+</a><a href="#h1-0-776" id="h1-0-776" class="i">+}
+</a><a href="#h1-0-777" id="h1-0-777" class="i">+
+</a><a href="#h1-0-778" id="h1-0-778" class="i">+.sales-pricing-notes .sales-fine-print {
+</a><a href="#h1-0-779" id="h1-0-779" class="i">+  grid-column: 1 / -1;
+</a><a href="#h1-0-780" id="h1-0-780" class="i">+  margin-top: 16px;
+</a><a href="#h1-0-781" id="h1-0-781" class="i">+  color: var(--sales-dim);
+</a><a href="#h1-0-782" id="h1-0-782" class="i">+  font-size: 11px;
+</a><a href="#h1-0-783" id="h1-0-783" class="i">+}
+</a><a href="#h1-0-784" id="h1-0-784" class="i">+
+</a><a href="#h1-0-785" id="h1-0-785" class="i">+.sales-empty-state {
+</a><a href="#h1-0-786" id="h1-0-786" class="i">+  margin: 0;
+</a><a href="#h1-0-787" id="h1-0-787" class="i">+  padding: 18px;
+</a><a href="#h1-0-788" id="h1-0-788" class="i">+  border: 1px dashed var(--sales-line-strong);
+</a><a href="#h1-0-789" id="h1-0-789" class="i">+  color: var(--sales-muted);
+</a><a href="#h1-0-790" id="h1-0-790" class="i">+}
+</a><a href="#h1-0-791" id="h1-0-791" class="i">+
+</a><a href="#h1-0-792" id="h1-0-792" class="i">+.sales-login-section {
+</a><a href="#h1-0-793" id="h1-0-793" class="i">+  display: grid;
+</a><a href="#h1-0-794" id="h1-0-794" class="i">+  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.84fr);
+</a><a href="#h1-0-795" id="h1-0-795" class="i">+  gap: clamp(30px, 8vw, 85px);
+</a><a href="#h1-0-796" id="h1-0-796" class="i">+  align-items: start;
+</a><a href="#h1-0-797" id="h1-0-797" class="i">+}
+</a><a href="#h1-0-798" id="h1-0-798" class="i">+
+</a><a href="#h1-0-799" id="h1-0-799" class="i">+.sales-login-panel {
+</a><a href="#h1-0-800" id="h1-0-800" class="i">+  min-width: 0;
+</a><a href="#h1-0-801" id="h1-0-801" class="i">+  padding: 21px;
+</a><a href="#h1-0-802" id="h1-0-802" class="i">+  border: 1px solid var(--sales-line);
+</a><a href="#h1-0-803" id="h1-0-803" class="i">+  background: var(--sales-paper);
+</a><a href="#h1-0-804" id="h1-0-804" class="i">+}
+</a><a href="#h1-0-805" id="h1-0-805" class="i">+
+</a><a href="#h1-0-806" id="h1-0-806" class="i">+.sales-login-panel .account-projects,
+</a><a href="#h1-0-807" id="h1-0-807" class="i">+.sales-login-panel .google-login-panel {
+</a><a href="#h1-0-808" id="h1-0-808" class="i">+  margin: 0;
+</a><a href="#h1-0-809" id="h1-0-809" class="i">+  padding: 0;
+</a><a href="#h1-0-810" id="h1-0-810" class="i">+  border: 0;
+</a><a href="#h1-0-811" id="h1-0-811" class="i">+  background: transparent;
+</a><a href="#h1-0-812" id="h1-0-812" class="i">+}
+</a><a href="#h1-0-813" id="h1-0-813" class="i">+
+</a><a href="#h1-0-814" id="h1-0-814" class="i">+.sales-support-section {
+</a><a href="#h1-0-815" id="h1-0-815" class="i">+  align-items: end;
+</a><a href="#h1-0-816" id="h1-0-816" class="i">+  padding-top: 74px;
+</a><a href="#h1-0-817" id="h1-0-817" class="i">+  border-top: 1px solid var(--sales-line);
+</a><a href="#h1-0-818" id="h1-0-818" class="i">+}
+</a><a href="#h1-0-819" id="h1-0-819" class="i">+
+</a><a href="#h1-0-820" id="h1-0-820" class="i">+.sales-support-section &gt; div:first-child {
+</a><a href="#h1-0-821" id="h1-0-821" class="i">+  max-width: 640px;
+</a><a href="#h1-0-822" id="h1-0-822" class="i">+}
+</a><a href="#h1-0-823" id="h1-0-823" class="i">+
+</a><a href="#h1-0-824" id="h1-0-824" class="i">+.sales-support-card {
+</a><a href="#h1-0-825" id="h1-0-825" class="i">+  min-width: min(100%, 255px);
+</a><a href="#h1-0-826" id="h1-0-826" class="i">+  flex-direction: column;
+</a><a href="#h1-0-827" id="h1-0-827" class="i">+  align-items: flex-start;
+</a><a href="#h1-0-828" id="h1-0-828" class="i">+  padding: 18px;
+</a><a href="#h1-0-829" id="h1-0-829" class="i">+  border: 1px solid var(--sales-line);
+</a><a href="#h1-0-830" id="h1-0-830" class="i">+  background: var(--sales-paper);
+</a><a href="#h1-0-831" id="h1-0-831" class="i">+}
+</a><a href="#h1-0-832" id="h1-0-832" class="i">+
+</a><a href="#h1-0-833" id="h1-0-833" class="i">+.sales-support-card &gt; span {
+</a><a href="#h1-0-834" id="h1-0-834" class="i">+  margin-bottom: 2px;
+</a><a href="#h1-0-835" id="h1-0-835" class="i">+  color: var(--sales-muted);
+</a><a href="#h1-0-836" id="h1-0-836" class="i">+  font-size: 12px;
+</a><a href="#h1-0-837" id="h1-0-837" class="i">+}
+</a><a href="#h1-0-838" id="h1-0-838" class="i">+
+</a><a href="#h1-0-839" id="h1-0-839" class="i">+.sales-support-card .sales-inline-link {
+</a><a href="#h1-0-840" id="h1-0-840" class="i">+  margin-top: 2px;
+</a><a href="#h1-0-841" id="h1-0-841" class="i">+}
+</a><a href="#h1-0-842" id="h1-0-842" class="i">+
+</a><a href="#h1-0-843" id="h1-0-843" class="i">+.sales-faq-section {
+</a><a href="#h1-0-844" id="h1-0-844" class="i">+  max-width: 830px;
+</a><a href="#h1-0-845" id="h1-0-845" class="i">+  margin-left: auto;
+</a><a href="#h1-0-846" id="h1-0-846" class="i">+  margin-right: auto;
+</a><a href="#h1-0-847" id="h1-0-847" class="i">+}
+</a><a href="#h1-0-848" id="h1-0-848" class="i">+
+</a><a href="#h1-0-849" id="h1-0-849" class="i">+.sales-faq-list {
+</a><a href="#h1-0-850" id="h1-0-850" class="i">+  border-top: 1px solid var(--sales-line);
+</a><a href="#h1-0-851" id="h1-0-851" class="i">+}
+</a><a href="#h1-0-852" id="h1-0-852" class="i">+
+</a><a href="#h1-0-853" id="h1-0-853" class="i">+.sales-faq-list details {
+</a><a href="#h1-0-854" id="h1-0-854" class="i">+  border-bottom: 1px solid var(--sales-line);
+</a><a href="#h1-0-855" id="h1-0-855" class="i">+}
+</a><a href="#h1-0-856" id="h1-0-856" class="i">+
+</a><a href="#h1-0-857" id="h1-0-857" class="i">+.sales-faq-list summary {
+</a><a href="#h1-0-858" id="h1-0-858" class="i">+  display: flex;
+</a><a href="#h1-0-859" id="h1-0-859" class="i">+  align-items: baseline;
+</a><a href="#h1-0-860" id="h1-0-860" class="i">+  justify-content: space-between;
+</a><a href="#h1-0-861" id="h1-0-861" class="i">+  gap: 15px;
+</a><a href="#h1-0-862" id="h1-0-862" class="i">+  padding: 17px 0;
+</a><a href="#h1-0-863" id="h1-0-863" class="i">+  color: var(--sales-ink);
+</a><a href="#h1-0-864" id="h1-0-864" class="i">+  cursor: pointer;
+</a><a href="#h1-0-865" id="h1-0-865" class="i">+  font-size: 14px;
+</a><a href="#h1-0-866" id="h1-0-866" class="i">+  font-weight: 560;
+</a><a href="#h1-0-867" id="h1-0-867" class="i">+  list-style: none;
+</a><a href="#h1-0-868" id="h1-0-868" class="i">+}
+</a><a href="#h1-0-869" id="h1-0-869" class="i">+
+</a><a href="#h1-0-870" id="h1-0-870" class="i">+.sales-faq-list summary::-webkit-details-marker {
+</a><a href="#h1-0-871" id="h1-0-871" class="i">+  display: none;
+</a><a href="#h1-0-872" id="h1-0-872" class="i">+}
+</a><a href="#h1-0-873" id="h1-0-873" class="i">+
+</a><a href="#h1-0-874" id="h1-0-874" class="i">+.sales-faq-list summary::after {
+</a><a href="#h1-0-875" id="h1-0-875" class="i">+  flex: 0 0 auto;
+</a><a href="#h1-0-876" id="h1-0-876" class="i">+  color: var(--sales-muted);
+</a><a href="#h1-0-877" id="h1-0-877" class="i">+  content: &quot;+&quot;;
+</a><a href="#h1-0-878" id="h1-0-878" class="i">+  font-size: 17px;
+</a><a href="#h1-0-879" id="h1-0-879" class="i">+  font-weight: 400;
+</a><a href="#h1-0-880" id="h1-0-880" class="i">+}
+</a><a href="#h1-0-881" id="h1-0-881" class="i">+
+</a><a href="#h1-0-882" id="h1-0-882" class="i">+.sales-faq-list details[open] summary::after {
+</a><a href="#h1-0-883" id="h1-0-883" class="i">+  content: &quot;−&quot;;
+</a><a href="#h1-0-884" id="h1-0-884" class="i">+}
+</a><a href="#h1-0-885" id="h1-0-885" class="i">+
+</a><a href="#h1-0-886" id="h1-0-886" class="i">+.sales-faq-list details p {
+</a><a href="#h1-0-887" id="h1-0-887" class="i">+  max-width: 700px;
+</a><a href="#h1-0-888" id="h1-0-888" class="i">+  margin: -3px 28px 17px 0;
+</a><a href="#h1-0-889" id="h1-0-889" class="i">+  color: var(--sales-muted);
+</a><a href="#h1-0-890" id="h1-0-890" class="i">+  font-size: 13px;
+</a><a href="#h1-0-891" id="h1-0-891" class="i">+  line-height: 1.6;
+</a><a href="#h1-0-892" id="h1-0-892" class="i">+}
+</a><a href="#h1-0-893" id="h1-0-893" class="i">+
+</a><a href="#h1-0-894" id="h1-0-894" class="i">+.sales-footer {
+</a><a href="#h1-0-895" id="h1-0-895" class="i">+  align-items: flex-start;
+</a><a href="#h1-0-896" id="h1-0-896" class="i">+  margin-top: 74px;
+</a><a href="#h1-0-897" id="h1-0-897" class="i">+  padding-top: 23px;
+</a><a href="#h1-0-898" id="h1-0-898" class="i">+  border-top: 1px solid var(--sales-line);
+</a><a href="#h1-0-899" id="h1-0-899" class="i">+}
+</a><a href="#h1-0-900" id="h1-0-900" class="i">+
+</a><a href="#h1-0-901" id="h1-0-901" class="i">+.sales-footer &gt; div {
+</a><a href="#h1-0-902" id="h1-0-902" class="i">+  min-width: 0;
+</a><a href="#h1-0-903" id="h1-0-903" class="i">+}
+</a><a href="#h1-0-904" id="h1-0-904" class="i">+
+</a><a href="#h1-0-905" id="h1-0-905" class="i">+.sales-footer strong {
+</a><a href="#h1-0-906" id="h1-0-906" class="i">+  font-size: 14px;
+</a><a href="#h1-0-907" id="h1-0-907" class="i">+  font-weight: 600;
+</a><a href="#h1-0-908" id="h1-0-908" class="i">+}
+</a><a href="#h1-0-909" id="h1-0-909" class="i">+
+</a><a href="#h1-0-910" id="h1-0-910" class="i">+.sales-footer p {
+</a><a href="#h1-0-911" id="h1-0-911" class="i">+  max-width: 330px;
+</a><a href="#h1-0-912" id="h1-0-912" class="i">+  margin: 6px 0 0;
+</a><a href="#h1-0-913" id="h1-0-913" class="i">+  color: var(--sales-muted);
+</a><a href="#h1-0-914" id="h1-0-914" class="i">+  font-size: 12px;
+</a><a href="#h1-0-915" id="h1-0-915" class="i">+}
+</a><a href="#h1-0-916" id="h1-0-916" class="i">+
+</a><a href="#h1-0-917" id="h1-0-917" class="i">+.sales-footer nav {
+</a><a href="#h1-0-918" id="h1-0-918" class="i">+  display: flex;
+</a><a href="#h1-0-919" id="h1-0-919" class="i">+  flex-wrap: wrap;
+</a><a href="#h1-0-920" id="h1-0-920" class="i">+  justify-content: flex-end;
+</a><a href="#h1-0-921" id="h1-0-921" class="i">+  gap: 10px 17px;
+</a><a href="#h1-0-922" id="h1-0-922" class="i">+  max-width: 460px;
+</a><a href="#h1-0-923" id="h1-0-923" class="i">+}
+</a><a href="#h1-0-924" id="h1-0-924" class="i">+
+</a><a href="#h1-0-925" id="h1-0-925" class="i">+.sales-footer nav a:not(.button) {
+</a><a href="#h1-0-926" id="h1-0-926" class="i">+  color: var(--sales-muted);
+</a><a href="#h1-0-927" id="h1-0-927" class="i">+  font-size: 12px;
+</a><a href="#h1-0-928" id="h1-0-928" class="i">+}
+</a><a href="#h1-0-929" id="h1-0-929" class="i">+
+</a><a href="#h1-0-930" id="h1-0-930" class="i">+.sales-footer nav .button {
+</a><a href="#h1-0-931" id="h1-0-931" class="i">+  padding: 8px 11px;
+</a><a href="#h1-0-932" id="h1-0-932" class="i">+  font-size: 12px;
+</a><a href="#h1-0-933" id="h1-0-933" class="i">+}
+</a><a href="#h1-0-934" id="h1-0-934" class="i">+
+</a><a href="#h1-0-935" id="h1-0-935" class="i">+@media (max-width: 900px) {
+</a><a href="#h1-0-936" id="h1-0-936" class="i">+  .sales-hero {
+</a><a href="#h1-0-937" id="h1-0-937" class="i">+    grid-template-columns: minmax(0, 1fr) minmax(270px, 0.87fr);
+</a><a href="#h1-0-938" id="h1-0-938" class="i">+    gap: 32px;
+</a><a href="#h1-0-939" id="h1-0-939" class="i">+  }
+</a><a href="#h1-0-940" id="h1-0-940" class="i">+
+</a><a href="#h1-0-941" id="h1-0-941" class="i">+  .sales-plans-list {
+</a><a href="#h1-0-942" id="h1-0-942" class="i">+    gap: 8px;
+</a><a href="#h1-0-943" id="h1-0-943" class="i">+  }
+</a><a href="#h1-0-944" id="h1-0-944" class="i">+
+</a><a href="#h1-0-945" id="h1-0-945" class="i">+  .sales-plan-card {
+</a><a href="#h1-0-946" id="h1-0-946" class="i">+    padding-left: 15px;
+</a><a href="#h1-0-947" id="h1-0-947" class="i">+    padding-right: 15px;
+</a><a href="#h1-0-948" id="h1-0-948" class="i">+  }
+</a><a href="#h1-0-949" id="h1-0-949" class="i">+}
+</a><a href="#h1-0-950" id="h1-0-950" class="i">+
+</a><a href="#h1-0-951" id="h1-0-951" class="i">+@media (max-width: 760px) {
+</a><a href="#h1-0-952" id="h1-0-952" class="i">+  .sales-page {
+</a><a href="#h1-0-953" id="h1-0-953" class="i">+    padding-bottom: 30px;
+</a><a href="#h1-0-954" id="h1-0-954" class="i">+  }
+</a><a href="#h1-0-955" id="h1-0-955" class="i">+
+</a><a href="#h1-0-956" id="h1-0-956" class="i">+  .sales-hero {
+</a><a href="#h1-0-957" id="h1-0-957" class="i">+    display: block;
+</a><a href="#h1-0-958" id="h1-0-958" class="i">+    min-height: 0;
+</a><a href="#h1-0-959" id="h1-0-959" class="i">+    padding: 48px 0 38px;
+</a><a href="#h1-0-960" id="h1-0-960" class="i">+  }
+</a><a href="#h1-0-961" id="h1-0-961" class="i">+
+</a><a href="#h1-0-962" id="h1-0-962" class="i">+  .sales-hero h1 {
+</a><a href="#h1-0-963" id="h1-0-963" class="i">+    max-width: 600px;
+</a><a href="#h1-0-964" id="h1-0-964" class="i">+    font-size: clamp(34px, 10vw, 48px);
+</a><a href="#h1-0-965" id="h1-0-965" class="i">+  }
+</a><a href="#h1-0-966" id="h1-0-966" class="i">+
+</a><a href="#h1-0-967" id="h1-0-967" class="i">+  .sales-hero-visual {
+</a><a href="#h1-0-968" id="h1-0-968" class="i">+    max-width: 600px;
+</a><a href="#h1-0-969" id="h1-0-969" class="i">+    margin-top: 36px;
+</a><a href="#h1-0-970" id="h1-0-970" class="i">+  }
+</a><a href="#h1-0-971" id="h1-0-971" class="i">+
+</a><a href="#h1-0-972" id="h1-0-972" class="i">+  .sales-highlight-rail,
+</a><a href="#h1-0-973" id="h1-0-973" class="i">+  .sales-product-section,
+</a><a href="#h1-0-974" id="h1-0-974" class="i">+  .sales-login-section,
+</a><a href="#h1-0-975" id="h1-0-975" class="i">+  .sales-support-section {
+</a><a href="#h1-0-976" id="h1-0-976" class="i">+    grid-template-columns: 1fr;
+</a><a href="#h1-0-977" id="h1-0-977" class="i">+  }
+</a><a href="#h1-0-978" id="h1-0-978" class="i">+
+</a><a href="#h1-0-979" id="h1-0-979" class="i">+  .sales-highlight-rail &gt; div {
+</a><a href="#h1-0-980" id="h1-0-980" class="i">+    padding: 15px 0;
+</a><a href="#h1-0-981" id="h1-0-981" class="i">+  }
+</a><a href="#h1-0-982" id="h1-0-982" class="i">+
+</a><a href="#h1-0-983" id="h1-0-983" class="i">+  .sales-highlight-rail &gt; div + div {
+</a><a href="#h1-0-984" id="h1-0-984" class="i">+    padding-left: 0;
+</a><a href="#h1-0-985" id="h1-0-985" class="i">+    border-top: 1px solid var(--sales-line);
+</a><a href="#h1-0-986" id="h1-0-986" class="i">+    border-left: 0;
+</a><a href="#h1-0-987" id="h1-0-987" class="i">+  }
+</a><a href="#h1-0-988" id="h1-0-988" class="i">+
+</a><a href="#h1-0-989" id="h1-0-989" class="i">+  .sales-section,
+</a><a href="#h1-0-990" id="h1-0-990" class="i">+  .sales-product-section {
+</a><a href="#h1-0-991" id="h1-0-991" class="i">+    padding-top: 53px;
+</a><a href="#h1-0-992" id="h1-0-992" class="i">+  }
+</a><a href="#h1-0-993" id="h1-0-993" class="i">+
+</a><a href="#h1-0-994" id="h1-0-994" class="i">+  .sales-resource-rail,
+</a><a href="#h1-0-995" id="h1-0-995" class="i">+  .sales-journey-list {
+</a><a href="#h1-0-996" id="h1-0-996" class="i">+    grid-template-columns: repeat(2, minmax(0, 1fr));
+</a><a href="#h1-0-997" id="h1-0-997" class="i">+  }
+</a><a href="#h1-0-998" id="h1-0-998" class="i">+
+</a><a href="#h1-0-999" id="h1-0-999" class="i">+  .sales-product-section {
+</a><a href="#h1-0-1000" id="h1-0-1000" class="i">+    display: grid;
+</a><a href="#h1-0-1001" id="h1-0-1001" class="i">+    gap: 30px;
+</a><a href="#h1-0-1002" id="h1-0-1002" class="i">+  }
+</a><a href="#h1-0-1003" id="h1-0-1003" class="i">+
+</a><a href="#h1-0-1004" id="h1-0-1004" class="i">+  .sales-plans-list {
+</a><a href="#h1-0-1005" id="h1-0-1005" class="i">+    grid-template-columns: 1fr;
+</a><a href="#h1-0-1006" id="h1-0-1006" class="i">+    gap: 12px;
+</a><a href="#h1-0-1007" id="h1-0-1007" class="i">+  }
+</a><a href="#h1-0-1008" id="h1-0-1008" class="i">+
+</a><a href="#h1-0-1009" id="h1-0-1009" class="i">+  .sales-plan-card {
+</a><a href="#h1-0-1010" id="h1-0-1010" class="i">+    padding: 21px 18px;
+</a><a href="#h1-0-1011" id="h1-0-1011" class="i">+  }
+</a><a href="#h1-0-1012" id="h1-0-1012" class="i">+
+</a><a href="#h1-0-1013" id="h1-0-1013" class="i">+  .sales-plan-description {
+</a><a href="#h1-0-1014" id="h1-0-1014" class="i">+    min-height: 0;
+</a><a href="#h1-0-1015" id="h1-0-1015" class="i">+  }
+</a><a href="#h1-0-1016" id="h1-0-1016" class="i">+
+</a><a href="#h1-0-1017" id="h1-0-1017" class="i">+  .sales-pricing {
+</a><a href="#h1-0-1018" id="h1-0-1018" class="i">+    margin-top: 53px;
+</a><a href="#h1-0-1019" id="h1-0-1019" class="i">+    padding: 23px 18px;
+</a><a href="#h1-0-1020" id="h1-0-1020" class="i">+  }
+</a><a href="#h1-0-1021" id="h1-0-1021" class="i">+
+</a><a href="#h1-0-1022" id="h1-0-1022" class="i">+  .sales-pricing-notes {
+</a><a href="#h1-0-1023" id="h1-0-1023" class="i">+    grid-template-columns: 1fr;
+</a><a href="#h1-0-1024" id="h1-0-1024" class="i">+  }
+</a><a href="#h1-0-1025" id="h1-0-1025" class="i">+
+</a><a href="#h1-0-1026" id="h1-0-1026" class="i">+  .sales-support-section {
+</a><a href="#h1-0-1027" id="h1-0-1027" class="i">+    display: grid;
+</a><a href="#h1-0-1028" id="h1-0-1028" class="i">+    gap: 27px;
+</a><a href="#h1-0-1029" id="h1-0-1029" class="i">+  }
+</a><a href="#h1-0-1030" id="h1-0-1030" class="i">+
+</a><a href="#h1-0-1031" id="h1-0-1031" class="i">+  .sales-footer {
+</a><a href="#h1-0-1032" id="h1-0-1032" class="i">+    display: grid;
+</a><a href="#h1-0-1033" id="h1-0-1033" class="i">+    gap: 25px;
+</a><a href="#h1-0-1034" id="h1-0-1034" class="i">+  }
+</a><a href="#h1-0-1035" id="h1-0-1035" class="i">+
+</a><a href="#h1-0-1036" id="h1-0-1036" class="i">+  .sales-footer nav {
+</a><a href="#h1-0-1037" id="h1-0-1037" class="i">+    justify-content: flex-start;
+</a><a href="#h1-0-1038" id="h1-0-1038" class="i">+  }
+</a><a href="#h1-0-1039" id="h1-0-1039" class="i">+}
+</a><a href="#h1-0-1040" id="h1-0-1040" class="i">+
+</a><a href="#h1-0-1041" id="h1-0-1041" class="i">+@media (max-width: 480px) {
+</a><a href="#h1-0-1042" id="h1-0-1042" class="i">+  .sales-page h2 {
+</a><a href="#h1-0-1043" id="h1-0-1043" class="i">+    font-size: 29px;
+</a><a href="#h1-0-1044" id="h1-0-1044" class="i">+  }
+</a><a href="#h1-0-1045" id="h1-0-1045" class="i">+
+</a><a href="#h1-0-1046" id="h1-0-1046" class="i">+  .sales-hero-actions .button {
+</a><a href="#h1-0-1047" id="h1-0-1047" class="i">+    flex: 1 1 100%;
+</a><a href="#h1-0-1048" id="h1-0-1048" class="i">+    text-align: center;
+</a><a href="#h1-0-1049" id="h1-0-1049" class="i">+  }
+</a><a href="#h1-0-1050" id="h1-0-1050" class="i">+
+</a><a href="#h1-0-1051" id="h1-0-1051" class="i">+  .sales-model-fields {
+</a><a href="#h1-0-1052" id="h1-0-1052" class="i">+    grid-template-columns: 1fr;
+</a><a href="#h1-0-1053" id="h1-0-1053" class="i">+  }
+</a><a href="#h1-0-1054" id="h1-0-1054" class="i">+
+</a><a href="#h1-0-1055" id="h1-0-1055" class="i">+  .sales-resource-rail,
+</a><a href="#h1-0-1056" id="h1-0-1056" class="i">+  .sales-journey-list {
+</a><a href="#h1-0-1057" id="h1-0-1057" class="i">+    grid-template-columns: 1fr;
+</a><a href="#h1-0-1058" id="h1-0-1058" class="i">+  }
+</a><a href="#h1-0-1059" id="h1-0-1059" class="i">+
+</a><a href="#h1-0-1060" id="h1-0-1060" class="i">+  .sales-resource-rail article {
+</a><a href="#h1-0-1061" id="h1-0-1061" class="i">+    padding-right: 0;
+</a><a href="#h1-0-1062" id="h1-0-1062" class="i">+    padding-bottom: 21px;
+</a><a href="#h1-0-1063" id="h1-0-1063" class="i">+  }
+</a><a href="#h1-0-1064" id="h1-0-1064" class="i">+
+</a><a href="#h1-0-1065" id="h1-0-1065" class="i">+  .sales-resource-rail article + article {
+</a><a href="#h1-0-1066" id="h1-0-1066" class="i">+    padding-top: 21px;
+</a><a href="#h1-0-1067" id="h1-0-1067" class="i">+    padding-left: 0;
+</a><a href="#h1-0-1068" id="h1-0-1068" class="i">+    border-top: 1px solid var(--sales-line);
+</a><a href="#h1-0-1069" id="h1-0-1069" class="i">+    border-left: 0;
+</a><a href="#h1-0-1070" id="h1-0-1070" class="i">+  }
+</a><a href="#h1-0-1071" id="h1-0-1071" class="i">+
+</a><a href="#h1-0-1072" id="h1-0-1072" class="i">+  .sales-journey-list li {
+</a><a href="#h1-0-1073" id="h1-0-1073" class="i">+    min-height: 0;
+</a><a href="#h1-0-1074" id="h1-0-1074" class="i">+  }
+</a><a href="#h1-0-1075" id="h1-0-1075" class="i">+
+</a><a href="#h1-0-1076" id="h1-0-1076" class="i">+  .sales-chart-header {
+</a><a href="#h1-0-1077" id="h1-0-1077" class="i">+    display: block;
+</a><a href="#h1-0-1078" id="h1-0-1078" class="i">+  }
+</a><a href="#h1-0-1079" id="h1-0-1079" class="i">+
+</a><a href="#h1-0-1080" id="h1-0-1080" class="i">+  .sales-chart-header &gt; span {
+</a><a href="#h1-0-1081" id="h1-0-1081" class="i">+    display: block;
+</a><a href="#h1-0-1082" id="h1-0-1082" class="i">+    margin-top: 5px;
+</a><a href="#h1-0-1083" id="h1-0-1083" class="i">+  }
+</a><a href="#h1-0-1084" id="h1-0-1084" class="i">+
+</a><a href="#h1-0-1085" id="h1-0-1085" class="i">+  .sales-chart-row {
+</a><a href="#h1-0-1086" id="h1-0-1086" class="i">+    grid-template-columns: minmax(63px, 0.75fr) minmax(0, 2fr) minmax(48px, auto);
+</a><a href="#h1-0-1087" id="h1-0-1087" class="i">+    gap: 7px;
+</a><a href="#h1-0-1088" id="h1-0-1088" class="i">+  }
+</a><a href="#h1-0-1089" id="h1-0-1089" class="i">+
+</a><a href="#h1-0-1090" id="h1-0-1090" class="i">+  .sales-chart-label,
+</a><a href="#h1-0-1091" id="h1-0-1091" class="i">+  .sales-chart-value {
+</a><a href="#h1-0-1092" id="h1-0-1092" class="i">+    font-size: 11px;
+</a><a href="#h1-0-1093" id="h1-0-1093" class="i">+  }
+</a><a href="#h1-0-1094" id="h1-0-1094" class="i">+
+</a><a href="#h1-0-1095" id="h1-0-1095" class="i">+  .sales-chart-axis {
+</a><a href="#h1-0-1096" id="h1-0-1096" class="i">+    margin-right: 55px;
+</a><a href="#h1-0-1097" id="h1-0-1097" class="i">+    margin-left: 69px;
+</a><a href="#h1-0-1098" id="h1-0-1098" class="i">+  }
+</a><a href="#h1-0-1099" id="h1-0-1099" class="i">+
+</a><a href="#h1-0-1100" id="h1-0-1100" class="i">+  .sales-footer nav {
+</a><a href="#h1-0-1101" id="h1-0-1101" class="i">+    gap: 11px 14px;
+</a><a href="#h1-0-1102" id="h1-0-1102" class="i">+  }
+</a><a href="#h1-0-1103" id="h1-0-1103" class="i">+}
+</a><a href="#h1-0-1104" id="h1-0-1104" class="i">+
+</a><a href="#h1-0-1105" id="h1-0-1105" class="i">+@media (prefers-reduced-motion: reduce) {
+</a><a href="#h1-0-1106" id="h1-0-1106" class="i">+  .sales-page *,
+</a><a href="#h1-0-1107" id="h1-0-1107" class="i">+  .sales-page *::before,
+</a><a href="#h1-0-1108" id="h1-0-1108" class="i">+  .sales-page *::after {
+</a><a href="#h1-0-1109" id="h1-0-1109" class="i">+    scroll-behavior: auto !important;
+</a><a href="#h1-0-1110" id="h1-0-1110" class="i">+    transition: none !important;
+</a><a href="#h1-0-1111" id="h1-0-1111" class="i">+  }
+</a><a href="#h1-0-1112" id="h1-0-1112" class="i">+}
+</a><a href="#h1-0-1113" id="h1-0-1113" class="i">+
+</a><a href="#h1-0-1114" id="h1-0-1114" class="i">+/* O comparador também é reutilizado no expansor da conta autenticada. */
+</a><a href="#h1-0-1115" id="h1-0-1115" class="i">+.sales-pricing {
+</a><a href="#h1-0-1116" id="h1-0-1116" class="i">+  --sales-paper: #121212;
+</a><a href="#h1-0-1117" id="h1-0-1117" class="i">+  --sales-soft: #1a1a1a;
+</a><a href="#h1-0-1118" id="h1-0-1118" class="i">+  --sales-line: #303030;
+</a><a href="#h1-0-1119" id="h1-0-1119" class="i">+  --sales-line-strong: #4a4a4a;
+</a><a href="#h1-0-1120" id="h1-0-1120" class="i">+  --sales-ink: #f2f2f2;
+</a><a href="#h1-0-1121" id="h1-0-1121" class="i">+  --sales-muted: #a0a0a0;
+</a><a href="#h1-0-1122" id="h1-0-1122" class="i">+  --sales-dim: #a0a0a0;
+</a><a href="#h1-0-1123" id="h1-0-1123" class="i">+  --sales-radius: 8px;
+</a><a href="#h1-0-1124" id="h1-0-1124" class="i">+  color: var(--sales-ink);
+</a><a href="#h1-0-1125" id="h1-0-1125" class="i">+  font-size: 13px;
+</a><a href="#h1-0-1126" id="h1-0-1126" class="i">+  line-height: 1.58;
+</a><a href="#h1-0-1127" id="h1-0-1127" class="i">+}
+</a><a href="#h1-0-1128" id="h1-0-1128" class="i">+
+</a><a href="#h1-0-1129" id="h1-0-1129" class="i">+.sales-pricing h2 {
+</a><a href="#h1-0-1130" id="h1-0-1130" class="i">+  letter-spacing: -0.045em;
+</a><a href="#h1-0-1131" id="h1-0-1131" class="i">+  line-height: 1.1;
+</a><a href="#h1-0-1132" id="h1-0-1132" class="i">+}
+</a><a href="#h1-0-1133" id="h1-0-1133" class="i">+
+</a><a href="#h1-0-1134" id="h1-0-1134" class="i">+.sales-preview-question {
+</a><a href="#h1-0-1135" id="h1-0-1135" class="i">+  margin: 0 0 22px;
+</a><a href="#h1-0-1136" id="h1-0-1136" class="i">+  padding: 0 0 20px;
+</a><a href="#h1-0-1137" id="h1-0-1137" class="i">+  border-bottom: 1px solid var(--sales-line);
+</a><a href="#h1-0-1138" id="h1-0-1138" class="i">+  color: #d5d5d5;
+</a><a href="#h1-0-1139" id="h1-0-1139" class="i">+  font-size: 13px;
+</a><a href="#h1-0-1140" id="h1-0-1140" class="i">+  line-height: 1.65;
+</a><a href="#h1-0-1141" id="h1-0-1141" class="i">+}
+</a><a href="#h1-0-1142" id="h1-0-1142" class="i">+
+</a><a href="#h1-0-1143" id="h1-0-1143" class="i">+.sales-preview-question small {
+</a><a href="#h1-0-1144" id="h1-0-1144" class="i">+  display: block;
+</a><a href="#h1-0-1145" id="h1-0-1145" class="i">+  margin-bottom: 7px;
+</a><a href="#h1-0-1146" id="h1-0-1146" class="i">+  color: var(--sales-muted);
+</a><a href="#h1-0-1147" id="h1-0-1147" class="i">+  font-size: 10px;
+</a><a href="#h1-0-1148" id="h1-0-1148" class="i">+  letter-spacing: 0.06em;
+</a><a href="#h1-0-1149" id="h1-0-1149" class="i">+  text-transform: uppercase;
+</a><a href="#h1-0-1150" id="h1-0-1150" class="i">+}
+</a><a href="#h1-0-1151" id="h1-0-1151" class="i">+
+</a><a href="#h1-0-1152" id="h1-0-1152" class="i">+.sales-chart-row,
+</a><a href="#h1-0-1153" id="h1-0-1153" class="i">+.sales-chart-axis {
+</a><a href="#h1-0-1154" id="h1-0-1154" class="i">+  display: grid;
+</a><a href="#h1-0-1155" id="h1-0-1155" class="i">+  grid-template-columns: 94px minmax(0, 1fr) 66px;
+</a><a href="#h1-0-1156" id="h1-0-1156" class="i">+  column-gap: 10px;
+</a><a href="#h1-0-1157" id="h1-0-1157" class="i">+}
+</a><a href="#h1-0-1158" id="h1-0-1158" class="i">+
+</a><a href="#h1-0-1159" id="h1-0-1159" class="i">+.sales-chart-axis {
+</a><a href="#h1-0-1160" id="h1-0-1160" class="i">+  margin: 8px 0 0;
+</a><a href="#h1-0-1161" id="h1-0-1161" class="i">+}
+</a><a href="#h1-0-1162" id="h1-0-1162" class="i">+
+</a><a href="#h1-0-1163" id="h1-0-1163" class="i">+.sales-axis-ticks {
+</a><a href="#h1-0-1164" id="h1-0-1164" class="i">+  grid-column: 2;
+</a><a href="#h1-0-1165" id="h1-0-1165" class="i">+  display: flex;
+</a><a href="#h1-0-1166" id="h1-0-1166" class="i">+  justify-content: space-between;
+</a><a href="#h1-0-1167" id="h1-0-1167" class="i">+}
+</a><a href="#h1-0-1168" id="h1-0-1168" class="i">+
+</a><a href="#h1-0-1169" id="h1-0-1169" class="i">+@media (max-width: 480px) {
+</a><a href="#h1-0-1170" id="h1-0-1170" class="i">+  .sales-chart-row,
+</a><a href="#h1-0-1171" id="h1-0-1171" class="i">+  .sales-chart-axis {
+</a><a href="#h1-0-1172" id="h1-0-1172" class="i">+    grid-template-columns: 80px minmax(0, 1fr) 60px;
+</a><a href="#h1-0-1173" id="h1-0-1173" class="i">+    column-gap: 7px;
+</a><a href="#h1-0-1174" id="h1-0-1174" class="i">+  }
+</a><a href="#h1-0-1175" id="h1-0-1175" class="i">+
+</a><a href="#h1-0-1176" id="h1-0-1176" class="i">+  .sales-chart-axis {
+</a><a href="#h1-0-1177" id="h1-0-1177" class="i">+    margin: 8px 0 0;
+</a><a href="#h1-0-1178" id="h1-0-1178" class="i">+  }
+</a><a href="#h1-0-1179" id="h1-0-1179" class="i">+}
+</a><a href="#h1-0-1180" id="h1-0-1180" class="i">+
+</a><a href="#h1-0-1181" id="h1-0-1181" class="i">+.sales-page a.button-primary,
+</a><a href="#h1-0-1182" id="h1-0-1182" class="i">+.sales-page a.button-primary:hover {
+</a><a href="#h1-0-1183" id="h1-0-1183" class="i">+  color: #111;
+</a><a href="#h1-0-1184" id="h1-0-1184" class="i">+}
+</a><a href="#h1-0-1185" id="h1-0-1185" class="i">+
+</a><a href="#h1-0-1186" id="h1-0-1186" class="i">+.sales-flows-rail {
+</a><a href="#h1-0-1187" id="h1-0-1187" class="i">+  grid-template-columns: repeat(2, minmax(0, 1fr));
+</a><a href="#h1-0-1188" id="h1-0-1188" class="i">+}
+</a><a href="#h1-0-1189" id="h1-0-1189" class="i">+
+</a><a href="#h1-0-1190" id="h1-0-1190" class="i">+.sales-demo-more {
+</a><a href="#h1-0-1191" id="h1-0-1191" class="i">+  display: flex;
+</a><a href="#h1-0-1192" id="h1-0-1192" class="i">+  flex-wrap: wrap;
+</a><a href="#h1-0-1193" id="h1-0-1193" class="i">+  align-items: center;
+</a><a href="#h1-0-1194" id="h1-0-1194" class="i">+  justify-content: center;
+</a><a href="#h1-0-1195" id="h1-0-1195" class="i">+  gap: 10px;
+</a><a href="#h1-0-1196" id="h1-0-1196" class="i">+  max-width: 780px;
+</a><a href="#h1-0-1197" id="h1-0-1197" class="i">+  margin: 15px auto 0;
+</a><a href="#h1-0-1198" id="h1-0-1198" class="i">+}
+</a><a href="#h1-0-1199" id="h1-0-1199" class="i">+
+</a><a href="#h1-0-1200" id="h1-0-1200" class="i">+@media (max-width: 680px) {
+</a><a href="#h1-0-1201" id="h1-0-1201" class="i">+  .sales-flows-rail {
+</a><a href="#h1-0-1202" id="h1-0-1202" class="i">+    grid-template-columns: 1fr;
+</a><a href="#h1-0-1203" id="h1-0-1203" class="i">+  }
+</a><a href="#h1-0-1204" id="h1-0-1204" class="i">+}
+</a><b>diff --git a/<a id="h2" href="../file/templates/base.html.html">templates/base.html</a> b/<a href="../file/templates/base.html.html">templates/base.html</a></b>
+<a href="#h2-0" id="h2-0" class="h">@@ -5,15 +5,10 @@
+</a>     &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+     &lt;title&gt;{% block title %}Assistente Acadêmico{% endblock %}&lt;/title&gt;
+     &lt;link rel=&quot;stylesheet&quot; href=&quot;{{ url_for(&#39;static&#39;, filename=&#39;css/app.css&#39;) }}&quot;&gt;
+<a href="#h2-0-3" id="h2-0-3" class="i">+    &lt;link rel=&quot;stylesheet&quot; href=&quot;{{ url_for(&#39;static&#39;, filename=&#39;css/marketing.css&#39;) }}&quot;&gt;
+</a>   &lt;/head&gt;
+   &lt;body&gt;
+<a href="#h2-0-6" id="h2-0-6" class="d">-    &lt;header class=&quot;site-header&quot;&gt;
+</a><a href="#h2-0-7" id="h2-0-7" class="d">-      &lt;a class=&quot;brand&quot; href=&quot;{{ url_for(&#39;public.home&#39;) }}&quot;&gt;Assistente Acadêmico&lt;/a&gt;
+</a><a href="#h2-0-8" id="h2-0-8" class="d">-      &lt;span class=&quot;environment-badge&quot;&gt;v2 privada&lt;/span&gt;
+</a><a href="#h2-0-9" id="h2-0-9" class="d">-    &lt;/header&gt;
+</a><a href="#h2-0-10" id="h2-0-10" class="d">-    &lt;main class=&quot;page-shell&quot;&gt;
+</a><a href="#h2-0-11" id="h2-0-11" class="d">-      {% block content %}{% endblock %}
+</a><a href="#h2-0-12" id="h2-0-12" class="d">-    &lt;/main&gt;
+</a><a href="#h2-0-13" id="h2-0-13" class="i">+    {% block content %}{% endblock %}
+</a>     &lt;script type=&quot;module&quot; src=&quot;{{ url_for(&#39;static&#39;, filename=&#39;js/app.js&#39;) }}&quot;&gt;&lt;/script&gt;
+   &lt;/body&gt;
+ &lt;/html&gt;
+<b>diff --git a/<a id="h3" href="../file/templates/public/home.html.html">templates/public/home.html</a> b/<a href="../file/templates/public/home.html.html">templates/public/home.html</a></b>
+<a href="#h3-0" id="h3-0" class="h">@@ -1,17 +1,195 @@
+</a> {% extends &quot;base.html&quot; %}
+<a href="#h3-0-1" id="h3-0-1" class="d">-{% block title %}Assistente Acadêmico — v2{% endblock %}
+</a><a href="#h3-0-2" id="h3-0-2" class="i">+{% block title %}Assistente Acadêmico — Case e Paper{% endblock %}
+</a> {% block content %}
+<a href="#h3-0-4" id="h3-0-4" class="d">-&lt;section class=&quot;hero-card&quot;&gt;
+</a><a href="#h3-0-5" id="h3-0-5" class="d">-  &lt;p class=&quot;eyebrow&quot;&gt;Nova base em construção&lt;/p&gt;
+</a><a href="#h3-0-6" id="h3-0-6" class="d">-  &lt;h1&gt;O mesmo Assistente Acadêmico, com uma base mais clara.&lt;/h1&gt;
+</a><a href="#h3-0-7" id="h3-0-7" class="d">-  &lt;p class=&quot;lead&quot;&gt;Esta versão privada reproduzirá o visual e os fluxos do site atual sem reutilizar o banco ou o código legado.&lt;/p&gt;
+</a><a href="#h3-0-8" id="h3-0-8" class="d">-  &lt;div class=&quot;status-row&quot; role=&quot;status&quot;&gt;
+</a><a href="#h3-0-9" id="h3-0-9" class="d">-    &lt;span class=&quot;status-dot&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;
+</a><a href="#h3-0-10" id="h3-0-10" class="d">-    Esqueleto v2 funcionando localmente
+</a><a href="#h3-0-11" id="h3-0-11" class="i">+&lt;header class=&quot;topbar saas-topbar&quot;&gt;&lt;a class=&quot;brand saas-brand&quot; href=&quot;#/site&quot; aria-label=&quot;Assistente Acadêmico — apresentação&quot;&gt;Assistente &lt;span&gt;acadêmico&lt;/span&gt;&lt;/a&gt;&lt;nav class=&quot;saas-nav&quot; aria-label=&quot;Navegação do produto&quot;&gt;&lt;a href=&quot;#como-funciona&quot; data-site-section=&quot;como-funciona&quot;&gt;Como funciona&lt;/a&gt;&lt;a href=&quot;#recursos&quot; data-site-section=&quot;recursos&quot;&gt;Recursos&lt;/a&gt;&lt;a href=&quot;#demonstracao&quot; data-site-section=&quot;demonstracao&quot;&gt;Demonstração&lt;/a&gt;&lt;a href=&quot;#precos&quot; data-site-section=&quot;precos&quot;&gt;Preços&lt;/a&gt;&lt;a href=&quot;#suporte&quot; data-site-section=&quot;suporte&quot;&gt;Suporte&lt;/a&gt;&lt;/nav&gt;&lt;div class=&quot;topbar-actions&quot;&gt;&lt;a class=&quot;button button-primary&quot; href=&quot;/oauth/google/start&quot;&gt;Entrar&lt;/a&gt;&lt;details class=&quot;saas-mobile-menu&quot;&gt;&lt;summary&gt;Menu&lt;/summary&gt;&lt;nav aria-label=&quot;Navegação móvel do produto&quot;&gt;&lt;a href=&quot;#como-funciona&quot; data-site-section=&quot;como-funciona&quot;&gt;Como funciona&lt;/a&gt;&lt;a href=&quot;#recursos&quot; data-site-section=&quot;recursos&quot;&gt;Recursos&lt;/a&gt;&lt;a href=&quot;#demonstracao&quot; data-site-section=&quot;demonstracao&quot;&gt;Demonstração&lt;/a&gt;&lt;a href=&quot;#precos&quot; data-site-section=&quot;precos&quot;&gt;Preços&lt;/a&gt;&lt;a href=&quot;#suporte&quot; data-site-section=&quot;suporte&quot;&gt;Suporte&lt;/a&gt;&lt;/nav&gt;&lt;/details&gt;&lt;/div&gt;&lt;/header&gt;
+</a><a href="#h3-0-12" id="h3-0-12" class="i">+&lt;main class=&quot;shell sales-shell&quot; id=&quot;main&quot;&gt;&lt;div class=&quot;sales-page&quot;&gt;
+</a><a href="#h3-0-13" id="h3-0-13" class="i">+    &lt;section class=&quot;sales-hero&quot; aria-labelledby=&quot;sales-title&quot;&gt;
+</a><a href="#h3-0-14" id="h3-0-14" class="i">+      &lt;div class=&quot;sales-hero-copy&quot;&gt;
+</a><a href="#h3-0-15" id="h3-0-15" class="i">+        &lt;p class=&quot;sales-kicker&quot;&gt;Para trabalhos acadêmicos&lt;/p&gt;
+</a><a href="#h3-0-16" id="h3-0-16" class="i">+        &lt;h1 id=&quot;sales-title&quot;&gt;Case e Paper, em um só lugar.&lt;/h1&gt;
+</a><a href="#h3-0-17" id="h3-0-17" class="i">+        &lt;p class=&quot;sales-lede&quot;&gt;No Case, organize o relatório, o debate e a dissertação. No Paper, faça o Projeto e depois avance para o Paper Final. Textos e fontes ficam no mesmo projeto; você revisa e exporta o PDF.&lt;/p&gt;
+</a><a href="#h3-0-18" id="h3-0-18" class="i">+
+</a><a href="#h3-0-19" id="h3-0-19" class="i">+        &lt;div class=&quot;sales-hero-actions&quot;&gt;&lt;a class=&quot;button button-primary&quot; href=&quot;/oauth/google/start&quot;&gt;Começar com Google&lt;/a&gt;&lt;a class=&quot;button&quot; href=&quot;#demonstracao&quot; data-site-section=&quot;demonstracao&quot;&gt;Ver exemplos&lt;/a&gt;&lt;/div&gt;
+</a><a href="#h3-0-20" id="h3-0-20" class="i">+        &lt;p class=&quot;sales-hero-microcopy&quot;&gt;Seus projetos são privados por padrão.&lt;/p&gt;
+</a><a href="#h3-0-21" id="h3-0-21" class="i">+      &lt;/div&gt;
+</a><a href="#h3-0-22" id="h3-0-22" class="i">+      &lt;div class=&quot;sales-hero-visual&quot;&gt;&lt;div class=&quot;sales-product-window sales-product-window-hero&quot; aria-label=&quot;Exemplo preenchido em modo somente leitura&quot;&gt;
+</a><a href="#h3-0-23" id="h3-0-23" class="i">+    &lt;div class=&quot;sales-window-chrome&quot;&gt;&lt;span class=&quot;sales-window-dot&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;span class=&quot;sales-window-dot&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;span class=&quot;sales-window-dot&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;span class=&quot;sales-window-route&quot;&gt;Assistente Acadêmico&lt;/span&gt;&lt;/div&gt;
+</a><a href="#h3-0-24" id="h3-0-24" class="i">+    &lt;div class=&quot;sales-window-body&quot;&gt;
+</a><a href="#h3-0-25" id="h3-0-25" class="i">+      &lt;div class=&quot;sales-window-topline&quot;&gt;&lt;span&gt;Exemplo&lt;/span&gt;&lt;span class=&quot;sales-readonly&quot;&gt;Somente leitura&lt;/span&gt;&lt;/div&gt;
+</a><a href="#h3-0-26" id="h3-0-26" class="i">+      &lt;p class=&quot;sales-kicker&quot;&gt;Projeto de Paper&lt;/p&gt;
+</a><a href="#h3-0-27" id="h3-0-27" class="i">+      &lt;h3&gt;O CONTRADITÓRIO NO INQUÉRITO POLICIAL APÓS A LEI Nº 13.245/2016: reflexos no valor probatório&lt;/h3&gt;
+</a><a href="#h3-0-28" id="h3-0-28" class="i">+      &lt;p class=&quot;sales-preview-question&quot;&gt;&lt;small&gt;Problema de pesquisa&lt;/small&gt;A participação da defesa técnica na fase investigatória altera o valor probatório dos atos do inquérito policial?&lt;/p&gt;
+</a><a href="#h3-0-29" id="h3-0-29" class="i">+      &lt;div class=&quot;sales-model-fields&quot;&gt;&lt;span&gt;&lt;small&gt;Projeto&lt;/small&gt;Problema, hipótese e objetivos&lt;/span&gt;&lt;span&gt;&lt;small&gt;Fontes&lt;/small&gt;Referências do trabalho&lt;/span&gt;&lt;span&gt;&lt;small&gt;Disciplina&lt;/small&gt;Metodologia Científica&lt;/span&gt;&lt;span&gt;&lt;small&gt;Próxima etapa&lt;/small&gt;Paper Final&lt;/span&gt;&lt;/div&gt;
+</a><a href="#h3-0-30" id="h3-0-30" class="i">+      &lt;div class=&quot;sales-window-actions&quot;&gt;
+</a><a href="#h3-0-31" id="h3-0-31" class="i">+        &lt;button class=&quot;button button-primary&quot; type=&quot;button&quot; data-model-workflow=&quot;projeto-paper-modelo&quot;&gt;Abrir exemplo&lt;/button&gt;
+</a><a href="#h3-0-32" id="h3-0-32" class="i">+        &lt;button class=&quot;button&quot; type=&quot;button&quot; data-model-document=&quot;projeto-paper-modelo&quot;&gt;Ler trabalho completo&lt;/button&gt;
+</a><a href="#h3-0-33" id="h3-0-33" class="i">+      &lt;/div&gt;
+</a><a href="#h3-0-34" id="h3-0-34" class="i">+    &lt;/div&gt;
+</a><a href="#h3-0-35" id="h3-0-35" class="i">+  &lt;/div&gt;&lt;/div&gt;
+</a><a href="#h3-0-36" id="h3-0-36" class="i">+    &lt;/section&gt;
+</a><a href="#h3-0-37" id="h3-0-37" class="i">+
+</a><a href="#h3-0-38" id="h3-0-38" class="i">+    &lt;section class=&quot;sales-highlight-rail&quot; aria-label=&quot;Resumo dos recursos&quot;&gt;
+</a><a href="#h3-0-39" id="h3-0-39" class="i">+      &lt;div&gt;&lt;strong&gt;Case&lt;/strong&gt;&lt;span&gt;relatório, debate e dissertação&lt;/span&gt;&lt;/div&gt;
+</a><a href="#h3-0-40" id="h3-0-40" class="i">+      &lt;div&gt;&lt;strong&gt;Paper&lt;/strong&gt;&lt;span&gt;Projeto e Paper Final, no mesmo crédito&lt;/span&gt;&lt;/div&gt;
+</a><a href="#h3-0-41" id="h3-0-41" class="i">+      &lt;div&gt;&lt;strong&gt;Créditos&lt;/strong&gt;&lt;span&gt;não expiram&lt;/span&gt;&lt;/div&gt;
+</a><a href="#h3-0-42" id="h3-0-42" class="i">+      &lt;div&gt;&lt;strong&gt;Pagamento&lt;/strong&gt;&lt;span&gt;Pix único, sem renovação&lt;/span&gt;&lt;/div&gt;
+</a><a href="#h3-0-43" id="h3-0-43" class="i">+    &lt;/section&gt;
+</a><a href="#h3-0-44" id="h3-0-44" class="i">+
+</a><a href="#h3-0-45" id="h3-0-45" class="i">+    &lt;section id=&quot;como-funciona&quot; class=&quot;sales-section sales-flows-section&quot; aria-labelledby=&quot;sales-flows-title&quot;&gt;
+</a><a href="#h3-0-46" id="h3-0-46" class="i">+      &lt;div class=&quot;sales-section-heading&quot;&gt;&lt;p class=&quot;sales-kicker&quot;&gt;Dois roteiros&lt;/p&gt;&lt;h2 id=&quot;sales-flows-title&quot;&gt;Cada trabalho tem suas etapas.&lt;/h2&gt;&lt;p&gt;Escolha o roteiro correspondente à atividade da sua disciplina.&lt;/p&gt;&lt;/div&gt;
+</a><a href="#h3-0-47" id="h3-0-47" class="i">+      &lt;div class=&quot;sales-resource-rail sales-flows-rail&quot;&gt;
+</a><a href="#h3-0-48" id="h3-0-48" class="i">+        &lt;article&gt;&lt;span class=&quot;sales-resource-number&quot;&gt;Case&lt;/span&gt;&lt;h3&gt;Relatório, debate e dissertação&lt;/h3&gt;&lt;p&gt;Registre fatos, questão jurídica, teses e fontes no relatório. Depois da entrega, use esse material para preparar o debate e a dissertação.&lt;/p&gt;&lt;/article&gt;
+</a><a href="#h3-0-49" id="h3-0-49" class="i">+        &lt;article&gt;&lt;span class=&quot;sales-resource-number&quot;&gt;Paper&lt;/span&gt;&lt;h3&gt;Projeto e Paper Final&lt;/h3&gt;&lt;p&gt;Organize problema, hipótese, objetivos, método e fontes no Projeto. Continue no Paper Final dentro do mesmo projeto e crédito.&lt;/p&gt;&lt;/article&gt;
+</a><a href="#h3-0-50" id="h3-0-50" class="i">+      &lt;/div&gt;
+</a><a href="#h3-0-51" id="h3-0-51" class="i">+    &lt;/section&gt;
+</a><a href="#h3-0-52" id="h3-0-52" class="i">+
+</a><a href="#h3-0-53" id="h3-0-53" class="i">+    &lt;section id=&quot;recursos&quot; class=&quot;sales-section sales-resources-section&quot; aria-labelledby=&quot;sales-resources-title&quot;&gt;
+</a><a href="#h3-0-54" id="h3-0-54" class="i">+      &lt;div class=&quot;sales-section-heading&quot;&gt;&lt;p class=&quot;sales-kicker&quot;&gt;Recursos&lt;/p&gt;&lt;h2 id=&quot;sales-resources-title&quot;&gt;Ferramentas para organizar e revisar.&lt;/h2&gt;&lt;/div&gt;
+</a><a href="#h3-0-55" id="h3-0-55" class="i">+      &lt;div class=&quot;sales-resource-rail&quot;&gt;
+</a><a href="#h3-0-56" id="h3-0-56" class="i">+        &lt;article&gt;&lt;span class=&quot;sales-resource-number&quot;&gt;01&lt;/span&gt;&lt;h3&gt;Fontes no trabalho&lt;/h3&gt;&lt;p&gt;Consulte sugestões de pesquisa, registre referências e confira os dados antes de usar uma fonte.&lt;/p&gt;&lt;/article&gt;
+</a><a href="#h3-0-57" id="h3-0-57" class="i">+        &lt;article&gt;&lt;span class=&quot;sales-resource-number&quot;&gt;02&lt;/span&gt;&lt;h3&gt;Prazos e tarefas&lt;/h3&gt;&lt;p&gt;Defina datas para as etapas do Case ou do Paper e acompanhe o que falta na agenda.&lt;/p&gt;&lt;/article&gt;
+</a><a href="#h3-0-58" id="h3-0-58" class="i">+        &lt;article&gt;&lt;span class=&quot;sales-resource-number&quot;&gt;03&lt;/span&gt;&lt;h3&gt;Revisão e PDF&lt;/h3&gt;&lt;p&gt;Confira o conteúdo, faça seus ajustes e exporte o trabalho em PDF.&lt;/p&gt;&lt;/article&gt;
+</a><a href="#h3-0-59" id="h3-0-59" class="i">+      &lt;/div&gt;
+</a><a href="#h3-0-60" id="h3-0-60" class="i">+    &lt;/section&gt;
+</a><a href="#h3-0-61" id="h3-0-61" class="i">+
+</a><a href="#h3-0-62" id="h3-0-62" class="i">+    &lt;section id=&quot;demonstracao&quot; class=&quot;sales-section sales-demo-section&quot; aria-labelledby=&quot;sales-demo-title&quot;&gt;
+</a><a href="#h3-0-63" id="h3-0-63" class="i">+      &lt;div class=&quot;sales-section-heading&quot;&gt;&lt;p class=&quot;sales-kicker&quot;&gt;Exemplos&lt;/p&gt;&lt;h2 id=&quot;sales-demo-title&quot;&gt;Veja trabalhos preenchidos.&lt;/h2&gt;&lt;p&gt;Abra os modelos para percorrer as etapas ou ler o documento final. Não precisa entrar na conta.&lt;/p&gt;&lt;/div&gt;
+</a><a href="#h3-0-64" id="h3-0-64" class="i">+      &lt;div class=&quot;sales-product-window sales-product-window-demo&quot; aria-label=&quot;Exemplo preenchido em modo somente leitura&quot;&gt;
+</a><a href="#h3-0-65" id="h3-0-65" class="i">+    &lt;div class=&quot;sales-window-chrome&quot;&gt;&lt;span class=&quot;sales-window-dot&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;span class=&quot;sales-window-dot&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;span class=&quot;sales-window-dot&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;span class=&quot;sales-window-route&quot;&gt;Assistente Acadêmico&lt;/span&gt;&lt;/div&gt;
+</a><a href="#h3-0-66" id="h3-0-66" class="i">+    &lt;div class=&quot;sales-window-body&quot;&gt;
+</a><a href="#h3-0-67" id="h3-0-67" class="i">+      &lt;div class=&quot;sales-window-topline&quot;&gt;&lt;span&gt;Exemplo&lt;/span&gt;&lt;span class=&quot;sales-readonly&quot;&gt;Somente leitura&lt;/span&gt;&lt;/div&gt;
+</a><a href="#h3-0-68" id="h3-0-68" class="i">+      &lt;p class=&quot;sales-kicker&quot;&gt;Relatório de case · Modelo preenchido&lt;/p&gt;
+</a><a href="#h3-0-69" id="h3-0-69" class="i">+      &lt;h3&gt;Direito da Personalidade&lt;/h3&gt;
+</a><a href="#h3-0-70" id="h3-0-70" class="i">+      &lt;p class=&quot;sales-preview-question&quot;&gt;&lt;small&gt;Questão do caso&lt;/small&gt;Diante do ocorrido, quais são os limites da liberdade de expressão quando esta colide com direitos de terceiros, especialmente no que se refere à proteção da honra, da imagem e da reputação?&lt;/p&gt;
+</a><a href="#h3-0-71" id="h3-0-71" class="i">+      &lt;div class=&quot;sales-model-fields&quot;&gt;&lt;span&gt;&lt;small&gt;Case&lt;/small&gt;Relatório, debate e dissertação&lt;/span&gt;&lt;span&gt;&lt;small&gt;Fontes&lt;/small&gt;Referências organizadas&lt;/span&gt;&lt;span&gt;&lt;small&gt;Disciplina&lt;/small&gt;Direito Civil I&lt;/span&gt;&lt;span&gt;&lt;small&gt;Entrega&lt;/small&gt;PDF gerado pelo projeto&lt;/span&gt;&lt;/div&gt;
+</a><a href="#h3-0-72" id="h3-0-72" class="i">+      &lt;div class=&quot;sales-window-actions&quot;&gt;
+</a><a href="#h3-0-73" id="h3-0-73" class="i">+        &lt;button class=&quot;button button-primary&quot; type=&quot;button&quot; data-model-workflow=&quot;civil-personality&quot;&gt;Abrir exemplo&lt;/button&gt;
+</a><a href="#h3-0-74" id="h3-0-74" class="i">+        &lt;button class=&quot;button&quot; type=&quot;button&quot; data-model-document=&quot;civil-personality&quot;&gt;Ler trabalho completo&lt;/button&gt;
+</a><a href="#h3-0-75" id="h3-0-75" class="i">+      &lt;/div&gt;
+</a><a href="#h3-0-76" id="h3-0-76" class="i">+    &lt;/div&gt;
+</a>   &lt;/div&gt;
+<a href="#h3-0-78" id="h3-0-78" class="d">-&lt;/section&gt;
+</a><a href="#h3-0-79" id="h3-0-79" class="d">-&lt;section class=&quot;plain-section&quot;&gt;
+</a><a href="#h3-0-80" id="h3-0-80" class="d">-  &lt;h2&gt;Próximo percurso&lt;/h2&gt;
+</a><a href="#h3-0-81" id="h3-0-81" class="d">-  &lt;p&gt;Login de teste, criação de Case, autosave, fontes e PDF. Nenhuma integração externa é chamada nesta fase.&lt;/p&gt;
+</a><a href="#h3-0-82" id="h3-0-82" class="d">-&lt;/section&gt;
+</a><a href="#h3-0-83" id="h3-0-83" class="i">+      &lt;div class=&quot;sales-demo-more&quot;&gt;&lt;span&gt;Outros modelos:&lt;/span&gt;&lt;button class=&quot;button&quot; type=&quot;button&quot; data-model-workflow=&quot;projeto-paper-modelo&quot;&gt;Projeto de Paper&lt;/button&gt;&lt;button class=&quot;button&quot; type=&quot;button&quot; data-model-workflow=&quot;paper-final-modelo&quot;&gt;Paper Final&lt;/button&gt;&lt;/div&gt;
+</a><a href="#h3-0-84" id="h3-0-84" class="i">+      &lt;p class=&quot;sales-demo-note&quot;&gt;&lt;a href=&quot;/jornada/#materiais-de-apoio&quot;&gt;Vídeos e materiais de apoio ↗&lt;/a&gt;&lt;/p&gt;
+</a><a href="#h3-0-85" id="h3-0-85" class="i">+    &lt;/section&gt;
+</a><a href="#h3-0-86" id="h3-0-86" class="i">+
+</a><a href="#h3-0-87" id="h3-0-87" class="i">+    &lt;section id=&quot;precos&quot; class=&quot;access-options sales-pricing&quot; aria-labelledby=&quot;sales-pricing-title&quot;&gt;
+</a><a href="#h3-0-88" id="h3-0-88" class="i">+    &lt;div class=&quot;sales-section-heading&quot;&gt;
+</a><a href="#h3-0-89" id="h3-0-89" class="i">+      &lt;p class=&quot;sales-kicker&quot;&gt;Planos e valores&lt;/p&gt;
+</a><a href="#h3-0-90" id="h3-0-90" class="i">+      &lt;h2 id=&quot;sales-pricing-title&quot;&gt;Um crédito ou um pacote de 7 projetos.&lt;/h2&gt;
+</a><a href="#h3-0-91" id="h3-0-91" class="i">+      &lt;p&gt;Pagamento único por Pix, sem renovação. Depois de confirmar o pagamento, o administrador atribui o plano e os créditos à conta.&lt;/p&gt;
+</a><a href="#h3-0-92" id="h3-0-92" class="i">+    &lt;/div&gt;
+</a><a href="#h3-0-93" id="h3-0-93" class="i">+    &lt;div class=&quot;sales-plans-list&quot;&gt;&lt;article class=&quot;sales-plan-card&quot; data-plan-code=&quot;avulso_ai&quot; aria-labelledby=&quot;sales-plan-avulso_ai&quot;&gt;
+</a><a href="#h3-0-94" id="h3-0-94" class="i">+    &lt;div class=&quot;sales-plan-heading&quot;&gt;
+</a><a href="#h3-0-95" id="h3-0-95" class="i">+      &lt;div&gt;
+</a><a href="#h3-0-96" id="h3-0-96" class="i">+        &lt;p class=&quot;sales-plan-index&quot;&gt;1 projeto&lt;/p&gt;
+</a><a href="#h3-0-97" id="h3-0-97" class="i">+        &lt;h3 id=&quot;sales-plan-avulso_ai&quot;&gt;Avulso&lt;/h3&gt;
+</a><a href="#h3-0-98" id="h3-0-98" class="i">+      &lt;/div&gt;
+</a><a href="#h3-0-99" id="h3-0-99" class="i">+    &lt;/div&gt;
+</a><a href="#h3-0-100" id="h3-0-100" class="i">+    &lt;p class=&quot;sales-plan-description&quot;&gt;1 projeto com sugestões de IA nas etapas disponíveis.&lt;/p&gt;
+</a><a href="#h3-0-101" id="h3-0-101" class="i">+    &lt;div class=&quot;sales-price-stack&quot;&gt;
+</a><a href="#h3-0-102" id="h3-0-102" class="i">+      &lt;strong class=&quot;sales-current-price&quot;&gt;R$ 12,00&lt;/strong&gt;
+</a><a href="#h3-0-103" id="h3-0-103" class="i">+    &lt;/div&gt;
+</a><a href="#h3-0-104" id="h3-0-104" class="i">+    &lt;ul class=&quot;sales-plan-benefits&quot;&gt;
+</a><a href="#h3-0-105" id="h3-0-105" class="i">+    &lt;li&gt;&lt;strong&gt;1 projeto&lt;/strong&gt;&lt;span&gt;1 crédito de projeto&lt;/span&gt;&lt;/li&gt;
+</a><a href="#h3-0-106" id="h3-0-106" class="i">+    &lt;li&gt;&lt;strong&gt;Assistência por IA&lt;/strong&gt;&lt;span&gt;Sugestões nas etapas disponíveis&lt;/span&gt;&lt;/li&gt;
+</a><a href="#h3-0-107" id="h3-0-107" class="i">+    &lt;li&gt;&lt;strong&gt;PDF&lt;/strong&gt;&lt;span&gt;Exportação a partir do projeto&lt;/span&gt;&lt;/li&gt;
+</a><a href="#h3-0-108" id="h3-0-108" class="i">+  &lt;/ul&gt;
+</a><a href="#h3-0-109" id="h3-0-109" class="i">+    &lt;details class=&quot;pix-payment&quot;&gt;
+</a><a href="#h3-0-110" id="h3-0-110" class="i">+      &lt;summary&gt;Ver pagamento por Pix&lt;/summary&gt;
+</a><a href="#h3-0-111" id="h3-0-111" class="i">+      &lt;div class=&quot;pix-payment-body&quot;&gt;
+</a><a href="#h3-0-112" id="h3-0-112" class="i">+        &lt;img class=&quot;pix-qr&quot; src=&quot;/pix/avulso-ai.svg&quot; width=&quot;168&quot; height=&quot;168&quot; alt=&quot;QR Code Pix do plano Avulso&quot;&gt;
+</a><a href="#h3-0-113" id="h3-0-113" class="i">+        &lt;button class=&quot;button button-primary&quot; type=&quot;button&quot; data-pix-copy=&quot;avulso_ai&quot;&gt;Copiar código Pix&lt;/button&gt;
+</a><a href="#h3-0-114" id="h3-0-114" class="i">+        &lt;span data-pix-status=&quot;avulso_ai&quot; role=&quot;status&quot; aria-live=&quot;polite&quot;&gt;&lt;/span&gt;
+</a><a href="#h3-0-115" id="h3-0-115" class="i">+        &lt;details class=&quot;pix-code&quot;&gt;
+</a><a href="#h3-0-116" id="h3-0-116" class="i">+          &lt;summary&gt;Ver código Pix completo&lt;/summary&gt;
+</a><a href="#h3-0-117" id="h3-0-117" class="i">+          &lt;code class=&quot;pix-payload&quot;&gt;00020126580014BR.GOV.BCB.PIX0136143e87f8-1f46-46b9-8c61-ad6d24f66c11520400005303986540512.005802BR5920Sivaldo Davi Pereira6009SAO PAULO62140510bsYkFbWYvt630426FE&lt;/code&gt;
+</a><a href="#h3-0-118" id="h3-0-118" class="i">+        &lt;/details&gt;
+</a><a href="#h3-0-119" id="h3-0-119" class="i">+      &lt;/div&gt;
+</a><a href="#h3-0-120" id="h3-0-120" class="i">+    &lt;/details&gt;
+</a><a href="#h3-0-121" id="h3-0-121" class="i">+  &lt;/article&gt;&lt;article class=&quot;sales-plan-card&quot; data-plan-code=&quot;sem_ia&quot; aria-labelledby=&quot;sales-plan-sem_ia&quot;&gt;
+</a><a href="#h3-0-122" id="h3-0-122" class="i">+    &lt;div class=&quot;sales-plan-heading&quot;&gt;
+</a><a href="#h3-0-123" id="h3-0-123" class="i">+      &lt;div&gt;
+</a><a href="#h3-0-124" id="h3-0-124" class="i">+        &lt;p class=&quot;sales-plan-index&quot;&gt;Pacote de até 7 projetos&lt;/p&gt;
+</a><a href="#h3-0-125" id="h3-0-125" class="i">+        &lt;h3 id=&quot;sales-plan-sem_ia&quot;&gt;Essencial&lt;/h3&gt;
+</a><a href="#h3-0-126" id="h3-0-126" class="i">+      &lt;/div&gt;
+</a><a href="#h3-0-127" id="h3-0-127" class="i">+    &lt;/div&gt;
+</a><a href="#h3-0-128" id="h3-0-128" class="i">+    &lt;p class=&quot;sales-plan-description&quot;&gt;Até 7 projetos com roteiros e exportação em PDF.&lt;/p&gt;
+</a><a href="#h3-0-129" id="h3-0-129" class="i">+    &lt;div class=&quot;sales-price-stack&quot;&gt;
+</a><a href="#h3-0-130" id="h3-0-130" class="i">+      &lt;strong class=&quot;sales-current-price&quot;&gt;R$ 35,00&lt;/strong&gt;
+</a><a href="#h3-0-131" id="h3-0-131" class="i">+    &lt;/div&gt;
+</a><a href="#h3-0-132" id="h3-0-132" class="i">+    &lt;ul class=&quot;sales-plan-benefits&quot;&gt;
+</a><a href="#h3-0-133" id="h3-0-133" class="i">+    &lt;li&gt;&lt;strong&gt;7 projetos&lt;/strong&gt;&lt;span&gt;7 créditos de projeto&lt;/span&gt;&lt;/li&gt;
+</a><a href="#h3-0-134" id="h3-0-134" class="i">+    &lt;li&gt;&lt;strong&gt;Roteiros para Case e Paper&lt;/strong&gt;&lt;span&gt;Estrutura de trabalho e exportação&lt;/span&gt;&lt;/li&gt;
+</a><a href="#h3-0-135" id="h3-0-135" class="i">+    &lt;li&gt;&lt;strong&gt;PDF&lt;/strong&gt;&lt;span&gt;Exportação a partir do projeto&lt;/span&gt;&lt;/li&gt;
+</a><a href="#h3-0-136" id="h3-0-136" class="i">+  &lt;/ul&gt;
+</a><a href="#h3-0-137" id="h3-0-137" class="i">+    &lt;details class=&quot;pix-payment&quot;&gt;
+</a><a href="#h3-0-138" id="h3-0-138" class="i">+      &lt;summary&gt;Ver pagamento por Pix&lt;/summary&gt;
+</a><a href="#h3-0-139" id="h3-0-139" class="i">+      &lt;div class=&quot;pix-payment-body&quot;&gt;
+</a><a href="#h3-0-140" id="h3-0-140" class="i">+        &lt;img class=&quot;pix-qr&quot; src=&quot;/pix/sem-ia.svg&quot; width=&quot;168&quot; height=&quot;168&quot; alt=&quot;QR Code Pix do plano Essencial&quot;&gt;
+</a><a href="#h3-0-141" id="h3-0-141" class="i">+        &lt;button class=&quot;button button-primary&quot; type=&quot;button&quot; data-pix-copy=&quot;sem_ia&quot;&gt;Copiar código Pix&lt;/button&gt;
+</a><a href="#h3-0-142" id="h3-0-142" class="i">+        &lt;span data-pix-status=&quot;sem_ia&quot; role=&quot;status&quot; aria-live=&quot;polite&quot;&gt;&lt;/span&gt;
+</a><a href="#h3-0-143" id="h3-0-143" class="i">+        &lt;details class=&quot;pix-code&quot;&gt;
+</a><a href="#h3-0-144" id="h3-0-144" class="i">+          &lt;summary&gt;Ver código Pix completo&lt;/summary&gt;
+</a><a href="#h3-0-145" id="h3-0-145" class="i">+          &lt;code class=&quot;pix-payload&quot;&gt;00020126580014BR.GOV.BCB.PIX0136143e87f8-1f46-46b9-8c61-ad6d24f66c11520400005303986540535.005802BR5920Sivaldo Davi Pereira6009SAO PAULO62140510Q5Ry2eeEG3630466A0&lt;/code&gt;
+</a><a href="#h3-0-146" id="h3-0-146" class="i">+        &lt;/details&gt;
+</a><a href="#h3-0-147" id="h3-0-147" class="i">+      &lt;/div&gt;
+</a><a href="#h3-0-148" id="h3-0-148" class="i">+    &lt;/details&gt;
+</a><a href="#h3-0-149" id="h3-0-149" class="i">+  &lt;/article&gt;&lt;article class=&quot;sales-plan-card&quot; data-plan-code=&quot;com_ia&quot; aria-labelledby=&quot;sales-plan-com_ia&quot;&gt;
+</a><a href="#h3-0-150" id="h3-0-150" class="i">+    &lt;div class=&quot;sales-plan-heading&quot;&gt;
+</a><a href="#h3-0-151" id="h3-0-151" class="i">+      &lt;div&gt;
+</a><a href="#h3-0-152" id="h3-0-152" class="i">+        &lt;p class=&quot;sales-plan-index&quot;&gt;Pacote de até 7 projetos&lt;/p&gt;
+</a><a href="#h3-0-153" id="h3-0-153" class="i">+        &lt;h3 id=&quot;sales-plan-com_ia&quot;&gt;Completo&lt;/h3&gt;
+</a><a href="#h3-0-154" id="h3-0-154" class="i">+      &lt;/div&gt;
+</a><a href="#h3-0-155" id="h3-0-155" class="i">+    &lt;/div&gt;
+</a><a href="#h3-0-156" id="h3-0-156" class="i">+    &lt;p class=&quot;sales-plan-description&quot;&gt;Até 7 projetos com sugestões de IA nas etapas disponíveis.&lt;/p&gt;
+</a><a href="#h3-0-157" id="h3-0-157" class="i">+    &lt;div class=&quot;sales-price-stack&quot;&gt;
+</a><a href="#h3-0-158" id="h3-0-158" class="i">+      &lt;strong class=&quot;sales-current-price&quot;&gt;R$ 69,90&lt;/strong&gt;
+</a><a href="#h3-0-159" id="h3-0-159" class="i">+    &lt;/div&gt;
+</a><a href="#h3-0-160" id="h3-0-160" class="i">+    &lt;ul class=&quot;sales-plan-benefits&quot;&gt;
+</a><a href="#h3-0-161" id="h3-0-161" class="i">+    &lt;li&gt;&lt;strong&gt;7 projetos&lt;/strong&gt;&lt;span&gt;7 créditos de projeto&lt;/span&gt;&lt;/li&gt;
+</a><a href="#h3-0-162" id="h3-0-162" class="i">+    &lt;li&gt;&lt;strong&gt;Assistência por IA&lt;/strong&gt;&lt;span&gt;Sugestões nas etapas disponíveis&lt;/span&gt;&lt;/li&gt;
+</a><a href="#h3-0-163" id="h3-0-163" class="i">+    &lt;li&gt;&lt;strong&gt;PDF&lt;/strong&gt;&lt;span&gt;Exportação a partir do projeto&lt;/span&gt;&lt;/li&gt;
+</a><a href="#h3-0-164" id="h3-0-164" class="i">+  &lt;/ul&gt;
+</a><a href="#h3-0-165" id="h3-0-165" class="i">+    &lt;details class=&quot;pix-payment&quot;&gt;
+</a><a href="#h3-0-166" id="h3-0-166" class="i">+      &lt;summary&gt;Ver pagamento por Pix&lt;/summary&gt;
+</a><a href="#h3-0-167" id="h3-0-167" class="i">+      &lt;div class=&quot;pix-payment-body&quot;&gt;
+</a><a href="#h3-0-168" id="h3-0-168" class="i">+        &lt;img class=&quot;pix-qr&quot; src=&quot;/pix/com-ia.svg&quot; width=&quot;168&quot; height=&quot;168&quot; alt=&quot;QR Code Pix do plano Completo&quot;&gt;
+</a><a href="#h3-0-169" id="h3-0-169" class="i">+        &lt;button class=&quot;button button-primary&quot; type=&quot;button&quot; data-pix-copy=&quot;com_ia&quot;&gt;Copiar código Pix&lt;/button&gt;
+</a><a href="#h3-0-170" id="h3-0-170" class="i">+        &lt;span data-pix-status=&quot;com_ia&quot; role=&quot;status&quot; aria-live=&quot;polite&quot;&gt;&lt;/span&gt;
+</a><a href="#h3-0-171" id="h3-0-171" class="i">+        &lt;details class=&quot;pix-code&quot;&gt;
+</a><a href="#h3-0-172" id="h3-0-172" class="i">+          &lt;summary&gt;Ver código Pix completo&lt;/summary&gt;
+</a><a href="#h3-0-173" id="h3-0-173" class="i">+          &lt;code class=&quot;pix-payload&quot;&gt;00020126580014BR.GOV.BCB.PIX0136143e87f8-1f46-46b9-8c61-ad6d24f66c11520400005303986540569.905802BR5920Sivaldo Davi Pereira6009SAO PAULO621405106GaGsYoE0Z6304FDFB&lt;/code&gt;
+</a><a href="#h3-0-174" id="h3-0-174" class="i">+        &lt;/details&gt;
+</a><a href="#h3-0-175" id="h3-0-175" class="i">+      &lt;/div&gt;
+</a><a href="#h3-0-176" id="h3-0-176" class="i">+    &lt;/details&gt;
+</a><a href="#h3-0-177" id="h3-0-177" class="i">+  &lt;/article&gt;&lt;/div&gt;
+</a><a href="#h3-0-178" id="h3-0-178" class="i">+    &lt;div class=&quot;sales-pricing-notes&quot;&gt;
+</a><a href="#h3-0-179" id="h3-0-179" class="i">+      &lt;p&gt;&lt;strong&gt;Para liberar o acesso:&lt;/strong&gt; entre com Google e envie o comprovante e o e-mail da conta pelo WhatsApp.&lt;/p&gt;
+</a><a href="#h3-0-180" id="h3-0-180" class="i">+      &lt;p&gt;Projeto extra: R$ 8,00 no Completo ou R$ 5,00 no Essencial.&lt;/p&gt;
+</a><a href="#h3-0-181" id="h3-0-181" class="i">+      &lt;div class=&quot;sales-contact-links&quot;&gt;&lt;a href=&quot;https://wa.me/5598981417363&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;Enviar comprovante pelo WhatsApp ↗&lt;/a&gt;&lt;/div&gt;
+</a><a href="#h3-0-182" id="h3-0-182" class="i">+    &lt;/div&gt;
+</a><a href="#h3-0-183" id="h3-0-183" class="i">+  &lt;/section&gt;
+</a><a href="#h3-0-184" id="h3-0-184" class="i">+
+</a><a href="#h3-0-185" id="h3-0-185" class="i">+    &lt;section id=&quot;suporte&quot; class=&quot;sales-section sales-support-section&quot; aria-labelledby=&quot;sales-support-title&quot;&gt;
+</a><a href="#h3-0-186" id="h3-0-186" class="i">+      &lt;div&gt;&lt;p class=&quot;sales-kicker&quot;&gt;Ajuda&lt;/p&gt;&lt;h2 id=&quot;sales-support-title&quot;&gt;Ficou com dúvida?&lt;/h2&gt;&lt;p&gt;Fale pelo WhatsApp sobre acesso, pagamento ou uso do roteiro. Para liberar o plano, envie também o e-mail da conta e o comprovante.&lt;/p&gt;&lt;/div&gt;
+</a><a href="#h3-0-187" id="h3-0-187" class="i">+      &lt;div class=&quot;sales-support-card&quot;&gt;&lt;span&gt;Atendimento pelo WhatsApp&lt;/span&gt;&lt;a class=&quot;button button-primary&quot; href=&quot;https://wa.me/5598981417363&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;Abrir WhatsApp&lt;/a&gt;&lt;a class=&quot;sales-inline-link&quot; href=&quot;https://www.instagram.com/sivaldo.davi/&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;Instagram&lt;/a&gt;&lt;/div&gt;
+</a><a href="#h3-0-188" id="h3-0-188" class="i">+    &lt;/section&gt;
+</a><a href="#h3-0-189" id="h3-0-189" class="i">+
+</a><a href="#h3-0-190" id="h3-0-190" class="i">+    &lt;section class=&quot;sales-section sales-faq-section&quot; aria-labelledby=&quot;sales-faq-title&quot;&gt;
+</a><a href="#h3-0-191" id="h3-0-191" class="i">+      &lt;div class=&quot;sales-section-heading&quot;&gt;&lt;p class=&quot;sales-kicker&quot;&gt;Dúvidas frequentes&lt;/p&gt;&lt;h2 id=&quot;sales-faq-title&quot;&gt;Antes de começar&lt;/h2&gt;&lt;/div&gt;
+</a><a href="#h3-0-192" id="h3-0-192" class="i">+      &lt;div class=&quot;sales-faq-list&quot;&gt;
+</a><a href="#h3-0-193" id="h3-0-193" class="i">+        &lt;details&gt;&lt;summary&gt;O que muda entre Essencial e Completo?&lt;/summary&gt;&lt;p&gt;Os dois pacotes incluem até 7 créditos de projeto. O Completo inclui sugestões por IA nas etapas disponíveis; o Essencial inclui os roteiros e a exportação em PDF.&lt;/p&gt;&lt;/details&gt;
+</a><a href="#h3-0-194" id="h3-0-194" class="i">+        &lt;details&gt;&lt;summary&gt;Projeto de Paper e Paper Final usam dois créditos?&lt;/summary&gt;&lt;p&gt;Não. As duas etapas pertencem ao mesmo projeto e usam um crédito.&lt;/p&gt;&lt;/details&gt;
+</a><a href="#h3-0-195" id="h3-0-195" class="i">+        &lt;details&gt;&lt;summary&gt;Os créditos expiram?&lt;/summary&gt;&lt;p&gt;Não. Os créditos não expiram e não há renovação automática.&lt;/p&gt;&lt;/details&gt;
+</a><a href="#h3-0-196" id="h3-0-196" class="i">+        &lt;details&gt;&lt;summary&gt;Como o plano é liberado após o Pix?&lt;/summary&gt;&lt;p&gt;Entre com Google, envie o comprovante e informe o e-mail da conta pelo WhatsApp. O administrador confirma o pagamento e atribui o plano e os créditos manualmente.&lt;/p&gt;&lt;/details&gt;
+</a><a href="#h3-0-197" id="h3-0-197" class="i">+        &lt;details&gt;&lt;summary&gt;Posso ver os modelos sem entrar?&lt;/summary&gt;&lt;p&gt;Sim. Os exemplos preenchidos e os documentos podem ser consultados sem criar uma conta.&lt;/p&gt;&lt;/details&gt;
+</a><a href="#h3-0-198" id="h3-0-198" class="i">+      &lt;/div&gt;
+</a><a href="#h3-0-199" id="h3-0-199" class="i">+    &lt;/section&gt;
+</a><a href="#h3-0-200" id="h3-0-200" class="i">+
+</a><a href="#h3-0-201" id="h3-0-201" class="i">+    &lt;footer class=&quot;sales-footer&quot;&gt;
+</a><a href="#h3-0-202" id="h3-0-202" class="i">+      &lt;div&gt;&lt;strong&gt;Assistente Acadêmico&lt;/strong&gt;&lt;p&gt;Roteiros para organizar Case e Paper.&lt;/p&gt;&lt;/div&gt;
+</a><a href="#h3-0-203" id="h3-0-203" class="i">+      &lt;nav aria-label=&quot;Links institucionais&quot;&gt;&lt;a href=&quot;/termos/&quot;&gt;Termos&lt;/a&gt;&lt;a href=&quot;/privacidade/&quot;&gt;Privacidade&lt;/a&gt;&lt;a href=&quot;/ajuda-ia/&quot;&gt;Detalhes da assistência&lt;/a&gt;&lt;a href=&quot;/jornada/&quot;&gt;Jornada&lt;/a&gt;&lt;a href=&quot;#suporte&quot; data-site-section=&quot;suporte&quot;&gt;Suporte&lt;/a&gt;&lt;/nav&gt;
+</a><a href="#h3-0-204" id="h3-0-204" class="i">+    &lt;/footer&gt;
+</a><a href="#h3-0-205" id="h3-0-205" class="i">+  &lt;/div&gt;&lt;/main&gt;
+</a><a href="#h3-0-206" id="h3-0-206" class="i">+
+</a> {% endblock %}
+<b>diff --git a/<a id="h4" href="../file/tests/test_smoke.py.html">tests/test_smoke.py</a> b/<a href="../file/tests/test_smoke.py.html">tests/test_smoke.py</a></b>
+<a href="#h4-0" id="h4-0" class="h">@@ -8,8 +8,8 @@ def test_public_shell_is_server_rendered(client):
+</a>     response = client.get(&quot;/&quot;)
+     assert response.status_code == 200
+     body = response.get_data(as_text=True)
+<a href="#h4-0-3" id="h4-0-3" class="d">-    assert &quot;O mesmo Assistente Acadêmico&quot; in body
+</a><a href="#h4-0-4" id="h4-0-4" class="d">-    assert &quot;v2 privada&quot; in body
+</a><a href="#h4-0-5" id="h4-0-5" class="i">+    assert &quot;Case e Paper, em um só lugar.&quot; in body
+</a><a href="#h4-0-6" id="h4-0-6" class="i">+    assert &quot;Seus projetos são privados por padrão.&quot; in body
+</a> 
+ 
+ def test_database_starts_without_legacy_tables(app):
+</pre>
+</div>
+</body>
+</html>

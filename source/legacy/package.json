@@ -1,0 +1,14 @@
+{
+  "name": "assistente-academico",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "hugo server --buildDrafts",
+    "build": "hugo --minify"
+  },
+  "dependencies": {
+    "@myriaddreamin/typst.ts": "^0.7.0",
+    "@myriaddreamin/typst-ts-renderer": "^0.7.0",
+    "@myriaddreamin/typst-ts-web-compiler": "^0.7.0"
+  }
+}

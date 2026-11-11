@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+<title>assistente-academico, branch HEAD</title>
+<subtitle>Assistente Acadêmico v2
+</subtitle>
+<entry>
+<id>4652cde5156c72b9f41b0847dfa57de72587095f</id>
+<published>2026-10-28T12:57:13Z</published>
+<updated>2026-10-28T12:57:13Z</updated>
+<title type="text">Fix: Add file-based migration lock to prevent SQLite locking issues in multi-worker gunicorn</title>
+<link rel="alternate" type="text/html" href="commit/4652cde5156c72b9f41b0847dfa57de72587095f.html" />
+<author>
+<name>Claude</name>
+<email>noreply@anthropic.com</email>
+</author>
+<content type="text">commit 4652cde5156c72b9f41b0847dfa57de72587095f
+parent feab64555d0c0b6ea05923bc6e3324b935e0208f
+Author: Claude &lt;noreply@anthropic.com&gt;
+Date:   Wed, 28 Oct 2026 09:57:13 -0300
+
+Fix: Add file-based migration lock to prevent SQLite locking issues in multi-worker gunicorn
+
+The init_db() function was being called in each gunicorn worker process,
+causing concurrent SQLite migrations that led to &#39;unable to open database file&#39;
+errors due to WAL mode locking conflicts. Added a file-based lock using fcntl
+to ensure only one worker runs migrations at a time.
+
+Co-Authored-By: Claude Opus 5.5 &lt;noreply@anthropic.com&gt;
+
+</content>
+</entry>
+<entry>
+<id>feab64555d0c0b6ea05923bc6e3324b935e0208f</id>
+<published>2026-10-28T12:31:32Z</published>
+<updated>2026-10-28T12:31:32Z</updated>
+<title type="text">Visual Design System Fixes + Documentation Updates</title>
+<link rel="alternate" type="text/html" href="commit/feab64555d0c0b6ea05923bc6e3324b935e0208f.html" />
+<author>
+<name>Claude</name>
+<email>noreply@anthropic.com</email>
+</author>
+<content type="text">commit feab64555d0c0b6ea05923bc6e3324b935e0208f
+Author: Claude &lt;noreply@anthropic.com&gt;
+Date:   Wed, 28 Oct 2026 09:31:32 -0300
+
+Visual Design System Fixes + Documentation Updates
+
+Phase 1-4 complete: tokens, layout, components, templates, docs updated
+
+Co-Authored-By: Claude Opus 5.5 &lt;noreply@anthropic.com&gt;
+
+</content>
+</entry>
+</feed>

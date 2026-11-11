@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>docs: planejar pesquisa juridica contextual e fallback Gemini - assistente-academico - Assistente Acadêmico v2
+</title>
+<link rel="icon" type="image/png" href="../favicon.png" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed" href="../atom.xml" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed (tags)" href="../tags.xml" />
+<link rel="stylesheet" type="text/css" href="../style.css" />
+</head>
+<body>
+<table><tr><td><a href="../../"><img src="../logo.png" alt="" width="32" height="32" /></a></td><td><h1>assistente-academico</h1><span class="desc">Assistente Acadêmico v2
+</span></td></tr><tr class="url"><td></td><td>git clone <a href="git://git.sivaldodavi.com.br/assistente-academico.git">git://git.sivaldodavi.com.br/assistente-academico.git</a></td></tr><tr><td></td><td>
+<a href="../log.html">Log</a> | <a href="../files.html">Files</a> | <a href="../refs.html">Refs</a> | <a href="../file/README.md.html">README</a></td></tr></table>
+<hr/>
+<div id="content">
+<pre><b>commit</b> <a href="../commit/17f028978586c27461f8279acdd9cbfd4c3b6809.html">17f028978586c27461f8279acdd9cbfd4c3b6809</a>
+<b>parent</b> <a href="../commit/686b3dc97af26fbe32734875cd1b2257b64fc8b2.html">686b3dc97af26fbe32734875cd1b2257b64fc8b2</a>
+<b>Author:</b> Sivaldo Davi &lt;<span class="offview">g<span>x</span>i<span>x</span>t<span>x</span>@<span>x</span>s<span>x</span>i<span>x</span>v<span>x</span>a<span>x</span>l<span>x</span>d<span>x</span>o<span>x</span>d<span>x</span>a<span>x</span>v<span>x</span>i<span>x</span>.<span>x</span>c<span>x</span>o<span>x</span>m</span>&gt;
+<b>Date:</b>   Mon, 26 Oct 2026 19:01:38 +0000
+
+docs: planejar pesquisa juridica contextual e fallback Gemini
+
+<b>Diffstat:</b>
+<table><tr><td class="M">M</td><td><a href="#h0">AGENTS.md</a></td><td> | </td><td class="num">3</td><td><span class="i">++</span><span class="d">-</span></td></tr>
+<tr><td class="M">M</td><td><a href="#h1">docs/ia/ESTADO.md</a></td><td> | </td><td class="num">2</td><td><span class="i">++</span><span class="d"></span></td></tr>
+<tr><td class="M">M</td><td><a href="#h2">docs/ia/PENDENCIAS.md</a></td><td> | </td><td class="num">4</td><td><span class="i">++</span><span class="d">--</span></td></tr>
+<tr><td class="A">A</td><td><a href="#h3">docs/ia/PLANO-PESQUISA-JURIDICA-E-IA.md</a></td><td> | </td><td class="num">194</td><td><span class="i">+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</span><span class="d"></span></td></tr>
+</table></pre><pre>4 files changed, 200 insertions(+), 3 deletions(-)
+<hr/><b>diff --git a/<a id="h0" href="../file/AGENTS.md.html">AGENTS.md</a> b/<a href="../file/AGENTS.md.html">AGENTS.md</a></b>
+<a href="#h0-0" id="h0-0" class="h">@@ -10,7 +10,8 @@ Leia, nesta ordem:
+</a> 2. `docs/ia/ARQUITETURA.md`;
+ 3. `docs/ia/DECISOES.md`;
+ 4. `docs/ia/INTERFACE.md`;
+<a href="#h0-0-3" id="h0-0-3" class="d">-5. a documentação do domínio que será alterado.
+</a><a href="#h0-0-4" id="h0-0-4" class="i">+5. `docs/ia/PLANO-PESQUISA-JURIDICA-E-IA.md` quando a mudança envolver biblioteca, catálogo, pesquisa ou IA;
+</a><a href="#h0-0-5" id="h0-0-5" class="i">+6. a documentação do domínio que será alterado.
+</a> 
+ ## Regras permanentes
+ 
+<b>diff --git a/<a id="h1" href="../file/docs/ia/ESTADO.md.html">docs/ia/ESTADO.md</a> b/<a href="../file/docs/ia/ESTADO.md.html">docs/ia/ESTADO.md</a></b>
+<a href="#h1-0" id="h1-0" class="h">@@ -18,6 +18,8 @@ A aplicação principal é independente em Python 3.13, Flask, Jinja, SQLite WAL
+</a> - adaptadores DeepSeek e JEV/Typesafe testáveis sem rede;
+ - compartilhamento administrativo revogável e comentários fora do texto.
+ 
+<a href="#h1-0-3" id="h1-0-3" class="i">+A Biblioteca Pessoal e a consulta A–Z do catálogo estão disponíveis, mas a pesquisa contextual do legado ainda não foi recuperada. Ainda faltam o percurso dentro da etapa de fontes, a separação de sugestões em Lei/Jurisprudência/Doutrina e o fallback técnico DeepSeek→Gemini. O plano permanente está em `docs/ia/PLANO-PESQUISA-JURIDICA-E-IA.md`.
+</a><a href="#h1-0-4" id="h1-0-4" class="i">+
+</a> ## Operação atual
+ 
+ O domínio `https://trab.sivaldodavi.com.br` aponta para o container `site-assistente-academico`, construído de `/opt/servidor/sites/assistente-academico/`. O banco principal fica em `/opt/servidor/data/assistente-academico/assistente_v2.sqlite3` e não compartilha dados com o legado.
+<b>diff --git a/<a id="h2" href="../file/docs/ia/PENDENCIAS.md.html">docs/ia/PENDENCIAS.md</a> b/<a href="../file/docs/ia/PENDENCIAS.md.html">docs/ia/PENDENCIAS.md</a></b>
+<a href="#h2-0" id="h2-0" class="h">@@ -6,9 +6,9 @@ Este arquivo reúne diferenças verificáveis entre a aplicação Python e o pro
+</a> 
+ - Composição acadêmica completa/ABNT, modelos e materiais de apoio do PDF. A cadeia Quarto/Typst agora reutiliza a extensão do produto de referência; ainda falta validar visualmente todos os modelos em produção.
+ - Regras de uso: reservas, limites efetivos na criação, concessão por plano, uso de IA por trabalho, falhas/devoluções e exibição de saldo. O painel de concessão manual e os contadores não substituem essas regras.
+<a href="#h2-0-3" id="h2-0-3" class="d">-- Assistentes especializados, etapas de pesquisa e avaliações JEV do legado. Revisão manual genérica e validação básica não comprovam cobertura de todos os fluxos anteriores.
+</a><a href="#h2-0-4" id="h2-0-4" class="i">+- Recuperar o percurso contextual de pesquisa do legado: índice Vade 2023, livros jurídicos 2021, ementas STJ, pergunta-problema, instruções do professor, teses, palavras-chave, busca institucional e ranking/validação JEV. Revisão manual genérica não substitui esse fluxo. O plano está em `PLANO-PESQUISA-JURIDICA-E-IA.md`.
+</a> - Estados de entrega por fase e comentários vinculados ao contexto acadêmico; a aplicação não manterá histórico de versões.
+<a href="#h2-0-6" id="h2-0-6" class="d">-- Citações, fontes vinculadas a trechos/argumentações e importação de resultados da pesquisa para referências. Fontes pessoais e índice local não equivalem a todos os mecanismos bibliográficos do sistema anterior.
+</a><a href="#h2-0-7" id="h2-0-7" class="i">+- Citações, fontes vinculadas a trechos/argumentações, importação confirmada de resultados para referências e integração opcional com Gemini como fallback técnico do DeepSeek. Fontes pessoais e índice local não equivalem aos mecanismos bibliográficos do sistema anterior.
+</a> 
+ Não retirar essas diferenças da lista apenas porque uma tela equivalente existe. Resolver usando o legado como referência de contrato e experiência, sem compartilhar banco de contas nem executar o backend antigo como parte da aplicação nova.
+ 
+<b>diff --git a/<a id="h3" href="../file/docs/ia/PLANO-PESQUISA-JURIDICA-E-IA.md.html">docs/ia/PLANO-PESQUISA-JURIDICA-E-IA.md</a> b/<a href="../file/docs/ia/PLANO-PESQUISA-JURIDICA-E-IA.md.html">docs/ia/PLANO-PESQUISA-JURIDICA-E-IA.md</a></b>
+<a href="#h3-0" id="h3-0" class="h">@@ -0,0 +1,194 @@
+</a><a href="#h3-0-0" id="h3-0-0" class="i">+# Plano de pesquisa jurídica e sugestões por IA
+</a><a href="#h3-0-1" id="h3-0-1" class="i">+
+</a><a href="#h3-0-2" id="h3-0-2" class="i">+## Decisão de produto
+</a><a href="#h3-0-3" id="h3-0-3" class="i">+
+</a><a href="#h3-0-4" id="h3-0-4" class="i">+A Biblioteca Pessoal e o Índice alfabético-remissivo não são a mesma coisa. A Biblioteca Pessoal guarda fontes escolhidas pelo usuário. O Índice consulta um acervo jurídico externo, separado do banco de contas, que fornece registros de legislação, jurisprudência e doutrina.
+</a><a href="#h3-0-5" id="h3-0-5" class="i">+
+</a><a href="#h3-0-6" id="h3-0-6" class="i">+O percurso correto acontece dentro do trabalho, na etapa de fontes e pesquisa. O usuário informa a pergunta-problema, as instruções do professor e, quando necessário, palavras-chave. O sistema consulta primeiro o catálogo jurídico real. Depois, sob ação explícita do usuário, a IA sugere pistas separadas em três grupos: **Lei**, **Jurisprudência** e **Doutrina**.
+</a><a href="#h3-0-7" id="h3-0-7" class="i">+
+</a><a href="#h3-0-8" id="h3-0-8" class="i">+A IA não escolhe uma autoridade “do nada”, não inventa número de processo, não transforma um livro em fonte cadastrada automaticamente e não apresenta uma recomendação como parecer jurídico. Ela recebe candidatos existentes no catálogo, devolve os identificadores desses candidatos e explica, em poucas linhas, por que cada um pode ser pertinente à pergunta. O usuário confere a fonte, edita o uso pretendido ou descarta a sugestão.
+</a><a href="#h3-0-9" id="h3-0-9" class="i">+
+</a><a href="#h3-0-10" id="h3-0-10" class="i">+Esta é uma recuperação de comportamento do legado, não um redesign. O legado já contém a maior parte dos contratos necessários em `research_catalog.py`, `scripts/import_epub_index.py`, `scripts/import_ufob_csv.py`, `scripts/import_stj_metadata.py`, `web_search.py`, `ai_support.py`, `providers.py`, `store/usage.py` e `assets/js/main.js`. A nova aplicação deve portar esses contratos, não inventar uma biblioteca genérica novamente.
+</a><a href="#h3-0-11" id="h3-0-11" class="i">+
+</a><a href="#h3-0-12" id="h3-0-12" class="i">+## O acervo que precisa existir
+</a><a href="#h3-0-13" id="h3-0-13" class="i">+
+</a><a href="#h3-0-14" id="h3-0-14" class="i">+O catálogo deve continuar sendo um SQLite somente leitura, fora do banco de contas e projetos. A tabela pública mantém `id`, `kind`, `title`, `reference`, `author`, `abstract`, `source_year`, `source`, `search_text` e `payload`. Os únicos tipos canônicos são `legislation`, `case-law` e `book`; a entrada `case_law` pode ser aceita apenas como alias de compatibilidade no request.
+</a><a href="#h3-0-15" id="h3-0-15" class="i">+
+</a><a href="#h3-0-16" id="h3-0-16" class="i">+O primeiro corpus é o índice alfabético-remissivo do Vade Mecum Método, 16ª edição de 2023. Ele não representa o texto integral das leis. Cada registro aponta para um termo, uma norma e uma remissão, com origem claramente identificada. A interface deve chamar isso de **Índice remissivo · 2023** e não prometer que o catálogo contém todos os dispositivos legais.
+</a><a href="#h3-0-17" id="h3-0-17" class="i">+
+</a><a href="#h3-0-18" id="h3-0-18" class="i">+O segundo corpus é o acervo jurídico da plataforma Minha Biblioteca/UFOB de 2021. Ele oferece metadados de livros jurídicos, como título, autor, ISBN, ano e origem. Não oferece o conteúdo integral dos livros. A interface deve chamá-lo de **Livros jurídicos · 2021** e deixar claro que o resultado é uma pista bibliográfica para conferência.
+</a><a href="#h3-0-19" id="h3-0-19" class="i">+
+</a><a href="#h3-0-20" id="h3-0-20" class="i">+O terceiro corpus é formado por metadados e ementas oficiais do STJ. O importador legado utiliza o pacote de dados abertos da Quarta Turma, preserva ementa, identificação do processo, órgão julgador, data e termos auxiliares, e deliberadamente não salva o campo de decisão ou o inteiro teor. A interface deve chamar isso de **Ementas STJ** e nunca apresentar ementa como se fosse acórdão completo.
+</a><a href="#h3-0-21" id="h3-0-21" class="i">+
+</a><a href="#h3-0-22" id="h3-0-22" class="i">+Os três importadores do legado devem ser reutilizados ou portados quase literalmente, com testes de seus formatos atuais. A atualização do catálogo precisa ser determinística, gerar IDs estáveis, deduplicar registros e escrever o SQLite de maneira atômica. O banco de usuários não participa dessa atualização.
+</a><a href="#h3-0-23" id="h3-0-23" class="i">+
+</a><a href="#h3-0-24" id="h3-0-24" class="i">+## Experiência do usuário
+</a><a href="#h3-0-25" id="h3-0-25" class="i">+
+</a><a href="#h3-0-26" id="h3-0-26" class="i">+Na etapa de fontes do Case, Projeto de Paper e Paper Final, o editor deve oferecer duas ações diferentes:
+</a><a href="#h3-0-27" id="h3-0-27" class="i">+
+</a><a href="#h3-0-28" id="h3-0-28" class="i">+1. **Pesquisar no catálogo.** Consulta local por termo, base e letra A–Z. Essa ação não chama IA e continua funcionando mesmo quando o consentimento de IA estiver desativado.
+</a><a href="#h3-0-29" id="h3-0-29" class="i">+2. **Pedir sugestões para este trabalho.** Ação manual que usa o contexto do trabalho e exige consentimento de IA. Nunca deve ser disparada por autosave, por digitação ou ao abrir a tela.
+</a><a href="#h3-0-30" id="h3-0-30" class="i">+
+</a><a href="#h3-0-31" id="h3-0-31" class="i">+Antes da sugestão, o usuário deve poder revisar os campos enviados: pergunta-problema, instruções do professor, palavras-chave, título, teses, objeto de pesquisa, teoria e fontes selecionadas. O sistema deve indicar quando algum campo está vazio. Em particular, sem instruções do professor a IA pode oferecer somente uma pista geral; não pode afirmar que a sugestão atende à atividade.
+</a><a href="#h3-0-32" id="h3-0-32" class="i">+
+</a><a href="#h3-0-33" id="h3-0-33" class="i">+O resultado deve aparecer em três blocos independentes:
+</a><a href="#h3-0-34" id="h3-0-34" class="i">+
+</a><a href="#h3-0-35" id="h3-0-35" class="i">+- **Lei:** registros do tipo `legislation`.
+</a><a href="#h3-0-36" id="h3-0-36" class="i">+- **Jurisprudência:** registros do tipo `case-law`, especialmente ementas e metadados do STJ.
+</a><a href="#h3-0-37" id="h3-0-37" class="i">+- **Doutrina:** registros do tipo `book`.
+</a><a href="#h3-0-38" id="h3-0-38" class="i">+
+</a><a href="#h3-0-39" id="h3-0-39" class="i">+Cada cartão mostra origem, ano, título, referência, autor quando houver, e uma justificativa curta da pertinência. Também mostra avisos de escopo: índice remissivo não é texto legal integral; ementa não é inteiro teor; livro catalogado não significa acesso ao conteúdo. As ações são **Aplicar**, **Editar antes** e **Descartar**. Aplicar não deve substituir texto acadêmico nem criar uma fonte pessoal sem confirmação explícita.
+</a><a href="#h3-0-40" id="h3-0-40" class="i">+
+</a><a href="#h3-0-41" id="h3-0-41" class="i">+A pesquisa web institucional, quando habilitada, permanece separada da consulta local. O legado permite fontes oficiais como `stj.jus.br`, `stf.jus.br`, `cnj.jus.br`, `planalto.gov.br` e `senado.leg.br`, com HTTPS, validação de host e proteção contra SSRF. Nenhum resultado web deve ser tratado como confiável apenas porque veio de uma busca; ele precisa manter URL, origem e aviso de conferência.
+</a><a href="#h3-0-42" id="h3-0-42" class="i">+
+</a><a href="#h3-0-43" id="h3-0-43" class="i">+## Contrato da recomendação
+</a><a href="#h3-0-44" id="h3-0-44" class="i">+
+</a><a href="#h3-0-45" id="h3-0-45" class="i">+A nova rota pode ser:
+</a><a href="#h3-0-46" id="h3-0-46" class="i">+
+</a><a href="#h3-0-47" id="h3-0-47" class="i">+```text
+</a><a href="#h3-0-48" id="h3-0-48" class="i">+POST /projects/&lt;project_id&gt;/ai/legal-recommendations
+</a><a href="#h3-0-49" id="h3-0-49" class="i">+```
+</a><a href="#h3-0-50" id="h3-0-50" class="i">+
+</a><a href="#h3-0-51" id="h3-0-51" class="i">+Entrada mínima:
+</a><a href="#h3-0-52" id="h3-0-52" class="i">+
+</a><a href="#h3-0-53" id="h3-0-53" class="i">+```json
+</a><a href="#h3-0-54" id="h3-0-54" class="i">+{
+</a><a href="#h3-0-55" id="h3-0-55" class="i">+  &quot;request_id&quot;: &quot;uuid&quot;,
+</a><a href="#h3-0-56" id="h3-0-56" class="i">+  &quot;project_revision&quot;: 12,
+</a><a href="#h3-0-57" id="h3-0-57" class="i">+  &quot;problem_question&quot;: &quot;...&quot;,
+</a><a href="#h3-0-58" id="h3-0-58" class="i">+  &quot;professor_instructions&quot;: &quot;...&quot;,
+</a><a href="#h3-0-59" id="h3-0-59" class="i">+  &quot;keywords&quot;: [&quot;...&quot;],
+</a><a href="#h3-0-60" id="h3-0-60" class="i">+  &quot;catalog_source_ids&quot;: [&quot;vademecum-2023:...&quot;, &quot;stj-...&quot;, &quot;ufob-mb:...&quot;]
+</a><a href="#h3-0-61" id="h3-0-61" class="i">+}
+</a><a href="#h3-0-62" id="h3-0-62" class="i">+```
+</a><a href="#h3-0-63" id="h3-0-63" class="i">+
+</a><a href="#h3-0-64" id="h3-0-64" class="i">+O navegador envia somente IDs de catálogo. Título, autor, ementa, referência, ano, tipo e origem são buscados novamente pelo servidor. Metadados enviados pelo navegador não são fonte de verdade.
+</a><a href="#h3-0-65" id="h3-0-65" class="i">+
+</a><a href="#h3-0-66" id="h3-0-66" class="i">+A resposta deve ter forma equivalente a:
+</a><a href="#h3-0-67" id="h3-0-67" class="i">+
+</a><a href="#h3-0-68" id="h3-0-68" class="i">+```json
+</a><a href="#h3-0-69" id="h3-0-69" class="i">+{
+</a><a href="#h3-0-70" id="h3-0-70" class="i">+  &quot;ok&quot;: true,
+</a><a href="#h3-0-71" id="h3-0-71" class="i">+  &quot;request_id&quot;: &quot;uuid&quot;,
+</a><a href="#h3-0-72" id="h3-0-72" class="i">+  &quot;provider&quot;: {
+</a><a href="#h3-0-73" id="h3-0-73" class="i">+    &quot;name&quot;: &quot;deepseek&quot;,
+</a><a href="#h3-0-74" id="h3-0-74" class="i">+    &quot;model&quot;: &quot;...&quot;,
+</a><a href="#h3-0-75" id="h3-0-75" class="i">+    &quot;fallback_used&quot;: false,
+</a><a href="#h3-0-76" id="h3-0-76" class="i">+    &quot;fallback_reason&quot;: null
+</a><a href="#h3-0-77" id="h3-0-77" class="i">+  },
+</a><a href="#h3-0-78" id="h3-0-78" class="i">+  &quot;recommendations&quot;: {
+</a><a href="#h3-0-79" id="h3-0-79" class="i">+    &quot;law&quot;: [],
+</a><a href="#h3-0-80" id="h3-0-80" class="i">+    &quot;jurisprudence&quot;: [],
+</a><a href="#h3-0-81" id="h3-0-81" class="i">+    &quot;doctrine&quot;: []
+</a><a href="#h3-0-82" id="h3-0-82" class="i">+  },
+</a><a href="#h3-0-83" id="h3-0-83" class="i">+  &quot;coverage&quot;: {
+</a><a href="#h3-0-84" id="h3-0-84" class="i">+    &quot;candidate_count&quot;: 3,
+</a><a href="#h3-0-85" id="h3-0-85" class="i">+    &quot;by_kind&quot;: {
+</a><a href="#h3-0-86" id="h3-0-86" class="i">+      &quot;legislation&quot;: 1,
+</a><a href="#h3-0-87" id="h3-0-87" class="i">+      &quot;case-law&quot;: 1,
+</a><a href="#h3-0-88" id="h3-0-88" class="i">+      &quot;book&quot;: 1
+</a><a href="#h3-0-89" id="h3-0-89" class="i">+    },
+</a><a href="#h3-0-90" id="h3-0-90" class="i">+    &quot;scope&quot;: &quot;índice local; pista inicial&quot;
+</a><a href="#h3-0-91" id="h3-0-91" class="i">+  },
+</a><a href="#h3-0-92" id="h3-0-92" class="i">+  &quot;warnings&quot;: [
+</a><a href="#h3-0-93" id="h3-0-93" class="i">+    &quot;Confira vigência, inteiro teor e pertinência antes de citar.&quot;
+</a><a href="#h3-0-94" id="h3-0-94" class="i">+  ]
+</a><a href="#h3-0-95" id="h3-0-95" class="i">+}
+</a><a href="#h3-0-96" id="h3-0-96" class="i">+```
+</a><a href="#h3-0-97" id="h3-0-97" class="i">+
+</a><a href="#h3-0-98" id="h3-0-98" class="i">+Cada recomendação deve conter `source_id`, `kind`, metadados canônicos, `why` e `rank`. O servidor rejeita categoria incompatível, ID inexistente, duplicidade, fonte inventada e campos extras. Se não houver candidato de uma categoria, a lista fica vazia e a resposta explica o recorte; ausência no catálogo não prova inexistência da fonte.
+</a><a href="#h3-0-99" id="h3-0-99" class="i">+
+</a><a href="#h3-0-100" id="h3-0-100" class="i">+## DeepSeek primário e Gemini como fallback
+</a><a href="#h3-0-101" id="h3-0-101" class="i">+
+</a><a href="#h3-0-102" id="h3-0-102" class="i">+O serviço deve manter uma interface única de saída estruturada, por exemplo `complete_json(messages, schema)`. O adaptador DeepSeek continua usando o endpoint já existente, `response_format: {&quot;type&quot;:&quot;json_object&quot;}` e validação local. A documentação oficial do DeepSeek alerta que JSON pode vir vazio ou truncado; por isso o parser precisa rejeitar resposta vazia, JSON inválido e estrutura semanticamente inválida.
+</a><a href="#h3-0-103" id="h3-0-103" class="i">+
+</a><a href="#h3-0-104" id="h3-0-104" class="i">+O adaptador Gemini deve ser separado no mesmo módulo de provedores. A chave não entra em URL, frontend, banco ou log. A configuração prevista é `GEMINI_API_KEY` ou `GEMINI_API_KEY_FILE`, além de `GEMINI_MODEL` e, se necessário, `GEMINI_API_URL`. O transporte pode usar REST para manter o projeto pequeno; a resposta Gemini é normalizada para o mesmo contrato interno antes de chegar ao domínio.
+</a><a href="#h3-0-105" id="h3-0-105" class="i">+
+</a><a href="#h3-0-106" id="h3-0-106" class="i">+A política é fechada e não é “tentar qualquer coisa até funcionar”:
+</a><a href="#h3-0-107" id="h3-0-107" class="i">+
+</a><a href="#h3-0-108" id="h3-0-108" class="i">+- fazer uma tentativa com DeepSeek;
+</a><a href="#h3-0-109" id="h3-0-109" class="i">+- chamar Gemini uma única vez somente em timeout, falha de conexão, HTTP 408, 429, 5xx, resposta JSON inválida ou resposta grande demais;
+</a><a href="#h3-0-110" id="h3-0-110" class="i">+- não usar Gemini quando faltarem termos, consentimento, quota, projeto, catálogo ou chave válida;
+</a><a href="#h3-0-111" id="h3-0-111" class="i">+- não fazer fallback em 401/402 nem em erro de regra de negócio;
+</a><a href="#h3-0-112" id="h3-0-112" class="i">+- se os dois falharem, devolver erro seguro e reembolsar a reserva;
+</a><a href="#h3-0-113" id="h3-0-113" class="i">+- se DeepSeek produzir resposta válida, nunca chamar Gemini;
+</a><a href="#h3-0-114" id="h3-0-114" class="i">+- informar no resultado qual provedor respondeu e se houve fallback.
+</a><a href="#h3-0-115" id="h3-0-115" class="i">+
+</a><a href="#h3-0-116" id="h3-0-116" class="i">+A rota continua verificando termos, consentimento, CSRF, propriedade do projeto e revisão salva antes de ler secrets ou chamar qualquer provedor. Uma requisição DeepSeek mais um eventual Gemini consome uma única unidade de uso. `request_id` UUID e uma reserva transacional impedem duplo débito em reenvio ou corrida entre abas.
+</a><a href="#h3-0-117" id="h3-0-117" class="i">+
+</a><a href="#h3-0-118" id="h3-0-118" class="i">+O JEV/Typesafe existente não deve ser usado como fallback do Gemini. Ele permanece como avaliador separado enquanto a paridade com o legado for necessária. A primeira versão da recomendação pode usar DeepSeek/Gemini para gerar a estrutura e JEV para validar pertinência, sem misturar os contratos.
+</a><a href="#h3-0-119" id="h3-0-119" class="i">+
+</a><a href="#h3-0-120" id="h3-0-120" class="i">+## Google Scholar: o que é possível
+</a><a href="#h3-0-121" id="h3-0-121" class="i">+
+</a><a href="#h3-0-122" id="h3-0-122" class="i">+Google Scholar é útil para artigos, teses, livros, citações e opiniões judiciais, mas não fornece uma API oficial nem acesso em massa. A própria ajuda do Google informa que não libera acesso em massa e pede respeito ao `robots.txt`; scraping direto não será colocado no Assistente.
+</a><a href="#h3-0-123" id="h3-0-123" class="i">+
+</a><a href="#h3-0-124" id="h3-0-124" class="i">+A solução segura é dividir a necessidade em três caminhos. O catálogo local continua sendo a fonte jurídica determinística. A busca oficial permitida continua sendo usada para Planalto, STJ, STF, CNJ e Senado. Uma integração Google Scholar pode ser criada como adaptador opcional de terceiro, por exemplo SerpApi, com chave separada, limite de uso, cache e aviso de que o resultado é externo. Ela não deve ser requisito para o site funcionar.
+</a><a href="#h3-0-125" id="h3-0-125" class="i">+
+</a><a href="#h3-0-126" id="h3-0-126" class="i">+Não usaremos a ferramenta Google Search do Gemini como substituta automática do Scholar. O grounding do Gemini pesquisa a web geral e devolve citações de URL, mas não garante que cada resultado seja de Google Scholar, nem substitui a proveniência dos corpora jurídicos. Se for habilitado no futuro, será uma etapa explícita de pesquisa externa, com custo e origem mostrados ao usuário.
+</a><a href="#h3-0-127" id="h3-0-127" class="i">+
+</a><a href="#h3-0-128" id="h3-0-128" class="i">+A ordem recomendada é: primeiro recuperar os três corpora e a pesquisa contextual do legado; depois criar o adaptador Scholar opcional; somente depois avaliar grounding do Gemini para consultas acadêmicas abertas. Isso evita pagar por busca externa enquanto o acervo básico ainda não está correto.
+</a><a href="#h3-0-129" id="h3-0-129" class="i">+
+</a><a href="#h3-0-130" id="h3-0-130" class="i">+## Organização da implementação
+</a><a href="#h3-0-131" id="h3-0-131" class="i">+
+</a><a href="#h3-0-132" id="h3-0-132" class="i">+### Fase 1 — Recuperar o acervo e seus contratos
+</a><a href="#h3-0-133" id="h3-0-133" class="i">+
+</a><a href="#h3-0-134" id="h3-0-134" class="i">+Portar os importadores do legado, montar o catálogo no volume externo do VPS, registrar metadados de origem e criar fixtures pequenas para Vade 2023, livros UFOB 2021 e ementas STJ. Validar IDs, deduplicação, anos, origem e a distinção entre ementa e inteiro teor.
+</a><a href="#h3-0-135" id="h3-0-135" class="i">+
+</a><a href="#h3-0-136" id="h3-0-136" class="i">+Critério de aceite: a biblioteca mostra as três bases reais, a consulta A–Z continua funcionando e a aplicação permanece utilizável quando o catálogo está ausente ou somente leitura.
+</a><a href="#h3-0-137" id="h3-0-137" class="i">+
+</a><a href="#h3-0-138" id="h3-0-138" class="i">+### Fase 2 — Recolocar a pesquisa dentro do trabalho
+</a><a href="#h3-0-139" id="h3-0-139" class="i">+
+</a><a href="#h3-0-140" id="h3-0-140" class="i">+Adicionar a ferramenta de pesquisa à etapa de fontes do editor. Reutilizar os campos já existentes de `assignment_prompt`, professor, pergunta-problema, teses, objeto, teoria e `keywords`. Repor a busca local contextual e a resposta de referências, sem chamar IA na consulta simples.
+</a><a href="#h3-0-141" id="h3-0-141" class="i">+
+</a><a href="#h3-0-142" id="h3-0-142" class="i">+Critério de aceite: o usuário consegue pesquisar, visualizar origem/ano/referência/ementa e escolher candidatos sem que nenhum resultado seja cadastrado automaticamente.
+</a><a href="#h3-0-143" id="h3-0-143" class="i">+
+</a><a href="#h3-0-144" id="h3-0-144" class="i">+### Fase 3 — Repor pesquisa contextual e validação
+</a><a href="#h3-0-145" id="h3-0-145" class="i">+
+</a><a href="#h3-0-146" id="h3-0-146" class="i">+Criar o domínio `legal_recommendations`, o serviço de contexto, a rota autenticada e os contratos de `request_id`, reserva, finalização e reembolso. Repor as ações especializadas do legado gradualmente, começando por pesquisa de referências e depois sugestões de pergunta-problema, teses e revisão de referências.
+</a><a href="#h3-0-147" id="h3-0-147" class="i">+
+</a><a href="#h3-0-148" id="h3-0-148" class="i">+Critério de aceite: a IA usa pergunta-problema e instruções do professor, separa Lei/Jurisprudência/Doutrina, só aponta IDs existentes e oferece aplicar/editar/descartar.
+</a><a href="#h3-0-149" id="h3-0-149" class="i">+
+</a><a href="#h3-0-150" id="h3-0-150" class="i">+### Fase 4 — Adicionar Gemini
+</a><a href="#h3-0-151" id="h3-0-151" class="i">+
+</a><a href="#h3-0-152" id="h3-0-152" class="i">+Implementar `GeminiClient` fakeável, fixtures de respostas válidas e inválidas, matriz de fallback e variáveis de configuração sem secrets no Git. O Gemini entra primeiro somente como fallback técnico, não como segundo resultado concorrente nem como busca web automática.
+</a><a href="#h3-0-153" id="h3-0-153" class="i">+
+</a><a href="#h3-0-154" id="h3-0-154" class="i">+Critério de aceite: DeepSeek válido gera uma única chamada; timeout/5xx do DeepSeek gera no máximo uma chamada Gemini; erro de consentimento, quota ou configuração não chama Gemini; resposta inválida dos dois reembolsa a reserva.
+</a><a href="#h3-0-155" id="h3-0-155" class="i">+
+</a><a href="#h3-0-156" id="h3-0-156" class="i">+### Fase 5 — Pesquisa acadêmica externa opcional
+</a><a href="#h3-0-157" id="h3-0-157" class="i">+
+</a><a href="#h3-0-158" id="h3-0-158" class="i">+Criar um adaptador separado para um provedor de resultados do Google Scholar, inicialmente desativado. A resposta fica marcada como externa, com cache, limite e URL original. O contrato não mistura esses resultados com o corpus STJ, Vade ou livros 2021.
+</a><a href="#h3-0-159" id="h3-0-159" class="i">+
+</a><a href="#h3-0-160" id="h3-0-160" class="i">+Critério de aceite: sem chave do provedor, a aplicação funciona normalmente; com chave, o usuário vê custo/limite e origem; nenhuma chamada é feita durante autosave ou abertura do editor.
+</a><a href="#h3-0-161" id="h3-0-161" class="i">+
+</a><a href="#h3-0-162" id="h3-0-162" class="i">+## Testes obrigatórios
+</a><a href="#h3-0-163" id="h3-0-163" class="i">+
+</a><a href="#h3-0-164" id="h3-0-164" class="i">+Os testes de domínio devem cobrir separação de categorias, IDs inexistentes, fontes incompatíveis, resposta vazia, ausência de professor e ausência de candidatos. Os testes de catálogo devem verificar FTS, fallback sem FTS, A–Z, deduplicação, anos e proveniência dos três corpora.
+</a><a href="#h3-0-165" id="h3-0-165" class="i">+
+</a><a href="#h3-0-166" id="h3-0-166" class="i">+Os testes de provedores devem usar transportes falsos. É necessário provar que DeepSeek válido não chama Gemini, que falha técnica chama Gemini uma vez, que falha de autenticação não faz fallback, que JSON inválido é rejeitado e que nenhum prompt ou resposta aparece em logs.
+</a><a href="#h3-0-167" id="h3-0-167" class="i">+
+</a><a href="#h3-0-168" id="h3-0-168" class="i">+Os testes de rota devem cobrir termos, consentimento, CSRF, projeto alheio, revisão velha, UUID repetido, quota, ausência de catálogo e reembolso. O teste de navegador deve conferir a ferramenta dentro da etapa de fontes, os três blocos de resultados, aplicar/editar/descartar, aviso de ementa, ausência de cadastro automático e preservação do autosave.
+</a><a href="#h3-0-169" id="h3-0-169" class="i">+
+</a><a href="#h3-0-170" id="h3-0-170" class="i">+Nenhum teste chama Google, DeepSeek, Gemini, JEV ou provedor Scholar real. Staging usa banco temporário, fixtures do catálogo e rede bloqueada para os testes automatizados.
+</a><a href="#h3-0-171" id="h3-0-171" class="i">+
+</a><a href="#h3-0-172" id="h3-0-172" class="i">+## Arquivos previstos
+</a><a href="#h3-0-173" id="h3-0-173" class="i">+
+</a><a href="#h3-0-174" id="h3-0-174" class="i">+A implementação deve reutilizar `app/services/research.py`, `app/services/assistant.py`, `app/services/providers.py`, `app/routes/ai.py`, `app/routes/library.py`, `templates/projects/editor.html` e `static/js/project-editor.js` antes de criar módulos novos.
+</a><a href="#h3-0-175" id="h3-0-175" class="i">+
+</a><a href="#h3-0-176" id="h3-0-176" class="i">+Os novos limites devem ficar pequenos e explícitos: `app/domain/legal_recommendations.py` para normalização e validação; um serviço de recomendação contextual; um adaptador Gemini no módulo de provedores; e testes por contrato. Os importadores do legado devem ficar em `scripts/` e a documentação do catálogo deve explicar como atualizá-los. Não criar uma segunda biblioteca, um segundo banco de usuários ou um agente autônomo separado.
+</a><a href="#h3-0-177" id="h3-0-177" class="i">+
+</a><a href="#h3-0-178" id="h3-0-178" class="i">+## Estado desta decisão
+</a><a href="#h3-0-179" id="h3-0-179" class="i">+
+</a><a href="#h3-0-180" id="h3-0-180" class="i">+Este documento define o plano aprovado para recuperar a pesquisa jurídica contextual. Nenhuma API Scholar, Gemini ou busca externa deve ser ativada apenas por existir neste documento. Primeiro devem ser recuperados os contratos e corpora do legado, com testes falsos e catálogo determinístico. A ativação de Gemini exige chave separada, documentação de custo e teste de fallback; a ativação de Scholar exige provedor explicitamente escolhido e política de uso.
+</a><a href="#h3-0-181" id="h3-0-181" class="i">+
+</a><a href="#h3-0-182" id="h3-0-182" class="i">+## Referências externas
+</a><a href="#h3-0-183" id="h3-0-183" class="i">+
+</a><a href="#h3-0-184" id="h3-0-184" class="i">+As referências a seguir fundamentam somente as capacidades e limitações dos serviços externos. Os comportamentos do produto legado foram confirmados nos arquivos e funções citados ao longo deste documento.
+</a><a href="#h3-0-185" id="h3-0-185" class="i">+
+</a><a href="#h3-0-186" id="h3-0-186" class="i">+[1]: https://ai.google.dev/gemini-api/docs/structured-output &quot;Gemini API structured outputs&quot;
+</a><a href="#h3-0-187" id="h3-0-187" class="i">+[2]: https://ai.google.dev/gemini-api/docs/quickstart &quot;Gemini API getting started&quot;
+</a><a href="#h3-0-188" id="h3-0-188" class="i">+[3]: https://ai.google.dev/gemini-api/docs/google-search &quot;Gemini API grounding with Google Search&quot;
+</a><a href="#h3-0-189" id="h3-0-189" class="i">+[4]: https://api-docs.deepseek.com/guides/json_mode/ &quot;DeepSeek JSON Output&quot;
+</a><a href="#h3-0-190" id="h3-0-190" class="i">+[5]: https://api-docs.deepseek.com/guides/search/ &quot;DeepSeek Search and Fetch&quot;
+</a><a href="#h3-0-191" id="h3-0-191" class="i">+[6]: https://scholar.google.com/intl/en/scholar/about.html &quot;Google Scholar About&quot;
+</a><a href="#h3-0-192" id="h3-0-192" class="i">+[7]: https://scholar.google.com/intl/en/scholar/help.html &quot;Google Scholar Search Help&quot;
+</a><a href="#h3-0-193" id="h3-0-193" class="i">+[8]: https://serpapi.com/google-scholar-api &quot;SerpApi Google Scholar API&quot;
+</a></pre>
+</div>
+</body>
+</html>

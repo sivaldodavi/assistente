@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>test_oauth.py - assistente-academico - Assistente Acadêmico v2
+</title>
+<link rel="icon" type="image/png" href="../../favicon.png" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed" href="../../atom.xml" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed (tags)" href="../../tags.xml" />
+<link rel="stylesheet" type="text/css" href="../../style.css" />
+</head>
+<body>
+<table><tr><td><a href="../../../"><img src="../../logo.png" alt="" width="32" height="32" /></a></td><td><h1>assistente-academico</h1><span class="desc">Assistente Acadêmico v2
+</span></td></tr><tr class="url"><td></td><td>git clone <a href="git://git.sivaldodavi.com.br/assistente-academico.git">git://git.sivaldodavi.com.br/assistente-academico.git</a></td></tr><tr><td></td><td>
+<a href="../../log.html">Log</a> | <a href="../../files.html">Files</a> | <a href="../../refs.html">Refs</a> | <a href="../../file/README.md.html">README</a></td></tr></table>
+<hr/>
+<div id="content">
+<p> test_oauth.py (3000B)</p><hr/><pre id="blob">
+<a href="#l1" class="line" id="l1">      1</a> from urllib.parse import parse_qs, urlsplit
+<a href="#l2" class="line" id="l2">      2</a> 
+<a href="#l3" class="line" id="l3">      3</a> from app.services.google_oauth import GoogleOAuthClient, valid_redirect_uri
+<a href="#l4" class="line" id="l4">      4</a> 
+<a href="#l5" class="line" id="l5">      5</a> 
+<a href="#l6" class="line" id="l6">      6</a> def configure_google(app):
+<a href="#l7" class="line" id="l7">      7</a>     app.config.update({
+<a href="#l8" class="line" id="l8">      8</a>         &quot;GOOGLE_CLIENT_ID&quot;: &quot;client-id&quot;,
+<a href="#l9" class="line" id="l9">      9</a>         &quot;GOOGLE_CLIENT_SECRET&quot;: &quot;client-secret&quot;,
+<a href="#l10" class="line" id="l10">     10</a>         &quot;GOOGLE_REDIRECT_URI&quot;: &quot;https://example.test/oauth/google/callback&quot;,
+<a href="#l11" class="line" id="l11">     11</a>     })
+<a href="#l12" class="line" id="l12">     12</a> 
+<a href="#l13" class="line" id="l13">     13</a> 
+<a href="#l14" class="line" id="l14">     14</a> def test_google_start_requires_configuration(client):
+<a href="#l15" class="line" id="l15">     15</a>     response = client.get(&quot;/oauth/google/start&quot;)
+<a href="#l16" class="line" id="l16">     16</a>     assert response.status_code == 302
+<a href="#l17" class="line" id="l17">     17</a>     assert &quot;google_login=unconfigured&quot; in response.headers[&quot;Location&quot;]
+<a href="#l18" class="line" id="l18">     18</a> 
+<a href="#l19" class="line" id="l19">     19</a> 
+<a href="#l20" class="line" id="l20">     20</a> def test_google_start_uses_state_nonce_and_pkce(app):
+<a href="#l21" class="line" id="l21">     21</a>     configure_google(app)
+<a href="#l22" class="line" id="l22">     22</a>     with app.test_client() as client:
+<a href="#l23" class="line" id="l23">     23</a>         response = client.get(&quot;/oauth/google/start&quot;)
+<a href="#l24" class="line" id="l24">     24</a>         assert response.status_code == 302
+<a href="#l25" class="line" id="l25">     25</a>         query = parse_qs(urlsplit(response.headers[&quot;Location&quot;]).query)
+<a href="#l26" class="line" id="l26">     26</a>         assert query[&quot;client_id&quot;] == [&quot;client-id&quot;]
+<a href="#l27" class="line" id="l27">     27</a>         assert query[&quot;code_challenge_method&quot;] == [&quot;S256&quot;]
+<a href="#l28" class="line" id="l28">     28</a>         assert len(query[&quot;state&quot;][0]) &gt;= 32
+<a href="#l29" class="line" id="l29">     29</a>         assert len(query[&quot;nonce&quot;][0]) &gt;= 32
+<a href="#l30" class="line" id="l30">     30</a>         assert len(query[&quot;code_challenge&quot;][0]) == 43
+<a href="#l31" class="line" id="l31">     31</a>         with client.session_transaction() as session:
+<a href="#l32" class="line" id="l32">     32</a>             flow = session[&quot;google_oauth&quot;]
+<a href="#l33" class="line" id="l33">     33</a>         assert flow[&quot;state&quot;] == query[&quot;state&quot;][0]
+<a href="#l34" class="line" id="l34">     34</a>         assert flow[&quot;nonce&quot;] == query[&quot;nonce&quot;][0]
+<a href="#l35" class="line" id="l35">     35</a> 
+<a href="#l36" class="line" id="l36">     36</a> 
+<a href="#l37" class="line" id="l37">     37</a> def test_google_callback_uses_fake_verified_claims(app, monkeypatch):
+<a href="#l38" class="line" id="l38">     38</a>     configure_google(app)
+<a href="#l39" class="line" id="l39">     39</a>     claims = {&quot;sub&quot;: &quot;google-sub&quot;, &quot;email&quot;: &quot;ana@example.test&quot;, &quot;name&quot;: &quot;Ana&quot;}
+<a href="#l40" class="line" id="l40">     40</a>     monkeypatch.setattr(GoogleOAuthClient, &quot;exchange_code&quot;, lambda self, code, verifier, nonce: claims)
+<a href="#l41" class="line" id="l41">     41</a>     with app.test_client() as client:
+<a href="#l42" class="line" id="l42">     42</a>         start = client.get(&quot;/oauth/google/start&quot;)
+<a href="#l43" class="line" id="l43">     43</a>         query = parse_qs(urlsplit(start.headers[&quot;Location&quot;]).query)
+<a href="#l44" class="line" id="l44">     44</a>         callback = client.get(f&quot;/oauth/google/callback?state={query[&#39;state&#39;][0]}&amp;code=fake-code&quot;)
+<a href="#l45" class="line" id="l45">     45</a>         assert callback.status_code == 302
+<a href="#l46" class="line" id="l46">     46</a>         assert callback.headers[&quot;Location&quot;].endswith(&quot;/account&quot;)
+<a href="#l47" class="line" id="l47">     47</a>         with client.session_transaction() as session:
+<a href="#l48" class="line" id="l48">     48</a>             assert session[&quot;account_id&quot;]
+<a href="#l49" class="line" id="l49">     49</a>             assert session[&quot;csrf_token&quot;]
+<a href="#l50" class="line" id="l50">     50</a> 
+<a href="#l51" class="line" id="l51">     51</a> 
+<a href="#l52" class="line" id="l52">     52</a> def test_google_redirect_validation_rejects_external_http_and_query_strings():
+<a href="#l53" class="line" id="l53">     53</a>     assert valid_redirect_uri(&quot;https://example.test/oauth/google/callback&quot;)
+<a href="#l54" class="line" id="l54">     54</a>     assert valid_redirect_uri(&quot;http://localhost:5000/oauth/google/callback&quot;)
+<a href="#l55" class="line" id="l55">     55</a>     assert not valid_redirect_uri(&quot;http://example.test/oauth/google/callback&quot;)
+<a href="#l56" class="line" id="l56">     56</a>     assert not valid_redirect_uri(&quot;https://example.test/oauth/google/callback?next=/&quot;)
+<a href="#l57" class="line" id="l57">     57</a>     assert not valid_redirect_uri(&quot;https://example.test/other&quot;)
+<a href="#l58" class="line" id="l58">     58</a> 
+<a href="#l59" class="line" id="l59">     59</a> 
+<a href="#l60" class="line" id="l60">     60</a> def test_google_callback_rejects_state_mismatch(app):
+<a href="#l61" class="line" id="l61">     61</a>     configure_google(app)
+<a href="#l62" class="line" id="l62">     62</a>     with app.test_client() as client:
+<a href="#l63" class="line" id="l63">     63</a>         client.get(&quot;/oauth/google/start&quot;)
+<a href="#l64" class="line" id="l64">     64</a>         response = client.get(&quot;/oauth/google/callback?state=wrong&amp;code=fake-code&quot;)
+<a href="#l65" class="line" id="l65">     65</a>         assert response.status_code == 302
+<a href="#l66" class="line" id="l66">     66</a>         assert &quot;google_login=failed&quot; in response.headers[&quot;Location&quot;]
+<a href="#l67" class="line" id="l67">     67</a>         with client.session_transaction() as session:
+<a href="#l68" class="line" id="l68">     68</a>             assert &quot;google_oauth&quot; not in session
+</pre>
+</div>
+</body>
+</html>

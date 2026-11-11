@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>feat: adicionar compartilhamento administrativo - assistente-academico - Assistente Acadêmico v2
+</title>
+<link rel="icon" type="image/png" href="../favicon.png" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed" href="../atom.xml" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed (tags)" href="../tags.xml" />
+<link rel="stylesheet" type="text/css" href="../style.css" />
+</head>
+<body>
+<table><tr><td><a href="../../"><img src="../logo.png" alt="" width="32" height="32" /></a></td><td><h1>assistente-academico</h1><span class="desc">Assistente Acadêmico v2
+</span></td></tr><tr class="url"><td></td><td>git clone <a href="git://git.sivaldodavi.com.br/assistente-academico.git">git://git.sivaldodavi.com.br/assistente-academico.git</a></td></tr><tr><td></td><td>
+<a href="../log.html">Log</a> | <a href="../files.html">Files</a> | <a href="../refs.html">Refs</a> | <a href="../file/README.md.html">README</a></td></tr></table>
+<hr/>
+<div id="content">
+<pre><b>commit</b> <a href="../commit/eda7b6c9c0c362ca8be21acfbe678a810ab046d7.html">eda7b6c9c0c362ca8be21acfbe678a810ab046d7</a>
+<b>parent</b> <a href="../commit/a2c946b7a5f8fbfc4e4425bf9ae8a70a41e51b57.html">a2c946b7a5f8fbfc4e4425bf9ae8a70a41e51b57</a>
+<b>Author:</b> Sivaldo Davi &lt;<span class="offview">g<span>x</span>i<span>x</span>t<span>x</span>@<span>x</span>s<span>x</span>i<span>x</span>v<span>x</span>a<span>x</span>l<span>x</span>d<span>x</span>o<span>x</span>d<span>x</span>a<span>x</span>v<span>x</span>i<span>x</span>.<span>x</span>c<span>x</span>o<span>x</span>m</span>&gt;
+<b>Date:</b>   Mon, 26 Oct 2026 16:26:25 +0000
+
+feat: adicionar compartilhamento administrativo
+
+<b>Diffstat:</b>
+<table><tr><td class="M">M</td><td><a href="#h0">.env.example</a></td><td> | </td><td class="num">1</td><td><span class="i">+</span><span class="d"></span></td></tr>
+<tr><td class="M">M</td><td><a href="#h1">app/__init__.py</a></td><td> | </td><td class="num">3</td><td><span class="i">+++</span><span class="d"></span></td></tr>
+<tr><td class="M">M</td><td><a href="#h2">app/auth.py</a></td><td> | </td><td class="num">14</td><td><span class="i">++++++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="A">A</td><td><a href="#h3">app/routes/admin.py</a></td><td> | </td><td class="num">35</td><td><span class="i">+++++++++++++++++++++++++++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="M">M</td><td><a href="#h4">app/routes/projects.py</a></td><td> | </td><td class="num">13</td><td><span class="i">+++++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="M">M</td><td><a href="#h5">app/store/accounts.py</a></td><td> | </td><td class="num">3</td><td><span class="i">+++</span><span class="d"></span></td></tr>
+<tr><td class="M">M</td><td><a href="#h6">app/store/schema.sql</a></td><td> | </td><td class="num">21</td><td><span class="i">++++++++++++++++++++</span><span class="d">-</span></td></tr>
+<tr><td class="A">A</td><td><a href="#h7">app/store/sharing.py</a></td><td> | </td><td class="num">54</td><td><span class="i">++++++++++++++++++++++++++++++++++++++++++++++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="A">A</td><td><a href="#h8">docs/ia/COMPARTILHAMENTO.md</a></td><td> | </td><td class="num">17</td><td><span class="i">+++++++++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="M">M</td><td><a href="#h9">static/css/app.css</a></td><td> | </td><td class="num">6</td><td><span class="i">++++++</span><span class="d"></span></td></tr>
+<tr><td class="A">A</td><td><a href="#h10">templates/admin/project.html</a></td><td> | </td><td class="num">7</td><td><span class="i">+++++++</span><span class="d"></span></td></tr>
+<tr><td class="A">A</td><td><a href="#h11">templates/admin/projects.html</a></td><td> | </td><td class="num">6</td><td><span class="i">++++++</span><span class="d"></span></td></tr>
+<tr><td class="M">M</td><td><a href="#h12">templates/projects/editor.html</a></td><td> | </td><td class="num">1</td><td><span class="i">+</span><span class="d"></span></td></tr>
+<tr><td class="A">A</td><td><a href="#h13">tests/test_sharing.py</a></td><td> | </td><td class="num">41</td><td><span class="i">+++++++++++++++++++++++++++++++++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="M">M</td><td><a href="#h14">tests/test_smoke.py</a></td><td> | </td><td class="num">2</td><td><span class="i">+</span><span class="d">-</span></td></tr>
+</table></pre><pre>15 files changed, 222 insertions(+), 2 deletions(-)
+<hr/><b>diff --git a/<a id="h0" href="../file/.env.example.html">.env.example</a> b/<a href="../file/.env.example.html">.env.example</a></b>
+<a href="#h0-0" id="h0-0" class="h">@@ -3,6 +3,7 @@ ASSISTENTE_V2_DATA_DIR=./var
+</a> ASSISTENTE_GOOGLE_CLIENT_ID=
+ ASSISTENTE_GOOGLE_CLIENT_SECRET=
+ ASSISTENTE_GOOGLE_REDIRECT_URI=
+<a href="#h0-0-3" id="h0-0-3" class="i">+ASSISTENTE_V2_ADMIN_EMAILS=
+</a> DEEPSEEK_API_KEY_FILE=
+ DEEPSEEK_API_URL=https://api.deepseek.com/chat/completions
+ DEEPSEEK_MODEL=deepseek-chat
+<b>diff --git a/<a id="h1" href="../file/app/__init__.py.html">app/__init__.py</a> b/<a href="../file/app/__init__.py.html">app/__init__.py</a></b>
+<a href="#h1-0" id="h1-0" class="h">@@ -23,6 +23,7 @@ def create_app(test_config=None):
+</a>         GOOGLE_CLIENT_ID=os.environ.get(&quot;ASSISTENTE_GOOGLE_CLIENT_ID&quot;, &quot;&quot;),
+         GOOGLE_CLIENT_SECRET=os.environ.get(&quot;ASSISTENTE_GOOGLE_CLIENT_SECRET&quot;, &quot;&quot;),
+         GOOGLE_REDIRECT_URI=os.environ.get(&quot;ASSISTENTE_GOOGLE_REDIRECT_URI&quot;, &quot;&quot;),
+<a href="#h1-0-3" id="h1-0-3" class="i">+        ADMIN_EMAILS={email.strip().lower() for email in os.environ.get(&quot;ASSISTENTE_V2_ADMIN_EMAILS&quot;, &quot;&quot;).split(&quot;,&quot;) if email.strip()},
+</a>     )
+     if test_config:
+         app.config.update(test_config)
+<a href="#h1-1" id="h1-1" class="h">@@ -31,6 +32,7 @@ def create_app(test_config=None):
+</a>     app.teardown_appcontext(close_db)
+ 
+     from .routes.account import account_bp
+<a href="#h1-1-3" id="h1-1-3" class="i">+    from .routes.admin import admin_bp
+</a>     from .routes.ai import ai_bp
+     from .routes.auth import auth_bp
+     from .routes.export import export_bp
+<a href="#h1-2" id="h1-2" class="h">@@ -41,6 +43,7 @@ def create_app(test_config=None):
+</a> 
+     app.register_blueprint(public_bp)
+     app.register_blueprint(account_bp)
+<a href="#h1-2-3" id="h1-2-3" class="i">+    app.register_blueprint(admin_bp)
+</a>     app.register_blueprint(ai_bp)
+     app.register_blueprint(auth_bp)
+     app.register_blueprint(export_bp)
+<b>diff --git a/<a id="h2" href="../file/app/auth.py.html">app/auth.py</a> b/<a href="../file/app/auth.py.html">app/auth.py</a></b>
+<a href="#h2-0" id="h2-0" class="h">@@ -32,3 +32,17 @@ def login_required(view):
+</a>         return view(*args, **kwargs)
+ 
+     return wrapped
+<a href="#h2-0-3" id="h2-0-3" class="i">+
+</a><a href="#h2-0-4" id="h2-0-4" class="i">+
+</a><a href="#h2-0-5" id="h2-0-5" class="i">+def admin_required(view):
+</a><a href="#h2-0-6" id="h2-0-6" class="i">+    @wraps(view)
+</a><a href="#h2-0-7" id="h2-0-7" class="i">+    def wrapped(*args, **kwargs):
+</a><a href="#h2-0-8" id="h2-0-8" class="i">+        if not current_account_id():
+</a><a href="#h2-0-9" id="h2-0-9" class="i">+            return redirect(url_for(&quot;public.home&quot;, login=&quot;required&quot;))
+</a><a href="#h2-0-10" id="h2-0-10" class="i">+        from .store.accounts import get_account
+</a><a href="#h2-0-11" id="h2-0-11" class="i">+        account = get_account(current_account_id())
+</a><a href="#h2-0-12" id="h2-0-12" class="i">+        if not account or not account.get(&quot;is_admin&quot;):
+</a><a href="#h2-0-13" id="h2-0-13" class="i">+            abort(403)
+</a><a href="#h2-0-14" id="h2-0-14" class="i">+        return view(*args, **kwargs)
+</a><a href="#h2-0-15" id="h2-0-15" class="i">+
+</a><a href="#h2-0-16" id="h2-0-16" class="i">+    return wrapped
+</a><b>diff --git a/<a id="h3" href="../file/app/routes/admin.py.html">app/routes/admin.py</a> b/<a href="../file/app/routes/admin.py.html">app/routes/admin.py</a></b>
+<a href="#h3-0" id="h3-0" class="h">@@ -0,0 +1,35 @@
+</a><a href="#h3-0-0" id="h3-0-0" class="i">+import json
+</a><a href="#h3-0-1" id="h3-0-1" class="i">+
+</a><a href="#h3-0-2" id="h3-0-2" class="i">+from flask import Blueprint, abort, redirect, render_template, request, url_for
+</a><a href="#h3-0-3" id="h3-0-3" class="i">+
+</a><a href="#h3-0-4" id="h3-0-4" class="i">+from ..auth import admin_required, current_account_id, require_csrf
+</a><a href="#h3-0-5" id="h3-0-5" class="i">+from ..store.sharing import add_admin_comment, get_shared_project, list_comments, list_shared_projects
+</a><a href="#h3-0-6" id="h3-0-6" class="i">+
+</a><a href="#h3-0-7" id="h3-0-7" class="i">+
+</a><a href="#h3-0-8" id="h3-0-8" class="i">+admin_bp = Blueprint(&quot;admin&quot;, __name__, url_prefix=&quot;/admin&quot;)
+</a><a href="#h3-0-9" id="h3-0-9" class="i">+
+</a><a href="#h3-0-10" id="h3-0-10" class="i">+
+</a><a href="#h3-0-11" id="h3-0-11" class="i">+@admin_bp.get(&quot;/projects&quot;)
+</a><a href="#h3-0-12" id="h3-0-12" class="i">+@admin_required
+</a><a href="#h3-0-13" id="h3-0-13" class="i">+def projects():
+</a><a href="#h3-0-14" id="h3-0-14" class="i">+    return render_template(&quot;admin/projects.html&quot;, projects=list_shared_projects())
+</a><a href="#h3-0-15" id="h3-0-15" class="i">+
+</a><a href="#h3-0-16" id="h3-0-16" class="i">+
+</a><a href="#h3-0-17" id="h3-0-17" class="i">+@admin_bp.get(&quot;/projects/&lt;project_id&gt;&quot;)
+</a><a href="#h3-0-18" id="h3-0-18" class="i">+@admin_required
+</a><a href="#h3-0-19" id="h3-0-19" class="i">+def project(project_id):
+</a><a href="#h3-0-20" id="h3-0-20" class="i">+    row = get_shared_project(project_id)
+</a><a href="#h3-0-21" id="h3-0-21" class="i">+    if row is None:
+</a><a href="#h3-0-22" id="h3-0-22" class="i">+        abort(404)
+</a><a href="#h3-0-23" id="h3-0-23" class="i">+    payload = json.loads(row[&quot;payload&quot;] or &quot;{}&quot;)
+</a><a href="#h3-0-24" id="h3-0-24" class="i">+    payload.update({&quot;id&quot;: row[&quot;id&quot;], &quot;project_type&quot;: row[&quot;project_type&quot;], &quot;title&quot;: row[&quot;title&quot;], &quot;revision&quot;: row[&quot;revision&quot;]})
+</a><a href="#h3-0-25" id="h3-0-25" class="i">+    return render_template(&quot;admin/project.html&quot;, project=payload, owner_email=row[&quot;email&quot;], allow_comments=bool(row[&quot;allow_admin_comments&quot;]), comments=list_comments(project_id))
+</a><a href="#h3-0-26" id="h3-0-26" class="i">+
+</a><a href="#h3-0-27" id="h3-0-27" class="i">+
+</a><a href="#h3-0-28" id="h3-0-28" class="i">+@admin_bp.post(&quot;/projects/&lt;project_id&gt;/comments&quot;)
+</a><a href="#h3-0-29" id="h3-0-29" class="i">+@admin_required
+</a><a href="#h3-0-30" id="h3-0-30" class="i">+def comment(project_id):
+</a><a href="#h3-0-31" id="h3-0-31" class="i">+    require_csrf()
+</a><a href="#h3-0-32" id="h3-0-32" class="i">+    if not add_admin_comment(project_id, current_account_id(), request.form.get(&quot;body&quot;, &quot;&quot;)):
+</a><a href="#h3-0-33" id="h3-0-33" class="i">+        abort(403)
+</a><a href="#h3-0-34" id="h3-0-34" class="i">+    return redirect(url_for(&quot;admin.project&quot;, project_id=project_id))
+</a><b>diff --git a/<a id="h4" href="../file/app/routes/projects.py.html">app/routes/projects.py</a> b/<a href="../file/app/routes/projects.py.html">app/routes/projects.py</a></b>
+<a href="#h4-0" id="h4-0" class="h">@@ -9,6 +9,7 @@ from ..domain.schedule import normalize_schedule
+</a> from ..domain.timeline import normalize_timeline, new_fact
+ from ..store.accounts import get_account
+ from ..store.projects import ProjectConflict, create_project, duplicate_project, get_project, list_projects, save_project
+<a href="#h4-0-3" id="h4-0-3" class="i">+from ..store.sharing import get_sharing, list_comments, save_sharing
+</a> from ..store.sources import list_sources, owned_source_ids
+ 
+ 
+<a href="#h4-1" id="h4-1" class="h">@@ -72,6 +73,8 @@ def editor(project_id):
+</a>         case_progress=case_progress(project.get(&quot;fields&quot;, {})) if is_case else None,
+         paper_sections=paper_sections(project[&quot;project_type&quot;]) if is_paper else [],
+         paper_progress=paper_progress(project.get(&quot;fields&quot;, {}), project[&quot;project_type&quot;]) if is_paper else None,
+<a href="#h4-1-3" id="h4-1-3" class="i">+        sharing=get_sharing(current_account_id(), project_id),
+</a><a href="#h4-1-4" id="h4-1-4" class="i">+        comments=list_comments(project_id),
+</a>     )
+ 
+ 
+<a href="#h4-2" id="h4-2" class="h">@@ -122,3 +125,13 @@ def save(project_id):
+</a>     if next_revision is None:
+         abort(404)
+     return jsonify({&quot;ok&quot;: True, &quot;revision&quot;: next_revision})
+<a href="#h4-2-3" id="h4-2-3" class="i">+
+</a><a href="#h4-2-4" id="h4-2-4" class="i">+
+</a><a href="#h4-2-5" id="h4-2-5" class="i">+@projects_bp.post(&quot;/projects/&lt;project_id&gt;/sharing&quot;)
+</a><a href="#h4-2-6" id="h4-2-6" class="i">+@login_required
+</a><a href="#h4-2-7" id="h4-2-7" class="i">+def update_sharing(project_id):
+</a><a href="#h4-2-8" id="h4-2-8" class="i">+    require_csrf()
+</a><a href="#h4-2-9" id="h4-2-9" class="i">+    sharing = save_sharing(current_account_id(), project_id, request.form.get(&quot;allow_admin_view&quot;) == &quot;on&quot;, request.form.get(&quot;allow_admin_comments&quot;) == &quot;on&quot;)
+</a><a href="#h4-2-10" id="h4-2-10" class="i">+    if sharing is None:
+</a><a href="#h4-2-11" id="h4-2-11" class="i">+        abort(404)
+</a><a href="#h4-2-12" id="h4-2-12" class="i">+    return redirect(url_for(&quot;projects.editor&quot;, project_id=project_id, saved=&quot;sharing&quot;))
+</a><b>diff --git a/<a id="h5" href="../file/app/store/accounts.py.html">app/store/accounts.py</a> b/<a href="../file/app/store/accounts.py.html">app/store/accounts.py</a></b>
+<a href="#h5-0" id="h5-0" class="h">@@ -2,6 +2,8 @@ import json
+</a> import time
+ from uuid import uuid4
+ 
+<a href="#h5-0-3" id="h5-0-3" class="i">+from flask import current_app
+</a><a href="#h5-0-4" id="h5-0-4" class="i">+
+</a> from .db import get_db
+ 
+ 
+<a href="#h5-1" id="h5-1" class="h">@@ -48,6 +50,7 @@ def get_account(account_id: str) -&gt; dict | None:
+</a>         &quot;ai_consent&quot;: bool(row[&quot;ai_consent&quot;]),
+         &quot;whatsapp_phone&quot;: row[&quot;whatsapp_phone&quot;],
+         &quot;whatsapp_opt_in&quot;: bool(row[&quot;whatsapp_opt_in&quot;]),
+<a href="#h5-1-3" id="h5-1-3" class="i">+        &quot;is_admin&quot;: row[&quot;email&quot;].lower() in current_app.config.get(&quot;ADMIN_EMAILS&quot;, set()),
+</a>     }
+ 
+ 
+<b>diff --git a/<a id="h6" href="../file/app/store/schema.sql.html">app/store/schema.sql</a> b/<a href="../file/app/store/schema.sql.html">app/store/schema.sql</a></b>
+<a href="#h6-0" id="h6-0" class="h">@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS app_meta (
+</a> );
+ 
+ INSERT INTO app_meta (key, value)
+<a href="#h6-0-3" id="h6-0-3" class="d">-VALUES (&#39;schema_version&#39;, &#39;6&#39;)
+</a><a href="#h6-0-4" id="h6-0-4" class="i">+VALUES (&#39;schema_version&#39;, &#39;7&#39;)
+</a> ON CONFLICT(key) DO UPDATE SET value = excluded.value;
+ 
+ CREATE TABLE IF NOT EXISTS accounts (
+<a href="#h6-1" id="h6-1" class="h">@@ -69,3 +69,22 @@ CREATE TABLE IF NOT EXISTS notification_outbox (
+</a> );
+ 
+ CREATE INDEX IF NOT EXISTS notification_outbox_ready ON notification_outbox(status, next_attempt_at);
+<a href="#h6-1-3" id="h6-1-3" class="i">+
+</a><a href="#h6-1-4" id="h6-1-4" class="i">+CREATE TABLE IF NOT EXISTS project_sharing (
+</a><a href="#h6-1-5" id="h6-1-5" class="i">+    project_id TEXT PRIMARY KEY REFERENCES projects(id) ON DELETE CASCADE,
+</a><a href="#h6-1-6" id="h6-1-6" class="i">+    account_id TEXT NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
+</a><a href="#h6-1-7" id="h6-1-7" class="i">+    allow_admin_view INTEGER NOT NULL DEFAULT 0,
+</a><a href="#h6-1-8" id="h6-1-8" class="i">+    allow_admin_comments INTEGER NOT NULL DEFAULT 0,
+</a><a href="#h6-1-9" id="h6-1-9" class="i">+    updated_at INTEGER NOT NULL
+</a><a href="#h6-1-10" id="h6-1-10" class="i">+);
+</a><a href="#h6-1-11" id="h6-1-11" class="i">+
+</a><a href="#h6-1-12" id="h6-1-12" class="i">+CREATE TABLE IF NOT EXISTS project_comments (
+</a><a href="#h6-1-13" id="h6-1-13" class="i">+    id TEXT PRIMARY KEY,
+</a><a href="#h6-1-14" id="h6-1-14" class="i">+    project_id TEXT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+</a><a href="#h6-1-15" id="h6-1-15" class="i">+    author_account_id TEXT NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
+</a><a href="#h6-1-16" id="h6-1-16" class="i">+    author_role TEXT NOT NULL,
+</a><a href="#h6-1-17" id="h6-1-17" class="i">+    body TEXT NOT NULL,
+</a><a href="#h6-1-18" id="h6-1-18" class="i">+    created_at INTEGER NOT NULL
+</a><a href="#h6-1-19" id="h6-1-19" class="i">+);
+</a><a href="#h6-1-20" id="h6-1-20" class="i">+
+</a><a href="#h6-1-21" id="h6-1-21" class="i">+CREATE INDEX IF NOT EXISTS project_comments_by_project ON project_comments(project_id, created_at);
+</a><b>diff --git a/<a id="h7" href="../file/app/store/sharing.py.html">app/store/sharing.py</a> b/<a href="../file/app/store/sharing.py.html">app/store/sharing.py</a></b>
+<a href="#h7-0" id="h7-0" class="h">@@ -0,0 +1,54 @@
+</a><a href="#h7-0-0" id="h7-0-0" class="i">+import time
+</a><a href="#h7-0-1" id="h7-0-1" class="i">+from uuid import uuid4
+</a><a href="#h7-0-2" id="h7-0-2" class="i">+
+</a><a href="#h7-0-3" id="h7-0-3" class="i">+from .db import get_db
+</a><a href="#h7-0-4" id="h7-0-4" class="i">+
+</a><a href="#h7-0-5" id="h7-0-5" class="i">+
+</a><a href="#h7-0-6" id="h7-0-6" class="i">+def get_sharing(account_id: str, project_id: str) -&gt; dict:
+</a><a href="#h7-0-7" id="h7-0-7" class="i">+    row = get_db().execute(&quot;SELECT * FROM project_sharing WHERE account_id = ? AND project_id = ?&quot;, (account_id, project_id)).fetchone()
+</a><a href="#h7-0-8" id="h7-0-8" class="i">+    if row is None:
+</a><a href="#h7-0-9" id="h7-0-9" class="i">+        return {&quot;project_id&quot;: project_id, &quot;allow_admin_view&quot;: False, &quot;allow_admin_comments&quot;: False}
+</a><a href="#h7-0-10" id="h7-0-10" class="i">+    return {&quot;project_id&quot;: row[&quot;project_id&quot;], &quot;allow_admin_view&quot;: bool(row[&quot;allow_admin_view&quot;]), &quot;allow_admin_comments&quot;: bool(row[&quot;allow_admin_comments&quot;])}
+</a><a href="#h7-0-11" id="h7-0-11" class="i">+
+</a><a href="#h7-0-12" id="h7-0-12" class="i">+
+</a><a href="#h7-0-13" id="h7-0-13" class="i">+def save_sharing(account_id: str, project_id: str, allow_view: bool, allow_comments: bool) -&gt; dict | None:
+</a><a href="#h7-0-14" id="h7-0-14" class="i">+    database = get_db()
+</a><a href="#h7-0-15" id="h7-0-15" class="i">+    exists = database.execute(&quot;SELECT id FROM projects WHERE id = ? AND account_id = ?&quot;, (project_id, account_id)).fetchone()
+</a><a href="#h7-0-16" id="h7-0-16" class="i">+    if exists is None:
+</a><a href="#h7-0-17" id="h7-0-17" class="i">+        return None
+</a><a href="#h7-0-18" id="h7-0-18" class="i">+    database.execute(
+</a><a href="#h7-0-19" id="h7-0-19" class="i">+        &quot;&quot;&quot;INSERT INTO project_sharing (project_id, account_id, allow_admin_view, allow_admin_comments, updated_at)
+</a><a href="#h7-0-20" id="h7-0-20" class="i">+           VALUES (?, ?, ?, ?, ?) ON CONFLICT(project_id) DO UPDATE SET allow_admin_view=excluded.allow_admin_view, allow_admin_comments=excluded.allow_admin_comments, updated_at=excluded.updated_at&quot;&quot;&quot;,
+</a><a href="#h7-0-21" id="h7-0-21" class="i">+        (project_id, account_id, int(allow_view), int(allow_comments and allow_view), int(time.time())),
+</a><a href="#h7-0-22" id="h7-0-22" class="i">+    )
+</a><a href="#h7-0-23" id="h7-0-23" class="i">+    database.commit()
+</a><a href="#h7-0-24" id="h7-0-24" class="i">+    return get_sharing(account_id, project_id)
+</a><a href="#h7-0-25" id="h7-0-25" class="i">+
+</a><a href="#h7-0-26" id="h7-0-26" class="i">+
+</a><a href="#h7-0-27" id="h7-0-27" class="i">+def list_comments(project_id: str) -&gt; list[dict]:
+</a><a href="#h7-0-28" id="h7-0-28" class="i">+    rows = get_db().execute(&quot;SELECT body, author_role, created_at FROM project_comments WHERE project_id = ? ORDER BY created_at&quot;, (project_id,)).fetchall()
+</a><a href="#h7-0-29" id="h7-0-29" class="i">+    return [dict(row) for row in rows]
+</a><a href="#h7-0-30" id="h7-0-30" class="i">+
+</a><a href="#h7-0-31" id="h7-0-31" class="i">+
+</a><a href="#h7-0-32" id="h7-0-32" class="i">+def list_shared_projects() -&gt; list[dict]:
+</a><a href="#h7-0-33" id="h7-0-33" class="i">+    rows = get_db().execute(&quot;&quot;&quot;SELECT p.id, p.title, p.project_type, p.updated_at, a.email, s.allow_admin_comments
+</a><a href="#h7-0-34" id="h7-0-34" class="i">+                             FROM projects p JOIN project_sharing s ON s.project_id=p.id JOIN accounts a ON a.id=p.account_id
+</a><a href="#h7-0-35" id="h7-0-35" class="i">+                             WHERE s.allow_admin_view=1 ORDER BY p.updated_at DESC&quot;&quot;&quot;).fetchall()
+</a><a href="#h7-0-36" id="h7-0-36" class="i">+    return [dict(row) for row in rows]
+</a><a href="#h7-0-37" id="h7-0-37" class="i">+
+</a><a href="#h7-0-38" id="h7-0-38" class="i">+
+</a><a href="#h7-0-39" id="h7-0-39" class="i">+def get_shared_project(project_id: str) -&gt; dict | None:
+</a><a href="#h7-0-40" id="h7-0-40" class="i">+    row = get_db().execute(&quot;&quot;&quot;SELECT p.*, s.allow_admin_comments, a.email
+</a><a href="#h7-0-41" id="h7-0-41" class="i">+                            FROM projects p JOIN project_sharing s ON s.project_id=p.id JOIN accounts a ON a.id=p.account_id
+</a><a href="#h7-0-42" id="h7-0-42" class="i">+                            WHERE p.id=? AND s.allow_admin_view=1&quot;&quot;&quot;, (project_id,)).fetchone()
+</a><a href="#h7-0-43" id="h7-0-43" class="i">+    return dict(row) if row else None
+</a><a href="#h7-0-44" id="h7-0-44" class="i">+
+</a><a href="#h7-0-45" id="h7-0-45" class="i">+
+</a><a href="#h7-0-46" id="h7-0-46" class="i">+def add_admin_comment(project_id: str, admin_account_id: str, body: str) -&gt; bool:
+</a><a href="#h7-0-47" id="h7-0-47" class="i">+    body = str(body or &quot;&quot;).strip()[:3000]
+</a><a href="#h7-0-48" id="h7-0-48" class="i">+    row = get_db().execute(&quot;SELECT allow_admin_comments FROM project_sharing WHERE project_id = ? AND allow_admin_view = 1&quot;, (project_id,)).fetchone()
+</a><a href="#h7-0-49" id="h7-0-49" class="i">+    if not row or not row[&quot;allow_admin_comments&quot;] or not body:
+</a><a href="#h7-0-50" id="h7-0-50" class="i">+        return False
+</a><a href="#h7-0-51" id="h7-0-51" class="i">+    get_db().execute(&quot;INSERT INTO project_comments (id, project_id, author_account_id, author_role, body, created_at) VALUES (?, ?, ?, &#39;admin&#39;, ?, ?)&quot;, (str(uuid4()), project_id, admin_account_id, body, int(time.time())))
+</a><a href="#h7-0-52" id="h7-0-52" class="i">+    get_db().commit()
+</a><a href="#h7-0-53" id="h7-0-53" class="i">+    return True
+</a><b>diff --git a/<a id="h8" href="../file/docs/ia/COMPARTILHAMENTO.md.html">docs/ia/COMPARTILHAMENTO.md</a> b/<a href="../file/docs/ia/COMPARTILHAMENTO.md.html">docs/ia/COMPARTILHAMENTO.md</a></b>
+<a href="#h8-0" id="h8-0" class="h">@@ -0,0 +1,17 @@
+</a><a href="#h8-0-0" id="h8-0-0" class="i">+# Compartilhamento e administração
+</a><a href="#h8-0-1" id="h8-0-1" class="i">+
+</a><a href="#h8-0-2" id="h8-0-2" class="i">+## Privacidade por padrão
+</a><a href="#h8-0-3" id="h8-0-3" class="i">+
+</a><a href="#h8-0-4" id="h8-0-4" class="i">+Cada projeto começa privado. O proprietário pode autorizar visualização administrativa e, separadamente, comentários administrativos. A segunda autorização não é ativada quando a primeira é salva sem a segunda.
+</a><a href="#h8-0-5" id="h8-0-5" class="i">+
+</a><a href="#h8-0-6" id="h8-0-6" class="i">+Revogar visualização impede novas aberturas administrativas. O texto acadêmico permanece no snapshot do proprietário; comentários ficam em `project_comments` e nunca são misturados aos campos do projeto.
+</a><a href="#h8-0-7" id="h8-0-7" class="i">+
+</a><a href="#h8-0-8" id="h8-0-8" class="i">+## Administração
+</a><a href="#h8-0-9" id="h8-0-9" class="i">+
+</a><a href="#h8-0-10" id="h8-0-10" class="i">+A v2 não promove o primeiro usuário automaticamente. Administradores são definidos por `ASSISTENTE_V2_ADMIN_EMAILS`, uma lista de e-mails configurada fora do Git. A rota administrativa exige sessão e essa configuração.
+</a><a href="#h8-0-11" id="h8-0-11" class="i">+
+</a><a href="#h8-0-12" id="h8-0-12" class="i">+O administrador vê apenas projetos com `allow_admin_view=1` e abre uma apresentação somente leitura. Se permitido, pode escrever comentário separado. Não existe endpoint administrativo para salvar o snapshot acadêmico do proprietário.
+</a><a href="#h8-0-13" id="h8-0-13" class="i">+
+</a><a href="#h8-0-14" id="h8-0-14" class="i">+## Testes
+</a><a href="#h8-0-15" id="h8-0-15" class="i">+
+</a><a href="#h8-0-16" id="h8-0-16" class="i">+Os testes criam proprietário e administrador fictícios, verificam a revogação implícita por padrão, isolamento de conta e comentário separado. Nenhuma permissão é herdada do banco legado.
+</a><b>diff --git a/<a id="h9" href="../file/static/css/app.css.html">static/css/app.css</a> b/<a href="../file/static/css/app.css.html">static/css/app.css</a></b>
+<a href="#h9-0" id="h9-0" class="h">@@ -50,6 +50,12 @@ button, input, textarea, select { font: inherit; color-scheme: dark; }
+</a> .export-panel { max-width: 900px; margin: 1.5rem auto 0; padding: 1.25rem 4vw; border-top: 1px solid var(--line); }
+ .export-panel h2 { margin: 0; font-size: 1.2rem; }
+ .ai-result { min-height: 2rem; margin-top: 1rem; padding: .8rem; border-left: 3px solid #777; color: var(--muted); white-space: pre-wrap; }
+<a href="#h9-0-3" id="h9-0-3" class="i">+.comments-list { margin-top: 1.25rem; }
+</a><a href="#h9-0-4" id="h9-0-4" class="i">+.comment { margin: .7rem 0; padding: .8rem; border-left: 3px solid var(--accent); background: #151515; }
+</a><a href="#h9-0-5" id="h9-0-5" class="i">+.comment p { margin: 0; white-space: pre-wrap; }
+</a><a href="#h9-0-6" id="h9-0-6" class="i">+.comment small { color: var(--muted); }
+</a><a href="#h9-0-7" id="h9-0-7" class="i">+.admin-readonly { max-width: 900px; margin: 0 auto 1.5rem; padding: 1.25rem 4vw; }
+</a><a href="#h9-0-8" id="h9-0-8" class="i">+.admin-readonly article { padding: .8rem 0; border-bottom: 1px solid var(--line); }
+</a> .create-form, .editor-form { display: grid; gap: 1rem; max-width: 900px; margin: 2rem auto 0; padding: 0 4vw; }
+ label { display: grid; gap: .4rem; color: var(--ink); font-weight: 650; }
+ input, select { width: 100%; min-height: 44px; padding: .65rem .75rem; border: 1px solid var(--line); background: #101010; color: var(--ink); }
+<b>diff --git a/<a id="h10" href="../file/templates/admin/project.html.html">templates/admin/project.html</a> b/<a href="../file/templates/admin/project.html.html">templates/admin/project.html</a></b>
+<a href="#h10-0" id="h10-0" class="h">@@ -0,0 +1,7 @@
+</a><a href="#h10-0-0" id="h10-0-0" class="i">+{% extends &quot;base.html&quot; %}
+</a><a href="#h10-0-1" id="h10-0-1" class="i">+{% block title %}Projeto compartilhado — Assistente Acadêmico{% endblock %}
+</a><a href="#h10-0-2" id="h10-0-2" class="i">+{% block content %}
+</a><a href="#h10-0-3" id="h10-0-3" class="i">+&lt;section class=&quot;page-heading&quot;&gt;&lt;a class=&quot;back-link&quot; href=&quot;{{ url_for(&#39;admin.projects&#39;) }}&quot;&gt;← Projetos compartilhados&lt;/a&gt;&lt;p class=&quot;eyebrow&quot;&gt;{{ owner_email }}&lt;/p&gt;&lt;h1&gt;{{ project[&#39;fields&#39;].get(&#39;title&#39;) or project[&#39;title&#39;] or &#39;Sem título&#39; }}&lt;/h1&gt;&lt;p class=&quot;lead&quot;&gt;Visualização administrativa somente leitura. O texto do projeto não é editável nesta tela.&lt;/p&gt;&lt;/section&gt;
+</a><a href="#h10-0-4" id="h10-0-4" class="i">+&lt;section class=&quot;admin-readonly&quot;&gt;&lt;h2&gt;Conteúdo&lt;/h2&gt;{% for key, value in project[&#39;fields&#39;].items() %}{% if value %}&lt;article&gt;&lt;h3&gt;{{ key|replace(&#39;_&#39;, &#39; &#39;)|title }}&lt;/h3&gt;&lt;p&gt;{{ value }}&lt;/p&gt;&lt;/article&gt;{% endif %}{% endfor %}&lt;/section&gt;
+</a><a href="#h10-0-5" id="h10-0-5" class="i">+&lt;section class=&quot;settings-card&quot;&gt;&lt;h2&gt;Comentários administrativos&lt;/h2&gt;{% for comment in comments %}&lt;article class=&quot;comment&quot;&gt;&lt;p&gt;{{ comment[&#39;body&#39;] }}&lt;/p&gt;&lt;small&gt;{{ comment[&#39;author_role&#39;] }}&lt;/small&gt;&lt;/article&gt;{% else %}&lt;p class=&quot;empty-state&quot;&gt;Nenhum comentário.&lt;/p&gt;{% endfor %}{% if allow_comments %}&lt;form method=&quot;post&quot; action=&quot;{{ url_for(&#39;admin.comment&#39;, project_id=project[&#39;id&#39;]) }}&quot;&gt;&lt;input type=&quot;hidden&quot; name=&quot;csrf_token&quot; value=&quot;{{ csrf_token() }}&quot;&gt;&lt;label&gt;Comentário&lt;textarea name=&quot;body&quot; maxlength=&quot;3000&quot; required&gt;&lt;/textarea&gt;&lt;/label&gt;&lt;button type=&quot;submit&quot;&gt;Enviar comentário&lt;/button&gt;&lt;/form&gt;{% else %}&lt;p class=&quot;field-help&quot;&gt;O proprietário não autorizou comentários.&lt;/p&gt;{% endif %}&lt;/section&gt;
+</a><a href="#h10-0-6" id="h10-0-6" class="i">+{% endblock %}
+</a><b>diff --git a/<a id="h11" href="../file/templates/admin/projects.html.html">templates/admin/projects.html</a> b/<a href="../file/templates/admin/projects.html.html">templates/admin/projects.html</a></b>
+<a href="#h11-0" id="h11-0" class="h">@@ -0,0 +1,6 @@
+</a><a href="#h11-0-0" id="h11-0-0" class="i">+{% extends &quot;base.html&quot; %}
+</a><a href="#h11-0-1" id="h11-0-1" class="i">+{% block title %}Projetos compartilhados — Assistente Acadêmico{% endblock %}
+</a><a href="#h11-0-2" id="h11-0-2" class="i">+{% block content %}
+</a><a href="#h11-0-3" id="h11-0-3" class="i">+&lt;section class=&quot;page-heading&quot;&gt;&lt;p class=&quot;eyebrow&quot;&gt;Administração&lt;/p&gt;&lt;h1&gt;Projetos compartilhados&lt;/h1&gt;&lt;p class=&quot;lead&quot;&gt;Apenas projetos cujo proprietário autorizou leitura aparecem aqui.&lt;/p&gt;&lt;/section&gt;
+</a><a href="#h11-0-4" id="h11-0-4" class="i">+&lt;section class=&quot;project-list&quot;&gt;{% for project in projects %}&lt;a class=&quot;project-row&quot; href=&quot;{{ url_for(&#39;admin.project&#39;, project_id=project[&#39;id&#39;]) }}&quot;&gt;&lt;span&gt;&lt;strong&gt;{{ project[&#39;title&#39;] or &#39;Sem título&#39; }}&lt;/strong&gt;&lt;small&gt;{{ project[&#39;project_type&#39;] }} · {{ project[&#39;email&#39;] }}&lt;/small&gt;&lt;/span&gt;&lt;span&gt;Visualizar&lt;/span&gt;&lt;/a&gt;{% else %}&lt;p class=&quot;empty-state&quot;&gt;Nenhum projeto foi compartilhado.&lt;/p&gt;{% endfor %}&lt;/section&gt;
+</a><a href="#h11-0-5" id="h11-0-5" class="i">+{% endblock %}
+</a><b>diff --git a/<a id="h12" href="../file/templates/projects/editor.html.html">templates/projects/editor.html</a> b/<a href="../file/templates/projects/editor.html.html">templates/projects/editor.html</a></b>
+<a href="#h12-0" id="h12-0" class="h">@@ -21,6 +21,7 @@
+</a>   &lt;section class=&quot;case-section project-sources&quot; aria-labelledby=&quot;project-sources-title&quot;&gt;&lt;p class=&quot;eyebrow&quot;&gt;Referências&lt;/p&gt;&lt;h2 id=&quot;project-sources-title&quot;&gt;Fontes no trabalho&lt;/h2&gt;&lt;p class=&quot;field-help&quot;&gt;Escolha as fontes usadas neste projeto. O vínculo fica separado da Biblioteca Pessoal e pode ser reutilizado em outros trabalhos.&lt;/p&gt;&lt;div class=&quot;source-check-list&quot;&gt;{% for source in sources %}&lt;label class=&quot;check-row&quot;&gt;&lt;input type=&quot;checkbox&quot; data-project-source value=&quot;{{ source[&#39;id&#39;] }}&quot; {% if source[&#39;id&#39;] in project[&#39;source_ids&#39;] %}checked{% endif %}&gt;&lt;span&gt;&lt;strong&gt;{{ source[&#39;title&#39;] }}&lt;/strong&gt;{% if source[&#39;author&#39;] %}&lt;small&gt;{{ source[&#39;author&#39;] }}&lt;/small&gt;{% endif %}&lt;/span&gt;&lt;/label&gt;{% else %}&lt;p class=&quot;empty-state&quot;&gt;Cadastre fontes na &lt;a class=&quot;back-link&quot; href=&quot;{{ url_for(&#39;library.home&#39;) }}&quot;&gt;Biblioteca Pessoal&lt;/a&gt; para vinculá-las.&lt;/p&gt;{% endfor %}&lt;/div&gt;&lt;/section&gt;
+   {% if case_sections %}&lt;section class=&quot;case-section criteria-editor&quot; aria-labelledby=&quot;criteria-title&quot;&gt;&lt;p class=&quot;eyebrow&quot;&gt;Análise&lt;/p&gt;&lt;div class=&quot;section-heading&quot;&gt;&lt;div&gt;&lt;h2 id=&quot;criteria-title&quot;&gt;Critérios e valores&lt;/h2&gt;&lt;p class=&quot;field-help&quot;&gt;Defina os conceitos técnicos usados nas teses e indique a base normativa, ética ou doutrinária.&lt;/p&gt;&lt;/div&gt;&lt;button type=&quot;button&quot; class=&quot;quiet-button&quot; data-add-criterion&gt;Adicionar critério&lt;/button&gt;&lt;/div&gt;&lt;div data-criteria-list&gt;{% for criterion in project[&#39;criteria&#39;] %}&lt;fieldset class=&quot;criterion-card&quot; data-criterion data-criterion-id=&quot;{{ criterion[&#39;id&#39;] }}&quot;&gt;&lt;legend&gt;Critério&lt;/legend&gt;&lt;label&gt;Nome&lt;input data-criterion-field=&quot;title&quot; maxlength=&quot;180&quot; value=&quot;{{ criterion[&#39;title&#39;] }}&quot;&gt;&lt;/label&gt;&lt;label&gt;Definição&lt;textarea data-criterion-field=&quot;definition&quot; maxlength=&quot;3000&quot; rows=&quot;4&quot;&gt;{{ criterion[&#39;definition&#39;] }}&lt;/textarea&gt;&lt;/label&gt;&lt;label&gt;Base ou fundamento&lt;input data-criterion-field=&quot;basis&quot; maxlength=&quot;1000&quot; value=&quot;{{ criterion[&#39;basis&#39;] }}&quot;&gt;&lt;/label&gt;&lt;button type=&quot;button&quot; class=&quot;quiet-button danger&quot; data-remove-criterion&gt;Remover critério&lt;/button&gt;&lt;/fieldset&gt;{% endfor %}&lt;/div&gt;&lt;/section&gt;{% endif %}
+   &lt;section class=&quot;case-section schedule-editor&quot; aria-labelledby=&quot;schedule-title&quot;&gt;&lt;p class=&quot;eyebrow&quot;&gt;Organização&lt;/p&gt;&lt;h2 id=&quot;schedule-title&quot;&gt;Prazos e tarefas&lt;/h2&gt;&lt;p class=&quot;field-help&quot;&gt;As datas ficam na agenda do projeto e podem gerar lembretes se você autorizar o WhatsApp.&lt;/p&gt;&lt;div class=&quot;fact-grid&quot;&gt;&lt;label&gt;Entrega do relatório&lt;input type=&quot;date&quot; data-schedule-field=&quot;report_date&quot; value=&quot;{{ project[&#39;schedule&#39;][&#39;report_date&#39;] }}&quot;&gt;&lt;/label&gt;&lt;label&gt;Debate&lt;input type=&quot;date&quot; data-schedule-field=&quot;debate_date&quot; value=&quot;{{ project[&#39;schedule&#39;][&#39;debate_date&#39;] }}&quot;&gt;&lt;/label&gt;&lt;label&gt;Dissertação&lt;input type=&quot;date&quot; data-schedule-field=&quot;dissertation_date&quot; value=&quot;{{ project[&#39;schedule&#39;][&#39;dissertation_date&#39;] }}&quot;&gt;&lt;/label&gt;&lt;label&gt;Paper Final&lt;input type=&quot;date&quot; data-schedule-field=&quot;final_date&quot; value=&quot;{{ project[&#39;schedule&#39;][&#39;final_date&#39;] }}&quot;&gt;&lt;/label&gt;&lt;/div&gt;&lt;div class=&quot;section-heading&quot;&gt;&lt;h3&gt;Tarefas&lt;/h3&gt;&lt;button type=&quot;button&quot; class=&quot;quiet-button&quot; data-add-task&gt;Adicionar tarefa&lt;/button&gt;&lt;/div&gt;&lt;div data-task-list&gt;{% for task in project[&#39;schedule&#39;][&#39;tasks&#39;] %}&lt;div class=&quot;task-row&quot; data-task data-task-id=&quot;{{ task[&#39;id&#39;] }}&quot;&gt;&lt;input data-task-field=&quot;title&quot; maxlength=&quot;180&quot; value=&quot;{{ task[&#39;title&#39;] }}&quot; placeholder=&quot;Tarefa&quot;&gt;&lt;input type=&quot;date&quot; data-task-field=&quot;date&quot; value=&quot;{{ task[&#39;date&#39;] }}&quot;&gt;&lt;button type=&quot;button&quot; class=&quot;quiet-button danger&quot; data-remove-task&gt;Remover&lt;/button&gt;&lt;/div&gt;{% endfor %}&lt;/div&gt;&lt;/section&gt;
+<a href="#h12-0-3" id="h12-0-3" class="i">+  &lt;section class=&quot;export-panel sharing-panel&quot; aria-labelledby=&quot;sharing-title&quot;&gt;&lt;h2 id=&quot;sharing-title&quot;&gt;Compartilhamento administrativo&lt;/h2&gt;&lt;p class=&quot;field-help&quot;&gt;O padrão é privado. Se autorizar, a administração poderá abrir uma cópia somente leitura; comentários são uma autorização separada e não entram no texto salvo.&lt;/p&gt;&lt;form method=&quot;post&quot; action=&quot;{{ url_for(&#39;projects.update_sharing&#39;, project_id=project[&#39;id&#39;]) }}&quot;&gt;&lt;input type=&quot;hidden&quot; name=&quot;csrf_token&quot; value=&quot;{{ csrf_token() }}&quot;&gt;&lt;label class=&quot;check-row&quot;&gt;&lt;input type=&quot;checkbox&quot; name=&quot;allow_admin_view&quot; {% if sharing[&#39;allow_admin_view&#39;] %}checked{% endif %}&gt; Permitir visualização administrativa&lt;/label&gt;&lt;label class=&quot;check-row&quot;&gt;&lt;input type=&quot;checkbox&quot; name=&quot;allow_admin_comments&quot; {% if sharing[&#39;allow_admin_comments&#39;] %}checked{% endif %}&gt; Permitir comentários administrativos&lt;/label&gt;&lt;button type=&quot;submit&quot; class=&quot;button&quot;&gt;Salvar compartilhamento&lt;/button&gt;&lt;/form&gt;{% if comments %}&lt;div class=&quot;comments-list&quot;&gt;&lt;h3&gt;Comentários recebidos&lt;/h3&gt;{% for comment in comments %}&lt;article class=&quot;comment&quot;&gt;&lt;p&gt;{{ comment[&#39;body&#39;] }}&lt;/p&gt;&lt;small&gt;{{ comment[&#39;author_role&#39;] }}&lt;/small&gt;&lt;/article&gt;{% endfor %}&lt;/div&gt;{% endif %}&lt;/section&gt;
+</a>   &lt;section class=&quot;timeline-editor&quot; aria-labelledby=&quot;timeline-title&quot;&gt;
+     &lt;div class=&quot;section-heading&quot;&gt;&lt;div&gt;&lt;p class=&quot;eyebrow&quot;&gt;Apoio estruturado&lt;/p&gt;&lt;h2 id=&quot;timeline-title&quot;&gt;Linha do Tempo dos Fatos&lt;/h2&gt;&lt;/div&gt;&lt;button type=&quot;button&quot; class=&quot;quiet-button&quot; data-add-fact&gt;Adicionar fato&lt;/button&gt;&lt;/div&gt;
+     &lt;p class=&quot;field-help&quot;&gt;Organize acontecimentos verificáveis. A Linha do Tempo não substitui a narrativa da descrição do caso.&lt;/p&gt;
+<b>diff --git a/<a id="h13" href="../file/tests/test_sharing.py.html">tests/test_sharing.py</a> b/<a href="../file/tests/test_sharing.py.html">tests/test_sharing.py</a></b>
+<a href="#h13-0" id="h13-0" class="h">@@ -0,0 +1,41 @@
+</a><a href="#h13-0-0" id="h13-0-0" class="i">+
+</a><a href="#h13-0-1" id="h13-0-1" class="i">+def csrf(client):
+</a><a href="#h13-0-2" id="h13-0-2" class="i">+    with client.session_transaction() as session:
+</a><a href="#h13-0-3" id="h13-0-3" class="i">+        return session[&quot;csrf_token&quot;]
+</a><a href="#h13-0-4" id="h13-0-4" class="i">+
+</a><a href="#h13-0-5" id="h13-0-5" class="i">+
+</a><a href="#h13-0-6" id="h13-0-6" class="i">+def login(client, email):
+</a><a href="#h13-0-7" id="h13-0-7" class="i">+    client.post(&quot;/auth/dev-login&quot;, data={&quot;email&quot;: email, &quot;name&quot;: email.split(&quot;@&quot;)[0]})
+</a><a href="#h13-0-8" id="h13-0-8" class="i">+    return csrf(client)
+</a><a href="#h13-0-9" id="h13-0-9" class="i">+
+</a><a href="#h13-0-10" id="h13-0-10" class="i">+
+</a><a href="#h13-0-11" id="h13-0-11" class="i">+def accept_terms(client, token):
+</a><a href="#h13-0-12" id="h13-0-12" class="i">+    client.post(&quot;/account/settings/terms&quot;, data={&quot;csrf_token&quot;: token, &quot;accept&quot;: &quot;on&quot;})
+</a><a href="#h13-0-13" id="h13-0-13" class="i">+
+</a><a href="#h13-0-14" id="h13-0-14" class="i">+
+</a><a href="#h13-0-15" id="h13-0-15" class="i">+def test_owner_can_share_and_admin_can_comment_without_editing_text(client):
+</a><a href="#h13-0-16" id="h13-0-16" class="i">+    owner_token = login(client, &quot;owner@example.test&quot;)
+</a><a href="#h13-0-17" id="h13-0-17" class="i">+    accept_terms(client, owner_token)
+</a><a href="#h13-0-18" id="h13-0-18" class="i">+    created = client.post(&quot;/projects&quot;, data={&quot;csrf_token&quot;: owner_token, &quot;project_type&quot;: &quot;case&quot;})
+</a><a href="#h13-0-19" id="h13-0-19" class="i">+    project_id = created.headers[&quot;Location&quot;].rsplit(&quot;/&quot;, 1)[-1]
+</a><a href="#h13-0-20" id="h13-0-20" class="i">+    shared = client.post(f&quot;/projects/{project_id}/sharing&quot;, data={&quot;csrf_token&quot;: owner_token, &quot;allow_admin_view&quot;: &quot;on&quot;, &quot;allow_admin_comments&quot;: &quot;on&quot;})
+</a><a href="#h13-0-21" id="h13-0-21" class="i">+    assert shared.status_code == 302
+</a><a href="#h13-0-22" id="h13-0-22" class="i">+    client.application.config[&quot;ADMIN_EMAILS&quot;] = {&quot;admin@example.test&quot;}
+</a><a href="#h13-0-23" id="h13-0-23" class="i">+    admin_token = login(client, &quot;admin@example.test&quot;)
+</a><a href="#h13-0-24" id="h13-0-24" class="i">+    accept_terms(client, admin_token)
+</a><a href="#h13-0-25" id="h13-0-25" class="i">+    listing = client.get(&quot;/admin/projects&quot;)
+</a><a href="#h13-0-26" id="h13-0-26" class="i">+    assert listing.status_code == 200
+</a><a href="#h13-0-27" id="h13-0-27" class="i">+    assert project_id in listing.get_data(as_text=True)
+</a><a href="#h13-0-28" id="h13-0-28" class="i">+    detail = client.get(f&quot;/admin/projects/{project_id}&quot;)
+</a><a href="#h13-0-29" id="h13-0-29" class="i">+    assert detail.status_code == 200
+</a><a href="#h13-0-30" id="h13-0-30" class="i">+    comment = client.post(f&quot;/admin/projects/{project_id}/comments&quot;, data={&quot;csrf_token&quot;: admin_token, &quot;body&quot;: &quot;Confira a fundamentação.&quot;})
+</a><a href="#h13-0-31" id="h13-0-31" class="i">+    assert comment.status_code == 302
+</a><a href="#h13-0-32" id="h13-0-32" class="i">+    owner_token = login(client, &quot;owner@example.test&quot;)
+</a><a href="#h13-0-33" id="h13-0-33" class="i">+    editor = client.get(f&quot;/projects/{project_id}&quot;)
+</a><a href="#h13-0-34" id="h13-0-34" class="i">+    assert &quot;Confira a fundamentação.&quot; in editor.get_data(as_text=True)
+</a><a href="#h13-0-35" id="h13-0-35" class="i">+
+</a><a href="#h13-0-36" id="h13-0-36" class="i">+
+</a><a href="#h13-0-37" id="h13-0-37" class="i">+def test_non_admin_cannot_list_shared_projects(client):
+</a><a href="#h13-0-38" id="h13-0-38" class="i">+    token = login(client, &quot;student@example.test&quot;)
+</a><a href="#h13-0-39" id="h13-0-39" class="i">+    accept_terms(client, token)
+</a><a href="#h13-0-40" id="h13-0-40" class="i">+    assert client.get(&quot;/admin/projects&quot;).status_code == 403
+</a><b>diff --git a/<a id="h14" href="../file/tests/test_smoke.py.html">tests/test_smoke.py</a> b/<a href="../file/tests/test_smoke.py.html">tests/test_smoke.py</a></b>
+<a href="#h14-0" id="h14-0" class="h">@@ -19,5 +19,5 @@ def test_database_starts_without_legacy_tables(app):
+</a>         names = {row[0] for row in get_db().execute(
+             &quot;SELECT name FROM sqlite_master WHERE type = &#39;table&#39;&quot;
+         )}
+<a href="#h14-0-3" id="h14-0-3" class="d">-    assert names == {&quot;app_meta&quot;, &quot;accounts&quot;, &quot;projects&quot;, &quot;sources&quot;, &quot;notification_outbox&quot;}
+</a><a href="#h14-0-4" id="h14-0-4" class="i">+    assert names == {&quot;app_meta&quot;, &quot;accounts&quot;, &quot;projects&quot;, &quot;sources&quot;, &quot;notification_outbox&quot;, &quot;project_sharing&quot;, &quot;project_comments&quot;}
+</a>     assert not any(&quot;legacy&quot; in name.lower() for name in names)
+</pre>
+</div>
+</body>
+</html>

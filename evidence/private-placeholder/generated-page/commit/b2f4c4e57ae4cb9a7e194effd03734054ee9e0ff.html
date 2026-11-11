@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>docs: atualiza descrição do escopo e do site - assistente-academico - Repositório assistente-academico
+</title>
+<link rel="icon" type="image/png" href="../favicon.png" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed" href="../atom.xml" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed (tags)" href="../tags.xml" />
+<link rel="stylesheet" type="text/css" href="../style.css" />
+</head>
+<body>
+<table><tr><td><a href="../../"><img src="../logo.png" alt="" width="32" height="32" /></a></td><td><h1>assistente-academico</h1><span class="desc">Repositório assistente-academico
+</span></td></tr><tr class="url"><td></td><td>git clone <a href="git://git.sivaldodavi.com/assistente-academico.git">git://git.sivaldodavi.com/assistente-academico.git</a></td></tr><tr><td></td><td>
+<a href="../log.html">Log</a> | <a href="../files.html">Files</a> | <a href="../refs.html">Refs</a> | <a href="../file/README.md.html">README</a></td></tr></table>
+<hr/>
+<div id="content">
+<pre><b>commit</b> <a href="../commit/b2f4c4e57ae4cb9a7e194effd03734054ee9e0ff.html">b2f4c4e57ae4cb9a7e194effd03734054ee9e0ff</a>
+<b>parent</b> <a href="../commit/bf2f61c15f804f75adcd82752cffe4883da67698.html">bf2f61c15f804f75adcd82752cffe4883da67698</a>
+<b>Author:</b> Sivaldo Davi  &lt;<a href="mailto:sivaldo@sivaldodavi">sivaldo@sivaldodavi</a>&gt;
+<b>Date:</b>   Sat, 17 Oct 2026 16:56:46 -0300
+
+docs: atualiza descrição do escopo e do site
+
+Co-authored-by: Copilot &lt;223556219+Copilot@users.noreply.github.com&gt;
+
+<b>Diffstat:</b>
+<table><tr><td class="M">M</td><td><a href="#h0">README.md</a></td><td> | </td><td class="num">36</td><td><span class="i">++++++++++++++++++++++</span><span class="d">--------------</span></td></tr>
+<tr><td class="M">M</td><td><a href="#h1">hugo.toml</a></td><td> | </td><td class="num">2</td><td><span class="i">+</span><span class="d">-</span></td></tr>
+<tr><td class="M">M</td><td><a href="#h2">layouts/index.html</a></td><td> | </td><td class="num">3</td><td><span class="i">++</span><span class="d">-</span></td></tr>
+<tr><td class="M">M</td><td><a href="#h3">static/css/main.css</a></td><td> | </td><td class="num">957</td><td><span class="i">++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</span><span class="d">-----</span></td></tr>
+<tr><td class="A">A</td><td><a href="#h4">static/models/relatorio-case-civil.pdf</a></td><td> | </td><td class="num">0</td><td><span class="i"></span><span class="d"></span></td></tr>
+</table></pre><pre>5 files changed, 927 insertions(+), 71 deletions(-)
+<hr/><b>diff --git a/<a id="h0" href="../file/README.md.html">README.md</a> b/<a href="../file/README.md.html">README.md</a></b>
+<a href="#h0-0" id="h0-0" class="h">@@ -1,7 +1,7 @@
+</a> # Roteiro
+ 
+<a href="#h0-0-2" id="h0-0-2" class="d">-Site estático em Hugo para orientar a elaboração de cases jurídicos e gerar
+</a><a href="#h0-0-3" id="h0-0-3" class="d">-documentos em Typst no navegador.
+</a><a href="#h0-0-4" id="h0-0-4" class="i">+Site estático em Hugo para orientar, passo a passo, a elaboração de relatórios de
+</a><a href="#h0-0-5" id="h0-0-5" class="i">+case jurídico, Projetos de Paper e Papers Finais, com exportação opcional em PDF.
+</a> 
+ ## Executar
+ 
+<a href="#h0-1" id="h0-1" class="h">@@ -17,22 +17,30 @@ npm run build
+</a> ```
+ 
+ O resultado fica em `public/` e pode ser servido por qualquer hospedagem estática.
+<a href="#h0-1-3" id="h0-1-3" class="d">-Hugo monta o site e agrupa o pequeno frontend JavaScript e as dependências
+</a><a href="#h0-1-4" id="h0-1-4" class="d">-WebAssembly do Typst. Não há backend: o conteúdo do trabalho fica no navegador,
+</a><a href="#h0-1-5" id="h0-1-5" class="d">-salvo localmente, e não é enviado a um servidor. O motor pode carregar recursos
+</a><a href="#h0-1-6" id="h0-1-6" class="d">-tipográficos pela rede.
+</a><a href="#h0-1-7" id="h0-1-7" class="i">+Hugo monta o site e agrupa o frontend JavaScript e as dependências WebAssembly do
+</a><a href="#h0-1-8" id="h0-1-8" class="i">+Typst. Não há backend: o trabalho fica salvo localmente neste navegador e não é
+</a><a href="#h0-1-9" id="h0-1-9" class="i">+enviado a um servidor. A exportação PDF é opcional e só aparece depois que o
+</a><a href="#h0-1-10" id="h0-1-10" class="i">+trabalho for marcado como finalizado. Para gerar em Arial, o navegador precisa
+</a><a href="#h0-1-11" id="h0-1-11" class="i">+oferecer acesso local a fontes e obter permissão para carregar Arial do
+</a><a href="#h0-1-12" id="h0-1-12" class="i">+dispositivo; os dados da fonte também não são enviados a um servidor.
+</a> 
+ ## Escopo desta branch
+ 
+<a href="#h0-1-16" id="h0-1-16" class="d">-- Roteiro dedicado à elaboração de case jurídico.
+</a><a href="#h0-1-17" id="h0-1-17" class="d">-- Preenchimento temporário com os dados do case de Direito da Personalidade.
+</a><a href="#h0-1-18" id="h0-1-18" class="d">-- Rascunhos salvos localmente no navegador.
+</a><a href="#h0-1-19" id="h0-1-19" class="d">-- Prévia SVG e exportação PDF executadas no navegador com Typst.
+</a><a href="#h0-1-20" id="h0-1-20" class="i">+- Um único trabalho por vez, salvo e retomado localmente.
+</a><a href="#h0-1-21" id="h0-1-21" class="i">+- Fluxo de relatório de case com etapas guiadas, checklists, indicador de progresso e controle de fontes por tese.
+</a><a href="#h0-1-22" id="h0-1-22" class="i">+- Modelos de consulta podem ser abertos como etapas preenchidas e somente para leitura ou como documento completo, com citações, referências e PDF quando disponível; eles não alteram o projeto salvo.
+</a><a href="#h0-1-23" id="h0-1-23" class="i">+- Fluxos de Projeto de Paper e Paper Final, com checklists, controle de fontes e orientação para referências.
+</a><a href="#h0-1-24" id="h0-1-24" class="i">+- Montador assistido de referências para livros, artigos, páginas/documentos online, legislação e jurisprudência; área de controle com alertas locais sobre possíveis inconsistências de citação autor-data.
+</a><a href="#h0-1-25" id="h0-1-25" class="i">+- Conferência local de possíveis inconsistências entre autor-data, texto e fontes; os avisos são heurísticos e precisam de revisão humana.
+</a><a href="#h0-1-26" id="h0-1-26" class="i">+- Prévia e exportação PDF opcionais, executadas no navegador com Typst após finalizar o trabalho.
+</a> - Sem conta, backend ou sincronização entre dispositivos.
+ 
+<a href="#h0-1-29" id="h0-1-29" class="d">-Este protótipo organiza a escrita, mas não valida teses jurídicas, fontes, citações
+</a><a href="#h0-1-30" id="h0-1-30" class="d">-ou conformidade institucional. Confira as orientações do professor e as normas
+</a><a href="#h0-1-31" id="h0-1-31" class="i">+O progresso confere campos, autoavaliações e organização das fontes, mas não valida
+</a><a href="#h0-1-32" id="h0-1-32" class="i">+teses jurídicas, citações, atualização das fontes, qualidade argumentativa ou
+</a><a href="#h0-1-33" id="h0-1-33" class="i">+conformidade institucional. Confira as orientações do professor e as normas
+</a> aplicáveis antes de entregar o documento.
+ 
+<a href="#h0-1-36" id="h0-1-36" class="d">-A branch `estado-atual` preserva o protótipo anterior, que também incluía o fluxo
+</a><a href="#h0-1-37" id="h0-1-37" class="d">-de paper.
+</a><a href="#h0-1-38" id="h0-1-38" class="i">+O montador usa modelos resumidos do manual de normatização da FACSUR e não
+</a><a href="#h0-1-39" id="h0-1-39" class="i">+substitui a conferência das normas ABNT vigentes ou das exigências do professor.
+</a><a href="#h0-1-40" id="h0-1-40" class="i">+A conferência de autor-data roda no navegador, não altera o texto, não envia
+</a><a href="#h0-1-41" id="h0-1-41" class="i">+conteúdo a um servidor e pode gerar alertas imprecisos.
+</a><b>diff --git a/<a id="h1" href="../file/hugo.toml.html">hugo.toml</a> b/<a href="../file/hugo.toml.html">hugo.toml</a></b>
+<a href="#h1-0" id="h1-0" class="h">@@ -3,7 +3,7 @@ title = &quot;Roteiro&quot;
+</a> disableKinds = [&quot;taxonomy&quot;, &quot;term&quot;]
+ 
+ [params]
+<a href="#h1-0-3" id="h1-0-3" class="d">-  description = &quot;Assistente simples para estruturar cases e papers e gerar documentos com Typst.&quot;
+</a><a href="#h1-0-4" id="h1-0-4" class="i">+  description = &quot;Roteiros guiados para elaborar relatórios de case, Projetos de Paper e Papers Finais, com exportação opcional em Typst.&quot;
+</a> 
+ [module]
+   [[module.mounts]]
+<b>diff --git a/<a id="h2" href="../file/layouts/index.html.html">layouts/index.html</a> b/<a href="../file/layouts/index.html.html">layouts/index.html</a></b>
+<a href="#h2-0" id="h2-0" class="h">@@ -4,13 +4,14 @@
+</a>     &lt;meta charset=&quot;utf-8&quot;&gt;
+     &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+     &lt;meta name=&quot;description&quot; content=&quot;{{ .Site.Params.description }}&quot;&gt;
+<a href="#h2-0-3" id="h2-0-3" class="d">-    &lt;meta name=&quot;theme-color&quot; content=&quot;#f7f7f5&quot;&gt;
+</a><a href="#h2-0-4" id="h2-0-4" class="i">+    &lt;meta name=&quot;theme-color&quot; content=&quot;#090909&quot;&gt;
+</a>     &lt;title&gt;{{ .Site.Title }} — escrita acadêmica&lt;/title&gt;
+     &lt;link rel=&quot;stylesheet&quot; href=&quot;{{ &quot;css/main.css&quot; | relURL }}&quot;&gt;
+   &lt;/head&gt;
+   &lt;body
+     data-compiler-wasm=&quot;{{ &quot;wasm/compiler/typst_ts_web_compiler_bg.wasm&quot; | relURL }}&quot;
+     data-renderer-wasm=&quot;{{ &quot;wasm/renderer/typst_ts_renderer_bg.wasm&quot; | relURL }}&quot;
+<a href="#h2-0-11" id="h2-0-11" class="i">+    data-case-model-pdf=&quot;{{ &quot;models/relatorio-case-civil.pdf&quot; | relURL }}&quot;
+</a>   &gt;
+     &lt;div id=&quot;app&quot;&gt;&lt;/div&gt;
+     {{ $options := dict &quot;target&quot; &quot;es2022&quot; &quot;minify&quot; true }}
+<b>diff --git a/<a id="h3" href="../file/static/css/main.css.html">static/css/main.css</a> b/<a href="../file/static/css/main.css.html">static/css/main.css</a></b>
+<a href="#h3-0" id="h3-0" class="h">@@ -1,17 +1,21 @@
+</a> :root {
+   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;
+<a href="#h3-0-2" id="h3-0-2" class="d">-  color: #20211f;
+</a><a href="#h3-0-3" id="h3-0-3" class="d">-  background: #f7f7f5;
+</a><a href="#h3-0-4" id="h3-0-4" class="i">+  color-scheme: dark;
+</a><a href="#h3-0-5" id="h3-0-5" class="i">+  color: #f2f2f2;
+</a><a href="#h3-0-6" id="h3-0-6" class="i">+  background: #090909;
+</a>   font-synthesis: none;
+   text-rendering: optimizeLegibility;
+<a href="#h3-0-9" id="h3-0-9" class="d">-  --ink: #20211f;
+</a><a href="#h3-0-10" id="h3-0-10" class="d">-  --muted: #72746f;
+</a><a href="#h3-0-11" id="h3-0-11" class="d">-  --line: #e1e2de;
+</a><a href="#h3-0-12" id="h3-0-12" class="d">-  --paper: #fff;
+</a><a href="#h3-0-13" id="h3-0-13" class="d">-  --soft: #efefec;
+</a><a href="#h3-0-14" id="h3-0-14" class="d">-  --accent: #315b4c;
+</a><a href="#h3-0-15" id="h3-0-15" class="d">-  --accent-soft: #e8efeb;
+</a><a href="#h3-0-16" id="h3-0-16" class="d">-  --danger: #9a4239;
+</a><a href="#h3-0-17" id="h3-0-17" class="i">+  --ink: #f2f2f2;
+</a><a href="#h3-0-18" id="h3-0-18" class="i">+  --muted: #a0a0a0;
+</a><a href="#h3-0-19" id="h3-0-19" class="i">+  --line: #303030;
+</a><a href="#h3-0-20" id="h3-0-20" class="i">+  --paper: #121212;
+</a><a href="#h3-0-21" id="h3-0-21" class="i">+  --soft: #1c1c1c;
+</a><a href="#h3-0-22" id="h3-0-22" class="i">+  --accent: #ededed;
+</a><a href="#h3-0-23" id="h3-0-23" class="i">+  --accent-soft: #262626;
+</a><a href="#h3-0-24" id="h3-0-24" class="i">+  --danger: #d0d0d0;
+</a><a href="#h3-0-25" id="h3-0-25" class="i">+  --control: #101010;
+</a><a href="#h3-0-26" id="h3-0-26" class="i">+  --control-hover: #272727;
+</a><a href="#h3-0-27" id="h3-0-27" class="i">+  --surface-hover: #1e1e1e;
+</a> }
+ 
+ * {
+<a href="#h3-1" id="h3-1" class="h">@@ -31,6 +35,18 @@ select {
+</a>   font: inherit;
+ }
+ 
+<a href="#h3-1-3" id="h3-1-3" class="i">+button,
+</a><a href="#h3-1-4" id="h3-1-4" class="i">+input,
+</a><a href="#h3-1-5" id="h3-1-5" class="i">+textarea,
+</a><a href="#h3-1-6" id="h3-1-6" class="i">+select {
+</a><a href="#h3-1-7" id="h3-1-7" class="i">+  color-scheme: dark;
+</a><a href="#h3-1-8" id="h3-1-8" class="i">+}
+</a><a href="#h3-1-9" id="h3-1-9" class="i">+
+</a><a href="#h3-1-10" id="h3-1-10" class="i">+:focus-visible {
+</a><a href="#h3-1-11" id="h3-1-11" class="i">+  outline: 2px solid #cfcfcf;
+</a><a href="#h3-1-12" id="h3-1-12" class="i">+  outline-offset: 3px;
+</a><a href="#h3-1-13" id="h3-1-13" class="i">+}
+</a><a href="#h3-1-14" id="h3-1-14" class="i">+
+</a> button {
+   color: inherit;
+ }
+<a href="#h3-2" id="h3-2" class="h">@@ -42,7 +58,7 @@ button {
+</a>   justify-content: space-between;
+   padding: 0 5vw;
+   border-bottom: 1px solid var(--line);
+<a href="#h3-2-3" id="h3-2-3" class="d">-  background: rgba(255, 255, 255, 0.76);
+</a><a href="#h3-2-4" id="h3-2-4" class="i">+  background: rgba(15, 15, 15, 0.92);
+</a> }
+ 
+ .brand {
+<a href="#h3-3" id="h3-3" class="h">@@ -124,7 +140,7 @@ h1 {
+</a> 
+ .choice:hover {
+   transform: translateY(-1px);
+<a href="#h3-3-3" id="h3-3-3" class="d">-  border-color: #aeb8b2;
+</a><a href="#h3-3-4" id="h3-3-4" class="i">+  border-color: #777;
+</a> }
+ 
+ .choice-title {
+<a href="#h3-4" id="h3-4" class="h">@@ -145,6 +161,84 @@ h1 {
+</a>   font-size: 20px;
+ }
+ 
+<a href="#h3-4-3" id="h3-4-3" class="i">+.workflow-catalog {
+</a><a href="#h3-4-4" id="h3-4-4" class="i">+  display: grid;
+</a><a href="#h3-4-5" id="h3-4-5" class="i">+  gap: 12px;
+</a><a href="#h3-4-6" id="h3-4-6" class="i">+  margin: 32px 0;
+</a><a href="#h3-4-7" id="h3-4-7" class="i">+}
+</a><a href="#h3-4-8" id="h3-4-8" class="i">+
+</a><a href="#h3-4-9" id="h3-4-9" class="i">+.workflow-card {
+</a><a href="#h3-4-10" id="h3-4-10" class="i">+  display: flex;
+</a><a href="#h3-4-11" id="h3-4-11" class="i">+  align-items: center;
+</a><a href="#h3-4-12" id="h3-4-12" class="i">+  justify-content: space-between;
+</a><a href="#h3-4-13" id="h3-4-13" class="i">+  gap: 24px;
+</a><a href="#h3-4-14" id="h3-4-14" class="i">+  padding: 22px;
+</a><a href="#h3-4-15" id="h3-4-15" class="i">+  border: 1px solid var(--line);
+</a><a href="#h3-4-16" id="h3-4-16" class="i">+  border-radius: 8px;
+</a><a href="#h3-4-17" id="h3-4-17" class="i">+  background: var(--paper);
+</a><a href="#h3-4-18" id="h3-4-18" class="i">+}
+</a><a href="#h3-4-19" id="h3-4-19" class="i">+
+</a><a href="#h3-4-20" id="h3-4-20" class="i">+.workflow-card-copy {
+</a><a href="#h3-4-21" id="h3-4-21" class="i">+  min-width: 0;
+</a><a href="#h3-4-22" id="h3-4-22" class="i">+}
+</a><a href="#h3-4-23" id="h3-4-23" class="i">+
+</a><a href="#h3-4-24" id="h3-4-24" class="i">+.workflow-card-copy .eyebrow {
+</a><a href="#h3-4-25" id="h3-4-25" class="i">+  margin-bottom: 8px;
+</a><a href="#h3-4-26" id="h3-4-26" class="i">+}
+</a><a href="#h3-4-27" id="h3-4-27" class="i">+
+</a><a href="#h3-4-28" id="h3-4-28" class="i">+.workflow-card h2 {
+</a><a href="#h3-4-29" id="h3-4-29" class="i">+  margin: 0 0 7px;
+</a><a href="#h3-4-30" id="h3-4-30" class="i">+  font-size: 19px;
+</a><a href="#h3-4-31" id="h3-4-31" class="i">+  font-weight: 600;
+</a><a href="#h3-4-32" id="h3-4-32" class="i">+  letter-spacing: -0.025em;
+</a><a href="#h3-4-33" id="h3-4-33" class="i">+}
+</a><a href="#h3-4-34" id="h3-4-34" class="i">+
+</a><a href="#h3-4-35" id="h3-4-35" class="i">+.workflow-card-copy &gt; p:last-child {
+</a><a href="#h3-4-36" id="h3-4-36" class="i">+  max-width: 530px;
+</a><a href="#h3-4-37" id="h3-4-37" class="i">+  margin: 0;
+</a><a href="#h3-4-38" id="h3-4-38" class="i">+  color: var(--muted);
+</a><a href="#h3-4-39" id="h3-4-39" class="i">+  font-size: 13px;
+</a><a href="#h3-4-40" id="h3-4-40" class="i">+  line-height: 1.55;
+</a><a href="#h3-4-41" id="h3-4-41" class="i">+}
+</a><a href="#h3-4-42" id="h3-4-42" class="i">+
+</a><a href="#h3-4-43" id="h3-4-43" class="i">+.workflow-card .start-button {
+</a><a href="#h3-4-44" id="h3-4-44" class="i">+  flex: 0 0 auto;
+</a><a href="#h3-4-45" id="h3-4-45" class="i">+  margin: 0;
+</a><a href="#h3-4-46" id="h3-4-46" class="i">+}
+</a><a href="#h3-4-47" id="h3-4-47" class="i">+
+</a><a href="#h3-4-48" id="h3-4-48" class="i">+.workflow-card .project-resume {
+</a><a href="#h3-4-49" id="h3-4-49" class="i">+  flex: 0 0 min(420px, 52%);
+</a><a href="#h3-4-50" id="h3-4-50" class="i">+  grid-template-columns: minmax(0, 1fr);
+</a><a href="#h3-4-51" id="h3-4-51" class="i">+  gap: 14px;
+</a><a href="#h3-4-52" id="h3-4-52" class="i">+  margin: 0;
+</a><a href="#h3-4-53" id="h3-4-53" class="i">+  padding: 16px;
+</a><a href="#h3-4-54" id="h3-4-54" class="i">+}
+</a><a href="#h3-4-55" id="h3-4-55" class="i">+
+</a><a href="#h3-4-56" id="h3-4-56" class="i">+.workflow-card .project-resume h3 {
+</a><a href="#h3-4-57" id="h3-4-57" class="i">+  margin: 0 0 8px;
+</a><a href="#h3-4-58" id="h3-4-58" class="i">+  font-size: 16px;
+</a><a href="#h3-4-59" id="h3-4-59" class="i">+  font-weight: 580;
+</a><a href="#h3-4-60" id="h3-4-60" class="i">+}
+</a><a href="#h3-4-61" id="h3-4-61" class="i">+
+</a><a href="#h3-4-62" id="h3-4-62" class="i">+.workflow-card .project-controls {
+</a><a href="#h3-4-63" id="h3-4-63" class="i">+  grid-template-columns: 1fr;
+</a><a href="#h3-4-64" id="h3-4-64" class="i">+  justify-items: stretch;
+</a><a href="#h3-4-65" id="h3-4-65" class="i">+}
+</a><a href="#h3-4-66" id="h3-4-66" class="i">+
+</a><a href="#h3-4-67" id="h3-4-67" class="i">+.workflow-card-disabled {
+</a><a href="#h3-4-68" id="h3-4-68" class="i">+  background: #0e0e0e;
+</a><a href="#h3-4-69" id="h3-4-69" class="i">+  color: #888;
+</a><a href="#h3-4-70" id="h3-4-70" class="i">+}
+</a><a href="#h3-4-71" id="h3-4-71" class="i">+
+</a><a href="#h3-4-72" id="h3-4-72" class="i">+.workflow-status {
+</a><a href="#h3-4-73" id="h3-4-73" class="i">+  flex: 0 0 auto;
+</a><a href="#h3-4-74" id="h3-4-74" class="i">+  padding: 6px 9px;
+</a><a href="#h3-4-75" id="h3-4-75" class="i">+  border: 1px solid var(--line);
+</a><a href="#h3-4-76" id="h3-4-76" class="i">+  border-radius: 4px;
+</a><a href="#h3-4-77" id="h3-4-77" class="i">+  color: var(--muted);
+</a><a href="#h3-4-78" id="h3-4-78" class="i">+  font-size: 11px;
+</a><a href="#h3-4-79" id="h3-4-79" class="i">+}
+</a><a href="#h3-4-80" id="h3-4-80" class="i">+
+</a> .temporary-models {
+   margin-top: 42px;
+   padding-top: 26px;
+<a href="#h3-5" id="h3-5" class="h">@@ -162,42 +256,456 @@ h1 {
+</a>   margin-bottom: 10px;
+ }
+ 
+<a href="#h3-5-3" id="h3-5-3" class="d">-.model-intro,
+</a><a href="#h3-5-4" id="h3-5-4" class="d">-.model-disclaimer {
+</a><a href="#h3-5-5" id="h3-5-5" class="d">-  color: var(--muted);
+</a><a href="#h3-5-6" id="h3-5-6" class="i">+.model-intro,
+</a><a href="#h3-5-7" id="h3-5-7" class="i">+.model-disclaimer {
+</a><a href="#h3-5-8" id="h3-5-8" class="i">+  color: var(--muted);
+</a><a href="#h3-5-9" id="h3-5-9" class="i">+  font-size: 13px;
+</a><a href="#h3-5-10" id="h3-5-10" class="i">+  line-height: 1.55;
+</a><a href="#h3-5-11" id="h3-5-11" class="i">+}
+</a><a href="#h3-5-12" id="h3-5-12" class="i">+
+</a><a href="#h3-5-13" id="h3-5-13" class="i">+.temporary-models .choice-list {
+</a><a href="#h3-5-14" id="h3-5-14" class="i">+  margin-top: 16px;
+</a><a href="#h3-5-15" id="h3-5-15" class="i">+}
+</a><a href="#h3-5-16" id="h3-5-16" class="i">+
+</a><a href="#h3-5-17" id="h3-5-17" class="i">+.model-disclaimer {
+</a><a href="#h3-5-18" id="h3-5-18" class="i">+  margin: 12px 0 0;
+</a><a href="#h3-5-19" id="h3-5-19" class="i">+  font-size: 12px;
+</a><a href="#h3-5-20" id="h3-5-20" class="i">+}
+</a><a href="#h3-5-21" id="h3-5-21" class="i">+
+</a><a href="#h3-5-22" id="h3-5-22" class="i">+.landing-shell {
+</a><a href="#h3-5-23" id="h3-5-23" class="i">+  width: min(900px, 92vw);
+</a><a href="#h3-5-24" id="h3-5-24" class="i">+}
+</a><a href="#h3-5-25" id="h3-5-25" class="i">+
+</a><a href="#h3-5-26" id="h3-5-26" class="i">+.project-resume {
+</a><a href="#h3-5-27" id="h3-5-27" class="i">+  display: grid;
+</a><a href="#h3-5-28" id="h3-5-28" class="i">+  grid-template-columns: minmax(0, 1fr) auto;
+</a><a href="#h3-5-29" id="h3-5-29" class="i">+  align-items: center;
+</a><a href="#h3-5-30" id="h3-5-30" class="i">+  gap: 24px;
+</a><a href="#h3-5-31" id="h3-5-31" class="i">+  margin: 30px 0;
+</a><a href="#h3-5-32" id="h3-5-32" class="i">+  padding: 24px;
+</a><a href="#h3-5-33" id="h3-5-33" class="i">+  border: 1px solid var(--line);
+</a><a href="#h3-5-34" id="h3-5-34" class="i">+  border-radius: 8px;
+</a><a href="#h3-5-35" id="h3-5-35" class="i">+  background: var(--paper);
+</a><a href="#h3-5-36" id="h3-5-36" class="i">+}
+</a><a href="#h3-5-37" id="h3-5-37" class="i">+
+</a><a href="#h3-5-38" id="h3-5-38" class="i">+.project-resume h2 {
+</a><a href="#h3-5-39" id="h3-5-39" class="i">+  margin: 0 0 8px;
+</a><a href="#h3-5-40" id="h3-5-40" class="i">+  font-size: 20px;
+</a><a href="#h3-5-41" id="h3-5-41" class="i">+  font-weight: 580;
+</a><a href="#h3-5-42" id="h3-5-42" class="i">+}
+</a><a href="#h3-5-43" id="h3-5-43" class="i">+
+</a><a href="#h3-5-44" id="h3-5-44" class="i">+.project-resume .eyebrow {
+</a><a href="#h3-5-45" id="h3-5-45" class="i">+  margin-bottom: 7px;
+</a><a href="#h3-5-46" id="h3-5-46" class="i">+}
+</a><a href="#h3-5-47" id="h3-5-47" class="i">+
+</a><a href="#h3-5-48" id="h3-5-48" class="i">+.project-controls {
+</a><a href="#h3-5-49" id="h3-5-49" class="i">+  display: grid;
+</a><a href="#h3-5-50" id="h3-5-50" class="i">+  justify-items: end;
+</a><a href="#h3-5-51" id="h3-5-51" class="i">+  gap: 8px;
+</a><a href="#h3-5-52" id="h3-5-52" class="i">+}
+</a><a href="#h3-5-53" id="h3-5-53" class="i">+
+</a><a href="#h3-5-54" id="h3-5-54" class="i">+.start-button {
+</a><a href="#h3-5-55" id="h3-5-55" class="i">+  margin: 4px 0 26px;
+</a><a href="#h3-5-56" id="h3-5-56" class="i">+}
+</a><a href="#h3-5-57" id="h3-5-57" class="i">+
+</a><a href="#h3-5-58" id="h3-5-58" class="i">+.progress-track {
+</a><a href="#h3-5-59" id="h3-5-59" class="i">+  width: 100%;
+</a><a href="#h3-5-60" id="h3-5-60" class="i">+  height: 8px;
+</a><a href="#h3-5-61" id="h3-5-61" class="i">+  overflow: hidden;
+</a><a href="#h3-5-62" id="h3-5-62" class="i">+  border-radius: 99px;
+</a><a href="#h3-5-63" id="h3-5-63" class="i">+  background: var(--soft);
+</a><a href="#h3-5-64" id="h3-5-64" class="i">+}
+</a><a href="#h3-5-65" id="h3-5-65" class="i">+
+</a><a href="#h3-5-66" id="h3-5-66" class="i">+.progress-fill {
+</a><a href="#h3-5-67" id="h3-5-67" class="i">+  display: block;
+</a><a href="#h3-5-68" id="h3-5-68" class="i">+  height: 100%;
+</a><a href="#h3-5-69" id="h3-5-69" class="i">+  border-radius: inherit;
+</a><a href="#h3-5-70" id="h3-5-70" class="i">+  background: var(--accent);
+</a><a href="#h3-5-71" id="h3-5-71" class="i">+  transition: width 160ms ease;
+</a><a href="#h3-5-72" id="h3-5-72" class="i">+}
+</a><a href="#h3-5-73" id="h3-5-73" class="i">+
+</a><a href="#h3-5-74" id="h3-5-74" class="i">+.progress-summary {
+</a><a href="#h3-5-75" id="h3-5-75" class="i">+  display: flex;
+</a><a href="#h3-5-76" id="h3-5-76" class="i">+  justify-content: space-between;
+</a><a href="#h3-5-77" id="h3-5-77" class="i">+  gap: 12px;
+</a><a href="#h3-5-78" id="h3-5-78" class="i">+  margin: 0 0 8px;
+</a><a href="#h3-5-79" id="h3-5-79" class="i">+  color: var(--muted);
+</a><a href="#h3-5-80" id="h3-5-80" class="i">+  font-size: 12px;
+</a><a href="#h3-5-81" id="h3-5-81" class="i">+}
+</a><a href="#h3-5-82" id="h3-5-82" class="i">+
+</a><a href="#h3-5-83" id="h3-5-83" class="i">+.preset-notice {
+</a><a href="#h3-5-84" id="h3-5-84" class="i">+  margin: -10px 0 22px;
+</a><a href="#h3-5-85" id="h3-5-85" class="i">+}
+</a><a href="#h3-5-86" id="h3-5-86" class="i">+
+</a><a href="#h3-5-87" id="h3-5-87" class="i">+.app-shell {
+</a><a href="#h3-5-88" id="h3-5-88" class="i">+  padding: 36px 0 70px;
+</a><a href="#h3-5-89" id="h3-5-89" class="i">+}
+</a><a href="#h3-5-90" id="h3-5-90" class="i">+
+</a><a href="#h3-5-91" id="h3-5-91" class="i">+.overall-progress {
+</a><a href="#h3-5-92" id="h3-5-92" class="i">+  margin: -12px 0 22px;
+</a><a href="#h3-5-93" id="h3-5-93" class="i">+}
+</a><a href="#h3-5-94" id="h3-5-94" class="i">+
+</a><a href="#h3-5-95" id="h3-5-95" class="i">+.overall-progress .progress-summary {
+</a><a href="#h3-5-96" id="h3-5-96" class="i">+  color: var(--ink);
+</a><a href="#h3-5-97" id="h3-5-97" class="i">+}
+</a><a href="#h3-5-98" id="h3-5-98" class="i">+
+</a><a href="#h3-5-99" id="h3-5-99" class="i">+.app-heading {
+</a><a href="#h3-5-100" id="h3-5-100" class="i">+  display: flex;
+</a><a href="#h3-5-101" id="h3-5-101" class="i">+  align-items: flex-start;
+</a><a href="#h3-5-102" id="h3-5-102" class="i">+  justify-content: space-between;
+</a><a href="#h3-5-103" id="h3-5-103" class="i">+  gap: 24px;
+</a><a href="#h3-5-104" id="h3-5-104" class="i">+  margin-bottom: 28px;
+</a><a href="#h3-5-105" id="h3-5-105" class="i">+}
+</a><a href="#h3-5-106" id="h3-5-106" class="i">+
+</a><a href="#h3-5-107" id="h3-5-107" class="i">+.app-heading-actions {
+</a><a href="#h3-5-108" id="h3-5-108" class="i">+  display: flex;
+</a><a href="#h3-5-109" id="h3-5-109" class="i">+  flex-wrap: wrap;
+</a><a href="#h3-5-110" id="h3-5-110" class="i">+  justify-content: flex-end;
+</a><a href="#h3-5-111" id="h3-5-111" class="i">+  gap: 14px;
+</a><a href="#h3-5-112" id="h3-5-112" class="i">+}
+</a><a href="#h3-5-113" id="h3-5-113" class="i">+
+</a><a href="#h3-5-114" id="h3-5-114" class="i">+.app-heading h1 {
+</a><a href="#h3-5-115" id="h3-5-115" class="i">+  margin: 0;
+</a><a href="#h3-5-116" id="h3-5-116" class="i">+  font-size: clamp(27px, 3vw, 36px);
+</a><a href="#h3-5-117" id="h3-5-117" class="i">+  letter-spacing: -0.04em;
+</a><a href="#h3-5-118" id="h3-5-118" class="i">+}
+</a><a href="#h3-5-119" id="h3-5-119" class="i">+
+</a><a href="#h3-5-120" id="h3-5-120" class="i">+.model-entry {
+</a><a href="#h3-5-121" id="h3-5-121" class="i">+  display: flex;
+</a><a href="#h3-5-122" id="h3-5-122" class="i">+  align-items: center;
+</a><a href="#h3-5-123" id="h3-5-123" class="i">+  justify-content: space-between;
+</a><a href="#h3-5-124" id="h3-5-124" class="i">+  gap: 24px;
+</a><a href="#h3-5-125" id="h3-5-125" class="i">+  margin-top: 34px;
+</a><a href="#h3-5-126" id="h3-5-126" class="i">+  padding: 22px;
+</a><a href="#h3-5-127" id="h3-5-127" class="i">+  border: 1px solid var(--line);
+</a><a href="#h3-5-128" id="h3-5-128" class="i">+  border-radius: 8px;
+</a><a href="#h3-5-129" id="h3-5-129" class="i">+  background: var(--paper);
+</a><a href="#h3-5-130" id="h3-5-130" class="i">+}
+</a><a href="#h3-5-131" id="h3-5-131" class="i">+
+</a><a href="#h3-5-132" id="h3-5-132" class="i">+.model-entry .eyebrow {
+</a><a href="#h3-5-133" id="h3-5-133" class="i">+  margin-bottom: 8px;
+</a><a href="#h3-5-134" id="h3-5-134" class="i">+}
+</a><a href="#h3-5-135" id="h3-5-135" class="i">+
+</a><a href="#h3-5-136" id="h3-5-136" class="i">+.model-entry h2 {
+</a><a href="#h3-5-137" id="h3-5-137" class="i">+  margin-bottom: 7px;
+</a><a href="#h3-5-138" id="h3-5-138" class="i">+  font-size: 19px;
+</a><a href="#h3-5-139" id="h3-5-139" class="i">+  font-weight: 600;
+</a><a href="#h3-5-140" id="h3-5-140" class="i">+  letter-spacing: -0.025em;
+</a><a href="#h3-5-141" id="h3-5-141" class="i">+}
+</a><a href="#h3-5-142" id="h3-5-142" class="i">+
+</a><a href="#h3-5-143" id="h3-5-143" class="i">+.model-entry p:last-child {
+</a><a href="#h3-5-144" id="h3-5-144" class="i">+  max-width: 530px;
+</a><a href="#h3-5-145" id="h3-5-145" class="i">+  margin: 0;
+</a><a href="#h3-5-146" id="h3-5-146" class="i">+  color: var(--muted);
+</a><a href="#h3-5-147" id="h3-5-147" class="i">+  font-size: 13px;
+</a><a href="#h3-5-148" id="h3-5-148" class="i">+  line-height: 1.55;
+</a><a href="#h3-5-149" id="h3-5-149" class="i">+}
+</a><a href="#h3-5-150" id="h3-5-150" class="i">+
+</a><a href="#h3-5-151" id="h3-5-151" class="i">+.model-entry .button {
+</a><a href="#h3-5-152" id="h3-5-152" class="i">+  flex: 0 0 auto;
+</a><a href="#h3-5-153" id="h3-5-153" class="i">+}
+</a><a href="#h3-5-154" id="h3-5-154" class="i">+
+</a><a href="#h3-5-155" id="h3-5-155" class="i">+.model-entry-actions {
+</a><a href="#h3-5-156" id="h3-5-156" class="i">+  display: flex;
+</a><a href="#h3-5-157" id="h3-5-157" class="i">+  flex-wrap: wrap;
+</a><a href="#h3-5-158" id="h3-5-158" class="i">+  gap: 9px;
+</a><a href="#h3-5-159" id="h3-5-159" class="i">+}
+</a><a href="#h3-5-160" id="h3-5-160" class="i">+
+</a><a href="#h3-5-161" id="h3-5-161" class="i">+.model-shell {
+</a><a href="#h3-5-162" id="h3-5-162" class="i">+  max-width: 980px;
+</a><a href="#h3-5-163" id="h3-5-163" class="i">+  padding-top: 36px;
+</a><a href="#h3-5-164" id="h3-5-164" class="i">+  padding-bottom: 70px;
+</a><a href="#h3-5-165" id="h3-5-165" class="i">+}
+</a><a href="#h3-5-166" id="h3-5-166" class="i">+
+</a><a href="#h3-5-167" id="h3-5-167" class="i">+.model-toolbar {
+</a><a href="#h3-5-168" id="h3-5-168" class="i">+  display: flex;
+</a><a href="#h3-5-169" id="h3-5-169" class="i">+  align-items: center;
+</a><a href="#h3-5-170" id="h3-5-170" class="i">+  justify-content: space-between;
+</a><a href="#h3-5-171" id="h3-5-171" class="i">+  gap: 20px;
+</a><a href="#h3-5-172" id="h3-5-172" class="i">+  margin-bottom: 18px;
+</a><a href="#h3-5-173" id="h3-5-173" class="i">+  padding: 15px 18px;
+</a><a href="#h3-5-174" id="h3-5-174" class="i">+  border: 1px solid var(--line);
+</a><a href="#h3-5-175" id="h3-5-175" class="i">+  border-radius: 7px;
+</a><a href="#h3-5-176" id="h3-5-176" class="i">+  background: var(--paper);
+</a><a href="#h3-5-177" id="h3-5-177" class="i">+}
+</a><a href="#h3-5-178" id="h3-5-178" class="i">+
+</a><a href="#h3-5-179" id="h3-5-179" class="i">+.model-toolbar p {
+</a><a href="#h3-5-180" id="h3-5-180" class="i">+  margin: 0;
+</a><a href="#h3-5-181" id="h3-5-181" class="i">+  color: var(--muted);
+</a><a href="#h3-5-182" id="h3-5-182" class="i">+  font-size: 13px;
+</a><a href="#h3-5-183" id="h3-5-183" class="i">+  line-height: 1.5;
+</a><a href="#h3-5-184" id="h3-5-184" class="i">+}
+</a><a href="#h3-5-185" id="h3-5-185" class="i">+
+</a><a href="#h3-5-186" id="h3-5-186" class="i">+.model-document {
+</a><a href="#h3-5-187" id="h3-5-187" class="i">+  overflow: hidden;
+</a><a href="#h3-5-188" id="h3-5-188" class="i">+  border: 1px solid var(--line);
+</a><a href="#h3-5-189" id="h3-5-189" class="i">+  border-radius: 8px;
+</a><a href="#h3-5-190" id="h3-5-190" class="i">+  background: var(--paper);
+</a><a href="#h3-5-191" id="h3-5-191" class="i">+}
+</a><a href="#h3-5-192" id="h3-5-192" class="i">+
+</a><a href="#h3-5-193" id="h3-5-193" class="i">+.model-cover {
+</a><a href="#h3-5-194" id="h3-5-194" class="i">+  display: grid;
+</a><a href="#h3-5-195" id="h3-5-195" class="i">+  justify-items: center;
+</a><a href="#h3-5-196" id="h3-5-196" class="i">+  gap: 14px;
+</a><a href="#h3-5-197" id="h3-5-197" class="i">+  padding: 54px 32px 42px;
+</a><a href="#h3-5-198" id="h3-5-198" class="i">+  border-bottom: 1px solid var(--line);
+</a><a href="#h3-5-199" id="h3-5-199" class="i">+  text-align: center;
+</a><a href="#h3-5-200" id="h3-5-200" class="i">+}
+</a><a href="#h3-5-201" id="h3-5-201" class="i">+
+</a><a href="#h3-5-202" id="h3-5-202" class="i">+.model-cover .model-institution {
+</a><a href="#h3-5-203" id="h3-5-203" class="i">+  color: var(--muted);
+</a><a href="#h3-5-204" id="h3-5-204" class="i">+  font-size: 12px;
+</a><a href="#h3-5-205" id="h3-5-205" class="i">+  font-weight: 600;
+</a><a href="#h3-5-206" id="h3-5-206" class="i">+  line-height: 1.7;
+</a><a href="#h3-5-207" id="h3-5-207" class="i">+  text-transform: uppercase;
+</a><a href="#h3-5-208" id="h3-5-208" class="i">+}
+</a><a href="#h3-5-209" id="h3-5-209" class="i">+
+</a><a href="#h3-5-210" id="h3-5-210" class="i">+.model-cover h2 {
+</a><a href="#h3-5-211" id="h3-5-211" class="i">+  margin: 30px 0 0;
+</a><a href="#h3-5-212" id="h3-5-212" class="i">+  font-size: clamp(23px, 4vw, 32px);
+</a><a href="#h3-5-213" id="h3-5-213" class="i">+  font-weight: 600;
+</a><a href="#h3-5-214" id="h3-5-214" class="i">+  letter-spacing: -0.035em;
+</a><a href="#h3-5-215" id="h3-5-215" class="i">+}
+</a><a href="#h3-5-216" id="h3-5-216" class="i">+
+</a><a href="#h3-5-217" id="h3-5-217" class="i">+.model-cover &gt; p {
+</a><a href="#h3-5-218" id="h3-5-218" class="i">+  margin-bottom: 0;
+</a><a href="#h3-5-219" id="h3-5-219" class="i">+}
+</a><a href="#h3-5-220" id="h3-5-220" class="i">+
+</a><a href="#h3-5-221" id="h3-5-221" class="i">+.model-metadata {
+</a><a href="#h3-5-222" id="h3-5-222" class="i">+  display: grid;
+</a><a href="#h3-5-223" id="h3-5-223" class="i">+  width: min(100%, 620px);
+</a><a href="#h3-5-224" id="h3-5-224" class="i">+  gap: 9px;
+</a><a href="#h3-5-225" id="h3-5-225" class="i">+  margin: 14px 0 0;
+</a><a href="#h3-5-226" id="h3-5-226" class="i">+  text-align: left;
+</a><a href="#h3-5-227" id="h3-5-227" class="i">+}
+</a><a href="#h3-5-228" id="h3-5-228" class="i">+
+</a><a href="#h3-5-229" id="h3-5-229" class="i">+.model-metadata div {
+</a><a href="#h3-5-230" id="h3-5-230" class="i">+  display: grid;
+</a><a href="#h3-5-231" id="h3-5-231" class="i">+  grid-template-columns: minmax(105px, 0.35fr) 1fr;
+</a><a href="#h3-5-232" id="h3-5-232" class="i">+  gap: 12px;
+</a><a href="#h3-5-233" id="h3-5-233" class="i">+}
+</a><a href="#h3-5-234" id="h3-5-234" class="i">+
+</a><a href="#h3-5-235" id="h3-5-235" class="i">+.model-metadata dt {
+</a><a href="#h3-5-236" id="h3-5-236" class="i">+  color: var(--muted);
+</a><a href="#h3-5-237" id="h3-5-237" class="i">+}
+</a><a href="#h3-5-238" id="h3-5-238" class="i">+
+</a><a href="#h3-5-239" id="h3-5-239" class="i">+.model-metadata dd {
+</a><a href="#h3-5-240" id="h3-5-240" class="i">+  margin: 0;
+</a><a href="#h3-5-241" id="h3-5-241" class="i">+}
+</a><a href="#h3-5-242" id="h3-5-242" class="i">+
+</a><a href="#h3-5-243" id="h3-5-243" class="i">+.model-content {
+</a><a href="#h3-5-244" id="h3-5-244" class="i">+  width: min(100%, 820px);
+</a><a href="#h3-5-245" id="h3-5-245" class="i">+  margin: 0 auto;
+</a><a href="#h3-5-246" id="h3-5-246" class="i">+  padding: 36px clamp(18px, 5vw, 54px) 46px;
+</a><a href="#h3-5-247" id="h3-5-247" class="i">+}
+</a><a href="#h3-5-248" id="h3-5-248" class="i">+
+</a><a href="#h3-5-249" id="h3-5-249" class="i">+.model-section {
+</a><a href="#h3-5-250" id="h3-5-250" class="i">+  margin-bottom: 34px;
+</a><a href="#h3-5-251" id="h3-5-251" class="i">+}
+</a><a href="#h3-5-252" id="h3-5-252" class="i">+
+</a><a href="#h3-5-253" id="h3-5-253" class="i">+.model-section h2 {
+</a><a href="#h3-5-254" id="h3-5-254" class="i">+  margin-bottom: 16px;
+</a><a href="#h3-5-255" id="h3-5-255" class="i">+  font-size: 18px;
+</a><a href="#h3-5-256" id="h3-5-256" class="i">+  font-weight: 620;
+</a><a href="#h3-5-257" id="h3-5-257" class="i">+  line-height: 1.4;
+</a><a href="#h3-5-258" id="h3-5-258" class="i">+}
+</a><a href="#h3-5-259" id="h3-5-259" class="i">+
+</a><a href="#h3-5-260" id="h3-5-260" class="i">+.model-section p {
+</a><a href="#h3-5-261" id="h3-5-261" class="i">+  margin-bottom: 14px;
+</a><a href="#h3-5-262" id="h3-5-262" class="i">+  color: #d8d8d8;
+</a><a href="#h3-5-263" id="h3-5-263" class="i">+  font-size: 14px;
+</a><a href="#h3-5-264" id="h3-5-264" class="i">+  line-height: 1.8;
+</a><a href="#h3-5-265" id="h3-5-265" class="i">+  white-space: pre-line;
+</a><a href="#h3-5-266" id="h3-5-266" class="i">+}
+</a><a href="#h3-5-267" id="h3-5-267" class="i">+
+</a><a href="#h3-5-268" id="h3-5-268" class="i">+.model-section blockquote {
+</a><a href="#h3-5-269" id="h3-5-269" class="i">+  margin: 18px 0;
+</a><a href="#h3-5-270" id="h3-5-270" class="i">+  padding: 14px 18px;
+</a><a href="#h3-5-271" id="h3-5-271" class="i">+  border-left: 3px solid #858585;
+</a><a href="#h3-5-272" id="h3-5-272" class="i">+  background: var(--soft);
+</a><a href="#h3-5-273" id="h3-5-273" class="i">+  color: #dedede;
+</a><a href="#h3-5-274" id="h3-5-274" class="i">+  font-size: 13px;
+</a><a href="#h3-5-275" id="h3-5-275" class="i">+  line-height: 1.7;
+</a><a href="#h3-5-276" id="h3-5-276" class="i">+  white-space: pre-line;
+</a><a href="#h3-5-277" id="h3-5-277" class="i">+}
+</a><a href="#h3-5-278" id="h3-5-278" class="i">+
+</a><a href="#h3-5-279" id="h3-5-279" class="i">+.model-citations ul,
+</a><a href="#h3-5-280" id="h3-5-280" class="i">+.model-source-list {
+</a><a href="#h3-5-281" id="h3-5-281" class="i">+  display: grid;
+</a><a href="#h3-5-282" id="h3-5-282" class="i">+  gap: 12px;
+</a><a href="#h3-5-283" id="h3-5-283" class="i">+  margin: 0;
+</a><a href="#h3-5-284" id="h3-5-284" class="i">+  padding-left: 22px;
+</a><a href="#h3-5-285" id="h3-5-285" class="i">+}
+</a><a href="#h3-5-286" id="h3-5-286" class="i">+
+</a><a href="#h3-5-287" id="h3-5-287" class="i">+.model-citations li,
+</a><a href="#h3-5-288" id="h3-5-288" class="i">+.model-source-list li {
+</a><a href="#h3-5-289" id="h3-5-289" class="i">+  padding-left: 4px;
+</a><a href="#h3-5-290" id="h3-5-290" class="i">+  color: #d8d8d8;
+</a><a href="#h3-5-291" id="h3-5-291" class="i">+  font-size: 13px;
+</a><a href="#h3-5-292" id="h3-5-292" class="i">+  line-height: 1.7;
+</a><a href="#h3-5-293" id="h3-5-293" class="i">+  overflow-wrap: anywhere;
+</a><a href="#h3-5-294" id="h3-5-294" class="i">+}
+</a><a href="#h3-5-295" id="h3-5-295" class="i">+
+</a><a href="#h3-5-296" id="h3-5-296" class="i">+.model-citations li span {
+</a><a href="#h3-5-297" id="h3-5-297" class="i">+  display: block;
+</a><a href="#h3-5-298" id="h3-5-298" class="i">+  margin-bottom: 3px;
+</a><a href="#h3-5-299" id="h3-5-299" class="i">+  color: var(--muted);
+</a><a href="#h3-5-300" id="h3-5-300" class="i">+  font-size: 11px;
+</a><a href="#h3-5-301" id="h3-5-301" class="i">+  font-weight: 600;
+</a><a href="#h3-5-302" id="h3-5-302" class="i">+  letter-spacing: 0.04em;
+</a><a href="#h3-5-303" id="h3-5-303" class="i">+  text-transform: uppercase;
+</a><a href="#h3-5-304" id="h3-5-304" class="i">+}
+</a><a href="#h3-5-305" id="h3-5-305" class="i">+
+</a><a href="#h3-5-306" id="h3-5-306" class="i">+.model-citations li p {
+</a><a href="#h3-5-307" id="h3-5-307" class="i">+  margin: 0;
+</a><a href="#h3-5-308" id="h3-5-308" class="i">+}
+</a><a href="#h3-5-309" id="h3-5-309" class="i">+
+</a><a href="#h3-5-310" id="h3-5-310" class="i">+.model-reference-note,
+</a><a href="#h3-5-311" id="h3-5-311" class="i">+.model-disclaimer {
+</a><a href="#h3-5-312" id="h3-5-312" class="i">+  color: var(--muted) !important;
+</a><a href="#h3-5-313" id="h3-5-313" class="i">+  font-size: 12px !important;
+</a><a href="#h3-5-314" id="h3-5-314" class="i">+}
+</a><a href="#h3-5-315" id="h3-5-315" class="i">+
+</a><a href="#h3-5-316" id="h3-5-316" class="i">+.model-source-list li span {
+</a><a href="#h3-5-317" id="h3-5-317" class="i">+  display: block;
+</a><a href="#h3-5-318" id="h3-5-318" class="i">+  margin-bottom: 3px;
+</a><a href="#h3-5-319" id="h3-5-319" class="i">+  color: var(--muted);
+</a><a href="#h3-5-320" id="h3-5-320" class="i">+  font-size: 11px;
+</a><a href="#h3-5-321" id="h3-5-321" class="i">+  font-weight: 650;
+</a><a href="#h3-5-322" id="h3-5-322" class="i">+  letter-spacing: 0.06em;
+</a><a href="#h3-5-323" id="h3-5-323" class="i">+  text-transform: uppercase;
+</a><a href="#h3-5-324" id="h3-5-324" class="i">+}
+</a><a href="#h3-5-325" id="h3-5-325" class="i">+
+</a><a href="#h3-5-326" id="h3-5-326" class="i">+.model-source-list {
+</a><a href="#h3-5-327" id="h3-5-327" class="i">+  gap: 15px;
+</a><a href="#h3-5-328" id="h3-5-328" class="i">+}
+</a><a href="#h3-5-329" id="h3-5-329" class="i">+
+</a><a href="#h3-5-330" id="h3-5-330" class="i">+.model-source-list li p {
+</a><a href="#h3-5-331" id="h3-5-331" class="i">+  margin: 0;
+</a><a href="#h3-5-332" id="h3-5-332" class="i">+  color: #d8d8d8;
+</a><a href="#h3-5-333" id="h3-5-333" class="i">+  font-size: 13px;
+</a><a href="#h3-5-334" id="h3-5-334" class="i">+  line-height: 1.7;
+</a><a href="#h3-5-335" id="h3-5-335" class="i">+  overflow-wrap: anywhere;
+</a><a href="#h3-5-336" id="h3-5-336" class="i">+}
+</a><a href="#h3-5-337" id="h3-5-337" class="i">+
+</a><a href="#h3-5-338" id="h3-5-338" class="i">+.model-disclaimer {
+</a><a href="#h3-5-339" id="h3-5-339" class="i">+  margin: 28px 0 0;
+</a><a href="#h3-5-340" id="h3-5-340" class="i">+  padding-top: 16px;
+</a><a href="#h3-5-341" id="h3-5-341" class="i">+  border-top: 1px solid var(--line);
+</a><a href="#h3-5-342" id="h3-5-342" class="i">+}
+</a><a href="#h3-5-343" id="h3-5-343" class="i">+
+</a><a href="#h3-5-344" id="h3-5-344" class="i">+.model-readonly-note {
+</a><a href="#h3-5-345" id="h3-5-345" class="i">+  margin: -10px 0 22px;
+</a><a href="#h3-5-346" id="h3-5-346" class="i">+  padding: 12px 14px;
+</a><a href="#h3-5-347" id="h3-5-347" class="i">+  border: 1px solid var(--line);
+</a><a href="#h3-5-348" id="h3-5-348" class="i">+  border-radius: 6px;
+</a><a href="#h3-5-349" id="h3-5-349" class="i">+  background: var(--paper);
+</a><a href="#h3-5-350" id="h3-5-350" class="i">+  color: var(--muted);
+</a><a href="#h3-5-351" id="h3-5-351" class="i">+  font-size: 12px;
+</a><a href="#h3-5-352" id="h3-5-352" class="i">+  line-height: 1.55;
+</a><a href="#h3-5-353" id="h3-5-353" class="i">+}
+</a><a href="#h3-5-354" id="h3-5-354" class="i">+
+</a><a href="#h3-5-355" id="h3-5-355" class="i">+.model-workflow-shell .step-card {
+</a><a href="#h3-5-356" id="h3-5-356" class="i">+  background: var(--paper);
+</a><a href="#h3-5-357" id="h3-5-357" class="i">+}
+</a><a href="#h3-5-358" id="h3-5-358" class="i">+
+</a><a href="#h3-5-359" id="h3-5-359" class="i">+.model-fields .field textarea,
+</a><a href="#h3-5-360" id="h3-5-360" class="i">+.model-fields .field input,
+</a><a href="#h3-5-361" id="h3-5-361" class="i">+.model-fields .field select,
+</a><a href="#h3-5-362" id="h3-5-362" class="i">+.model-readonly-section textarea {
+</a><a href="#h3-5-363" id="h3-5-363" class="i">+  background: #171717;
+</a><a href="#h3-5-364" id="h3-5-364" class="i">+  color: var(--ink);
+</a><a href="#h3-5-365" id="h3-5-365" class="i">+}
+</a><a href="#h3-5-366" id="h3-5-366" class="i">+
+</a><a href="#h3-5-367" id="h3-5-367" class="i">+.model-fields .field select:disabled {
+</a><a href="#h3-5-368" id="h3-5-368" class="i">+  opacity: 1;
+</a><a href="#h3-5-369" id="h3-5-369" class="i">+}
+</a><a href="#h3-5-370" id="h3-5-370" class="i">+
+</a><a href="#h3-5-371" id="h3-5-371" class="i">+.model-readonly-section {
+</a><a href="#h3-5-372" id="h3-5-372" class="i">+  margin-top: 10px;
+</a><a href="#h3-5-373" id="h3-5-373" class="i">+}
+</a><a href="#h3-5-374" id="h3-5-374" class="i">+
+</a><a href="#h3-5-375" id="h3-5-375" class="i">+.model-source-row {
+</a><a href="#h3-5-376" id="h3-5-376" class="i">+  gap: 10px;
+</a><a href="#h3-5-377" id="h3-5-377" class="i">+}
+</a><a href="#h3-5-378" id="h3-5-378" class="i">+
+</a><a href="#h3-5-379" id="h3-5-379" class="i">+.model-source-status {
+</a><a href="#h3-5-380" id="h3-5-380" class="i">+  color: var(--muted);
+</a><a href="#h3-5-381" id="h3-5-381" class="i">+  font-size: 11px;
+</a><a href="#h3-5-382" id="h3-5-382" class="i">+}
+</a><a href="#h3-5-383" id="h3-5-383" class="i">+
+</a><a href="#h3-5-384" id="h3-5-384" class="i">+.model-source-reference {
+</a><a href="#h3-5-385" id="h3-5-385" class="i">+  margin: 0;
+</a><a href="#h3-5-386" id="h3-5-386" class="i">+  color: #d8d8d8;
+</a><a href="#h3-5-387" id="h3-5-387" class="i">+  font-size: 13px;
+</a><a href="#h3-5-388" id="h3-5-388" class="i">+  line-height: 1.7;
+</a><a href="#h3-5-389" id="h3-5-389" class="i">+  overflow-wrap: anywhere;
+</a><a href="#h3-5-390" id="h3-5-390" class="i">+}
+</a><a href="#h3-5-391" id="h3-5-391" class="i">+
+</a><a href="#h3-5-392" id="h3-5-392" class="i">+.model-citation-examples {
+</a><a href="#h3-5-393" id="h3-5-393" class="i">+  display: grid;
+</a><a href="#h3-5-394" id="h3-5-394" class="i">+  gap: 12px;
+</a><a href="#h3-5-395" id="h3-5-395" class="i">+  margin-top: 24px;
+</a><a href="#h3-5-396" id="h3-5-396" class="i">+}
+</a><a href="#h3-5-397" id="h3-5-397" class="i">+
+</a><a href="#h3-5-398" id="h3-5-398" class="i">+.model-citation-examples h3,
+</a><a href="#h3-5-399" id="h3-5-399" class="i">+.model-review h3 {
+</a><a href="#h3-5-400" id="h3-5-400" class="i">+  margin: 0;
+</a><a href="#h3-5-401" id="h3-5-401" class="i">+  font-size: 16px;
+</a><a href="#h3-5-402" id="h3-5-402" class="i">+}
+</a><a href="#h3-5-403" id="h3-5-403" class="i">+
+</a><a href="#h3-5-404" id="h3-5-404" class="i">+.model-citation-examples ul {
+</a><a href="#h3-5-405" id="h3-5-405" class="i">+  display: grid;
+</a><a href="#h3-5-406" id="h3-5-406" class="i">+  gap: 12px;
+</a><a href="#h3-5-407" id="h3-5-407" class="i">+  margin: 0;
+</a><a href="#h3-5-408" id="h3-5-408" class="i">+  padding-left: 22px;
+</a><a href="#h3-5-409" id="h3-5-409" class="i">+}
+</a><a href="#h3-5-410" id="h3-5-410" class="i">+
+</a><a href="#h3-5-411" id="h3-5-411" class="i">+.model-citation-examples li {
+</a><a href="#h3-5-412" id="h3-5-412" class="i">+  padding-left: 4px;
+</a><a href="#h3-5-413" id="h3-5-413" class="i">+  color: #d8d8d8;
+</a>   font-size: 13px;
+<a href="#h3-5-415" id="h3-5-415" class="d">-  line-height: 1.55;
+</a><a href="#h3-5-416" id="h3-5-416" class="i">+  line-height: 1.7;
+</a><a href="#h3-5-417" id="h3-5-417" class="i">+  overflow-wrap: anywhere;
+</a> }
+ 
+<a href="#h3-5-420" id="h3-5-420" class="d">-.temporary-models .choice-list {
+</a><a href="#h3-5-421" id="h3-5-421" class="d">-  margin-top: 16px;
+</a><a href="#h3-5-422" id="h3-5-422" class="i">+.model-citation-examples li span {
+</a><a href="#h3-5-423" id="h3-5-423" class="i">+  display: block;
+</a><a href="#h3-5-424" id="h3-5-424" class="i">+  margin-bottom: 3px;
+</a><a href="#h3-5-425" id="h3-5-425" class="i">+  color: var(--muted);
+</a><a href="#h3-5-426" id="h3-5-426" class="i">+  font-size: 11px;
+</a><a href="#h3-5-427" id="h3-5-427" class="i">+  font-weight: 600;
+</a><a href="#h3-5-428" id="h3-5-428" class="i">+  letter-spacing: 0.04em;
+</a><a href="#h3-5-429" id="h3-5-429" class="i">+  text-transform: uppercase;
+</a> }
+ 
+<a href="#h3-5-432" id="h3-5-432" class="d">-.model-disclaimer {
+</a><a href="#h3-5-433" id="h3-5-433" class="d">-  margin: 12px 0 0;
+</a><a href="#h3-5-434" id="h3-5-434" class="d">-  font-size: 12px;
+</a><a href="#h3-5-435" id="h3-5-435" class="i">+.model-citation-examples li p {
+</a><a href="#h3-5-436" id="h3-5-436" class="i">+  margin: 0;
+</a> }
+ 
+<a href="#h3-5-439" id="h3-5-439" class="d">-.preset-notice {
+</a><a href="#h3-5-440" id="h3-5-440" class="d">-  margin: -10px 0 22px;
+</a><a href="#h3-5-441" id="h3-5-441" class="i">+.model-checklist .check-item {
+</a><a href="#h3-5-442" id="h3-5-442" class="i">+  cursor: default;
+</a> }
+ 
+<a href="#h3-5-445" id="h3-5-445" class="d">-.app-shell {
+</a><a href="#h3-5-446" id="h3-5-446" class="d">-  padding: 36px 0 70px;
+</a><a href="#h3-5-447" id="h3-5-447" class="i">+.model-checklist .field-hint {
+</a><a href="#h3-5-448" id="h3-5-448" class="i">+  margin: 0;
+</a> }
+ 
+<a href="#h3-5-451" id="h3-5-451" class="d">-.app-heading {
+</a><a href="#h3-5-452" id="h3-5-452" class="d">-  display: flex;
+</a><a href="#h3-5-453" id="h3-5-453" class="d">-  align-items: flex-start;
+</a><a href="#h3-5-454" id="h3-5-454" class="d">-  justify-content: space-between;
+</a><a href="#h3-5-455" id="h3-5-455" class="d">-  gap: 24px;
+</a><a href="#h3-5-456" id="h3-5-456" class="d">-  margin-bottom: 28px;
+</a><a href="#h3-5-457" id="h3-5-457" class="i">+.model-review {
+</a><a href="#h3-5-458" id="h3-5-458" class="i">+  display: grid;
+</a><a href="#h3-5-459" id="h3-5-459" class="i">+  justify-items: start;
+</a><a href="#h3-5-460" id="h3-5-460" class="i">+  gap: 12px;
+</a><a href="#h3-5-461" id="h3-5-461" class="i">+  padding: 18px;
+</a><a href="#h3-5-462" id="h3-5-462" class="i">+  border: 1px solid var(--line);
+</a><a href="#h3-5-463" id="h3-5-463" class="i">+  border-radius: 6px;
+</a><a href="#h3-5-464" id="h3-5-464" class="i">+  background: var(--paper);
+</a> }
+ 
+<a href="#h3-5-467" id="h3-5-467" class="d">-.app-heading h1 {
+</a><a href="#h3-5-468" id="h3-5-468" class="i">+.model-review p {
+</a>   margin: 0;
+<a href="#h3-5-470" id="h3-5-470" class="d">-  font-size: clamp(27px, 3vw, 36px);
+</a><a href="#h3-5-471" id="h3-5-471" class="d">-  letter-spacing: -0.04em;
+</a><a href="#h3-5-472" id="h3-5-472" class="i">+  color: var(--muted);
+</a><a href="#h3-5-473" id="h3-5-473" class="i">+  font-size: 13px;
+</a><a href="#h3-5-474" id="h3-5-474" class="i">+  line-height: 1.6;
+</a> }
+ 
+ .back-link,
+<a href="#h3-6" id="h3-6" class="h">@@ -217,7 +725,7 @@ h1 {
+</a> 
+ .workspace {
+   display: grid;
+<a href="#h3-6-3" id="h3-6-3" class="d">-  grid-template-columns: 190px minmax(300px, 1fr) minmax(270px, 0.85fr);
+</a><a href="#h3-6-4" id="h3-6-4" class="i">+  grid-template-columns: 190px minmax(0, 1fr);
+</a>   align-items: start;
+   gap: 24px;
+ }
+<a href="#h3-7" id="h3-7" class="h">@@ -229,7 +737,7 @@ h1 {
+</a> 
+ .step-link {
+   display: grid;
+<a href="#h3-7-3" id="h3-7-3" class="d">-  grid-template-columns: 25px 1fr;
+</a><a href="#h3-7-4" id="h3-7-4" class="i">+  grid-template-columns: 25px minmax(0, 1fr) 16px;
+</a>   align-items: start;
+   gap: 9px;
+   width: 100%;
+<a href="#h3-8" id="h3-8" class="h">@@ -245,7 +753,7 @@ h1 {
+</a> }
+ 
+ .step-link:hover {
+<a href="#h3-8-3" id="h3-8-3" class="d">-  background: #eeefec;
+</a><a href="#h3-8-4" id="h3-8-4" class="i">+  background: var(--surface-hover);
+</a> }
+ 
+ .step-link[aria-current=&quot;step&quot;] {
+<a href="#h3-9" id="h3-9" class="h">@@ -254,6 +762,14 @@ h1 {
+</a>   font-weight: 600;
+ }
+ 
+<a href="#h3-9-3" id="h3-9-3" class="i">+.step-status {
+</a><a href="#h3-9-4" id="h3-9-4" class="i">+  grid-column: 3;
+</a><a href="#h3-9-5" id="h3-9-5" class="i">+  grid-row: 1;
+</a><a href="#h3-9-6" id="h3-9-6" class="i">+  color: var(--accent);
+</a><a href="#h3-9-7" id="h3-9-7" class="i">+  font-size: 14px;
+</a><a href="#h3-9-8" id="h3-9-8" class="i">+  font-weight: 700;
+</a><a href="#h3-9-9" id="h3-9-9" class="i">+}
+</a><a href="#h3-9-10" id="h3-9-10" class="i">+
+</a> .step-index {
+   font-variant-numeric: tabular-nums;
+ }
+<a href="#h3-10" id="h3-10" class="h">@@ -289,6 +805,250 @@ h1 {
+</a>   gap: 18px;
+ }
+ 
+<a href="#h3-10-3" id="h3-10-3" class="i">+.field-group {
+</a><a href="#h3-10-4" id="h3-10-4" class="i">+  display: grid;
+</a><a href="#h3-10-5" id="h3-10-5" class="i">+  gap: 12px;
+</a><a href="#h3-10-6" id="h3-10-6" class="i">+}
+</a><a href="#h3-10-7" id="h3-10-7" class="i">+
+</a><a href="#h3-10-8" id="h3-10-8" class="i">+.field-group h3 {
+</a><a href="#h3-10-9" id="h3-10-9" class="i">+  margin: 0;
+</a><a href="#h3-10-10" id="h3-10-10" class="i">+  font-size: 16px;
+</a><a href="#h3-10-11" id="h3-10-11" class="i">+}
+</a><a href="#h3-10-12" id="h3-10-12" class="i">+
+</a><a href="#h3-10-13" id="h3-10-13" class="i">+.field-group .field-label-row {
+</a><a href="#h3-10-14" id="h3-10-14" class="i">+  align-items: center;
+</a><a href="#h3-10-15" id="h3-10-15" class="i">+}
+</a><a href="#h3-10-16" id="h3-10-16" class="i">+
+</a><a href="#h3-10-17" id="h3-10-17" class="i">+.reference-details {
+</a><a href="#h3-10-18" id="h3-10-18" class="i">+  display: grid;
+</a><a href="#h3-10-19" id="h3-10-19" class="i">+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+</a><a href="#h3-10-20" id="h3-10-20" class="i">+  gap: 14px;
+</a><a href="#h3-10-21" id="h3-10-21" class="i">+}
+</a><a href="#h3-10-22" id="h3-10-22" class="i">+
+</a><a href="#h3-10-23" id="h3-10-23" class="i">+.reference-preview,
+</a><a href="#h3-10-24" id="h3-10-24" class="i">+.citation-analysis {
+</a><a href="#h3-10-25" id="h3-10-25" class="i">+  display: grid;
+</a><a href="#h3-10-26" id="h3-10-26" class="i">+  gap: 10px;
+</a><a href="#h3-10-27" id="h3-10-27" class="i">+  padding: 16px;
+</a><a href="#h3-10-28" id="h3-10-28" class="i">+  border: 1px solid var(--line);
+</a><a href="#h3-10-29" id="h3-10-29" class="i">+  border-radius: 6px;
+</a><a href="#h3-10-30" id="h3-10-30" class="i">+  background: var(--paper);
+</a><a href="#h3-10-31" id="h3-10-31" class="i">+}
+</a><a href="#h3-10-32" id="h3-10-32" class="i">+
+</a><a href="#h3-10-33" id="h3-10-33" class="i">+.reference-preview-text {
+</a><a href="#h3-10-34" id="h3-10-34" class="i">+  margin: 0;
+</a><a href="#h3-10-35" id="h3-10-35" class="i">+  padding: 12px;
+</a><a href="#h3-10-36" id="h3-10-36" class="i">+  border-radius: 5px;
+</a><a href="#h3-10-37" id="h3-10-37" class="i">+  background: var(--soft);
+</a><a href="#h3-10-38" id="h3-10-38" class="i">+  font-size: 13px;
+</a><a href="#h3-10-39" id="h3-10-39" class="i">+  line-height: 1.6;
+</a><a href="#h3-10-40" id="h3-10-40" class="i">+  overflow-wrap: anywhere;
+</a><a href="#h3-10-41" id="h3-10-41" class="i">+}
+</a><a href="#h3-10-42" id="h3-10-42" class="i">+
+</a><a href="#h3-10-43" id="h3-10-43" class="i">+.citation-analysis h3 {
+</a><a href="#h3-10-44" id="h3-10-44" class="i">+  margin: 0;
+</a><a href="#h3-10-45" id="h3-10-45" class="i">+  font-size: 16px;
+</a><a href="#h3-10-46" id="h3-10-46" class="i">+}
+</a><a href="#h3-10-47" id="h3-10-47" class="i">+
+</a><a href="#h3-10-48" id="h3-10-48" class="i">+.citation-analysis .field-hint {
+</a><a href="#h3-10-49" id="h3-10-49" class="i">+  margin: 0;
+</a><a href="#h3-10-50" id="h3-10-50" class="i">+}
+</a><a href="#h3-10-51" id="h3-10-51" class="i">+
+</a><a href="#h3-10-52" id="h3-10-52" class="i">+.citation-warning-list {
+</a><a href="#h3-10-53" id="h3-10-53" class="i">+  display: grid;
+</a><a href="#h3-10-54" id="h3-10-54" class="i">+  gap: 8px;
+</a><a href="#h3-10-55" id="h3-10-55" class="i">+  margin: 0;
+</a><a href="#h3-10-56" id="h3-10-56" class="i">+  padding-left: 20px;
+</a><a href="#h3-10-57" id="h3-10-57" class="i">+  color: var(--danger);
+</a><a href="#h3-10-58" id="h3-10-58" class="i">+  font-size: 12px;
+</a><a href="#h3-10-59" id="h3-10-59" class="i">+  line-height: 1.5;
+</a><a href="#h3-10-60" id="h3-10-60" class="i">+}
+</a><a href="#h3-10-61" id="h3-10-61" class="i">+
+</a><a href="#h3-10-62" id="h3-10-62" class="i">+.citation-analysis-clear {
+</a><a href="#h3-10-63" id="h3-10-63" class="i">+  margin: 0;
+</a><a href="#h3-10-64" id="h3-10-64" class="i">+  color: #e0e0e0;
+</a><a href="#h3-10-65" id="h3-10-65" class="i">+  font-size: 12px;
+</a><a href="#h3-10-66" id="h3-10-66" class="i">+  line-height: 1.5;
+</a><a href="#h3-10-67" id="h3-10-67" class="i">+}
+</a><a href="#h3-10-68" id="h3-10-68" class="i">+
+</a><a href="#h3-10-69" id="h3-10-69" class="i">+.stage-checklist,
+</a><a href="#h3-10-70" id="h3-10-70" class="i">+.source-theses {
+</a><a href="#h3-10-71" id="h3-10-71" class="i">+  display: grid;
+</a><a href="#h3-10-72" id="h3-10-72" class="i">+  gap: 10px;
+</a><a href="#h3-10-73" id="h3-10-73" class="i">+  min-width: 0;
+</a><a href="#h3-10-74" id="h3-10-74" class="i">+  margin: 26px 0 0;
+</a><a href="#h3-10-75" id="h3-10-75" class="i">+  padding: 16px;
+</a><a href="#h3-10-76" id="h3-10-76" class="i">+  border: 1px solid var(--line);
+</a><a href="#h3-10-77" id="h3-10-77" class="i">+  border-radius: 6px;
+</a><a href="#h3-10-78" id="h3-10-78" class="i">+}
+</a><a href="#h3-10-79" id="h3-10-79" class="i">+
+</a><a href="#h3-10-80" id="h3-10-80" class="i">+.stage-checklist legend,
+</a><a href="#h3-10-81" id="h3-10-81" class="i">+.source-theses legend {
+</a><a href="#h3-10-82" id="h3-10-82" class="i">+  padding: 0 6px;
+</a><a href="#h3-10-83" id="h3-10-83" class="i">+  font-size: 13px;
+</a><a href="#h3-10-84" id="h3-10-84" class="i">+  font-weight: 600;
+</a><a href="#h3-10-85" id="h3-10-85" class="i">+}
+</a><a href="#h3-10-86" id="h3-10-86" class="i">+
+</a><a href="#h3-10-87" id="h3-10-87" class="i">+.check-item {
+</a><a href="#h3-10-88" id="h3-10-88" class="i">+  display: flex;
+</a><a href="#h3-10-89" id="h3-10-89" class="i">+  align-items: flex-start;
+</a><a href="#h3-10-90" id="h3-10-90" class="i">+  gap: 9px;
+</a><a href="#h3-10-91" id="h3-10-91" class="i">+  margin: 0;
+</a><a href="#h3-10-92" id="h3-10-92" class="i">+  color: #d2d2d2;
+</a><a href="#h3-10-93" id="h3-10-93" class="i">+  cursor: pointer;
+</a><a href="#h3-10-94" id="h3-10-94" class="i">+  font-size: 12px;
+</a><a href="#h3-10-95" id="h3-10-95" class="i">+  font-weight: 450 !important;
+</a><a href="#h3-10-96" id="h3-10-96" class="i">+  line-height: 1.5;
+</a><a href="#h3-10-97" id="h3-10-97" class="i">+}
+</a><a href="#h3-10-98" id="h3-10-98" class="i">+
+</a><a href="#h3-10-99" id="h3-10-99" class="i">+.check-item input {
+</a><a href="#h3-10-100" id="h3-10-100" class="i">+  flex: 0 0 auto;
+</a><a href="#h3-10-101" id="h3-10-101" class="i">+  width: auto;
+</a><a href="#h3-10-102" id="h3-10-102" class="i">+  margin: 2px 0 0;
+</a><a href="#h3-10-103" id="h3-10-103" class="i">+  accent-color: var(--accent);
+</a><a href="#h3-10-104" id="h3-10-104" class="i">+}
+</a><a href="#h3-10-105" id="h3-10-105" class="i">+
+</a><a href="#h3-10-106" id="h3-10-106" class="i">+.criteria-list,
+</a><a href="#h3-10-107" id="h3-10-107" class="i">+.source-list {
+</a><a href="#h3-10-108" id="h3-10-108" class="i">+  display: grid;
+</a><a href="#h3-10-109" id="h3-10-109" class="i">+  gap: 14px;
+</a><a href="#h3-10-110" id="h3-10-110" class="i">+}
+</a><a href="#h3-10-111" id="h3-10-111" class="i">+
+</a><a href="#h3-10-112" id="h3-10-112" class="i">+.criteria-row,
+</a><a href="#h3-10-113" id="h3-10-113" class="i">+.source-row {
+</a><a href="#h3-10-114" id="h3-10-114" class="i">+  display: grid;
+</a><a href="#h3-10-115" id="h3-10-115" class="i">+  gap: 14px;
+</a><a href="#h3-10-116" id="h3-10-116" class="i">+  padding: 16px;
+</a><a href="#h3-10-117" id="h3-10-117" class="i">+  border: 1px solid var(--line);
+</a><a href="#h3-10-118" id="h3-10-118" class="i">+  border-radius: 6px;
+</a><a href="#h3-10-119" id="h3-10-119" class="i">+  background: var(--paper);
+</a><a href="#h3-10-120" id="h3-10-120" class="i">+}
+</a><a href="#h3-10-121" id="h3-10-121" class="i">+
+</a><a href="#h3-10-122" id="h3-10-122" class="i">+.source-row-head {
+</a><a href="#h3-10-123" id="h3-10-123" class="i">+  display: flex;
+</a><a href="#h3-10-124" id="h3-10-124" class="i">+  align-items: center;
+</a><a href="#h3-10-125" id="h3-10-125" class="i">+  justify-content: space-between;
+</a><a href="#h3-10-126" id="h3-10-126" class="i">+}
+</a><a href="#h3-10-127" id="h3-10-127" class="i">+
+</a><a href="#h3-10-128" id="h3-10-128" class="i">+.remove-button {
+</a><a href="#h3-10-129" id="h3-10-129" class="i">+  justify-self: end;
+</a><a href="#h3-10-130" id="h3-10-130" class="i">+  color: var(--danger);
+</a><a href="#h3-10-131" id="h3-10-131" class="i">+}
+</a><a href="#h3-10-132" id="h3-10-132" class="i">+
+</a><a href="#h3-10-133" id="h3-10-133" class="i">+.source-flag {
+</a><a href="#h3-10-134" id="h3-10-134" class="i">+  padding-top: 2px;
+</a><a href="#h3-10-135" id="h3-10-135" class="i">+}
+</a><a href="#h3-10-136" id="h3-10-136" class="i">+
+</a><a href="#h3-10-137" id="h3-10-137" class="i">+.empty-list {
+</a><a href="#h3-10-138" id="h3-10-138" class="i">+  margin: 0;
+</a><a href="#h3-10-139" id="h3-10-139" class="i">+  padding: 12px;
+</a><a href="#h3-10-140" id="h3-10-140" class="i">+  border-radius: 5px;
+</a><a href="#h3-10-141" id="h3-10-141" class="i">+  background: var(--soft);
+</a><a href="#h3-10-142" id="h3-10-142" class="i">+  color: var(--muted);
+</a><a href="#h3-10-143" id="h3-10-143" class="i">+  font-size: 12px;
+</a><a href="#h3-10-144" id="h3-10-144" class="i">+}
+</a><a href="#h3-10-145" id="h3-10-145" class="i">+
+</a><a href="#h3-10-146" id="h3-10-146" class="i">+.source-counts {
+</a><a href="#h3-10-147" id="h3-10-147" class="i">+  display: grid;
+</a><a href="#h3-10-148" id="h3-10-148" class="i">+  gap: 5px;
+</a><a href="#h3-10-149" id="h3-10-149" class="i">+  margin-top: 20px;
+</a><a href="#h3-10-150" id="h3-10-150" class="i">+  color: var(--muted);
+</a><a href="#h3-10-151" id="h3-10-151" class="i">+  font-size: 12px;
+</a><a href="#h3-10-152" id="h3-10-152" class="i">+  line-height: 1.5;
+</a><a href="#h3-10-153" id="h3-10-153" class="i">+}
+</a><a href="#h3-10-154" id="h3-10-154" class="i">+
+</a><a href="#h3-10-155" id="h3-10-155" class="i">+.requirement-list {
+</a><a href="#h3-10-156" id="h3-10-156" class="i">+  display: grid;
+</a><a href="#h3-10-157" id="h3-10-157" class="i">+  gap: 8px;
+</a><a href="#h3-10-158" id="h3-10-158" class="i">+  margin: 14px 0 0;
+</a><a href="#h3-10-159" id="h3-10-159" class="i">+  padding: 0;
+</a><a href="#h3-10-160" id="h3-10-160" class="i">+  list-style: none;
+</a><a href="#h3-10-161" id="h3-10-161" class="i">+}
+</a><a href="#h3-10-162" id="h3-10-162" class="i">+
+</a><a href="#h3-10-163" id="h3-10-163" class="i">+.requirement-list li {
+</a><a href="#h3-10-164" id="h3-10-164" class="i">+  display: grid;
+</a><a href="#h3-10-165" id="h3-10-165" class="i">+  grid-template-columns: 18px minmax(0, 1fr) auto;
+</a><a href="#h3-10-166" id="h3-10-166" class="i">+  align-items: start;
+</a><a href="#h3-10-167" id="h3-10-167" class="i">+  gap: 8px;
+</a><a href="#h3-10-168" id="h3-10-168" class="i">+  color: var(--muted);
+</a><a href="#h3-10-169" id="h3-10-169" class="i">+  font-size: 12px;
+</a><a href="#h3-10-170" id="h3-10-170" class="i">+  line-height: 1.5;
+</a><a href="#h3-10-171" id="h3-10-171" class="i">+}
+</a><a href="#h3-10-172" id="h3-10-172" class="i">+
+</a><a href="#h3-10-173" id="h3-10-173" class="i">+.requirement-list li &gt; span:first-child {
+</a><a href="#h3-10-174" id="h3-10-174" class="i">+  font-weight: 700;
+</a><a href="#h3-10-175" id="h3-10-175" class="i">+}
+</a><a href="#h3-10-176" id="h3-10-176" class="i">+
+</a><a href="#h3-10-177" id="h3-10-177" class="i">+.requirement-list .is-done {
+</a><a href="#h3-10-178" id="h3-10-178" class="i">+  color: var(--accent);
+</a><a href="#h3-10-179" id="h3-10-179" class="i">+}
+</a><a href="#h3-10-180" id="h3-10-180" class="i">+
+</a><a href="#h3-10-181" id="h3-10-181" class="i">+.requirement-list .is-missing {
+</a><a href="#h3-10-182" id="h3-10-182" class="i">+  color: var(--danger);
+</a><a href="#h3-10-183" id="h3-10-183" class="i">+}
+</a><a href="#h3-10-184" id="h3-10-184" class="i">+
+</a><a href="#h3-10-185" id="h3-10-185" class="i">+.review-panel {
+</a><a href="#h3-10-186" id="h3-10-186" class="i">+  display: grid;
+</a><a href="#h3-10-187" id="h3-10-187" class="i">+  gap: 18px;
+</a><a href="#h3-10-188" id="h3-10-188" class="i">+}
+</a><a href="#h3-10-189" id="h3-10-189" class="i">+
+</a><a href="#h3-10-190" id="h3-10-190" class="i">+.review-progress {
+</a><a href="#h3-10-191" id="h3-10-191" class="i">+  display: grid;
+</a><a href="#h3-10-192" id="h3-10-192" class="i">+  grid-template-columns: auto 1fr;
+</a><a href="#h3-10-193" id="h3-10-193" class="i">+  align-items: baseline;
+</a><a href="#h3-10-194" id="h3-10-194" class="i">+  gap: 4px 12px;
+</a><a href="#h3-10-195" id="h3-10-195" class="i">+}
+</a><a href="#h3-10-196" id="h3-10-196" class="i">+
+</a><a href="#h3-10-197" id="h3-10-197" class="i">+.review-progress strong {
+</a><a href="#h3-10-198" id="h3-10-198" class="i">+  color: var(--accent);
+</a><a href="#h3-10-199" id="h3-10-199" class="i">+  font-size: 30px;
+</a><a href="#h3-10-200" id="h3-10-200" class="i">+}
+</a><a href="#h3-10-201" id="h3-10-201" class="i">+
+</a><a href="#h3-10-202" id="h3-10-202" class="i">+.review-progress &gt; span {
+</a><a href="#h3-10-203" id="h3-10-203" class="i">+  color: var(--muted);
+</a><a href="#h3-10-204" id="h3-10-204" class="i">+  font-size: 12px;
+</a><a href="#h3-10-205" id="h3-10-205" class="i">+}
+</a><a href="#h3-10-206" id="h3-10-206" class="i">+
+</a><a href="#h3-10-207" id="h3-10-207" class="i">+.review-progress .progress-track {
+</a><a href="#h3-10-208" id="h3-10-208" class="i">+  grid-column: 1 / -1;
+</a><a href="#h3-10-209" id="h3-10-209" class="i">+}
+</a><a href="#h3-10-210" id="h3-10-210" class="i">+
+</a><a href="#h3-10-211" id="h3-10-211" class="i">+.review-requirements {
+</a><a href="#h3-10-212" id="h3-10-212" class="i">+  gap: 10px;
+</a><a href="#h3-10-213" id="h3-10-213" class="i">+}
+</a><a href="#h3-10-214" id="h3-10-214" class="i">+
+</a><a href="#h3-10-215" id="h3-10-215" class="i">+.completion-notice {
+</a><a href="#h3-10-216" id="h3-10-216" class="i">+  margin: 0;
+</a><a href="#h3-10-217" id="h3-10-217" class="i">+}
+</a><a href="#h3-10-218" id="h3-10-218" class="i">+
+</a><a href="#h3-10-219" id="h3-10-219" class="i">+.export-actions {
+</a><a href="#h3-10-220" id="h3-10-220" class="i">+  display: flex;
+</a><a href="#h3-10-221" id="h3-10-221" class="i">+  flex-wrap: wrap;
+</a><a href="#h3-10-222" id="h3-10-222" class="i">+  gap: 10px;
+</a><a href="#h3-10-223" id="h3-10-223" class="i">+}
+</a><a href="#h3-10-224" id="h3-10-224" class="i">+
+</a><a href="#h3-10-225" id="h3-10-225" class="i">+.review-panel .preview-body {
+</a><a href="#h3-10-226" id="h3-10-226" class="i">+  max-height: 70vh;
+</a><a href="#h3-10-227" id="h3-10-227" class="i">+}
+</a><a href="#h3-10-228" id="h3-10-228" class="i">+
+</a><a href="#h3-10-229" id="h3-10-229" class="i">+.review-panel .preview-body img {
+</a><a href="#h3-10-230" id="h3-10-230" class="i">+  display: block;
+</a><a href="#h3-10-231" id="h3-10-231" class="i">+  width: 100%;
+</a><a href="#h3-10-232" id="h3-10-232" class="i">+  height: auto;
+</a><a href="#h3-10-233" id="h3-10-233" class="i">+  border: 1px solid var(--line);
+</a><a href="#h3-10-234" id="h3-10-234" class="i">+  background: white;
+</a><a href="#h3-10-235" id="h3-10-235" class="i">+}
+</a><a href="#h3-10-236" id="h3-10-236" class="i">+
+</a><a href="#h3-10-237" id="h3-10-237" class="i">+.review-panel .preview-status {
+</a><a href="#h3-10-238" id="h3-10-238" class="i">+  min-height: 20px;
+</a><a href="#h3-10-239" id="h3-10-239" class="i">+  padding: 0;
+</a><a href="#h3-10-240" id="h3-10-240" class="i">+  border: 0;
+</a><a href="#h3-10-241" id="h3-10-241" class="i">+}
+</a><a href="#h3-10-242" id="h3-10-242" class="i">+
+</a><a href="#h3-10-243" id="h3-10-243" class="i">+.finalize-button {
+</a><a href="#h3-10-244" id="h3-10-244" class="i">+  justify-self: start;
+</a><a href="#h3-10-245" id="h3-10-245" class="i">+}
+</a><a href="#h3-10-246" id="h3-10-246" class="i">+
+</a> .field label,
+ .field legend {
+   display: block;
+<a href="#h3-11" id="h3-11" class="h">@@ -326,10 +1086,10 @@ h1 {
+</a> .field select {
+   width: 100%;
+   padding: 11px 12px;
+<a href="#h3-11-3" id="h3-11-3" class="d">-  border: 1px solid #d9dad6;
+</a><a href="#h3-11-4" id="h3-11-4" class="i">+  border: 1px solid #393939;
+</a>   border-radius: 5px;
+   outline: none;
+<a href="#h3-11-7" id="h3-11-7" class="d">-  background: #fff;
+</a><a href="#h3-11-8" id="h3-11-8" class="i">+  background: var(--control);
+</a>   color: var(--ink);
+   font-size: 13px;
+   line-height: 1.5;
+<a href="#h3-12" id="h3-12" class="h">@@ -338,8 +1098,8 @@ h1 {
+</a> .field input:focus,
+ .field textarea:focus,
+ .field select:focus {
+<a href="#h3-12-3" id="h3-12-3" class="d">-  border-color: #7e9a8c;
+</a><a href="#h3-12-4" id="h3-12-4" class="d">-  box-shadow: 0 0 0 3px rgba(49, 91, 76, 0.1);
+</a><a href="#h3-12-5" id="h3-12-5" class="i">+  border-color: #a5a5a5;
+</a><a href="#h3-12-6" id="h3-12-6" class="i">+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08);
+</a> }
+ 
+ .field textarea {
+<a href="#h3-13" id="h3-13" class="h">@@ -378,7 +1138,7 @@ h1 {
+</a>   padding: 8px 10px;
+   border: 1px solid var(--line);
+   border-radius: 5px;
+<a href="#h3-13-3" id="h3-13-3" class="d">-  color: #4a4c48;
+</a><a href="#h3-13-4" id="h3-13-4" class="i">+  color: #d2d2d2;
+</a>   cursor: pointer;
+   font-size: 12px !important;
+   font-weight: 450 !important;
+<a href="#h3-14" id="h3-14" class="h">@@ -408,7 +1168,7 @@ h1 {
+</a>   padding: 9px 14px;
+   border: 1px solid var(--line);
+   border-radius: 5px;
+<a href="#h3-14-3" id="h3-14-3" class="d">-  background: #fff;
+</a><a href="#h3-14-4" id="h3-14-4" class="i">+  background: var(--control);
+</a>   cursor: pointer;
+   font-size: 13px;
+   font-weight: 560;
+<a href="#h3-15" id="h3-15" class="h">@@ -416,7 +1176,8 @@ h1 {
+</a> }
+ 
+ .button:hover:not(:disabled) {
+<a href="#h3-15-3" id="h3-15-3" class="d">-  border-color: #9da49f;
+</a><a href="#h3-15-4" id="h3-15-4" class="i">+  border-color: #858585;
+</a><a href="#h3-15-5" id="h3-15-5" class="i">+  background: var(--control-hover);
+</a> }
+ 
+ .button:disabled {
+<a href="#h3-16" id="h3-16" class="h">@@ -425,14 +1186,14 @@ h1 {
+</a> }
+ 
+ .button-primary {
+<a href="#h3-16-3" id="h3-16-3" class="d">-  border-color: var(--accent);
+</a><a href="#h3-16-4" id="h3-16-4" class="d">-  background: var(--accent);
+</a><a href="#h3-16-5" id="h3-16-5" class="d">-  color: #fff;
+</a><a href="#h3-16-6" id="h3-16-6" class="i">+  border-color: #ededed;
+</a><a href="#h3-16-7" id="h3-16-7" class="i">+  background: #ededed;
+</a><a href="#h3-16-8" id="h3-16-8" class="i">+  color: #111;
+</a> }
+ 
+ .button-primary:hover:not(:disabled) {
+<a href="#h3-16-12" id="h3-16-12" class="d">-  border-color: #244638;
+</a><a href="#h3-16-13" id="h3-16-13" class="d">-  background: #244638;
+</a><a href="#h3-16-14" id="h3-16-14" class="i">+  border-color: #c8c8c8;
+</a><a href="#h3-16-15" id="h3-16-15" class="i">+  background: #c8c8c8;
+</a> }
+ 
+ .preview-card {
+<a href="#h3-17" id="h3-17" class="h">@@ -469,7 +1230,7 @@ h1 {
+</a>   place-items: center;
+   overflow: auto;
+   padding: 14px;
+<a href="#h3-17-3" id="h3-17-3" class="d">-  background: #efefed;
+</a><a href="#h3-17-4" id="h3-17-4" class="i">+  background: #1a1a1a;
+</a> }
+ 
+ .preview-empty {
+<a href="#h3-18" id="h3-18" class="h">@@ -490,9 +1251,9 @@ h1 {
+</a>   display: block;
+   width: 100%;
+   height: auto;
+<a href="#h3-18-3" id="h3-18-3" class="d">-  border: 1px solid #e2e2df;
+</a><a href="#h3-18-4" id="h3-18-4" class="d">-  background: white;
+</a><a href="#h3-18-5" id="h3-18-5" class="d">-  box-shadow: 0 2px 8px rgba(22, 25, 23, 0.08);
+</a><a href="#h3-18-6" id="h3-18-6" class="i">+  border: 1px solid #d4d4d4;
+</a><a href="#h3-18-7" id="h3-18-7" class="i">+  background: #fff;
+</a><a href="#h3-18-8" id="h3-18-8" class="i">+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.55);
+</a> }
+ 
+ .preview-status {
+<a href="#h3-19" id="h3-19" class="h">@@ -521,8 +1282,8 @@ h1 {
+</a>   margin-top: 15px;
+   padding: 11px 12px;
+   border-radius: 5px;
+<a href="#h3-19-3" id="h3-19-3" class="d">-  background: #f3f3f0;
+</a><a href="#h3-19-4" id="h3-19-4" class="d">-  color: #5e605b;
+</a><a href="#h3-19-5" id="h3-19-5" class="i">+  background: #1c1c1c;
+</a><a href="#h3-19-6" id="h3-19-6" class="i">+  color: #c2c2c2;
+</a>   font-size: 12px;
+   line-height: 1.55;
+ }
+<a href="#h3-20" id="h3-20" class="h">@@ -571,6 +1332,48 @@ h1 {
+</a>     padding-top: 8vh;
+   }
+ 
+<a href="#h3-20-3" id="h3-20-3" class="i">+  .project-resume {
+</a><a href="#h3-20-4" id="h3-20-4" class="i">+    grid-template-columns: minmax(0, 1fr);
+</a><a href="#h3-20-5" id="h3-20-5" class="i">+    gap: 18px;
+</a><a href="#h3-20-6" id="h3-20-6" class="i">+    padding: 18px;
+</a><a href="#h3-20-7" id="h3-20-7" class="i">+  }
+</a><a href="#h3-20-8" id="h3-20-8" class="i">+
+</a><a href="#h3-20-9" id="h3-20-9" class="i">+  .workflow-card {
+</a><a href="#h3-20-10" id="h3-20-10" class="i">+    align-items: flex-start;
+</a><a href="#h3-20-11" id="h3-20-11" class="i">+    flex-direction: column;
+</a><a href="#h3-20-12" id="h3-20-12" class="i">+    gap: 16px;
+</a><a href="#h3-20-13" id="h3-20-13" class="i">+    padding: 18px;
+</a><a href="#h3-20-14" id="h3-20-14" class="i">+  }
+</a><a href="#h3-20-15" id="h3-20-15" class="i">+
+</a><a href="#h3-20-16" id="h3-20-16" class="i">+  .workflow-card .project-resume {
+</a><a href="#h3-20-17" id="h3-20-17" class="i">+    flex-basis: auto;
+</a><a href="#h3-20-18" id="h3-20-18" class="i">+    width: 100%;
+</a><a href="#h3-20-19" id="h3-20-19" class="i">+  }
+</a><a href="#h3-20-20" id="h3-20-20" class="i">+
+</a><a href="#h3-20-21" id="h3-20-21" class="i">+  .workflow-card .start-button {
+</a><a href="#h3-20-22" id="h3-20-22" class="i">+    width: 100%;
+</a><a href="#h3-20-23" id="h3-20-23" class="i">+  }
+</a><a href="#h3-20-24" id="h3-20-24" class="i">+
+</a><a href="#h3-20-25" id="h3-20-25" class="i">+  .model-entry,
+</a><a href="#h3-20-26" id="h3-20-26" class="i">+  .model-toolbar {
+</a><a href="#h3-20-27" id="h3-20-27" class="i">+    align-items: stretch;
+</a><a href="#h3-20-28" id="h3-20-28" class="i">+    flex-direction: column;
+</a><a href="#h3-20-29" id="h3-20-29" class="i">+  }
+</a><a href="#h3-20-30" id="h3-20-30" class="i">+
+</a><a href="#h3-20-31" id="h3-20-31" class="i">+  .model-entry-actions {
+</a><a href="#h3-20-32" id="h3-20-32" class="i">+    display: grid;
+</a><a href="#h3-20-33" id="h3-20-33" class="i">+    grid-template-columns: 1fr;
+</a><a href="#h3-20-34" id="h3-20-34" class="i">+  }
+</a><a href="#h3-20-35" id="h3-20-35" class="i">+
+</a><a href="#h3-20-36" id="h3-20-36" class="i">+  .model-entry .button,
+</a><a href="#h3-20-37" id="h3-20-37" class="i">+  .model-toolbar .button {
+</a><a href="#h3-20-38" id="h3-20-38" class="i">+    width: 100%;
+</a><a href="#h3-20-39" id="h3-20-39" class="i">+  }
+</a><a href="#h3-20-40" id="h3-20-40" class="i">+
+</a><a href="#h3-20-41" id="h3-20-41" class="i">+  .project-controls {
+</a><a href="#h3-20-42" id="h3-20-42" class="i">+    justify-items: stretch;
+</a><a href="#h3-20-43" id="h3-20-43" class="i">+  }
+</a><a href="#h3-20-44" id="h3-20-44" class="i">+
+</a>   .app-shell {
+     padding-top: 24px;
+   }
+<a href="#h3-21" id="h3-21" class="h">@@ -579,6 +1382,26 @@ h1 {
+</a>     margin-bottom: 20px;
+   }
+ 
+<a href="#h3-21-3" id="h3-21-3" class="i">+  .app-heading-actions {
+</a><a href="#h3-21-4" id="h3-21-4" class="i">+    align-items: flex-end;
+</a><a href="#h3-21-5" id="h3-21-5" class="i">+    flex-direction: column-reverse;
+</a><a href="#h3-21-6" id="h3-21-6" class="i">+    gap: 5px;
+</a><a href="#h3-21-7" id="h3-21-7" class="i">+  }
+</a><a href="#h3-21-8" id="h3-21-8" class="i">+
+</a><a href="#h3-21-9" id="h3-21-9" class="i">+  .model-shell {
+</a><a href="#h3-21-10" id="h3-21-10" class="i">+    padding-top: 24px;
+</a><a href="#h3-21-11" id="h3-21-11" class="i">+  }
+</a><a href="#h3-21-12" id="h3-21-12" class="i">+
+</a><a href="#h3-21-13" id="h3-21-13" class="i">+  .model-cover {
+</a><a href="#h3-21-14" id="h3-21-14" class="i">+    padding: 36px 18px 28px;
+</a><a href="#h3-21-15" id="h3-21-15" class="i">+  }
+</a><a href="#h3-21-16" id="h3-21-16" class="i">+
+</a><a href="#h3-21-17" id="h3-21-17" class="i">+  .model-metadata div {
+</a><a href="#h3-21-18" id="h3-21-18" class="i">+    grid-template-columns: minmax(85px, 0.4fr) 1fr;
+</a><a href="#h3-21-19" id="h3-21-19" class="i">+    gap: 8px;
+</a><a href="#h3-21-20" id="h3-21-20" class="i">+    font-size: 12px;
+</a><a href="#h3-21-21" id="h3-21-21" class="i">+  }
+</a><a href="#h3-21-22" id="h3-21-22" class="i">+
+</a>   .workspace {
+     grid-template-columns: minmax(0, 1fr);
+     gap: 14px;
+<a href="#h3-22" id="h3-22" class="h">@@ -601,6 +1424,30 @@ h1 {
+</a>     padding: 21px 18px;
+   }
+ 
+<a href="#h3-22-3" id="h3-22-3" class="i">+  .step-nav {
+</a><a href="#h3-22-4" id="h3-22-4" class="i">+    display: flex;
+</a><a href="#h3-22-5" id="h3-22-5" class="i">+    gap: 5px;
+</a><a href="#h3-22-6" id="h3-22-6" class="i">+    overflow-x: auto;
+</a><a href="#h3-22-7" id="h3-22-7" class="i">+    padding-bottom: 3px;
+</a><a href="#h3-22-8" id="h3-22-8" class="i">+  }
+</a><a href="#h3-22-9" id="h3-22-9" class="i">+
+</a><a href="#h3-22-10" id="h3-22-10" class="i">+  .step-link {
+</a><a href="#h3-22-11" id="h3-22-11" class="i">+    min-width: 130px;
+</a><a href="#h3-22-12" id="h3-22-12" class="i">+    width: auto;
+</a><a href="#h3-22-13" id="h3-22-13" class="i">+    grid-template-columns: 25px 1fr 14px;
+</a><a href="#h3-22-14" id="h3-22-14" class="i">+    padding: 9px 8px;
+</a><a href="#h3-22-15" id="h3-22-15" class="i">+  }
+</a><a href="#h3-22-16" id="h3-22-16" class="i">+
+</a><a href="#h3-22-17" id="h3-22-17" class="i">+  .step-status {
+</a><a href="#h3-22-18" id="h3-22-18" class="i">+    grid-column: 3;
+</a><a href="#h3-22-19" id="h3-22-19" class="i">+    grid-row: 1;
+</a><a href="#h3-22-20" id="h3-22-20" class="i">+  }
+</a><a href="#h3-22-21" id="h3-22-21" class="i">+
+</a><a href="#h3-22-22" id="h3-22-22" class="i">+  .criteria-row,
+</a><a href="#h3-22-23" id="h3-22-23" class="i">+  .source-row {
+</a><a href="#h3-22-24" id="h3-22-24" class="i">+    padding: 12px;
+</a><a href="#h3-22-25" id="h3-22-25" class="i">+  }
+</a><a href="#h3-22-26" id="h3-22-26" class="i">+
+</a>   .preview-card {
+     grid-column: auto;
+   }
+<b>diff --git a/<a id="h4" href="../file/static/models/relatorio-case-civil.pdf.html">static/models/relatorio-case-civil.pdf</a> b/<a href="../file/static/models/relatorio-case-civil.pdf.html">static/models/relatorio-case-civil.pdf</a></b>
+Binary files differ.
+</pre>
+</div>
+</body>
+</html>

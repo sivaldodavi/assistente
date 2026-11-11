@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>feat: adicionar debate e dissertacao ao case - assistente-academico - Assistente Acadêmico v2
+</title>
+<link rel="icon" type="image/png" href="../favicon.png" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed" href="../atom.xml" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed (tags)" href="../tags.xml" />
+<link rel="stylesheet" type="text/css" href="../style.css" />
+</head>
+<body>
+<table><tr><td><a href="../../"><img src="../logo.png" alt="" width="32" height="32" /></a></td><td><h1>assistente-academico</h1><span class="desc">Assistente Acadêmico v2
+</span></td></tr><tr class="url"><td></td><td>git clone <a href="git://git.sivaldodavi.com.br/assistente-academico.git">git://git.sivaldodavi.com.br/assistente-academico.git</a></td></tr><tr><td></td><td>
+<a href="../log.html">Log</a> | <a href="../files.html">Files</a> | <a href="../refs.html">Refs</a> | <a href="../file/README.md.html">README</a></td></tr></table>
+<hr/>
+<div id="content">
+<pre><b>commit</b> <a href="../commit/1cdd2b493fe4707786a96e1dbcc6e582bd89ca9f.html">1cdd2b493fe4707786a96e1dbcc6e582bd89ca9f</a>
+<b>parent</b> <a href="../commit/eed52efe885ec30cbfac4af502d98971d034931c.html">eed52efe885ec30cbfac4af502d98971d034931c</a>
+<b>Author:</b> Sivaldo Davi &lt;<span class="offview">g<span>x</span>i<span>x</span>t<span>x</span>@<span>x</span>s<span>x</span>i<span>x</span>v<span>x</span>a<span>x</span>l<span>x</span>d<span>x</span>o<span>x</span>d<span>x</span>a<span>x</span>v<span>x</span>i<span>x</span>.<span>x</span>c<span>x</span>o<span>x</span>m</span>&gt;
+<b>Date:</b>   Mon, 26 Oct 2026 16:16:25 +0000
+
+feat: adicionar debate e dissertacao ao case
+
+<b>Diffstat:</b>
+<table><tr><td class="M">M</td><td><a href="#h0">app/domain/case.py</a></td><td> | </td><td class="num">36</td><td><span class="i">+++++++++++++++++++++++++++++++++</span><span class="d">---</span></td></tr>
+<tr><td class="M">M</td><td><a href="#h1">docs/ia/CASE.md</a></td><td> | </td><td class="num">2</td><td><span class="i">+</span><span class="d">-</span></td></tr>
+<tr><td class="M">M</td><td><a href="#h2">tests/test_projects.py</a></td><td> | </td><td class="num">5</td><td><span class="i">++++</span><span class="d">-</span></td></tr>
+</table></pre><pre>3 files changed, 38 insertions(+), 5 deletions(-)
+<hr/><b>diff --git a/<a id="h0" href="../file/app/domain/case.py.html">app/domain/case.py</a> b/<a href="../file/app/domain/case.py.html">app/domain/case.py</a></b>
+<a href="#h0-0" id="h0-0" class="h">@@ -40,12 +40,42 @@ CASE_SECTIONS = [
+</a>     },
+ ]
+ 
+<a href="#h0-0-3" id="h0-0-3" class="d">-_FIELD_RULES = {field[&quot;id&quot;]: field for section in CASE_SECTIONS for field in section[&quot;fields&quot;]}
+</a><a href="#h0-0-4" id="h0-0-4" class="d">-REQUIRED_CASE_FIELDS = tuple(field_id for field_id, field in _FIELD_RULES.items() if field.get(&quot;required&quot;))
+</a><a href="#h0-0-5" id="h0-0-5" class="i">+CASE_LATER_SECTIONS = [
+</a><a href="#h0-0-6" id="h0-0-6" class="i">+    {
+</a><a href="#h0-0-7" id="h0-0-7" class="i">+        &quot;id&quot;: &quot;debate&quot;,
+</a><a href="#h0-0-8" id="h0-0-8" class="i">+        &quot;title&quot;: &quot;Debate em grupo&quot;,
+</a><a href="#h0-0-9" id="h0-0-9" class="i">+        &quot;intro&quot;: &quot;Prepare a posição, registre as objeções ouvidas e anote o que mudou depois da discussão.&quot;,
+</a><a href="#h0-0-10" id="h0-0-10" class="i">+        &quot;fields&quot;: [
+</a><a href="#h0-0-11" id="h0-0-11" class="i">+            {&quot;id&quot;: &quot;debate_thesis&quot;, &quot;label&quot;: &quot;Tese que vai defender&quot;, &quot;required&quot;: True, &quot;limit&quot;: 100},
+</a><a href="#h0-0-12" id="h0-0-12" class="i">+            {&quot;id&quot;: &quot;debate_position&quot;, &quot;label&quot;: &quot;Sua posição em uma frase&quot;, &quot;type&quot;: &quot;textarea&quot;, &quot;required&quot;: True, &quot;limit&quot;: 3000},
+</a><a href="#h0-0-13" id="h0-0-13" class="i">+            {&quot;id&quot;: &quot;debate_arguments&quot;, &quot;label&quot;: &quot;Argumentos para expor&quot;, &quot;type&quot;: &quot;textarea&quot;, &quot;required&quot;: True, &quot;limit&quot;: 10000},
+</a><a href="#h0-0-14" id="h0-0-14" class="i">+            {&quot;id&quot;: &quot;debate_objections&quot;, &quot;label&quot;: &quot;Objeções esperadas e respostas&quot;, &quot;type&quot;: &quot;textarea&quot;, &quot;required&quot;: True, &quot;limit&quot;: 10000},
+</a><a href="#h0-0-15" id="h0-0-15" class="i">+            {&quot;id&quot;: &quot;debate_heard&quot;, &quot;label&quot;: &quot;Objeções e perguntas que surgiram&quot;, &quot;type&quot;: &quot;textarea&quot;, &quot;limit&quot;: 8000},
+</a><a href="#h0-0-16" id="h0-0-16" class="i">+            {&quot;id&quot;: &quot;debate_changes&quot;, &quot;label&quot;: &quot;O que mudou na sua tese&quot;, &quot;type&quot;: &quot;textarea&quot;, &quot;limit&quot;: 8000},
+</a><a href="#h0-0-17" id="h0-0-17" class="i">+            {&quot;id&quot;: &quot;debate_learnings&quot;, &quot;label&quot;: &quot;Pontos para levar à dissertação&quot;, &quot;type&quot;: &quot;textarea&quot;, &quot;limit&quot;: 8000},
+</a><a href="#h0-0-18" id="h0-0-18" class="i">+        ],
+</a><a href="#h0-0-19" id="h0-0-19" class="i">+    },
+</a><a href="#h0-0-20" id="h0-0-20" class="i">+    {
+</a><a href="#h0-0-21" id="h0-0-21" class="i">+        &quot;id&quot;: &quot;dissertation&quot;,
+</a><a href="#h0-0-22" id="h0-0-22" class="i">+        &quot;title&quot;: &quot;Dissertação&quot;,
+</a><a href="#h0-0-23" id="h0-0-23" class="i">+        &quot;intro&quot;: &quot;Escreva uma versão individual, amadurecida pelo debate, sem copiar automaticamente o relatório.&quot;,
+</a><a href="#h0-0-24" id="h0-0-24" class="i">+        &quot;fields&quot;: [
+</a><a href="#h0-0-25" id="h0-0-25" class="i">+            {&quot;id&quot;: &quot;dissertation_author&quot;, &quot;label&quot;: &quot;Seu nome&quot;, &quot;required&quot;: True, &quot;limit&quot;: 160},
+</a><a href="#h0-0-26" id="h0-0-26" class="i">+            {&quot;id&quot;: &quot;dissertation_intro&quot;, &quot;label&quot;: &quot;Introdução&quot;, &quot;type&quot;: &quot;textarea&quot;, &quot;required&quot;: True, &quot;limit&quot;: 12000},
+</a><a href="#h0-0-27" id="h0-0-27" class="i">+            {&quot;id&quot;: &quot;dissertation_foundation&quot;, &quot;label&quot;: &quot;Fundamentação&quot;, &quot;type&quot;: &quot;textarea&quot;, &quot;required&quot;: True, &quot;limit&quot;: 30000},
+</a><a href="#h0-0-28" id="h0-0-28" class="i">+            {&quot;id&quot;: &quot;dissertation_conclusion&quot;, &quot;label&quot;: &quot;Conclusão&quot;, &quot;type&quot;: &quot;textarea&quot;, &quot;required&quot;: True, &quot;limit&quot;: 12000},
+</a><a href="#h0-0-29" id="h0-0-29" class="i">+        ],
+</a><a href="#h0-0-30" id="h0-0-30" class="i">+    },
+</a><a href="#h0-0-31" id="h0-0-31" class="i">+]
+</a><a href="#h0-0-32" id="h0-0-32" class="i">+
+</a><a href="#h0-0-33" id="h0-0-33" class="i">+ALL_CASE_SECTIONS = CASE_SECTIONS + CASE_LATER_SECTIONS
+</a><a href="#h0-0-34" id="h0-0-34" class="i">+_FIELD_RULES = {field[&quot;id&quot;]: field for section in ALL_CASE_SECTIONS for field in section[&quot;fields&quot;]}
+</a><a href="#h0-0-35" id="h0-0-35" class="i">+_BASE_FIELD_RULES = {field[&quot;id&quot;]: field for section in CASE_SECTIONS for field in section[&quot;fields&quot;]}
+</a><a href="#h0-0-36" id="h0-0-36" class="i">+REQUIRED_CASE_FIELDS = tuple(field_id for field_id, field in _BASE_FIELD_RULES.items() if field.get(&quot;required&quot;))
+</a> 
+ 
+ def case_sections() -&gt; list[dict]:
+<a href="#h0-0-40" id="h0-0-40" class="d">-    return CASE_SECTIONS
+</a><a href="#h0-0-41" id="h0-0-41" class="i">+    return ALL_CASE_SECTIONS
+</a> 
+ 
+ def normalize_case_fields(raw: object) -&gt; dict:
+<b>diff --git a/<a id="h1" href="../file/docs/ia/CASE.md.html">docs/ia/CASE.md</a> b/<a href="../file/docs/ia/CASE.md.html">docs/ia/CASE.md</a></b>
+<a href="#h1-0" id="h1-0" class="h">@@ -8,7 +8,7 @@ O Case tem um roteiro acadêmico próprio. A v2 começa por três blocos:
+</a> 2. **Descrição do caso:** narrativa dos fatos e pergunta-problema;
+ 3. **Decisões possíveis:** base conceitual e duas alternativas juridicamente plausíveis.
+ 
+<a href="#h1-0-3" id="h1-0-3" class="d">-Teses A e B, critérios, referências, debate, dissertação, revisão e PDF serão acrescentados como blocos posteriores do mesmo projeto, sem criar outro banco ou duplicar o Case.
+</a><a href="#h1-0-4" id="h1-0-4" class="i">+Critérios, referências, debate, dissertação, revisão e PDF são blocos do mesmo projeto, sem criar outro banco ou duplicar o Case. O debate registra preparação e retorno da discussão; a dissertação tem autoria, introdução, fundamentação e conclusão próprios.
+</a> 
+ ## Narrativa e Linha do Tempo
+ 
+<b>diff --git a/<a id="h2" href="../file/tests/test_projects.py.html">tests/test_projects.py</a> b/<a href="../file/tests/test_projects.py.html">tests/test_projects.py</a></b>
+<a href="#h2-0" id="h2-0" class="h">@@ -20,7 +20,10 @@ def test_login_create_and_open_case(client):
+</a>     assert response.status_code == 302
+     editor = client.get(response.headers[&quot;Location&quot;])
+     assert editor.status_code == 200
+<a href="#h2-0-3" id="h2-0-3" class="d">-    assert &quot;Linha do Tempo dos Fatos&quot; in editor.get_data(as_text=True)
+</a><a href="#h2-0-4" id="h2-0-4" class="i">+    body = editor.get_data(as_text=True)
+</a><a href="#h2-0-5" id="h2-0-5" class="i">+    assert &quot;Linha do Tempo dos Fatos&quot; in body
+</a><a href="#h2-0-6" id="h2-0-6" class="i">+    assert &quot;Debate em grupo&quot; in body
+</a><a href="#h2-0-7" id="h2-0-7" class="i">+    assert &quot;Dissertação&quot; in body
+</a> 
+ 
+ def test_editor_uses_sources_from_personal_library(client):
+</pre>
+</div>
+</body>
+</html>

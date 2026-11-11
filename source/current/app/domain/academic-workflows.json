@@ -1,0 +1,1249 @@
+{
+  "case": [
+    {
+      "title": "Identificação",
+      "intro": "Informe os dados do relatório e, se quiser usar assistência por IA, registre a proposta, o enunciado ou as instruções do professor. As datas de entrega ficam em \"Planejar este trabalho\", no topo da página.",
+      "fields": [
+        {
+          "id": "title",
+          "label": "Título do relatório",
+          "required": true,
+          "limit": 240
+        },
+        {
+          "id": "authors",
+          "label": "Autor(es)",
+          "type": "textarea",
+          "hint": "Escreva um nome por linha.",
+          "required": true,
+          "limit": 1200
+        },
+        {
+          "id": "assignment_prompt",
+          "label": "Proposta, enunciado ou instruções do professor",
+          "type": "textarea",
+          "size": "large",
+          "hint": "Opcional para salvar o projeto e pedir ajuda por IA. Sem esse contexto, a assistência será geral e não avaliará adequação à atividade.",
+          "limit": 12000
+        },
+        {
+          "id": "profile",
+          "label": "Modelo de formatação",
+          "type": "select",
+          "options": [
+            [
+              "facsure",
+              "Referência FACSUR"
+            ],
+            [
+              "livre",
+              "Formato livre"
+            ]
+          ],
+          "limit": 240
+        },
+        {
+          "id": "discipline",
+          "label": "Disciplina",
+          "type": "text",
+          "source": "disciplines",
+          "required": true,
+          "row": "docente",
+          "limit": 160
+        },
+        {
+          "id": "teacher",
+          "label": "Professor(a)",
+          "type": "text",
+          "source": "teachers",
+          "required": true,
+          "row": "docente",
+          "limit": 160
+        },
+        {
+          "id": "period",
+          "label": "Período",
+          "type": "select",
+          "options": [
+            [
+              "",
+              "Selecione…"
+            ],
+            [
+              "1",
+              "1º período"
+            ],
+            [
+              "2",
+              "2º período"
+            ],
+            [
+              "3",
+              "3º período"
+            ],
+            [
+              "4",
+              "4º período"
+            ],
+            [
+              "5",
+              "5º período"
+            ],
+            [
+              "6",
+              "6º período"
+            ],
+            [
+              "7",
+              "7º período"
+            ],
+            [
+              "8",
+              "8º período"
+            ],
+            [
+              "9",
+              "9º período"
+            ],
+            [
+              "10",
+              "10º período"
+            ]
+          ],
+          "row": "turma",
+          "limit": 80
+        },
+        {
+          "id": "shift",
+          "label": "Turno",
+          "type": "select",
+          "options": [
+            [
+              "",
+              "Selecione…"
+            ],
+            [
+              "matutino",
+              "Matutino"
+            ],
+            [
+              "noturno",
+              "Noturno"
+            ]
+          ],
+          "row": "turma",
+          "limit": 80
+        },
+        {
+          "id": "partner",
+          "label": "Colega de dupla (opcional)",
+          "hint": "Se preenchido, o nome entra em Autor(es).",
+          "limit": 160
+        },
+        {
+          "id": "year",
+          "label": "Ano",
+          "limit": 4
+        }
+      ],
+      "id": "identification",
+      "phase": "report",
+      "custom": ""
+    },
+    {
+      "title": "1 · Descrição do caso",
+      "intro": "Use como referência a proposta ou o enunciado registrado na etapa Identificação. Reescreva a situação com suas palavras, apresente os fatos relevantes e feche com uma pergunta jurídica clara.",
+      "fields": [
+        {
+          "id": "facts",
+          "label": "Narrativa dos fatos",
+          "type": "textarea",
+          "size": "large",
+          "hint": "Use a sequência quem está envolvido, o que aconteceu, contexto e conflito. Evite copiar o enunciado ou antecipar uma solução.",
+          "required": true,
+          "limit": 16000
+        },
+        {
+          "id": "problem",
+          "label": "Pergunta-problema",
+          "type": "textarea",
+          "hint": "Termine a seção com uma pergunta aberta, ligada aos fatos e sem anunciar as teses.",
+          "required": true,
+          "limit": 3000
+        }
+      ],
+      "checks": [
+        [
+          "facts-original",
+          "Reescrevi os fatos com minhas próprias palavras, sem copiar o enunciado."
+        ],
+        [
+          "facts-neutral",
+          "Mantive a descrição sem antecipar solução ou julgamento."
+        ],
+        [
+          "facts-relevant",
+          "Apresentei quem, o que, contexto e conflito e cortei o que não altera o caso."
+        ],
+        [
+          "problem-question",
+          "A seção termina com uma pergunta jurídica clara, não respondível apenas com sim ou não."
+        ]
+      ],
+      "id": "description",
+      "phase": "report",
+      "custom": ""
+    },
+    {
+      "title": "2.1 · Decisões possíveis",
+      "intro": "Apresente a base conceitual que torna o caso discutível e formule duas alternativas juridicamente plausíveis, em tom neutro.",
+      "fields": [
+        {
+          "id": "decision_basis",
+          "label": "Apresentação das soluções possíveis",
+          "type": "textarea",
+          "hint": "Apresente a base conceitual e a análise. Termine o parágrafo introdutório com dois-pontos; o PDF colocará as alternativas logo abaixo como a) e b).",
+          "required": true,
+          "limit": 12000
+        },
+        {
+          "id": "decision_a",
+          "label": "Solução possível — alternativa a)",
+          "type": "textarea",
+          "hint": "Redija a primeira alternativa jurídica, sem digitar o marcador a).",
+          "required": true,
+          "limit": 6000
+        },
+        {
+          "id": "decision_b",
+          "label": "Solução possível — alternativa b)",
+          "type": "textarea",
+          "hint": "Redija a segunda alternativa jurídica, sem digitar o marcador b), e mantenha peso comparável à primeira.",
+          "required": true,
+          "limit": 6000
+        }
+      ],
+      "checks": [
+        [
+          "decisions-clear",
+          "As duas decisões possíveis estão formuladas com clareza."
+        ],
+        [
+          "decisions-balanced",
+          "As alternativas têm peso jurídico comparável."
+        ],
+        [
+          "decisions-neutral",
+          "A base conceitual e a apresentação não indicam uma preferência."
+        ]
+      ],
+      "id": "decisions",
+      "phase": "report",
+      "custom": ""
+    },
+    {
+      "title": "2.2.1 · Argumentação da tese A",
+      "intro": "Desenvolva a primeira linha argumentativa. Integre legislação, doutrina e jurisprudência e explique como cada fonte se relaciona com o problema. Nas citações diretas, indique a página.",
+      "fields": [
+        {
+          "id": "thesis_a_title",
+          "label": "Título da linha argumentativa A",
+          "placeholder": "Síntese da primeira posição",
+          "required": true,
+          "limit": 240
+        },
+        {
+          "id": "thesis_a",
+          "label": "Argumentação da tese A",
+          "type": "textarea",
+          "size": "large",
+          "hint": "Construa o raciocínio com norma, interpretação doutrinária, decisão judicial e análise própria. Após cada citação, explique sua relevância.",
+          "required": true,
+          "limit": 30000
+        }
+      ],
+      "checks": [
+        [
+          "thesis-a-integrated",
+          "Entrelacei legislação, doutrina e jurisprudência na argumentação."
+        ],
+        [
+          "thesis-a-comment",
+          "Expliquei com palavras próprias a relevância das citações para o caso."
+        ],
+        [
+          "thesis-a-neutral",
+          "Mantive a análise equilibrada e redigida em terceira pessoa."
+        ],
+        [
+          "thesis-a-length",
+          "Revisei a extensão da tese A conforme a orientação de aproximadamente duas laudas."
+        ]
+      ],
+      "id": "thesis_a",
+      "phase": "report",
+      "custom": ""
+    },
+    {
+      "title": "2.2.2 · Argumentação da tese B",
+      "intro": "Desenvolva a segunda linha com o mesmo cuidado e extensão da primeira, sem transformar uma das posições em argumento artificialmente fraco. Nas citações diretas, indique a página.",
+      "fields": [
+        {
+          "id": "thesis_b_title",
+          "label": "Título da linha argumentativa B",
+          "placeholder": "Síntese da segunda posição",
+          "required": true,
+          "limit": 240
+        },
+        {
+          "id": "thesis_b",
+          "label": "Argumentação da tese B",
+          "type": "textarea",
+          "size": "large",
+          "hint": "Integre lei, doutrina e decisões judiciais; depois de cada citação, explique a conexão com o problema.",
+          "required": true,
+          "limit": 30000
+        }
+      ],
+      "checks": [
+        [
+          "thesis-b-integrated",
+          "Entrelacei legislação, doutrina e jurisprudência na argumentação."
+        ],
+        [
+          "thesis-b-comment",
+          "Expliquei com palavras próprias a relevância das citações para o caso."
+        ],
+        [
+          "thesis-b-neutral",
+          "Mantive a análise equilibrada e redigida em terceira pessoa."
+        ],
+        [
+          "thesis-b-length",
+          "Revisei a extensão da tese B conforme a orientação de aproximadamente duas laudas."
+        ]
+      ],
+      "id": "thesis_b",
+      "phase": "report",
+      "custom": ""
+    },
+    {
+      "title": "2.3 · Critérios e valores",
+      "intro": "Liste os conceitos técnicos e princípios usados nas teses, definindo cada um e indicando sua base normativa ou ética.",
+      "custom": "criteria",
+      "checks": [
+        [
+          "criteria-defined",
+          "Defini os conceitos técnicos relevantes e indiquei o fundamento de cada definição."
+        ],
+        [
+          "criteria-covered",
+          "Conferi se os termos técnicos usados nas teses estão explicados nesta seção."
+        ]
+      ],
+      "id": "criteria",
+      "phase": "report",
+      "fields": []
+    },
+    {
+      "title": "Referências",
+      "intro": "Cadastre as fontes por categoria durante a elaboração. O relatório reúne só as fontes marcadas como citadas e monta a lista em ordem alfabética.",
+      "custom": "sources",
+      "checks": [
+        [
+          "references-elements",
+          "Conferi os dados de cada referência: autoria, título, local, editora e ano; link e data de acesso quando houver."
+        ]
+      ],
+      "id": "sources",
+      "phase": "report",
+      "fields": []
+    },
+    {
+      "title": "Revisão e entrega do relatório",
+      "intro": "Confira os critérios atendidos e o que ainda falta. O indicador mede a lista de requisitos e as fontes registradas; não avalia a correção jurídica dos argumentos.",
+      "custom": "review",
+      "id": "review_report",
+      "phase": "report",
+      "fields": []
+    },
+    {
+      "phase": "debate",
+      "title": "Debate em grupo",
+      "intro": "O debate é coletivo e acontece em sala. Antes, prepare a tese que vai defender; depois, registre o que ouviu e o que mudou. Esse registro serve de base para a dissertação.",
+      "groups": [
+        [
+          "before",
+          "Antes do debate"
+        ],
+        [
+          "after",
+          "Depois do debate"
+        ]
+      ],
+      "custom": "debate",
+      "fields": [
+        {
+          "id": "debate_thesis",
+          "group": "before",
+          "label": "Tese que vai defender",
+          "type": "select",
+          "options": [
+            [
+              "",
+              "Escolha uma tese"
+            ],
+            [
+              "A",
+              "Tese A"
+            ],
+            [
+              "B",
+              "Tese B"
+            ]
+          ],
+          "required": true,
+          "limit": 100
+        },
+        {
+          "id": "debate_position",
+          "group": "before",
+          "label": "Sua posição em uma frase",
+          "type": "textarea",
+          "hint": "Diga de forma direta qual solução jurídica você defende para o caso.",
+          "required": true,
+          "limit": 3000
+        },
+        {
+          "id": "debate_arguments",
+          "group": "before",
+          "label": "Argumentos para expor",
+          "type": "textarea",
+          "size": "large",
+          "hint": "De dois a quatro argumentos, um por parágrafo. Indique a lei, a doutrina ou a decisão que sustenta cada um.",
+          "required": true,
+          "limit": 10000
+        },
+        {
+          "id": "debate_objections",
+          "group": "before",
+          "label": "Objeções esperadas e suas respostas",
+          "type": "textarea",
+          "size": "large",
+          "hint": "Para cada objeção que pode surgir, escreva como vai responder.",
+          "required": true,
+          "limit": 10000
+        },
+        {
+          "id": "debate_heard",
+          "group": "after",
+          "label": "Objeções e perguntas que surgiram",
+          "type": "textarea",
+          "hint": "Preencha depois do debate.",
+          "required": true,
+          "limit": 8000
+        },
+        {
+          "id": "debate_changes",
+          "group": "after",
+          "label": "O que mudou na sua tese",
+          "type": "textarea",
+          "hint": "Premissas corrigidas e argumentos reforçados ou abandonados.",
+          "required": true,
+          "limit": 8000
+        },
+        {
+          "id": "debate_learnings",
+          "group": "after",
+          "label": "Pontos para levar à dissertação",
+          "type": "textarea",
+          "hint": "Opcional.",
+          "limit": 8000
+        }
+      ],
+      "checks": [
+        [
+          "debate-thesis",
+          "Consigo expor minha tese jurídica com clareza."
+        ],
+        [
+          "debate-grounded",
+          "Cada argumento está ligado a norma, doutrina ou jurisprudência."
+        ],
+        [
+          "debate-answers",
+          "Preparei respostas técnicas para as objeções prováveis."
+        ],
+        [
+          "debate-participation",
+          "Participei do debate de forma ativa e dentro do tempo."
+        ]
+      ],
+      "id": "debate"
+    },
+    {
+      "phase": "dissertation",
+      "title": "Dissertação",
+      "intro": "Escreva a dissertação em três partes: introdução, desenvolvimento e conclusão.",
+      "fields": [
+        {
+          "id": "dissertation_author",
+          "label": "Seu nome",
+          "hint": "Use somente o seu nome.",
+          "required": true,
+          "limit": 160
+        },
+        {
+          "id": "dissertation_intro",
+          "label": "Introdução",
+          "type": "textarea",
+          "size": "large",
+          "hint": "Apresente o caso e a tese que você defende.",
+          "required": true,
+          "limit": 12000
+        },
+        {
+          "id": "dissertation_conclusion",
+          "label": "Conclusão",
+          "type": "textarea",
+          "size": "large",
+          "hint": "Feche com a solução do caso, sem argumentos novos.",
+          "required": true,
+          "limit": 12000
+        }
+      ],
+      "checks": [
+        [
+          "dissertation-intro-thesis",
+          "A introdução expõe a tese diante do caso apresentado."
+        ],
+        [
+          "dissertation-own-words",
+          "Escrevi a dissertação com minhas palavras, sem copiar o relatório."
+        ],
+        [
+          "dissertation-debate",
+          "Incorporei as objeções e os ajustes do debate."
+        ],
+        [
+          "dissertation-organization",
+          "O texto tem estrutura lógica e linguagem técnica."
+        ],
+        [
+          "dissertation-conclusion",
+          "A conclusão apresenta a solução do caso."
+        ]
+      ],
+      "id": "dissertation",
+      "custom": "dissertation"
+    },
+    {
+      "phase": "dissertation",
+      "title": "Revisão e entrega da dissertação",
+      "intro": "Confira o texto e marque a entrega.",
+      "custom": "review",
+      "id": "review_dissertation",
+      "fields": []
+    }
+  ],
+  "paper_project": [
+    {
+      "title": "Identificação e delimitação",
+      "intro": "Delimite o tema antes de formular o problema. Use o funil do tema e confirme interesse, viabilidade, relevância e competência. As datas de entrega ficam em \"Planejar este trabalho\", no topo da página.",
+      "fields": [
+        {
+          "id": "profile",
+          "label": "Modelo de formatação",
+          "type": "select",
+          "options": [
+            [
+              "facsure",
+              "Referência FACSUR"
+            ],
+            [
+              "livre",
+              "Formato livre"
+            ]
+          ],
+          "limit": 240
+        },
+        {
+          "id": "title",
+          "label": "Título provisório",
+          "required": true,
+          "limit": 240
+        },
+        {
+          "id": "authors",
+          "label": "Autor(es)",
+          "type": "textarea",
+          "hint": "Um nome por linha.",
+          "required": true,
+          "limit": 1200
+        },
+        {
+          "id": "assignment_prompt",
+          "label": "Proposta ou instruções do professor",
+          "type": "textarea",
+          "size": "large",
+          "hint": "Opcional para salvar o projeto e pedir ajuda por IA. Sem esse contexto, a assistência será geral e não avaliará adequação à atividade.",
+          "limit": 12000
+        },
+        {
+          "id": "discipline",
+          "label": "Disciplina",
+          "type": "text",
+          "source": "disciplines",
+          "required": true,
+          "row": "docente",
+          "limit": 160
+        },
+        {
+          "id": "teacher",
+          "label": "Professor(a) ou orientador(a)",
+          "type": "text",
+          "source": "teachers",
+          "required": true,
+          "row": "docente",
+          "limit": 160
+        },
+        {
+          "id": "period",
+          "label": "Período",
+          "type": "select",
+          "options": [
+            [
+              "",
+              "Selecione…"
+            ],
+            [
+              "1",
+              "1º período"
+            ],
+            [
+              "2",
+              "2º período"
+            ],
+            [
+              "3",
+              "3º período"
+            ],
+            [
+              "4",
+              "4º período"
+            ],
+            [
+              "5",
+              "5º período"
+            ],
+            [
+              "6",
+              "6º período"
+            ],
+            [
+              "7",
+              "7º período"
+            ],
+            [
+              "8",
+              "8º período"
+            ],
+            [
+              "9",
+              "9º período"
+            ],
+            [
+              "10",
+              "10º período"
+            ]
+          ],
+          "row": "turma",
+          "limit": 80
+        },
+        {
+          "id": "shift",
+          "label": "Turno",
+          "type": "select",
+          "options": [
+            [
+              "",
+              "Selecione…"
+            ],
+            [
+              "matutino",
+              "Matutino"
+            ],
+            [
+              "noturno",
+              "Noturno"
+            ]
+          ],
+          "row": "turma",
+          "limit": 80
+        },
+        {
+          "id": "partner",
+          "label": "Colega de dupla (opcional)",
+          "hint": "Se preenchido, o nome entra em Autor(es).",
+          "limit": 160
+        },
+        {
+          "id": "year",
+          "label": "Ano",
+          "limit": 4
+        },
+        {
+          "id": "area",
+          "label": "Área",
+          "limit": 160
+        },
+        {
+          "id": "delimitation",
+          "label": "Tema geral e recorte específico",
+          "type": "textarea",
+          "hint": "Delimite por assunto, período, local ou grupo.",
+          "required": true,
+          "limit": 6000
+        },
+        {
+          "id": "research_context",
+          "label": "Contexto (onde, quando e quem)",
+          "type": "textarea",
+          "required": true,
+          "limit": 5000
+        },
+        {
+          "id": "research_object",
+          "label": "Objeto delimitado",
+          "type": "textarea",
+          "hint": "Expresse o tema final já com recorte e contexto.",
+          "required": true,
+          "limit": 5000
+        }
+      ],
+      "checks": [
+        [
+          "paper-topic-filters",
+          "Conferi interesse, viabilidade, relevância e competência."
+        ],
+        [
+          "paper-topic-scope",
+          "O tema tem recorte claro e não está amplo demais."
+        ]
+      ],
+      "id": "paper_identification",
+      "phase": "paper_project",
+      "custom": ""
+    },
+    {
+      "title": "Problema de pesquisa",
+      "intro": "Contextualize a questão e formule uma pergunta específica, ligada ao tema e possível de investigar.",
+      "fields": [
+        {
+          "id": "problem_context",
+          "label": "Contextualização breve do problema",
+          "type": "textarea",
+          "required": true,
+          "limit": 6000
+        },
+        {
+          "id": "problem",
+          "label": "Pergunta de pesquisa",
+          "type": "textarea",
+          "hint": "Formule uma frase clara e termine com ponto de interrogação.",
+          "required": true,
+          "limit": 3000
+        }
+      ],
+      "checks": [
+        [
+          "paper-problem-clear",
+          "O problema é claro, específico, ligado ao tema, investigável e relevante para o Direito."
+        ]
+      ],
+      "id": "paper_problem",
+      "phase": "paper_project",
+      "custom": ""
+    },
+    {
+      "title": "Hipótese",
+      "intro": "Apresente uma resposta provisória ao problema. A hipótese precisa ser uma afirmação que a pesquisa possa confirmar ou refutar.",
+      "fields": [
+        {
+          "id": "hypothesis",
+          "label": "Hipótese",
+          "type": "textarea",
+          "required": true,
+          "limit": 5000
+        }
+      ],
+      "checks": [
+        [
+          "paper-hypothesis-answer",
+          "A hipótese afirma uma resposta direta ao problema e pode ser confirmada ou refutada."
+        ]
+      ],
+      "id": "paper_hypothesis",
+      "phase": "paper_project",
+      "custom": ""
+    },
+    {
+      "title": "Justificativa",
+      "intro": "Explique por que vale a pena investigar o tema, considerando sua importância jurídica, social e acadêmica e sua atualidade.",
+      "fields": [
+        {
+          "id": "justification",
+          "label": "Justificativa",
+          "type": "textarea",
+          "size": "large",
+          "required": true,
+          "limit": 8000
+        }
+      ],
+      "checks": [
+        [
+          "paper-justification-relevance",
+          "Indiquei relevância jurídica, social ou acadêmica e atualidade do tema."
+        ]
+      ],
+      "id": "paper_justification",
+      "phase": "paper_project",
+      "custom": ""
+    },
+    {
+      "title": "Objetivos",
+      "intro": "O objetivo geral espelha o problema. Os objetivos específicos desdobram as etapas necessárias para alcançá-lo.",
+      "fields": [
+        {
+          "id": "objective_general",
+          "label": "Objetivo geral",
+          "type": "textarea",
+          "hint": "Use um verbo no infinitivo.",
+          "required": true,
+          "limit": 3000
+        },
+        {
+          "id": "objective1",
+          "label": "Objetivo específico 1",
+          "type": "textarea",
+          "required": true,
+          "limit": 8000
+        },
+        {
+          "id": "objective2",
+          "label": "Objetivo específico 2",
+          "type": "textarea",
+          "required": true,
+          "limit": 8000
+        },
+        {
+          "id": "objective3",
+          "label": "Objetivo específico 3 (opcional)",
+          "type": "textarea",
+          "limit": 8000
+        }
+      ],
+      "checks": [
+        [
+          "paper-objectives-aligned",
+          "O objetivo geral corresponde ao problema e os objetivos específicos avançam em ordem lógica."
+        ]
+      ],
+      "id": "paper_objectives",
+      "phase": "paper_project",
+      "custom": ""
+    },
+    {
+      "title": "Referencial teórico",
+      "intro": "Registre os tópicos e autores previstos e conecte cada tópico aos objetivos específicos. Priorize obras consultadas na Biblioteca Virtual FACSUR.",
+      "fields": [
+        {
+          "id": "theory",
+          "label": "Tópicos e autores-chave previstos",
+          "type": "textarea",
+          "size": "large",
+          "hint": "Um tópico ou autor por linha.",
+          "required": true,
+          "limit": 10000
+        }
+      ],
+      "checks": [
+        [
+          "paper-theory-objectives",
+          "Cada tópico do referencial está ligado a um objetivo específico."
+        ]
+      ],
+      "id": "paper_theory",
+      "phase": "paper_project",
+      "custom": ""
+    },
+    {
+      "title": "Metodologia",
+      "intro": "Descreva uma metodologia compatível com o problema e os objetivos. As cinco camadas devem contar a mesma história.",
+      "fields": [
+        {
+          "id": "method_author",
+          "label": "Autor de metodologia adotado",
+          "placeholder": "Gil, Lakatos e Marconi, Prodanov e Freitas...",
+          "required": true,
+          "limit": 240
+        },
+        {
+          "id": "nature",
+          "label": "Natureza",
+          "placeholder": "Básica ou aplicada",
+          "required": true,
+          "limit": 160
+        },
+        {
+          "id": "approach",
+          "label": "Abordagem",
+          "placeholder": "Qualitativa, quantitativa ou mista",
+          "required": true,
+          "limit": 160
+        },
+        {
+          "id": "ends",
+          "label": "Fins",
+          "placeholder": "Exploratória, descritiva ou explicativa",
+          "required": true,
+          "limit": 160
+        },
+        {
+          "id": "procedure",
+          "label": "Procedimentos",
+          "placeholder": "Bibliográfico, documental, estudo de caso...",
+          "required": true,
+          "limit": 300
+        },
+        {
+          "id": "instruments",
+          "label": "Instrumentos e análise dos dados",
+          "type": "textarea",
+          "required": true,
+          "limit": 6000
+        }
+      ],
+      "checks": [
+        [
+          "paper-method-coherent",
+          "As cinco camadas metodológicas estão definidas e são coerentes entre si e com os objetivos."
+        ]
+      ],
+      "id": "paper_methodology",
+      "phase": "paper_project",
+      "custom": ""
+    },
+    {
+      "title": "Referências do projeto",
+      "intro": "Cadastre as fontes citadas no projeto, priorizando a Biblioteca Virtual FACSUR. A lista final sai em ordem alfabética.",
+      "custom": "sources",
+      "id": "sources",
+      "phase": "paper_project",
+      "fields": []
+    },
+    {
+      "title": "Revisão do Projeto de Paper",
+      "intro": "Confira o que falta antes de gerar a prévia do projeto.",
+      "custom": "review",
+      "id": "review_paper",
+      "phase": "paper_project",
+      "fields": []
+    }
+  ],
+  "paper_final": [
+    {
+      "title": "Identificação, resumo e palavras-chave",
+      "intro": "Defina o título final e apresente um resumo informativo do trabalho, seguido pelas palavras-chave. Os dados de identificação vêm do Projeto de Paper e podem ser ajustados aqui.",
+      "fields": [
+        {
+          "id": "profile",
+          "label": "Modelo de formatação",
+          "type": "select",
+          "options": [
+            [
+              "facsure",
+              "Referência FACSUR"
+            ],
+            [
+              "livre",
+              "Formato livre"
+            ]
+          ],
+          "limit": 240
+        },
+        {
+          "id": "title",
+          "label": "Título definitivo",
+          "required": true,
+          "limit": 240
+        },
+        {
+          "id": "authors",
+          "label": "Autor(es)",
+          "type": "textarea",
+          "hint": "Um nome por linha.",
+          "required": true,
+          "limit": 1200
+        },
+        {
+          "id": "assignment_prompt",
+          "label": "Proposta ou instruções do professor",
+          "type": "textarea",
+          "size": "large",
+          "hint": "Opcional para salvar o projeto e pedir ajuda por IA. Sem esse contexto, a assistência será geral e não avaliará adequação à atividade.",
+          "limit": 12000
+        },
+        {
+          "id": "discipline",
+          "label": "Disciplina",
+          "type": "text",
+          "source": "disciplines",
+          "required": true,
+          "row": "docente",
+          "limit": 160
+        },
+        {
+          "id": "teacher",
+          "label": "Professor(a) ou orientador(a)",
+          "type": "text",
+          "source": "teachers",
+          "required": true,
+          "row": "docente",
+          "limit": 160
+        },
+        {
+          "id": "period",
+          "label": "Período",
+          "type": "select",
+          "options": [
+            [
+              "",
+              "Selecione…"
+            ],
+            [
+              "1",
+              "1º período"
+            ],
+            [
+              "2",
+              "2º período"
+            ],
+            [
+              "3",
+              "3º período"
+            ],
+            [
+              "4",
+              "4º período"
+            ],
+            [
+              "5",
+              "5º período"
+            ],
+            [
+              "6",
+              "6º período"
+            ],
+            [
+              "7",
+              "7º período"
+            ],
+            [
+              "8",
+              "8º período"
+            ],
+            [
+              "9",
+              "9º período"
+            ],
+            [
+              "10",
+              "10º período"
+            ]
+          ],
+          "row": "turma",
+          "limit": 80
+        },
+        {
+          "id": "shift",
+          "label": "Turno",
+          "type": "select",
+          "options": [
+            [
+              "",
+              "Selecione…"
+            ],
+            [
+              "matutino",
+              "Matutino"
+            ],
+            [
+              "noturno",
+              "Noturno"
+            ]
+          ],
+          "row": "turma",
+          "limit": 80
+        },
+        {
+          "id": "partner",
+          "label": "Colega de dupla (opcional)",
+          "hint": "Se preenchido, o nome entra em Autor(es).",
+          "limit": 160
+        },
+        {
+          "id": "year",
+          "label": "Ano",
+          "limit": 4
+        },
+        {
+          "id": "abstract",
+          "label": "Resumo",
+          "type": "textarea",
+          "size": "large",
+          "hint": "A planilha recomenda 150–250 palavras, cobrindo tema, problema, objetivo, metodologia e resultado principal.",
+          "required": true,
+          "limit": 6000
+        },
+        {
+          "id": "keywords",
+          "label": "Palavras-chave",
+          "hint": "Use de 3 a 5 termos, separados por ponto e vírgula.",
+          "required": true,
+          "limit": 600
+        },
+        {
+          "id": "ai_note",
+          "label": "Nota sobre uso de IA (se exigida)",
+          "type": "textarea",
+          "hint": "Siga a política institucional e as orientações da disciplina.",
+          "limit": 2000
+        }
+      ],
+      "checks": [
+        [
+          "paper-final-title",
+          "O título é claro, conciso e delimitado."
+        ],
+        [
+          "paper-final-abstract",
+          "O resumo cobre tema, problema, objetivo, metodologia e resultado principal."
+        ],
+        [
+          "paper-final-keywords",
+          "Incluí de 3 a 5 palavras-chave."
+        ]
+      ],
+      "id": "paper_final_identity",
+      "phase": "paper_final",
+      "custom": ""
+    },
+    {
+      "title": "Introdução",
+      "intro": "Apresente tema, contexto, problema, hipótese, objetivos, metodologia e organização do trabalho, nesta ordem.",
+      "fields": [
+        {
+          "id": "introduction",
+          "label": "Introdução",
+          "type": "textarea",
+          "size": "large",
+          "required": true,
+          "limit": 16000
+        }
+      ],
+      "checks": [
+        [
+          "paper-final-intro-content",
+          "A introdução apresenta tema, contexto, problema, hipótese, objetivos, metodologia e organização."
+        ],
+        [
+          "paper-final-impersonal",
+          "Mantive redação impessoal, sem primeira pessoa."
+        ]
+      ],
+      "id": "paper_final_introduction",
+      "phase": "paper_final",
+      "custom": ""
+    },
+    {
+      "title": "Desenvolvimento",
+      "intro": "Organize o desenvolvimento em tópicos com progressão argumentativa. Integre legislação, doutrina e jurisprudência; explique cada citação e apresente análise própria.",
+      "custom": "development",
+      "checks": [
+        [
+          "paper-final-development-sources",
+          "Entrelacei legislação, doutrina e jurisprudência, em vez de separá-las em blocos."
+        ],
+        [
+          "paper-final-development-comments",
+          "Expliquei cada citação e sua relação com o tema."
+        ],
+        [
+          "paper-final-development-analysis",
+          "Apresentei análise própria e progressão entre parágrafos e tópicos."
+        ],
+        [
+          "paper-final-development-length",
+          "Conferi a extensão final recomendada de 12 a 15 páginas, sem contar a capa."
+        ]
+      ],
+      "id": "paper_final_development",
+      "phase": "paper_final",
+      "fields": []
+    },
+    {
+      "title": "Conclusão",
+      "intro": "Retome o problema e a hipótese, sintetize o resultado e os limites da pesquisa. Não introduza fontes, dados ou assuntos novos.",
+      "fields": [
+        {
+          "id": "conclusion",
+          "label": "Conclusão",
+          "type": "textarea",
+          "size": "large",
+          "required": true,
+          "limit": 10000
+        }
+      ],
+      "checks": [
+        [
+          "paper-final-conclusion-answer",
+          "Respondi ao problema e indiquei se a hipótese foi confirmada ou refutada."
+        ],
+        [
+          "paper-final-conclusion-no-new",
+          "Não acrescentei assunto, autor ou dado novo e indiquei limites ou pesquisa futura."
+        ]
+      ],
+      "id": "paper_final_conclusion",
+      "phase": "paper_final",
+      "custom": ""
+    },
+    {
+      "title": "Referências finais",
+      "intro": "Una as fontes do projeto às novas fontes citadas no paper. A lista final reúne só as marcadas como citadas, em ordem alfabética.",
+      "custom": "sources",
+      "checks": [
+        [
+          "paper-final-references-details",
+          "Conferi os dados de cada referência: autoria, título, local, editora e ano; link, DOI e data de acesso quando houver."
+        ],
+        [
+          "paper-final-ai-use",
+          "Conferi a política institucional e registrei eventual uso de IA conforme as orientações da disciplina."
+        ]
+      ],
+      "id": "sources",
+      "phase": "paper_final",
+      "fields": []
+    },
+    {
+      "title": "Revisão do Paper Final",
+      "intro": "Confira o que falta antes de gerar a prévia do paper.",
+      "custom": "review",
+      "id": "review_paper_final",
+      "phase": "paper_final",
+      "fields": []
+    }
+  ]
+}

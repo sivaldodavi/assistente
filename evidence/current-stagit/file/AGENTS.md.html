@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AGENTS.md - assistente-academico - Assistente Acadêmico v2
+</title>
+<link rel="icon" type="image/png" href="../favicon.png" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed" href="../atom.xml" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed (tags)" href="../tags.xml" />
+<link rel="stylesheet" type="text/css" href="../style.css" />
+</head>
+<body>
+<table><tr><td><a href="../../"><img src="../logo.png" alt="" width="32" height="32" /></a></td><td><h1>assistente-academico</h1><span class="desc">Assistente Acadêmico v2
+</span></td></tr><tr class="url"><td></td><td>git clone <a href="git://git.sivaldodavi.com.br/assistente-academico.git">git://git.sivaldodavi.com.br/assistente-academico.git</a></td></tr><tr><td></td><td>
+<a href="../log.html">Log</a> | <a href="../files.html">Files</a> | <a href="../refs.html">Refs</a> | <a href="../file/README.md.html">README</a></td></tr></table>
+<hr/>
+<div id="content">
+<p> AGENTS.md (3092B)</p><hr/><pre id="blob">
+<a href="#l1" class="line" id="l1">      1</a> # Instruções para agentes — Assistente Acadêmico
+<a href="#l2" class="line" id="l2">      2</a> 
+<a href="#l3" class="line" id="l3">      3</a> Este é o projeto novo do Assistente Acadêmico. Ele não compartilha banco, cookies, volume, código executável ou estado de sessão com o projeto legado.
+<a href="#l4" class="line" id="l4">      4</a> 
+<a href="#l5" class="line" id="l5">      5</a> ## Antes de alterar
+<a href="#l6" class="line" id="l6">      6</a> 
+<a href="#l7" class="line" id="l7">      7</a> Leia, nesta ordem:
+<a href="#l8" class="line" id="l8">      8</a> 
+<a href="#l9" class="line" id="l9">      9</a> 1. `README.md`;
+<a href="#l10" class="line" id="l10">     10</a> 2. `docs/ia/ARQUITETURA.md`;
+<a href="#l11" class="line" id="l11">     11</a> 3. `docs/ia/DECISOES.md`;
+<a href="#l12" class="line" id="l12">     12</a> 4. `docs/ia/INTERFACE.md`;
+<a href="#l13" class="line" id="l13">     13</a> 5. `docs/ia/PARIDADE-FUNCIONAL-ATUAL.md`;
+<a href="#l14" class="line" id="l14">     14</a> 6. `docs/ia/OPERACAO-BACKUP.md` quando a mudança envolver banco, operação ou deploy;
+<a href="#l15" class="line" id="l15">     15</a> 7. `docs/ia/PLANO-PESQUISA-JURIDICA-E-IA.md` quando a mudança envolver biblioteca, catálogo, pesquisa ou IA;
+<a href="#l16" class="line" id="l16">     16</a> 8. a documentação do domínio que será alterado.
+<a href="#l17" class="line" id="l17">     17</a> 
+<a href="#l18" class="line" id="l18">     18</a> Para qualquer alteração de assistência, JEV, pesquisa jurídica ou modelos públicos, leia também `docs/ia/IA-EDITOR-JEV.md` antes de editar templates, JavaScript ou provedores.
+<a href="#l19" class="line" id="l19">     19</a> 
+<a href="#l20" class="line" id="l20">     20</a> ## Regras permanentes
+<a href="#l21" class="line" id="l21">     21</a> 
+<a href="#l22" class="line" id="l22">     22</a> - Responda e documente em português.
+<a href="#l23" class="line" id="l23">     23</a> - Não leia, copie ou altere banco, contas, projetos ou secrets de produção.
+<a href="#l24" class="line" id="l24">     24</a> - Testes usam banco temporário e provedores falsos.
+<a href="#l25" class="line" id="l25">     25</a> - Nunca chame DeepSeek, JEV ou Google durante testes; o contato manual externo não é chamado por testes.
+<a href="#l26" class="line" id="l26">     26</a> - Secrets entram somente por variáveis de ambiente ou arquivos montados como secret.
+<a href="#l27" class="line" id="l27">     27</a> - Não coloque token, client secret, cookie, telefone ou conteúdo acadêmico em Git ou log.
+<a href="#l28" class="line" id="l28">     28</a> - Não crie compatibilidade com o banco legado sem decisão explícita.
+<a href="#l29" class="line" id="l29">     29</a> - Não crie contas `legacy` na aplicação.
+<a href="#l30" class="line" id="l30">     30</a> - Não implemente pagamentos automáticos.
+<a href="#l31" class="line" id="l31">     31</a> - Toda alteração deve atualizar a documentação permanente quando mudar uma regra do domínio.
+<a href="#l32" class="line" id="l32">     32</a> - A descrição dos fatos pertence à etapa Descrição do caso. Não adicionar cronologia ou Linha do Tempo: o recurso foi explicitamente rejeitado pelo titular.
+<a href="#l33" class="line" id="l33">     33</a> - Preservar os roteiros, campos, dimensões e navegação por etapas do produto de referência; mudança de framework não autoriza redesenho nem corte de funcionalidades.
+<a href="#l34" class="line" id="l34">     34</a> - A IA deve aparecer dentro da etapa que ela analisa, nunca como um painel genérico separado. As ações especializadas e o JEV ficam em `app/services/ai_workflows.py`, `app/services/ai_support.py` e `app/domain/case_rubric.py`; consulte esses contratos antes de criar outra ação.
+<a href="#l35" class="line" id="l35">     35</a> - DeepSeek é o provedor primário das ações estruturadas; Gemini é fallback técnico único e JEV/Typesafe é avaliador separado. Nenhuma resposta altera o trabalho sem confirmação explícita no editor.
+<a href="#l36" class="line" id="l36">     36</a> - Os modelos da vitrine vêm de `app/domain/public-models.json`, extraído do conteúdo anonimizado do legado. Não reduzir novamente os modelos a placeholders nem misturar dados de contas.
+<a href="#l37" class="line" id="l37">     37</a> 
+<a href="#l38" class="line" id="l38">     38</a> ## Verificação mínima
+<a href="#l39" class="line" id="l39">     39</a> 
+<a href="#l40" class="line" id="l40">     40</a> ```sh
+<a href="#l41" class="line" id="l41">     41</a> python3 -m pytest -q
+<a href="#l42" class="line" id="l42">     42</a> python3 -m compileall -q app ops wsgi.py
+<a href="#l43" class="line" id="l43">     43</a> ```
+<a href="#l44" class="line" id="l44">     44</a> 
+<a href="#l45" class="line" id="l45">     45</a> O build Docker e a medição de RAM entram antes de qualquer pré-produção. O domínio atual só muda após aceite explícito e rollback testado.
+<a href="#l46" class="line" id="l46">     46</a> 
+<a href="#l47" class="line" id="l47">     47</a> O backup diário deve ser mantido por uma única rotina versionada em `ops/assistente-db-backup`; não criar cópias paralelas ou alterar retenção, caminho e permissões sem atualizar também `services/assistente-db-backup.*` e `docs/ia/OPERACAO-BACKUP.md`.
+</pre>
+</div>
+</body>
+</html>

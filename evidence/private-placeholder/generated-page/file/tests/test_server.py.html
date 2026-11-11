@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>test_server.py - assistente-academico - Repositório assistente-academico
+</title>
+<link rel="icon" type="image/png" href="../../favicon.png" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed" href="../../atom.xml" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed (tags)" href="../../tags.xml" />
+<link rel="stylesheet" type="text/css" href="../../style.css" />
+</head>
+<body>
+<table><tr><td><a href="../../../"><img src="../../logo.png" alt="" width="32" height="32" /></a></td><td><h1>assistente-academico</h1><span class="desc">Repositório assistente-academico
+</span></td></tr><tr class="url"><td></td><td>git clone <a href="git://git.sivaldodavi.com/assistente-academico.git">git://git.sivaldodavi.com/assistente-academico.git</a></td></tr><tr><td></td><td>
+<a href="../../log.html">Log</a> | <a href="../../files.html">Files</a> | <a href="../../refs.html">Refs</a> | <a href="../../file/README.md.html">README</a></td></tr></table>
+<hr/>
+<div id="content">
+<p> test_server.py (23142B)</p><hr/><pre id="blob">
+<a href="#l1" class="line" id="l1">      1</a> import contextlib
+<a href="#l2" class="line" id="l2">      2</a> import io
+<a href="#l3" class="line" id="l3">      3</a> import json
+<a href="#l4" class="line" id="l4">      4</a> import tempfile
+<a href="#l5" class="line" id="l5">      5</a> import unittest
+<a href="#l6" class="line" id="l6">      6</a> import stat
+<a href="#l7" class="line" id="l7">      7</a> from pathlib import Path
+<a href="#l8" class="line" id="l8">      8</a> from unittest.mock import patch
+<a href="#l9" class="line" id="l9">      9</a> 
+<a href="#l10" class="line" id="l10">     10</a> import server
+<a href="#l11" class="line" id="l11">     11</a> from server import ApiError, Store
+<a href="#l12" class="line" id="l12">     12</a> 
+<a href="#l13" class="line" id="l13">     13</a> 
+<a href="#l14" class="line" id="l14">     14</a> def project(title=&quot;Projeto de teste&quot;, project_type=&quot;case&quot;):
+<a href="#l15" class="line" id="l15">     15</a>     return {
+<a href="#l16" class="line" id="l16">     16</a>         &quot;version&quot;: 2,
+<a href="#l17" class="line" id="l17">     17</a>         &quot;projectType&quot;: project_type,
+<a href="#l18" class="line" id="l18">     18</a>         &quot;fields&quot;: {
+<a href="#l19" class="line" id="l19">     19</a>             &quot;title&quot;: title,
+<a href="#l20" class="line" id="l20">     20</a>             &quot;author&quot;: &quot;Nome que não deve ser enviado&quot;,
+<a href="#l21" class="line" id="l21">     21</a>             &quot;assignmentPrompt&quot;: &quot;Proposta do professor para orientar o trabalho.&quot;,
+<a href="#l22" class="line" id="l22">     22</a>             &quot;originalCasePrompt&quot;: &quot;Enunciado original opcional do professor.&quot;,
+<a href="#l23" class="line" id="l23">     23</a>             &quot;facts&quot;: &quot;Fatos relevantes do caso apresentado para contextualizar a análise.&quot;,
+<a href="#l24" class="line" id="l24">     24</a>             &quot;problem&quot;: &quot;Qual é a solução jurídica adequada diante dos fatos narrados?&quot;,
+<a href="#l25" class="line" id="l25">     25</a>             &quot;decisionBasis&quot;: &quot;Base conceitual pertinente ao problema.&quot;,
+<a href="#l26" class="line" id="l26">     26</a>             &quot;thesisATitle&quot;: &quot;Tese A&quot;,
+<a href="#l27" class="line" id="l27">     27</a>             &quot;thesisA&quot;: &quot;Argumentação da tese A. &quot; * 8,
+<a href="#l28" class="line" id="l28">     28</a>             &quot;thesisBTitle&quot;: &quot;Tese B&quot;,
+<a href="#l29" class="line" id="l29">     29</a>             &quot;thesisB&quot;: &quot;Argumentação da tese B. &quot; * 8,
+<a href="#l30" class="line" id="l30">     30</a>         },
+<a href="#l31" class="line" id="l31">     31</a>         &quot;sources&quot;: [],
+<a href="#l32" class="line" id="l32">     32</a>         &quot;criteria&quot;: [],
+<a href="#l33" class="line" id="l33">     33</a>         &quot;checks&quot;: {},
+<a href="#l34" class="line" id="l34">     34</a>         &quot;currentStep&quot;: 0,
+<a href="#l35" class="line" id="l35">     35</a>         &quot;finalized&quot;: False,
+<a href="#l36" class="line" id="l36">     36</a>     }
+<a href="#l37" class="line" id="l37">     37</a> 
+<a href="#l38" class="line" id="l38">     38</a> 
+<a href="#l39" class="line" id="l39">     39</a> class StoreTests(unittest.TestCase):
+<a href="#l40" class="line" id="l40">     40</a>     def setUp(self):
+<a href="#l41" class="line" id="l41">     41</a>         self.temp_dir = tempfile.TemporaryDirectory()
+<a href="#l42" class="line" id="l42">     42</a>         self.store = Store(Path(self.temp_dir.name) / &quot;app.sqlite3&quot;)
+<a href="#l43" class="line" id="l43">     43</a>         self.first_code, self.second_code = self.store.issue_batch(2, days=7, project_limit=1)
+<a href="#l44" class="line" id="l44">     44</a> 
+<a href="#l45" class="line" id="l45">     45</a>     def tearDown(self):
+<a href="#l46" class="line" id="l46">     46</a>         self.temp_dir.cleanup()
+<a href="#l47" class="line" id="l47">     47</a> 
+<a href="#l48" class="line" id="l48">     48</a>     def test_codes_are_random_and_only_their_hashes_are_stored(self):
+<a href="#l49" class="line" id="l49">     49</a>         account = self.store.account_by_code(self.first_code)
+<a href="#l50" class="line" id="l50">     50</a>         self.assertIsNotNone(account)
+<a href="#l51" class="line" id="l51">     51</a>         self.assertNotEqual(account[&quot;code_hash&quot;], self.first_code)
+<a href="#l52" class="line" id="l52">     52</a>         self.assertEqual(len(self.store.list_accounts()), 2)
+<a href="#l53" class="line" id="l53">     53</a> 
+<a href="#l54" class="line" id="l54">     54</a>     def test_owner_account_has_no_license_project_or_analysis_limits(self):
+<a href="#l55" class="line" id="l55">     55</a>         start = 1_800_000_000
+<a href="#l56" class="line" id="l56">     56</a>         self.store.create_owner_account(&quot;TESTOWNER22&quot;, start)
+<a href="#l57" class="line" id="l57">     57</a>         account = self.store.account_by_code(&quot;testowner22&quot;)
+<a href="#l58" class="line" id="l58">     58</a>         self.assertIsNotNone(account)
+<a href="#l59" class="line" id="l59">     59</a>         self.assertTrue(account[&quot;owner&quot;])
+<a href="#l60" class="line" id="l60">     60</a>         self.assertNotEqual(account[&quot;code_hash&quot;], &quot;TESTOWNER22&quot;)
+<a href="#l61" class="line" id="l61">     61</a>         self.assertTrue(Store.license_active(account, start + 100 * 365 * 24 * 60 * 60))
+<a href="#l62" class="line" id="l62">     62</a>         summary = self.store.account_summary(
+<a href="#l63" class="line" id="l63">     63</a>             account, start + 100 * 365 * 24 * 60 * 60
+<a href="#l64" class="line" id="l64">     64</a>         )
+<a href="#l65" class="line" id="l65">     65</a>         self.assertTrue(summary[&quot;unlimited&quot;])
+<a href="#l66" class="line" id="l66">     66</a>         self.assertTrue(summary[&quot;active&quot;])
+<a href="#l67" class="line" id="l67">     67</a>         self.assertIsNone(summary[&quot;expires_at&quot;])
+<a href="#l68" class="line" id="l68">     68</a>         self.assertIsNone(summary[&quot;project_limit&quot;])
+<a href="#l69" class="line" id="l69">     69</a>         self.assertIsNone(summary[&quot;ai_analysis_limit&quot;])
+<a href="#l70" class="line" id="l70">     70</a>         self.assertIsNone(summary[&quot;ai_analysis_remaining&quot;])
+<a href="#l71" class="line" id="l71">     71</a>         self.assertIsNone(summary[&quot;deepseek_explanation_limit&quot;])
+<a href="#l72" class="line" id="l72">     72</a>         self.assertIsNone(summary[&quot;deepseek_explanation_remaining&quot;])
+<a href="#l73" class="line" id="l73">     73</a> 
+<a href="#l74" class="line" id="l74">     74</a>         with self.store.connect() as connection:
+<a href="#l75" class="line" id="l75">     75</a>             connection.execute(
+<a href="#l76" class="line" id="l76">     76</a>                 &quot;UPDATE accounts SET project_limit = 1, ai_analysis_limit = 1, expires_at = 1 WHERE id = ?&quot;,
+<a href="#l77" class="line" id="l77">     77</a>                 (account[&quot;id&quot;],),
+<a href="#l78" class="line" id="l78">     78</a>             )
+<a href="#l79" class="line" id="l79">     79</a>         first_project_id = self.store.create_project(account, project(&quot;Case A&quot;), start + 1)
+<a href="#l80" class="line" id="l80">     80</a>         second_project_id = self.store.create_project(account, project(&quot;Case B&quot;), start + 2)
+<a href="#l81" class="line" id="l81">     81</a>         first_state, first_usage = self.store.reserve_case_analysis(
+<a href="#l82" class="line" id="l82">     82</a>             account[&quot;id&quot;], first_project_id, start + 3
+<a href="#l83" class="line" id="l83">     83</a>         )
+<a href="#l84" class="line" id="l84">     84</a>         second_state, second_usage = self.store.reserve_case_analysis(
+<a href="#l85" class="line" id="l85">     85</a>             account[&quot;id&quot;], second_project_id, start + 4
+<a href="#l86" class="line" id="l86">     86</a>         )
+<a href="#l87" class="line" id="l87">     87</a>         self.assertIn(&quot;case_facts&quot;, first_state)
+<a href="#l88" class="line" id="l88">     88</a>         self.assertIn(&quot;case_facts&quot;, second_state)
+<a href="#l89" class="line" id="l89">     89</a>         self.assertIsNone(first_usage[&quot;limit&quot;])
+<a href="#l90" class="line" id="l90">     90</a>         self.assertIsNone(first_usage[&quot;remaining&quot;])
+<a href="#l91" class="line" id="l91">     91</a>         self.assertIsNone(second_usage[&quot;remaining&quot;])
+<a href="#l92" class="line" id="l92">     92</a>         self.assertEqual(second_usage[&quot;used&quot;], 2)
+<a href="#l93" class="line" id="l93">     93</a> 
+<a href="#l94" class="line" id="l94">     94</a>     def test_owner_code_must_be_custom_alphanumeric_and_unique(self):
+<a href="#l95" class="line" id="l95">     95</a>         with self.assertRaises(ValueError):
+<a href="#l96" class="line" id="l96">     96</a>             self.store.create_owner_account(&quot;SHORT&quot;)
+<a href="#l97" class="line" id="l97">     97</a>         self.store.create_owner_account(&quot;TESTOWNER22&quot;)
+<a href="#l98" class="line" id="l98">     98</a>         with self.assertRaises(ValueError):
+<a href="#l99" class="line" id="l99">     99</a>             self.store.create_owner_account(&quot;TESTOWNER22&quot;)
+<a href="#l100" class="line" id="l100">    100</a> 
+<a href="#l101" class="line" id="l101">    101</a>     def test_create_owner_command_confirms_code_without_printing_it(self):
+<a href="#l102" class="line" id="l102">    102</a>         with (
+<a href="#l103" class="line" id="l103">    103</a>             patch(&quot;server.Store&quot;, return_value=self.store),
+<a href="#l104" class="line" id="l104">    104</a>             patch(&quot;server.getpass.getpass&quot;, side_effect=[&quot;TESTOWNER22&quot;, &quot;TESTOWNER22&quot;]),
+<a href="#l105" class="line" id="l105">    105</a>             patch(&quot;builtins.print&quot;) as print_mock,
+<a href="#l106" class="line" id="l106">    106</a>         ):
+<a href="#l107" class="line" id="l107">    107</a>             self.assertEqual(server.admin_main([&quot;create-owner&quot;]), 0)
+<a href="#l108" class="line" id="l108">    108</a>         self.assertIsNotNone(self.store.account_by_code(&quot;TESTOWNER22&quot;))
+<a href="#l109" class="line" id="l109">    109</a>         self.assertEqual(print_mock.call_args.args[0], &quot;Conta do proprietário criada.&quot;)
+<a href="#l110" class="line" id="l110">    110</a>         self.assertNotIn(&quot;TESTOWNER22&quot;, str(print_mock.call_args))
+<a href="#l111" class="line" id="l111">    111</a> 
+<a href="#l112" class="line" id="l112">    112</a>     def test_create_owner_command_rejects_mismatched_confirmation(self):
+<a href="#l113" class="line" id="l113">    113</a>         error_output = io.StringIO()
+<a href="#l114" class="line" id="l114">    114</a>         with (
+<a href="#l115" class="line" id="l115">    115</a>             patch(&quot;server.Store&quot;, return_value=self.store),
+<a href="#l116" class="line" id="l116">    116</a>             patch(&quot;server.getpass.getpass&quot;, side_effect=[&quot;TESTOWNER22&quot;, &quot;DIFFERENT22&quot;]),
+<a href="#l117" class="line" id="l117">    117</a>             contextlib.redirect_stderr(error_output),
+<a href="#l118" class="line" id="l118">    118</a>         ):
+<a href="#l119" class="line" id="l119">    119</a>             self.assertEqual(server.admin_main([&quot;create-owner&quot;]), 1)
+<a href="#l120" class="line" id="l120">    120</a>         self.assertIn(&quot;Os códigos não coincidem.&quot;, error_output.getvalue())
+<a href="#l121" class="line" id="l121">    121</a>         self.assertIsNone(self.store.account_by_code(&quot;TESTOWNER22&quot;))
+<a href="#l122" class="line" id="l122">    122</a> 
+<a href="#l123" class="line" id="l123">    123</a>     def test_account_list_identifies_owner_and_unlimited_quotas(self):
+<a href="#l124" class="line" id="l124">    124</a>         self.store.create_owner_account(&quot;TESTOWNER22&quot;)
+<a href="#l125" class="line" id="l125">    125</a>         with (
+<a href="#l126" class="line" id="l126">    126</a>             patch(&quot;server.Store&quot;, return_value=self.store),
+<a href="#l127" class="line" id="l127">    127</a>             patch(&quot;builtins.print&quot;) as print_mock,
+<a href="#l128" class="line" id="l128">    128</a>         ):
+<a href="#l129" class="line" id="l129">    129</a>             self.assertEqual(server.admin_main([&quot;list&quot;]), 0)
+<a href="#l130" class="line" id="l130">    130</a>         owner_line = next(
+<a href="#l131" class="line" id="l131">    131</a>             call.args[0]
+<a href="#l132" class="line" id="l132">    132</a>             for call in print_mock.call_args_list
+<a href="#l133" class="line" id="l133">    133</a>             if &quot;proprietário&quot; in call.args[0]
+<a href="#l134" class="line" id="l134">    134</a>         )
+<a href="#l135" class="line" id="l135">    135</a>         self.assertIn(&quot;projetos=ilimitados&quot;, owner_line)
+<a href="#l136" class="line" id="l136">    136</a>         self.assertIn(&quot;jev=0/ilimitadas&quot;, owner_line)
+<a href="#l137" class="line" id="l137">    137</a>         self.assertIn(&quot;deepseek=0/ilimitadas&quot;, owner_line)
+<a href="#l138" class="line" id="l138">    138</a> 
+<a href="#l139" class="line" id="l139">    139</a>     def test_initial_batch_can_issue_one_hundred_seven_day_single_project_codes(self):
+<a href="#l140" class="line" id="l140">    140</a>         codes = self.store.issue_batch(100, days=7, project_limit=1)
+<a href="#l141" class="line" id="l141">    141</a>         self.assertEqual(len(codes), 100)
+<a href="#l142" class="line" id="l142">    142</a>         self.assertEqual(len(set(codes)), 100)
+<a href="#l143" class="line" id="l143">    143</a>         self.assertTrue(all(code.startswith(&quot;ROTE-&quot;) for code in codes))
+<a href="#l144" class="line" id="l144">    144</a>         self.assertTrue(all(self.store.account_by_code(code)[&quot;default_days&quot;] == 7 for code in codes))
+<a href="#l145" class="line" id="l145">    145</a>         self.assertTrue(all(self.store.account_by_code(code)[&quot;project_limit&quot;] == 1 for code in codes))
+<a href="#l146" class="line" id="l146">    146</a>         self.assertTrue(all(self.store.account_by_code(code)[&quot;ai_analysis_limit&quot;] == 5 for code in codes))
+<a href="#l147" class="line" id="l147">    147</a>         self.assertTrue(
+<a href="#l148" class="line" id="l148">    148</a>             all(
+<a href="#l149" class="line" id="l149">    149</a>                 self.store.account_by_code(code)[&quot;deepseek_explanation_limit&quot;] == 5
+<a href="#l150" class="line" id="l150">    150</a>                 for code in codes
+<a href="#l151" class="line" id="l151">    151</a>             )
+<a href="#l152" class="line" id="l152">    152</a>         )
+<a href="#l153" class="line" id="l153">    153</a> 
+<a href="#l154" class="line" id="l154">    154</a>     def test_analysis_quota_is_atomic_and_resets_when_license_is_renewed(self):
+<a href="#l155" class="line" id="l155">    155</a>         start = 1_800_000_000
+<a href="#l156" class="line" id="l156">    156</a>         self.store.update_account(self.first_code, ai_analysis_limit=1)
+<a href="#l157" class="line" id="l157">    157</a>         account = self.store.activate_code(self.first_code, start)
+<a href="#l158" class="line" id="l158">    158</a>         project_id = self.store.create_project(account, project(), start + 1)
+<a href="#l159" class="line" id="l159">    159</a>         state, usage = self.store.reserve_case_analysis(account[&quot;id&quot;], project_id, start + 2)
+<a href="#l160" class="line" id="l160">    160</a>         self.assertEqual(usage, {&quot;limit&quot;: 1, &quot;used&quot;: 1, &quot;remaining&quot;: 0})
+<a href="#l161" class="line" id="l161">    161</a>         self.assertEqual(state[&quot;thesis_a_argument&quot;], project()[&quot;fields&quot;][&quot;thesisA&quot;])
+<a href="#l162" class="line" id="l162">    162</a>         self.assertNotIn(&quot;author&quot;, state)
+<a href="#l163" class="line" id="l163">    163</a>         with self.assertRaises(ApiError) as quota_error:
+<a href="#l164" class="line" id="l164">    164</a>             self.store.reserve_case_analysis(account[&quot;id&quot;], project_id, start + 3)
+<a href="#l165" class="line" id="l165">    165</a>         self.assertEqual(quota_error.exception.code, &quot;ai_quota_exhausted&quot;)
+<a href="#l166" class="line" id="l166">    166</a> 
+<a href="#l167" class="line" id="l167">    167</a>         self.store.extend_account(self.first_code, 7, start + 4)
+<a href="#l168" class="line" id="l168">    168</a>         renewed = self.store.account_by_code(self.first_code)
+<a href="#l169" class="line" id="l169">    169</a>         self.assertEqual(renewed[&quot;ai_analysis_used&quot;], 0)
+<a href="#l170" class="line" id="l170">    170</a> 
+<a href="#l171" class="line" id="l171">    171</a>     def test_deepseek_explanation_quota_is_independent_and_resets_on_renewal(self):
+<a href="#l172" class="line" id="l172">    172</a>         start = 1_800_000_000
+<a href="#l173" class="line" id="l173">    173</a>         self.store.update_account(self.first_code, deepseek_explanation_limit=1)
+<a href="#l174" class="line" id="l174">    174</a>         account = self.store.activate_code(self.first_code, start)
+<a href="#l175" class="line" id="l175">    175</a>         case = project()
+<a href="#l176" class="line" id="l176">    176</a>         case[&quot;sources&quot;] = [{&quot;reference&quot;: &quot;PRIVATE SOURCE LIST&quot;}]
+<a href="#l177" class="line" id="l177">    177</a>         case[&quot;criteria&quot;] = [
+<a href="#l178" class="line" id="l178">    178</a>             {
+<a href="#l179" class="line" id="l179">    179</a>                 &quot;term&quot;: &quot;Proporcionalidade&quot;,
+<a href="#l180" class="line" id="l180">    180</a>                 &quot;definition&quot;: &quot;Adequação, necessidade e proporcionalidade estrita.&quot;,
+<a href="#l181" class="line" id="l181">    181</a>                 &quot;basis&quot;: &quot;Base conceitual.&quot;,
+<a href="#l182" class="line" id="l182">    182</a>             }
+<a href="#l183" class="line" id="l183">    183</a>         ]
+<a href="#l184" class="line" id="l184">    184</a>         project_id = self.store.create_project(account, case, start + 1)
+<a href="#l185" class="line" id="l185">    185</a>         context, usage = self.store.reserve_deepseek_explanation(
+<a href="#l186" class="line" id="l186">    186</a>             account[&quot;id&quot;],
+<a href="#l187" class="line" id="l187">    187</a>             project_id,
+<a href="#l188" class="line" id="l188">    188</a>             &quot;legal_writing_foundation&quot;,
+<a href="#l189" class="line" id="l189">    189</a>             {&quot;score&quot;: 2.25, &quot;confidence&quot;: 0.8, &quot;probabilities&quot;: [0.05, 0.15, 0.4, 0.4]},
+<a href="#l190" class="line" id="l190">    190</a>             start + 2,
+<a href="#l191" class="line" id="l191">    191</a>         )
+<a href="#l192" class="line" id="l192">    192</a>         serialized = json.dumps(context, ensure_ascii=False)
+<a href="#l193" class="line" id="l193">    193</a>         self.assertEqual(usage, {&quot;limit&quot;: 1, &quot;used&quot;: 1, &quot;remaining&quot;: 0})
+<a href="#l194" class="line" id="l194">    194</a>         self.assertIn(&quot;Argumentação da tese A&quot;, serialized)
+<a href="#l195" class="line" id="l195">    195</a>         self.assertNotIn(&quot;Nome que não deve ser enviado&quot;, serialized)
+<a href="#l196" class="line" id="l196">    196</a>         self.assertNotIn(&quot;PRIVATE SOURCE LIST&quot;, serialized)
+<a href="#l197" class="line" id="l197">    197</a>         self.assertNotIn(&quot;Proporcionalidade&quot;, serialized)
+<a href="#l198" class="line" id="l198">    198</a>         with self.assertRaises(ApiError) as quota_error:
+<a href="#l199" class="line" id="l199">    199</a>             self.store.reserve_deepseek_explanation(
+<a href="#l200" class="line" id="l200">    200</a>                 account[&quot;id&quot;],
+<a href="#l201" class="line" id="l201">    201</a>                 project_id,
+<a href="#l202" class="line" id="l202">    202</a>                 &quot;legal_writing_foundation&quot;,
+<a href="#l203" class="line" id="l203">    203</a>                 {&quot;score&quot;: 2, &quot;confidence&quot;: 0.8, &quot;probabilities&quot;: [0.05, 0.15, 0.4, 0.4]},
+<a href="#l204" class="line" id="l204">    204</a>                 start + 3,
+<a href="#l205" class="line" id="l205">    205</a>             )
+<a href="#l206" class="line" id="l206">    206</a>         self.assertEqual(quota_error.exception.code, &quot;deepseek_quota_exhausted&quot;)
+<a href="#l207" class="line" id="l207">    207</a>         current = self.store.account_by_code(self.first_code)
+<a href="#l208" class="line" id="l208">    208</a>         self.assertEqual(current[&quot;ai_analysis_used&quot;], 0)
+<a href="#l209" class="line" id="l209">    209</a>         self.assertEqual(current[&quot;deepseek_explanation_used&quot;], 1)
+<a href="#l210" class="line" id="l210">    210</a> 
+<a href="#l211" class="line" id="l211">    211</a>         self.store.extend_account(self.first_code, 7, start + 4)
+<a href="#l212" class="line" id="l212">    212</a>         renewed = self.store.account_by_code(self.first_code)
+<a href="#l213" class="line" id="l213">    213</a>         self.assertEqual(renewed[&quot;deepseek_explanation_used&quot;], 0)
+<a href="#l214" class="line" id="l214">    214</a> 
+<a href="#l215" class="line" id="l215">    215</a>     def test_deepseek_explanation_rejects_papers_and_invalid_jev_results_without_quota(self):
+<a href="#l216" class="line" id="l216">    216</a>         self.store.update_account(self.first_code, project_limit=2)
+<a href="#l217" class="line" id="l217">    217</a>         account = self.store.activate_code(self.first_code, 1_800_000_000)
+<a href="#l218" class="line" id="l218">    218</a>         paper_id = self.store.create_project(
+<a href="#l219" class="line" id="l219">    219</a>             account, project(&quot;Paper&quot;, &quot;paper&quot;), 1_800_000_001
+<a href="#l220" class="line" id="l220">    220</a>         )
+<a href="#l221" class="line" id="l221">    221</a>         with self.assertRaises(ApiError) as paper_error:
+<a href="#l222" class="line" id="l222">    222</a>             self.store.reserve_deepseek_explanation(
+<a href="#l223" class="line" id="l223">    223</a>                 account[&quot;id&quot;],
+<a href="#l224" class="line" id="l224">    224</a>                 paper_id,
+<a href="#l225" class="line" id="l225">    225</a>                 &quot;case_description&quot;,
+<a href="#l226" class="line" id="l226">    226</a>                 {&quot;score&quot;: 2, &quot;confidence&quot;: 0.8, &quot;probabilities&quot;: [0.05, 0.15, 0.4, 0.4]},
+<a href="#l227" class="line" id="l227">    227</a>                 1_800_000_002,
+<a href="#l228" class="line" id="l228">    228</a>             )
+<a href="#l229" class="line" id="l229">    229</a>         self.assertEqual(paper_error.exception.code, &quot;case_analysis_only&quot;)
+<a href="#l230" class="line" id="l230">    230</a>         case_id = self.store.create_project(
+<a href="#l231" class="line" id="l231">    231</a>             account, project(&quot;Case&quot;), 1_800_000_003
+<a href="#l232" class="line" id="l232">    232</a>         )
+<a href="#l233" class="line" id="l233">    233</a>         with self.assertRaises(ApiError) as result_error:
+<a href="#l234" class="line" id="l234">    234</a>             self.store.reserve_deepseek_explanation(
+<a href="#l235" class="line" id="l235">    235</a>                 account[&quot;id&quot;],
+<a href="#l236" class="line" id="l236">    236</a>                 case_id,
+<a href="#l237" class="line" id="l237">    237</a>                 &quot;case_description&quot;,
+<a href="#l238" class="line" id="l238">    238</a>                 {&quot;score&quot;: float(&quot;nan&quot;), &quot;confidence&quot;: 0.8, &quot;probabilities&quot;: [0.05, 0.15, 0.4, 0.4]},
+<a href="#l239" class="line" id="l239">    239</a>                 1_800_000_004,
+<a href="#l240" class="line" id="l240">    240</a>             )
+<a href="#l241" class="line" id="l241">    241</a>         self.assertEqual(result_error.exception.code, &quot;invalid_jev_result&quot;)
+<a href="#l242" class="line" id="l242">    242</a>         stored = self.store.account_by_code(self.first_code)
+<a href="#l243" class="line" id="l243">    243</a>         self.assertEqual(stored[&quot;deepseek_explanation_used&quot;], 0)
+<a href="#l244" class="line" id="l244">    244</a> 
+<a href="#l245" class="line" id="l245">    245</a>     def test_project_assistant_uses_prompt_without_identity_or_reference_list_and_supports_paper_final(self):
+<a href="#l246" class="line" id="l246">    246</a>         start = 1_800_000_000
+<a href="#l247" class="line" id="l247">    247</a>         self.store.update_account(self.first_code, deepseek_explanation_limit=1)
+<a href="#l248" class="line" id="l248">    248</a>         account = self.store.activate_code(self.first_code, start)
+<a href="#l249" class="line" id="l249">    249</a>         paper = project(&quot;Paper final&quot;, &quot;paper&quot;)
+<a href="#l250" class="line" id="l250">    250</a>         paper[&quot;fields&quot;][&quot;paperKind&quot;] = &quot;final&quot;
+<a href="#l251" class="line" id="l251">    251</a>         paper[&quot;fields&quot;][&quot;assignmentPrompt&quot;] = &quot;Analise o tema e responda ao problema proposto.&quot;
+<a href="#l252" class="line" id="l252">    252</a>         paper[&quot;fields&quot;][&quot;introduction&quot;] = &quot;Esta é a introdução do paper.&quot;
+<a href="#l253" class="line" id="l253">    253</a>         paper[&quot;fields&quot;][&quot;developmentSections&quot;] = [
+<a href="#l254" class="line" id="l254">    254</a>             {&quot;id&quot;: &quot;section-one&quot;, &quot;title&quot;: &quot;Fundamentação&quot;, &quot;content&quot;: &quot;Argumentação do tópico.&quot;}
+<a href="#l255" class="line" id="l255">    255</a>         ]
+<a href="#l256" class="line" id="l256">    256</a>         paper[&quot;sources&quot;] = [{&quot;reference&quot;: &quot;REFERÊNCIA PRIVADA&quot;}]
+<a href="#l257" class="line" id="l257">    257</a>         project_id = self.store.create_project(account, paper, start + 1)
+<a href="#l258" class="line" id="l258">    258</a>         context, usage = self.store.reserve_project_ai(
+<a href="#l259" class="line" id="l259">    259</a>             account[&quot;id&quot;],
+<a href="#l260" class="line" id="l260">    260</a>             project_id,
+<a href="#l261" class="line" id="l261">    261</a>             {&quot;action&quot;: &quot;review&quot;, &quot;field_id&quot;: &quot;developmentText:section-one&quot;},
+<a href="#l262" class="line" id="l262">    262</a>             start + 2,
+<a href="#l263" class="line" id="l263">    263</a>         )
+<a href="#l264" class="line" id="l264">    264</a>         serialized = json.dumps(context, ensure_ascii=False)
+<a href="#l265" class="line" id="l265">    265</a>         self.assertEqual(usage, {&quot;limit&quot;: 1, &quot;used&quot;: 1, &quot;remaining&quot;: 0})
+<a href="#l266" class="line" id="l266">    266</a>         self.assertEqual(context[&quot;project_type&quot;], &quot;paper&quot;)
+<a href="#l267" class="line" id="l267">    267</a>         self.assertEqual(context[&quot;field&quot;][&quot;text&quot;], &quot;Argumentação do tópico.&quot;)
+<a href="#l268" class="line" id="l268">    268</a>         self.assertIn(&quot;assignment_prompt&quot;, context)
+<a href="#l269" class="line" id="l269">    269</a>         self.assertIn(&quot;introduction&quot;, context[&quot;project_context&quot;])
+<a href="#l270" class="line" id="l270">    270</a>         self.assertNotIn(&quot;Nome que não deve ser enviado&quot;, serialized)
+<a href="#l271" class="line" id="l271">    271</a>         self.assertNotIn(&quot;REFERÊNCIA PRIVADA&quot;, serialized)
+<a href="#l272" class="line" id="l272">    272</a>         with self.assertRaises(ApiError) as quota_error:
+<a href="#l273" class="line" id="l273">    273</a>             self.store.reserve_project_ai(
+<a href="#l274" class="line" id="l274">    274</a>                 account[&quot;id&quot;], project_id, {&quot;action&quot;: &quot;chat&quot;, &quot;messages&quot;: [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Pergunta&quot;}]}, start + 3
+<a href="#l275" class="line" id="l275">    275</a>             )
+<a href="#l276" class="line" id="l276">    276</a>         self.assertEqual(quota_error.exception.code, &quot;deepseek_quota_exhausted&quot;)
+<a href="#l277" class="line" id="l277">    277</a> 
+<a href="#l278" class="line" id="l278">    278</a>     def test_project_assistant_requires_assignment_prompt_and_respects_context_selection(self):
+<a href="#l279" class="line" id="l279">    279</a>         start = 1_800_000_000
+<a href="#l280" class="line" id="l280">    280</a>         self.store.update_account(self.first_code, deepseek_explanation_limit=2)
+<a href="#l281" class="line" id="l281">    281</a>         account = self.store.activate_code(self.first_code, start)
+<a href="#l282" class="line" id="l282">    282</a>         case = project(&quot;Case&quot;)
+<a href="#l283" class="line" id="l283">    283</a>         del case[&quot;fields&quot;][&quot;assignmentPrompt&quot;]
+<a href="#l284" class="line" id="l284">    284</a>         project_id = self.store.create_project(account, case, start + 1)
+<a href="#l285" class="line" id="l285">    285</a>         with self.assertRaises(ApiError) as prompt_error:
+<a href="#l286" class="line" id="l286">    286</a>             self.store.reserve_project_ai(
+<a href="#l287" class="line" id="l287">    287</a>                 account[&quot;id&quot;],
+<a href="#l288" class="line" id="l288">    288</a>                 project_id,
+<a href="#l289" class="line" id="l289">    289</a>                 {&quot;action&quot;: &quot;review&quot;, &quot;field_id&quot;: &quot;facts&quot;},
+<a href="#l290" class="line" id="l290">    290</a>                 start + 2,
+<a href="#l291" class="line" id="l291">    291</a>             )
+<a href="#l292" class="line" id="l292">    292</a>         self.assertEqual(prompt_error.exception.code, &quot;assignment_prompt_required&quot;)
+<a href="#l293" class="line" id="l293">    293</a>         self.assertEqual(self.store.account_by_code(self.first_code)[&quot;deepseek_explanation_used&quot;], 0)
+<a href="#l294" class="line" id="l294">    294</a> 
+<a href="#l295" class="line" id="l295">    295</a>         case[&quot;fields&quot;][&quot;assignmentPrompt&quot;] = &quot;Proposta do professor.&quot;
+<a href="#l296" class="line" id="l296">    296</a>         self.store.update_project(account, project_id, case, 1, start + 3)
+<a href="#l297" class="line" id="l297">    297</a>         context, _ = self.store.reserve_project_ai(
+<a href="#l298" class="line" id="l298">    298</a>             account[&quot;id&quot;],
+<a href="#l299" class="line" id="l299">    299</a>             project_id,
+<a href="#l300" class="line" id="l300">    300</a>             {
+<a href="#l301" class="line" id="l301">    301</a>                 &quot;action&quot;: &quot;chat&quot;,
+<a href="#l302" class="line" id="l302">    302</a>                 &quot;context_fields&quot;: [],
+<a href="#l303" class="line" id="l303">    303</a>                 &quot;messages&quot;: [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Como posso delimitar?&quot;}],
+<a href="#l304" class="line" id="l304">    304</a>             },
+<a href="#l305" class="line" id="l305">    305</a>             start + 4,
+<a href="#l306" class="line" id="l306">    306</a>         )
+<a href="#l307" class="line" id="l307">    307</a>         self.assertEqual(context[&quot;project_context&quot;], {})
+<a href="#l308" class="line" id="l308">    308</a>         self.assertEqual(context[&quot;development_topics&quot;], [])
+<a href="#l309" class="line" id="l309">    309</a>         self.assertEqual(context[&quot;assignment_prompt&quot;], &quot;Proposta do professor.&quot;)
+<a href="#l310" class="line" id="l310">    310</a> 
+<a href="#l311" class="line" id="l311">    311</a>     def test_case_analysis_sends_only_report_content_not_identity_or_reference_list(self):
+<a href="#l312" class="line" id="l312">    312</a>         account = self.store.activate_code(self.first_code, 1_800_000_000)
+<a href="#l313" class="line" id="l313">    313</a>         case = project()
+<a href="#l314" class="line" id="l314">    314</a>         case[&quot;sources&quot;] = [{&quot;reference&quot;: &quot;PRIVATE SOURCE LIST&quot;}]
+<a href="#l315" class="line" id="l315">    315</a>         case[&quot;criteria&quot;] = [{&quot;term&quot;: &quot;Proporcionalidade&quot;, &quot;definition&quot;: &quot;Adequação, necessidade e proporcionalidade estrita.&quot;, &quot;basis&quot;: &quot;Base conceitual.&quot;}]
+<a href="#l316" class="line" id="l316">    316</a>         project_id = self.store.create_project(account, case, 1_800_000_001)
+<a href="#l317" class="line" id="l317">    317</a>         state, usage = self.store.reserve_case_analysis(account[&quot;id&quot;], project_id, 1_800_000_002)
+<a href="#l318" class="line" id="l318">    318</a>         serialized = str(state)
+<a href="#l319" class="line" id="l319">    319</a>         self.assertIn(&quot;Fatos relevantes do caso&quot;, serialized)
+<a href="#l320" class="line" id="l320">    320</a>         self.assertIn(&quot;Proporcionalidade&quot;, serialized)
+<a href="#l321" class="line" id="l321">    321</a>         self.assertNotIn(&quot;Nome que não deve ser enviado&quot;, serialized)
+<a href="#l322" class="line" id="l322">    322</a>         self.assertNotIn(&quot;PRIVATE SOURCE LIST&quot;, serialized)
+<a href="#l323" class="line" id="l323">    323</a>         self.assertEqual(usage[&quot;used&quot;], 1)
+<a href="#l324" class="line" id="l324">    324</a> 
+<a href="#l325" class="line" id="l325">    325</a>     def test_case_analysis_rejects_papers_without_spending_quota(self):
+<a href="#l326" class="line" id="l326">    326</a>         account = self.store.activate_code(self.first_code, 1_800_000_000)
+<a href="#l327" class="line" id="l327">    327</a>         paper_id = self.store.create_project(
+<a href="#l328" class="line" id="l328">    328</a>             account, project(&quot;Paper&quot;, &quot;paper&quot;), 1_800_000_001
+<a href="#l329" class="line" id="l329">    329</a>         )
+<a href="#l330" class="line" id="l330">    330</a>         with self.assertRaises(ApiError) as error:
+<a href="#l331" class="line" id="l331">    331</a>             self.store.reserve_case_analysis(account[&quot;id&quot;], paper_id, 1_800_000_002)
+<a href="#l332" class="line" id="l332">    332</a>         self.assertEqual(error.exception.code, &quot;case_analysis_only&quot;)
+<a href="#l333" class="line" id="l333">    333</a>         self.assertEqual(self.store.account_by_code(self.first_code)[&quot;ai_analysis_used&quot;], 0)
+<a href="#l334" class="line" id="l334">    334</a> 
+<a href="#l335" class="line" id="l335">    335</a>     def test_section_analysis_sends_only_matching_fields_and_original_prompt_when_relevant(self):
+<a href="#l336" class="line" id="l336">    336</a>         account = self.store.activate_code(self.first_code, 1_800_000_000)
+<a href="#l337" class="line" id="l337">    337</a>         case = project()
+<a href="#l338" class="line" id="l338">    338</a>         case[&quot;sources&quot;] = [{&quot;reference&quot;: &quot;PRIVATE SOURCE LIST&quot;}]
+<a href="#l339" class="line" id="l339">    339</a>         project_id = self.store.create_project(account, case, 1_800_000_001)
+<a href="#l340" class="line" id="l340">    340</a>         state, usage = self.store.reserve_case_analysis(
+<a href="#l341" class="line" id="l341">    341</a>             account[&quot;id&quot;], project_id, 1_800_000_002, section=&quot;case_description&quot;
+<a href="#l342" class="line" id="l342">    342</a>         )
+<a href="#l343" class="line" id="l343">    343</a>         self.assertEqual(
+<a href="#l344" class="line" id="l344">    344</a>             set(state),
+<a href="#l345" class="line" id="l345">    345</a>             {&quot;assignment_prompt&quot;, &quot;case_facts&quot;, &quot;legal_question&quot;, &quot;original_case_prompt&quot;},
+<a href="#l346" class="line" id="l346">    346</a>         )
+<a href="#l347" class="line" id="l347">    347</a>         self.assertIn(&quot;Enunciado original&quot;, state[&quot;original_case_prompt&quot;])
+<a href="#l348" class="line" id="l348">    348</a>         self.assertNotIn(&quot;PRIVATE SOURCE LIST&quot;, str(state))
+<a href="#l349" class="line" id="l349">    349</a>         self.assertNotIn(&quot;Argumentação da tese A&quot;, str(state))
+<a href="#l350" class="line" id="l350">    350</a>         self.assertEqual(usage[&quot;used&quot;], 1)
+<a href="#l351" class="line" id="l351">    351</a> 
+<a href="#l352" class="line" id="l352">    352</a>         case[&quot;fields&quot;][&quot;originalCasePrompt&quot;] = &quot;&quot;
+<a href="#l353" class="line" id="l353">    353</a>         self.store.update_project(account, project_id, case, 1, 1_800_000_003)
+<a href="#l354" class="line" id="l354">    354</a>         state, _ = self.store.reserve_case_analysis(
+<a href="#l355" class="line" id="l355">    355</a>             account[&quot;id&quot;], project_id, 1_800_000_004, section=&quot;case_description&quot;
+<a href="#l356" class="line" id="l356">    356</a>         )
+<a href="#l357" class="line" id="l357">    357</a>         self.assertNotIn(&quot;original_case_prompt&quot;, state)
+<a href="#l358" class="line" id="l358">    358</a> 
+<a href="#l359" class="line" id="l359">    359</a>     def test_unassessable_section_is_rejected_without_spending_quota(self):
+<a href="#l360" class="line" id="l360">    360</a>         account = self.store.activate_code(self.first_code, 1_800_000_000)
+<a href="#l361" class="line" id="l361">    361</a>         project_id = self.store.create_project(account, project(), 1_800_000_001)
+<a href="#l362" class="line" id="l362">    362</a>         with self.assertRaises(ApiError) as error:
+<a href="#l363" class="line" id="l363">    363</a>             self.store.reserve_case_analysis(
+<a href="#l364" class="line" id="l364">    364</a>                 account[&quot;id&quot;], project_id, 1_800_000_002, section=&quot;references&quot;
+<a href="#l365" class="line" id="l365">    365</a>             )
+<a href="#l366" class="line" id="l366">    366</a>         self.assertEqual(error.exception.code, &quot;invalid_analysis_section&quot;)
+<a href="#l367" class="line" id="l367">    367</a>         self.assertEqual(self.store.account_by_code(self.first_code)[&quot;ai_analysis_used&quot;], 0)
+<a href="#l368" class="line" id="l368">    368</a> 
+<a href="#l369" class="line" id="l369">    369</a>     def test_case_assessment_requires_professor_prompt_without_consuming_quota(self):
+<a href="#l370" class="line" id="l370">    370</a>         account = self.store.activate_code(self.first_code, 1_800_000_000)
+<a href="#l371" class="line" id="l371">    371</a>         case = project()
+<a href="#l372" class="line" id="l372">    372</a>         del case[&quot;fields&quot;][&quot;assignmentPrompt&quot;]
+<a href="#l373" class="line" id="l373">    373</a>         project_id = self.store.create_project(account, case, 1_800_000_001)
+<a href="#l374" class="line" id="l374">    374</a>         with self.assertRaises(ApiError) as error:
+<a href="#l375" class="line" id="l375">    375</a>             self.store.reserve_case_analysis(account[&quot;id&quot;], project_id, 1_800_000_002)
+<a href="#l376" class="line" id="l376">    376</a>         self.assertEqual(error.exception.code, &quot;assignment_prompt_required&quot;)
+<a href="#l377" class="line" id="l377">    377</a>         self.assertEqual(self.store.account_by_code(self.first_code)[&quot;ai_analysis_used&quot;], 0)
+<a href="#l378" class="line" id="l378">    378</a> 
+<a href="#l379" class="line" id="l379">    379</a>     def test_license_starts_on_first_use_and_expires_after_seven_days(self):
+<a href="#l380" class="line" id="l380">    380</a>         start = 1_800_000_000
+<a href="#l381" class="line" id="l381">    381</a>         account = self.store.activate_code(self.first_code, start)
+<a href="#l382" class="line" id="l382">    382</a>         self.assertEqual(account[&quot;activated_at&quot;], start)
+<a href="#l383" class="line" id="l383">    383</a>         self.assertEqual(account[&quot;expires_at&quot;], start + 7 * 24 * 60 * 60)
+<a href="#l384" class="line" id="l384">    384</a>         same_account = self.store.activate_code(self.first_code, start + 100)
+<a href="#l385" class="line" id="l385">    385</a>         self.assertEqual(same_account[&quot;activated_at&quot;], start)
+<a href="#l386" class="line" id="l386">    386</a> 
+<a href="#l387" class="line" id="l387">    387</a>     def test_project_limit_and_account_isolation_are_enforced(self):
+<a href="#l388" class="line" id="l388">    388</a>         account = self.store.activate_code(self.first_code, 1_800_000_000)
+<a href="#l389" class="line" id="l389">    389</a>         project_id = self.store.create_project(account, project(), 1_800_000_001)
+<a href="#l390" class="line" id="l390">    390</a>         with self.assertRaises(ApiError) as quota_error:
+<a href="#l391" class="line" id="l391">    391</a>             self.store.create_project(account, project(&quot;Segundo&quot;), 1_800_000_002)
+<a href="#l392" class="line" id="l392">    392</a>         self.assertEqual(quota_error.exception.code, &quot;project_limit&quot;)
+<a href="#l393" class="line" id="l393">    393</a> 
+<a href="#l394" class="line" id="l394">    394</a>         other = self.store.activate_code(self.second_code, 1_800_000_000)
+<a href="#l395" class="line" id="l395">    395</a>         with self.assertRaises(ApiError) as isolation_error:
+<a href="#l396" class="line" id="l396">    396</a>             self.store.get_project(other[&quot;id&quot;], project_id)
+<a href="#l397" class="line" id="l397">    397</a>         self.assertEqual(isolation_error.exception.status, 404)
+<a href="#l398" class="line" id="l398">    398</a> 
+<a href="#l399" class="line" id="l399">    399</a>     def test_expired_accounts_can_read_but_not_change_projects(self):
+<a href="#l400" class="line" id="l400">    400</a>         start = 1_800_000_000
+<a href="#l401" class="line" id="l401">    401</a>         account = self.store.activate_code(self.first_code, start)
+<a href="#l402" class="line" id="l402">    402</a>         project_id = self.store.create_project(account, project(), start + 1)
+<a href="#l403" class="line" id="l403">    403</a>         expired_at = start + 7 * 24 * 60 * 60
+<a href="#l404" class="line" id="l404">    404</a>         self.assertEqual(self.store.get_project(account[&quot;id&quot;], project_id)[&quot;project&quot;][&quot;fields&quot;][&quot;title&quot;], &quot;Projeto de teste&quot;)
+<a href="#l405" class="line" id="l405">    405</a>         with self.assertRaises(ApiError) as error:
+<a href="#l406" class="line" id="l406">    406</a>             self.store.update_project(account, project_id, project(&quot;Editado&quot;), 1, expired_at)
+<a href="#l407" class="line" id="l407">    407</a>         self.assertEqual(error.exception.code, &quot;license_expired&quot;)
+<a href="#l408" class="line" id="l408">    408</a> 
+<a href="#l409" class="line" id="l409">    409</a>     def test_stale_revision_cannot_overwrite_another_device_edit(self):
+<a href="#l410" class="line" id="l410">    410</a>         start = 1_800_000_000
+<a href="#l411" class="line" id="l411">    411</a>         account = self.store.activate_code(self.first_code, start)
+<a href="#l412" class="line" id="l412">    412</a>         project_id = self.store.create_project(account, project(), start + 1)
+<a href="#l413" class="line" id="l413">    413</a>         revision = self.store.update_project(account, project_id, project(&quot;Nova versão&quot;), 1, start + 2)
+<a href="#l414" class="line" id="l414">    414</a>         self.assertEqual(revision, 2)
+<a href="#l415" class="line" id="l415">    415</a>         with self.assertRaises(ApiError) as error:
+<a href="#l416" class="line" id="l416">    416</a>             self.store.update_project(account, project_id, project(&quot;Versão antiga&quot;), 1, start + 3)
+<a href="#l417" class="line" id="l417">    417</a>         self.assertEqual(error.exception.status, 409)
+<a href="#l418" class="line" id="l418">    418</a>         self.assertEqual(
+<a href="#l419" class="line" id="l419">    419</a>             self.store.get_project(account[&quot;id&quot;], project_id)[&quot;project&quot;][&quot;fields&quot;][&quot;title&quot;],
+<a href="#l420" class="line" id="l420">    420</a>             &quot;Nova versão&quot;,
+<a href="#l421" class="line" id="l421">    421</a>         )
+<a href="#l422" class="line" id="l422">    422</a> 
+<a href="#l423" class="line" id="l423">    423</a>     def test_renewal_extends_expiry_and_code_rotation_invalidates_old_code(self):
+<a href="#l424" class="line" id="l424">    424</a>         start = 1_800_000_000
+<a href="#l425" class="line" id="l425">    425</a>         account = self.store.activate_code(self.first_code, start)
+<a href="#l426" class="line" id="l426">    426</a>         self.store.extend_account(self.first_code, 7, start + 3 * 24 * 60 * 60)
+<a href="#l427" class="line" id="l427">    427</a>         renewed = self.store.account_by_code(self.first_code)
+<a href="#l428" class="line" id="l428">    428</a>         self.assertEqual(renewed[&quot;expires_at&quot;], account[&quot;expires_at&quot;] + 7 * 24 * 60 * 60)
+<a href="#l429" class="line" id="l429">    429</a>         replacement = self.store.rotate_code(self.first_code)
+<a href="#l430" class="line" id="l430">    430</a>         self.assertIsNone(self.store.account_by_code(self.first_code))
+<a href="#l431" class="line" id="l431">    431</a>         self.assertEqual(self.store.account_by_code(replacement)[&quot;id&quot;], account[&quot;id&quot;])
+<a href="#l432" class="line" id="l432">    432</a> 
+<a href="#l433" class="line" id="l433">    433</a>     def test_revoked_code_cannot_create_a_new_session(self):
+<a href="#l434" class="line" id="l434">    434</a>         self.store.set_revoked(self.first_code, True)
+<a href="#l435" class="line" id="l435">    435</a>         with self.assertRaises(ApiError) as error:
+<a href="#l436" class="line" id="l436">    436</a>             self.store.activate_code(self.first_code)
+<a href="#l437" class="line" id="l437">    437</a>         self.assertEqual(error.exception.code, &quot;invalid_code&quot;)
+<a href="#l438" class="line" id="l438">    438</a> 
+<a href="#l439" class="line" id="l439">    439</a>     def test_account_data_is_retained_when_license_expires(self):
+<a href="#l440" class="line" id="l440">    440</a>         start = 1_800_000_000
+<a href="#l441" class="line" id="l441">    441</a>         account = self.store.activate_code(self.first_code, start)
+<a href="#l442" class="line" id="l442">    442</a>         project_id = self.store.create_project(account, project(), start + 1)
+<a href="#l443" class="line" id="l443">    443</a>         summary = self.store.account_summary(account, start + 8 * 24 * 60 * 60)
+<a href="#l444" class="line" id="l444">    444</a>         self.assertFalse(summary[&quot;active&quot;])
+<a href="#l445" class="line" id="l445">    445</a>         self.assertEqual(summary[&quot;project_count&quot;], 1)
+<a href="#l446" class="line" id="l446">    446</a>         self.assertEqual(self.store.get_project(account[&quot;id&quot;], project_id)[&quot;id&quot;], project_id)
+<a href="#l447" class="line" id="l447">    447</a> 
+<a href="#l448" class="line" id="l448">    448</a>     def test_backup_is_private_and_contains_the_database(self):
+<a href="#l449" class="line" id="l449">    449</a>         self.store.issue_batch(1)
+<a href="#l450" class="line" id="l450">    450</a>         destination = Path(self.temp_dir.name) / &quot;backup&quot; / &quot;copy.sqlite3&quot;
+<a href="#l451" class="line" id="l451">    451</a>         backup = self.store.backup(destination)
+<a href="#l452" class="line" id="l452">    452</a>         self.assertTrue(backup.is_file())
+<a href="#l453" class="line" id="l453">    453</a>         self.assertEqual(stat.S_IMODE(backup.stat().st_mode), 0o600)
+<a href="#l454" class="line" id="l454">    454</a>         copy = Store(backup)
+<a href="#l455" class="line" id="l455">    455</a>         self.assertEqual(len(copy.list_accounts()), 3)
+<a href="#l456" class="line" id="l456">    456</a> 
+<a href="#l457" class="line" id="l457">    457</a> 
+<a href="#l458" class="line" id="l458">    458</a> if __name__ == &quot;__main__&quot;:
+<a href="#l459" class="line" id="l459">    459</a>     unittest.main()
+</pre>
+</div>
+</body>
+</html>

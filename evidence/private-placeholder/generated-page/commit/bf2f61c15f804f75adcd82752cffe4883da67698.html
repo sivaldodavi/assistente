@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>feat(case): dedica main ao fluxo de cases - assistente-academico - Repositório assistente-academico
+</title>
+<link rel="icon" type="image/png" href="../favicon.png" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed" href="../atom.xml" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed (tags)" href="../tags.xml" />
+<link rel="stylesheet" type="text/css" href="../style.css" />
+</head>
+<body>
+<table><tr><td><a href="../../"><img src="../logo.png" alt="" width="32" height="32" /></a></td><td><h1>assistente-academico</h1><span class="desc">Repositório assistente-academico
+</span></td></tr><tr class="url"><td></td><td>git clone <a href="git://git.sivaldodavi.com/assistente-academico.git">git://git.sivaldodavi.com/assistente-academico.git</a></td></tr><tr><td></td><td>
+<a href="../log.html">Log</a> | <a href="../files.html">Files</a> | <a href="../refs.html">Refs</a> | <a href="../file/README.md.html">README</a></td></tr></table>
+<hr/>
+<div id="content">
+<pre><b>commit</b> <a href="../commit/bf2f61c15f804f75adcd82752cffe4883da67698.html">bf2f61c15f804f75adcd82752cffe4883da67698</a>
+<b>parent</b> <a href="../commit/0238d271e8988a5988d6c8b341e67d208c3e5c10.html">0238d271e8988a5988d6c8b341e67d208c3e5c10</a>
+<b>Author:</b> Sivaldo Davi  &lt;<a href="mailto:sivaldo@sivaldodavi">sivaldo@sivaldodavi</a>&gt;
+<b>Date:</b>   Sat, 17 Oct 2026 10:26:59 -0300
+
+feat(case): dedica main ao fluxo de cases
+
+Co-authored-by: Copilot &lt;223556219+Copilot@users.noreply.github.com&gt;
+
+<b>Diffstat:</b>
+<table><tr><td class="M">M</td><td><a href="#h0">README.md</a></td><td> | </td><td class="num">10</td><td><span class="i">+++++++</span><span class="d">---</span></td></tr>
+<tr><td class="M">M</td><td><a href="#h1">assets/js/main.js</a></td><td> | </td><td class="num">209</td><td><span class="i">+++</span><span class="d">----------------------------------------------------------------------------</span></td></tr>
+</table></pre><pre>2 files changed, 14 insertions(+), 205 deletions(-)
+<hr/><b>diff --git a/<a id="h0" href="../file/README.md.html">README.md</a> b/<a href="../file/README.md.html">README.md</a></b>
+<a href="#h0-0" id="h0-0" class="h">@@ -1,6 +1,6 @@
+</a> # Roteiro
+ 
+<a href="#h0-0-2" id="h0-0-2" class="d">-Site estático em Hugo para orientar a elaboração de cases e papers e gerar
+</a><a href="#h0-0-3" id="h0-0-3" class="i">+Site estático em Hugo para orientar a elaboração de cases jurídicos e gerar
+</a> documentos em Typst no navegador.
+ 
+ ## Executar
+<a href="#h0-1" id="h0-1" class="h">@@ -22,9 +22,10 @@ WebAssembly do Typst. Não há backend: o conteúdo do trabalho fica no navegado
+</a> salvo localmente, e não é enviado a um servidor. O motor pode carregar recursos
+ tipográficos pela rede.
+ 
+<a href="#h0-1-3" id="h0-1-3" class="d">-## Escopo atual
+</a><a href="#h0-1-4" id="h0-1-4" class="i">+## Escopo desta branch
+</a> 
+<a href="#h0-1-6" id="h0-1-6" class="d">-- Fluxos separados para case e paper, com etapas e dicas contextuais.
+</a><a href="#h0-1-7" id="h0-1-7" class="i">+- Roteiro dedicado à elaboração de case jurídico.
+</a><a href="#h0-1-8" id="h0-1-8" class="i">+- Preenchimento temporário com os dados do case de Direito da Personalidade.
+</a> - Rascunhos salvos localmente no navegador.
+ - Prévia SVG e exportação PDF executadas no navegador com Typst.
+ - Sem conta, backend ou sincronização entre dispositivos.
+<a href="#h0-2" id="h0-2" class="h">@@ -32,3 +33,6 @@ tipográficos pela rede.
+</a> Este protótipo organiza a escrita, mas não valida teses jurídicas, fontes, citações
+ ou conformidade institucional. Confira as orientações do professor e as normas
+ aplicáveis antes de entregar o documento.
+<a href="#h0-2-3" id="h0-2-3" class="i">+
+</a><a href="#h0-2-4" id="h0-2-4" class="i">+A branch `estado-atual` preserva o protótipo anterior, que também incluía o fluxo
+</a><a href="#h0-2-5" id="h0-2-5" class="i">+de paper.
+</a><b>diff --git a/<a id="h1" href="../file/assets/js/main.js.html">assets/js/main.js</a> b/<a href="../file/assets/js/main.js.html">assets/js/main.js</a></b>
+<a href="#h1-0" id="h1-0" class="h">@@ -9,7 +9,6 @@ function initialDraft() {
+</a>     city: &quot;Pinheiro — MA&quot;,
+     year: String(new Date().getFullYear()),
+     caseType: &quot;Fechado&quot;,
+<a href="#h1-0-3" id="h1-0-3" class="d">-    paperKind: &quot;final&quot;,
+</a>   };
+ }
+ 
+<a href="#h1-1" id="h1-1" class="h">@@ -23,7 +22,7 @@ const workflows = {
+</a>         title: &quot;Identificação&quot;,
+         intro: &quot;Comece pelas informações que identificam o trabalho. Siga o modelo da sua instituição se ele for diferente.&quot;,
+         fields: [
+<a href="#h1-1-3" id="h1-1-3" class="d">-          { id: &quot;profile&quot;, label: &quot;Modelo de formatação&quot;, type: &quot;select&quot;, options: [[&quot;facsure&quot;, &quot;Padrão da FACSUR&quot;], [&quot;livre&quot;, &quot;Formato livre&quot;]], hint: &quot;O padrão FACSUR usa os dois PDFs da faculdade como referência. Confira exigências específicas com o professor.&quot; },
+</a><a href="#h1-1-4" id="h1-1-4" class="i">+          { id: &quot;profile&quot;, label: &quot;Modelo de formatação&quot;, type: &quot;select&quot;, options: [[&quot;facsure&quot;, &quot;Padrão da FACSUR&quot;], [&quot;livre&quot;, &quot;Formato livre&quot;]], hint: &quot;O padrão FACSUR usa o PDF de case da faculdade como referência. Confira exigências específicas com o professor.&quot; },
+</a>           { id: &quot;title&quot;, label: &quot;Título do trabalho&quot;, hint: &quot;Obrigatório para gerar o PDF.&quot;, requiredFor: [&quot;case&quot;], required: true },
+           { id: &quot;institution&quot;, label: &quot;Instituição&quot;, hint: &quot;Pré-preenchido para a FACSUR; pode editar.&quot; },
+           { id: &quot;course&quot;, label: &quot;Curso&quot;, hint: &quot;Ex.: Direito.&quot; },
+<a href="#h1-2" id="h1-2" class="h">@@ -88,91 +87,6 @@ const workflows = {
+</a>       },
+     ],
+   },
+<a href="#h1-2-3" id="h1-2-3" class="d">-  paper: {
+</a><a href="#h1-2-4" id="h1-2-4" class="d">-    name: &quot;Paper acadêmico&quot;,
+</a><a href="#h1-2-5" id="h1-2-5" class="d">-    short: &quot;Paper&quot;,
+</a><a href="#h1-2-6" id="h1-2-6" class="d">-    description: &quot;Planeje a pesquisa e transforme o projeto em um paper com começo, desenvolvimento e conclusão.&quot;,
+</a><a href="#h1-2-7" id="h1-2-7" class="d">-    steps: [
+</a><a href="#h1-2-8" id="h1-2-8" class="d">-      {
+</a><a href="#h1-2-9" id="h1-2-9" class="d">-        title: &quot;Identificação e tema&quot;,
+</a><a href="#h1-2-10" id="h1-2-10" class="d">-        intro: &quot;Delimite o objeto antes de avançar. Use as orientações institucionais quando houver requisitos próprios.&quot;,
+</a><a href="#h1-2-11" id="h1-2-11" class="d">-        fields: [
+</a><a href="#h1-2-12" id="h1-2-12" class="d">-          { id: &quot;profile&quot;, label: &quot;Modelo de formatação&quot;, type: &quot;select&quot;, options: [[&quot;facsure&quot;, &quot;Padrão da FACSUR&quot;], [&quot;livre&quot;, &quot;Formato livre&quot;]], hint: &quot;O padrão FACSUR usa como referência o PDF do mini-artigo da faculdade.&quot; },
+</a><a href="#h1-2-13" id="h1-2-13" class="d">-          { id: &quot;paperKind&quot;, label: &quot;Documento para gerar&quot;, type: &quot;select&quot;, options: [[&quot;final&quot;, &quot;Paper final / mini-artigo&quot;], [&quot;project&quot;, &quot;Projeto de paper&quot;]], hint: &quot;O projeto e o paper final têm estruturas diferentes. Selecione o documento que quer exportar.&quot; },
+</a><a href="#h1-2-14" id="h1-2-14" class="d">-          { id: &quot;title&quot;, label: &quot;Título do trabalho&quot;, hint: &quot;Obrigatório. No projeto pode ser provisório.&quot;, requiredFor: [&quot;paper&quot;, &quot;project&quot;], required: true },
+</a><a href="#h1-2-15" id="h1-2-15" class="d">-          { id: &quot;institution&quot;, label: &quot;Instituição&quot;, hint: &quot;Pré-preenchido para a FACSUR; pode editar.&quot; },
+</a><a href="#h1-2-16" id="h1-2-16" class="d">-          { id: &quot;course&quot;, label: &quot;Curso&quot;, hint: &quot;Ex.: Direito.&quot; },
+</a><a href="#h1-2-17" id="h1-2-17" class="d">-          { id: &quot;discipline&quot;, label: &quot;Disciplina&quot;, hint: &quot;Obrigatória no modelo FACSUR.&quot;, requiredFor: [&quot;facsure&quot;] },
+</a><a href="#h1-2-18" id="h1-2-18" class="d">-          { id: &quot;author&quot;, label: &quot;Autor(es)&quot;, type: &quot;textarea&quot;, hint: &quot;Obrigatório. Para mais de um autor, escreva cada nome em uma linha.&quot;, requiredFor: [&quot;paper&quot;, &quot;project&quot;], required: true },
+</a><a href="#h1-2-19" id="h1-2-19" class="d">-          { id: &quot;teacher&quot;, label: &quot;Professor(a) ou orientador(a)&quot;, hint: &quot;Obrigatório no modelo FACSUR.&quot;, requiredFor: [&quot;facsure&quot;] },
+</a><a href="#h1-2-20" id="h1-2-20" class="d">-          { id: &quot;classInfo&quot;, label: &quot;Turma e período&quot;, placeholder: &quot;Noturno, 2º período&quot;, requiredFor: [&quot;facsure&quot;] },
+</a><a href="#h1-2-21" id="h1-2-21" class="d">-          { id: &quot;deliveryDate&quot;, label: &quot;Data de entrega&quot;, placeholder: &quot;28/09/2026&quot;, requiredFor: [&quot;facsure&quot;] },
+</a><a href="#h1-2-22" id="h1-2-22" class="d">-          { id: &quot;city&quot;, label: &quot;Cidade e estado&quot; },
+</a><a href="#h1-2-23" id="h1-2-23" class="d">-          { id: &quot;year&quot;, label: &quot;Ano&quot; },
+</a><a href="#h1-2-24" id="h1-2-24" class="d">-          { id: &quot;area&quot;, label: &quot;Área ou tema geral&quot;, hint: &quot;Apoio para delimitar o objeto; não aparece como seção isolada no paper final.&quot;, requiredFor: [&quot;project&quot;] },
+</a><a href="#h1-2-25" id="h1-2-25" class="d">-          { id: &quot;delimitation&quot;, label: &quot;Recorte específico&quot;, type: &quot;textarea&quot;, hint: &quot;Apoio ao projeto: delimite por período, local, grupo ou objeto.&quot;, requiredFor: [&quot;project&quot;] },
+</a><a href="#h1-2-26" id="h1-2-26" class="d">-          { id: &quot;researchObject&quot;, label: &quot;Objeto delimitado&quot;, type: &quot;textarea&quot;, hint: &quot;Apoio ao projeto. No paper final, o objeto deve estar explicado na introdução.&quot;, requiredFor: [&quot;project&quot;] },
+</a><a href="#h1-2-27" id="h1-2-27" class="d">-        ],
+</a><a href="#h1-2-28" id="h1-2-28" class="d">-      },
+</a><a href="#h1-2-29" id="h1-2-29" class="d">-      {
+</a><a href="#h1-2-30" id="h1-2-30" class="d">-        title: &quot;Problema e hipótese&quot;,
+</a><a href="#h1-2-31" id="h1-2-31" class="d">-        intro: &quot;O problema orienta a pesquisa; a hipótese é uma resposta provisória que poderá ser confirmada ou refutada.&quot;,
+</a><a href="#h1-2-32" id="h1-2-32" class="d">-        fields: [
+</a><a href="#h1-2-33" id="h1-2-33" class="d">-          { id: &quot;problemContext&quot;, label: &quot;Contextualização do problema&quot;, type: &quot;textarea&quot; },
+</a><a href="#h1-2-34" id="h1-2-34" class="d">-          { id: &quot;problem&quot;, label: &quot;Pergunta de pesquisa&quot;, type: &quot;textarea&quot;, hint: &quot;Obrigatória no projeto. Uma pergunta clara, específica, ligada ao tema e possível de investigar; no paper final, ela deve estar na introdução.&quot;, requiredFor: [&quot;project&quot;] },
+</a><a href="#h1-2-35" id="h1-2-35" class="d">-          { id: &quot;hypothesis&quot;, label: &quot;Hipótese&quot;, type: &quot;textarea&quot;, hint: &quot;Necessária no Projeto de Paper deste roteiro; no paper final, deve ser retomada na introdução se adotada.&quot;, requiredFor: [&quot;project&quot;] },
+</a><a href="#h1-2-36" id="h1-2-36" class="d">-          { id: &quot;justification&quot;, label: &quot;Justificativa&quot;, type: &quot;textarea&quot;, hint: &quot;Obrigatória no Projeto FACSUR. Explique a relevância e atualidade; no paper final, sintetize na introdução.&quot;, requiredFor: [&quot;project&quot;] },
+</a><a href="#h1-2-37" id="h1-2-37" class="d">-        ],
+</a><a href="#h1-2-38" id="h1-2-38" class="d">-      },
+</a><a href="#h1-2-39" id="h1-2-39" class="d">-      {
+</a><a href="#h1-2-40" id="h1-2-40" class="d">-        title: &quot;Objetivos&quot;,
+</a><a href="#h1-2-41" id="h1-2-41" class="d">-        intro: &quot;O objetivo geral deve refletir o problema. Os objetivos específicos indicam etapas para alcançá-lo.&quot;,
+</a><a href="#h1-2-42" id="h1-2-42" class="d">-        fields: [
+</a><a href="#h1-2-43" id="h1-2-43" class="d">-          { id: &quot;objectiveGeneral&quot;, label: &quot;Objetivo geral&quot;, type: &quot;textarea&quot;, hint: &quot;Obrigatório no projeto. Use um verbo no infinitivo e indique objeto e recorte; no paper final, inclua-o na introdução.&quot;, requiredFor: [&quot;project&quot;] },
+</a><a href="#h1-2-44" id="h1-2-44" class="d">-          { id: &quot;objective1&quot;, label: &quot;Objetivo específico 1&quot;, type: &quot;textarea&quot;, requiredFor: [&quot;project&quot;] },
+</a><a href="#h1-2-45" id="h1-2-45" class="d">-          { id: &quot;objective2&quot;, label: &quot;Objetivo específico 2&quot;, type: &quot;textarea&quot;, requiredFor: [&quot;project&quot;] },
+</a><a href="#h1-2-46" id="h1-2-46" class="d">-          { id: &quot;objective3&quot;, label: &quot;Objetivo específico 3 (opcional)&quot;, type: &quot;textarea&quot; },
+</a><a href="#h1-2-47" id="h1-2-47" class="d">-        ],
+</a><a href="#h1-2-48" id="h1-2-48" class="d">-      },
+</a><a href="#h1-2-49" id="h1-2-49" class="d">-      {
+</a><a href="#h1-2-50" id="h1-2-50" class="d">-        title: &quot;Referencial e método&quot;,
+</a><a href="#h1-2-51" id="h1-2-51" class="d">-        intro: &quot;Declare as referências teóricas previstas e descreva uma metodologia coerente com o problema e os objetivos.&quot;,
+</a><a href="#h1-2-52" id="h1-2-52" class="d">-        fields: [
+</a><a href="#h1-2-53" id="h1-2-53" class="d">-          { id: &quot;theory&quot;, label: &quot;Referencial teórico e autores-chave&quot;, type: &quot;textarea&quot;, size: &quot;large&quot;, hint: &quot;Obrigatório no projeto. Liste tópicos e fontes que realmente pretende consultar; no paper final, desenvolva isso no texto.&quot;, requiredFor: [&quot;project&quot;] },
+</a><a href="#h1-2-54" id="h1-2-54" class="d">-          { id: &quot;methodAuthor&quot;, label: &quot;Autor de metodologia adotado&quot;, placeholder: &quot;Gil, Lakatos e Marconi, Prodanov e Freitas...&quot;, requiredFor: [&quot;project&quot;] },
+</a><a href="#h1-2-55" id="h1-2-55" class="d">-          { id: &quot;nature&quot;, label: &quot;Natureza da pesquisa&quot;, placeholder: &quot;Básica ou aplicada&quot;, requiredFor: [&quot;project&quot;] },
+</a><a href="#h1-2-56" id="h1-2-56" class="d">-          { id: &quot;approach&quot;, label: &quot;Abordagem&quot;, placeholder: &quot;Qualitativa, quantitativa ou mista&quot;, requiredFor: [&quot;project&quot;] },
+</a><a href="#h1-2-57" id="h1-2-57" class="d">-          { id: &quot;ends&quot;, label: &quot;Fins&quot;, placeholder: &quot;Exploratória, descritiva ou explicativa&quot;, requiredFor: [&quot;project&quot;] },
+</a><a href="#h1-2-58" id="h1-2-58" class="d">-          { id: &quot;procedure&quot;, label: &quot;Procedimentos&quot;, placeholder: &quot;Bibliográfico, documental, estudo de caso...&quot;, requiredFor: [&quot;project&quot;] },
+</a><a href="#h1-2-59" id="h1-2-59" class="d">-          { id: &quot;instruments&quot;, label: &quot;Instrumentos e análise&quot;, type: &quot;textarea&quot;, hint: &quot;Obrigatórios no projeto. Indique as fontes/dados e como serão analisados.&quot;, requiredFor: [&quot;project&quot;] },
+</a><a href="#h1-2-60" id="h1-2-60" class="d">-        ],
+</a><a href="#h1-2-61" id="h1-2-61" class="d">-      },
+</a><a href="#h1-2-62" id="h1-2-62" class="d">-      {
+</a><a href="#h1-2-63" id="h1-2-63" class="d">-        title: &quot;Paper final&quot;,
+</a><a href="#h1-2-64" id="h1-2-64" class="d">-        intro: &quot;Reaproveite o projeto na introdução, desenvolva os argumentos e conclua respondendo ao problema.&quot;,
+</a><a href="#h1-2-65" id="h1-2-65" class="d">-        fields: [
+</a><a href="#h1-2-66" id="h1-2-66" class="d">-          { id: &quot;abstract&quot;, label: &quot;Resumo&quot;, type: &quot;textarea&quot;, hint: &quot;Obrigatório no modelo de mini-artigo FACSUR. A planilha indica 150–250 palavras; confirme com o professor.&quot;, requiredFor: [&quot;paper&quot;] },
+</a><a href="#h1-2-67" id="h1-2-67" class="d">-          { id: &quot;keywords&quot;, label: &quot;Palavras-chave&quot;, placeholder: &quot;Pesquisa; Direito; tema&quot;, hint: &quot;Obrigatórias no modelo FACSUR; a planilha indica 3 a 5.&quot;, requiredFor: [&quot;paper&quot;] },
+</a><a href="#h1-2-68" id="h1-2-68" class="d">-          { id: &quot;introduction&quot;, label: &quot;Introdução&quot;, type: &quot;textarea&quot;, size: &quot;large&quot;, hint: &quot;Obrigatória no paper final. Apresente tema, contexto, problema, objetivos, metodologia e organização conforme a orientação do professor.&quot;, requiredFor: [&quot;paper&quot;] },
+</a><a href="#h1-2-69" id="h1-2-69" class="d">-          { id: &quot;development1Title&quot;, label: &quot;Título do primeiro tópico de desenvolvimento&quot;, requiredFor: [&quot;paper&quot;] },
+</a><a href="#h1-2-70" id="h1-2-70" class="d">-          { id: &quot;development1&quot;, label: &quot;Texto do tópico 1&quot;, type: &quot;textarea&quot;, size: &quot;large&quot;, hint: &quot;Obrigatório no paper final. Desenvolva a discussão com fontes verificadas e análise própria.&quot;, requiredFor: [&quot;paper&quot;] },
+</a><a href="#h1-2-71" id="h1-2-71" class="d">-          { id: &quot;development2Title&quot;, label: &quot;Título do segundo tópico de desenvolvimento (se houver)&quot; },
+</a><a href="#h1-2-72" id="h1-2-72" class="d">-          { id: &quot;development2&quot;, label: &quot;Texto do tópico 2&quot;, type: &quot;textarea&quot;, size: &quot;large&quot; },
+</a><a href="#h1-2-73" id="h1-2-73" class="d">-          { id: &quot;development3Title&quot;, label: &quot;Tópico de desenvolvimento 3 (opcional)&quot; },
+</a><a href="#h1-2-74" id="h1-2-74" class="d">-          { id: &quot;development3&quot;, label: &quot;Texto do tópico 3&quot;, type: &quot;textarea&quot;, size: &quot;large&quot; },
+</a><a href="#h1-2-75" id="h1-2-75" class="d">-          { id: &quot;conclusion&quot;, label: &quot;Conclusão&quot;, type: &quot;textarea&quot;, size: &quot;large&quot;, hint: &quot;Obrigatória no paper final segundo o roteiro da planilha. Responda ao problema sem introduzir fontes novas.&quot;, requiredFor: [&quot;paper&quot;] },
+</a><a href="#h1-2-76" id="h1-2-76" class="d">-        ],
+</a><a href="#h1-2-77" id="h1-2-77" class="d">-      },
+</a><a href="#h1-2-78" id="h1-2-78" class="d">-      {
+</a><a href="#h1-2-79" id="h1-2-79" class="d">-        title: &quot;Referências&quot;,
+</a><a href="#h1-2-80" id="h1-2-80" class="d">-        intro: &quot;Inclua apenas fontes citadas no trabalho, em ordem alfabética e conforme a norma e o padrão institucional vigentes.&quot;,
+</a><a href="#h1-2-81" id="h1-2-81" class="d">-        fields: [
+</a><a href="#h1-2-82" id="h1-2-82" class="d">-          { id: &quot;references&quot;, label: &quot;Referências&quot;, type: &quot;textarea&quot;, size: &quot;large&quot;, hint: &quot;Obrigatórias. Inclua somente fontes citadas e confira os dados bibliográficos.&quot;, requiredFor: [&quot;paper&quot;, &quot;project&quot;] },
+</a><a href="#h1-2-83" id="h1-2-83" class="d">-          { id: &quot;aiNote&quot;, label: &quot;Nota sobre uso de ferramentas de IA (se exigida)&quot;, type: &quot;textarea&quot;, hint: &quot;Siga exatamente a política e o modelo adotados pela instituição.&quot; },
+</a><a href="#h1-2-84" id="h1-2-84" class="d">-        ],
+</a><a href="#h1-2-85" id="h1-2-85" class="d">-      },
+</a><a href="#h1-2-86" id="h1-2-86" class="d">-    ],
+</a><a href="#h1-2-87" id="h1-2-87" class="d">-  },
+</a> };
+ 
+ const temporaryPresets = [
+<a href="#h1-3" id="h1-3" class="h">@@ -274,58 +188,7 @@ ORGANIZAÇÃO DAS NAÇÕES UNIDAS (ONU). Declaração Universal dos Direitos Hum
+</a> SOUSA, Cássio V. S.; GIACOMELLI, Cinthia L. F. Direito civil I. Porto Alegre: SAGAH, 2018. ISBN 9788595024441. Disponível em: https://integrada.minhabiblioteca.com.br/reader/books/9788595024441/. Acesso em: 19 set. 2026.`,
+     },
+   },
+<a href="#h1-3-3" id="h1-3-3" class="d">-  {
+</a><a href="#h1-3-4" id="h1-3-4" class="d">-    id: &quot;paper-filosofia&quot;,
+</a><a href="#h1-3-5" id="h1-3-5" class="d">-    type: &quot;paper&quot;,
+</a><a href="#h1-3-6" id="h1-3-6" class="d">-    title: &quot;Paper · Hobbes e Aristóteles&quot;,
+</a><a href="#h1-3-7" id="h1-3-7" class="d">-    copy: &quot;Abre o gerador de paper com o mini-artigo de Filosofia preenchido.&quot;,
+</a><a href="#h1-3-8" id="h1-3-8" class="d">-    note: &quot;O mini-artigo de referência não tem uma seção própria de conclusão. Esse campo fica opcional neste preenchimento e não aparece no PDF gerado se permanecer vazio.&quot;,
+</a><a href="#h1-3-9" id="h1-3-9" class="d">-    omitRequired: [&quot;conclusion&quot;],
+</a><a href="#h1-3-10" id="h1-3-10" class="d">-    draft: {
+</a><a href="#h1-3-11" id="h1-3-11" class="d">-      ...initialDraft(),
+</a><a href="#h1-3-12" id="h1-3-12" class="d">-      paperKind: &quot;final&quot;,
+</a><a href="#h1-3-13" id="h1-3-13" class="d">-      title: &quot;A RUPTURA DA TEORIA HOBBESIANA DO CONTRATO SOCIAL COM A CONCEPÇÃO ARISTOTÉLICA DE SOCIEDADE COMO COOPERAÇÃO NATURAL&quot;,
+</a><a href="#h1-3-14" id="h1-3-14" class="d">-      author: &quot;Autor 1\nAutor 2&quot;,
+</a><a href="#h1-3-15" id="h1-3-15" class="d">-      discipline: &quot;Filosofia geral e política&quot;,
+</a><a href="#h1-3-16" id="h1-3-16" class="d">-      teacher: &quot;Professor(a) da disciplina&quot;,
+</a><a href="#h1-3-17" id="h1-3-17" class="d">-      classInfo: &quot;Noturno, 2º período&quot;,
+</a><a href="#h1-3-18" id="h1-3-18" class="d">-      deliveryDate: &quot;28/09/2026&quot;,
+</a><a href="#h1-3-19" id="h1-3-19" class="d">-      abstract: `Este artigo analisa a ruptura da teoria hobbesiana do contrato social com a concepção aristotélica de sociedade como cooperação natural. Parte-se da compreensão de que a tradição clássica, especialmente em Aristóteles, concebe a sociedade como comunidade natural originada da carência humana e ordenada ao bem comum, tendo no zoon politikon e na cidade o fim necessário da realização humana. Com a modernidade política, especialmente em Hobbes, essa concepção passa a ser problematizada, na medida em que se nega a aptidão natural do homem para a vida em sociedade e se substitui o princípio do animal político pelo princípio do benefício próprio, orientado pela autoconservação e pela busca de vantagens individuais. Nesse contexto, o artigo concentra-se na relação entre essa inversão antropológica e a nova cosmologia mecanicista, fundada na lei da inércia e na exclusividade das causas eficientes, que concebe o movimento como pura mudança de lugar. A análise considera, particularmente, a passagem do estado de natureza ao estado social como transição da ordem mecânica da matéria à ordem final da vontade, procurando demonstrar que a sociedade, para Hobbes, não é cooperação natural, mas artefato construído pela vontade humana para a conservação de si.`,
+</a><a href="#h1-3-20" id="h1-3-20" class="d">-      keywords: &quot;Hobbes. Aristóteles. Contrato social. Zoon politikon. Mecanicismo.&quot;,
+</a><a href="#h1-3-21" id="h1-3-21" class="d">-      introduction: `A história da filosofia política ocidental pode ser compreendida, em larga medida, como o desenrolar de uma tensão entre duas concepções antagônicas de sociedade. De um lado, a tradição clássica sistematizada por Aristóteles concebe a sociedade como comunidade natural, originada da carência humana e orientada ao bem comum: o homem é, por natureza, um animal político — zoon politikon —, e a cidade é o fim ao qual tende. De outro, a modernidade política, da qual Hobbes é representante radical, nega essa tendência natural e entende a sociedade como artefato construído pela vontade humana para a conservação de si.
+</a><a href="#h1-3-22" id="h1-3-22" class="d">-
+</a><a href="#h1-3-23" id="h1-3-23" class="d">-O problema deste artigo é: como a teoria do contrato social de Hobbes, nos capítulos XIII, XVII e XVIII do Leviatã, rompe com a concepção aristotélica de sociedade como cooperação natural, formulada nos capítulos 1 e 2 do Livro I da Política? A hipótese é que essa ruptura não se reduz a uma divergência política ou moral, mas decorre de uma transformação profunda na concepção de natureza: a substituição de uma natureza teleológica por uma natureza mecânica, que nega causas finais. Essa nova cosmologia, fundada na lei da inércia e na exclusividade das causas eficientes, permite a Hobbes negar que a natureza associe os homens e afirmar que o consenso só pode ser obtido artificialmente.
+</a><a href="#h1-3-24" id="h1-3-24" class="d">-
+</a><a href="#h1-3-25" id="h1-3-25" class="d">-O estudo se justifica porque a ruptura hobbesiana com Aristóteles é central para entender a filosofia política de Hobbes e o advento da modernidade política; porque a oposição entre os modelos aristotélico e hobbesiano permanece viva em debates contemporâneos; e porque tal análise ilumina a relação entre filosofia da natureza e filosofia política.
+</a><a href="#h1-3-26" id="h1-3-26" class="d">-
+</a><a href="#h1-3-27" id="h1-3-27" class="d">-O objetivo geral é analisar como a teoria hobbesiana do contrato social, no Leviatã, rompe com a concepção aristotélica de sociedade como cooperação natural, apresentada na Política. Os objetivos específicos são: (i) caracterizar a concepção aristotélica de sociedade na Política (Livro I, caps. 1-2); (ii) expor a crítica de Hobbes no Leviatã (caps. XIII, XVII e XVIII), evidenciando a substituição do zoon politikon pelo benefício próprio; (iii) demonstrar que essa crítica se enraíza na cosmologia mecanicista; e (iv) articular esses eixos para mostrar que, para Hobbes, a sociedade não é cooperação natural, mas artefato da vontade humana para a conservação de si. A metodologia é teórico-bibliográfica, com análise textual e comparativa das obras de Aristóteles e Hobbes. Como etapa preliminar, este documento delimita o problema e a fundamentação teórica inicial.`,
+</a><a href="#h1-3-28" id="h1-3-28" class="d">-      development1Title: &quot;FUNDAMENTOS TEÓRICOS: DA SOCIEDADE NATURAL AO ESTADO ARTIFICIAL&quot;,
+</a><a href="#h1-3-29" id="h1-3-29" class="d">-      development1: `A crítica de Thomas Hobbes a Aristóteles marca a passagem do modelo político clássico para o racionalista moderno. Em Política, Aristóteles (2025, p. 21-22) define a pólis afirmando que “uma cidade é uma produção natural, que o homem é naturalmente um animal político” e que a comunidade política se organiza para além da mera subsistência, pois “foi fundada para que possamos viver, mas continua existindo para que possamos viver felizes”. Além disso, o filósofo grego ressalta a função da linguagem ao assinalar que “o dom da fala também prova claramente que o homem é um animal mais social do que as abelhas ou qualquer outro animal gregário”, sendo o único dotado do “discernimento do bem e do mal, do justo e do injusto”. Nessa concepção, a vida política não é um artifício exterior à natureza humana, mas o desdobramento de uma inclinação natural à convivência e à realização do bem comum.
+</a><a href="#h1-3-30" id="h1-3-30" class="d">-
+</a><a href="#h1-3-31" id="h1-3-31" class="d">-Nessa perspectiva, enquanto Mascaro (2024, p. 135) destaca a sociabilidade natural e a busca do bem comum como pilares do pensamento grego, Rosa (2013, p. 1) salienta que a vertente clássica se fundamenta na premissa de que “se o bem comum determina a visão platônico-aristotélica, a leitura hobbesiana instaura uma lógica que emerge através do contrato social”, partindo da investigação historicista de “Como nasceu o Estado?” sob o pressuposto do homem como zoon politikon. O contraste envolve, portanto, duas visões distintas da ordem política: uma teleológica (ou finalística) e outra contratualista.
+</a><a href="#h1-3-32" id="h1-3-32" class="d">-
+</a><a href="#h1-3-33" id="h1-3-33" class="d">-A ruptura promovida por Hobbes não se explica apenas no filosoficamente; ela se insere em um contexto histórico bélico — como as guerras religiosas europeias e a Guerra Civil Inglesa — e de ascensão do mecanicismo da nova ciência, que substituiu o cosmos ordenado e finalístico. Nesse cenário, a filosofia política precisava encontrar um novo fundamento para a ordem, já que a tradição clássica e a escolástica não conseguiam mais conter os conflitos. Hobbes, assim, formula sua crítica ao zoon politikon e propõe a construção artificial do Estado, buscando na razão calculante e no contrato os meios para fundar a autoridade política sobre bases seguras.
+</a><a href="#h1-3-34" id="h1-3-34" class="d">-
+</a><a href="#h1-3-35" id="h1-3-35" class="d">-Apoiando-se na reflexão de Yara Frateschi (2008, p. 28-29), constata-se que Hobbes recusa a sociabilidade inata, sustentando que a capacidade de viver em comunidade não é natural do ser humano, mas sim um aprendizado artificial adquirido por convenção. Como sintetiza a autora, a crítica hobbesiana à teoria política tradicional atua por meio da substituição do princípio do zoon politikon pelo princípio do benefício próprio, o qual afirma que a natureza humana conduz, em primeiro lugar, à procura do que o homem considera bom para si mesmo. Assim, a sociabilidade deixa de ser causa da política e passa a ser efeito de instituições destinadas a conter as paixões e a orientar os interesses individuais.
+</a><a href="#h1-3-36" id="h1-3-36" class="d">-
+</a><a href="#h1-3-37" id="h1-3-37" class="d">-No Leviatã, Hobbes estabelece essa lógica ao proclamar que “pela Arte é criado aquele grande LEVIATÃ, chamado de REPÚBLICA ou ESTADO (no latim, CIVITAS), que nada mais é do que um homem artificial”. Do mesmo modo, ao descrever a miséria do estado de natureza no Capítulo XIII, Hobbes (2020, p. 130) sentencia que nele “existe o contínuo temor e perigo de morte violenta; e a vida do homem é solitária, pobre, tosca, embrutecida e breve”. A imagem do homem artificial e a descrição do estado de natureza se tornam, portanto, respectivamente diagnóstico e remédio: se a condição natural é insuportável, a ordem civil precisa ser construída pela arte e pelo pacto.
+</a><a href="#h1-3-38" id="h1-3-38" class="d">-
+</a><a href="#h1-3-39" id="h1-3-39" class="d">-Corroborando essa mudança, Rosa (2013) enfatiza que a ação humana passa a ter como pilar a tendência à autopreservação, consistindo na transição da ordem mecânica da matéria à ordem final da vontade. Na mesma direção, Mascaro (2024, p. 135) destaca que o que Aristóteles chamara de natureza social do homem será invertido pelos modernos, para os quais a natureza humana é individual e a sociedade surge por contrato. A sociedade política deixa de ser uma inclinação biológica ou cosmológica natural e se torna um artifício construído por convenção, cuja legitimidade depende do consentimento e da capacidade de garantir segurança.
+</a><a href="#h1-3-40" id="h1-3-40" class="d">-
+</a><a href="#h1-3-41" id="h1-3-41" class="d">-Silva (2014, p. 167) ressalta, por sua vez, que o método resolutivo-compositivo (ou geométrico) estabelece uma relação fundamental entre filosofia natural e política nas bases do pensamento hobbesiano, demonstrando que as paixões humanas — matéria tanto da filosofia natural quanto da política — são vistas por Hobbes sob a ótica desse mesmo método geométrico. Ademais, Silva (2014, p. 170) pondera que a organização estatal hobbesiana existe sobre uma analogia que compara o Estado civil à imagem e semelhança de um “homem-máquina” colocado tanto como “artífice quanto como matéria desse grande autômato”. Desse modo, a política moderna de Hobbes se apresenta como uma ciência construtiva: em vez de deduzir a ordem da natureza (como se propõe Aristóteles), ela a fabrica racionalmente, tendo o Estado como obra humana destinada a superar a instabilidade do estado de natureza.`,
+</a><a href="#h1-3-42" id="h1-3-42" class="d">-      references: `ARISTÓTELES. Política. Tradução de Luciene Ribeiro dos Santos de Freitas. Barueri, SP: Novo Século Editora, 2025.
+</a> 
+<a href="#h1-3-44" id="h1-3-44" class="d">-FRATESCHI, Yara. A física da política: Hobbes contra Aristóteles. Campinas, SP: Editora da Unicamp, 2008.
+</a><a href="#h1-3-45" id="h1-3-45" class="d">-
+</a><a href="#h1-3-46" id="h1-3-46" class="d">-HOBBES, Thomas. Leviatã, ou, Matéria, palavra e poder de uma República eclesiástica e civil. Tradução de Gabriel Lima Marques e Renan Marques Birro. Petrópolis, RJ: Vozes, 2020.
+</a><a href="#h1-3-47" id="h1-3-47" class="d">-
+</a><a href="#h1-3-48" id="h1-3-48" class="d">-MASCARO, Alysson L. Filosofia do Direito - 11ª Edição 2024. 11. ed. Rio de Janeiro: Atlas, 2024. E-book. p. I. ISBN 9786559776603. Disponível em: https://integrada.minhabiblioteca.com.br/reader/books/9786559776603/. Acesso em: 28 set. 2026.
+</a><a href="#h1-3-49" id="h1-3-49" class="d">-
+</a><a href="#h1-3-50" id="h1-3-50" class="d">-ROSA, Luiz Carlos Mariano da. Do bem comum da visão platônico-aristotélica à lógica hobbesiana do contrato social (da ordem mecânica da matéria à ordem final da vontade). Revista Espaço Politikón Zôon, Batatais, SP, 2013.
+</a><a href="#h1-3-51" id="h1-3-51" class="d">-
+</a><a href="#h1-3-52" id="h1-3-52" class="d">-SILVA, Luiz Carlos Santos da. O Homem por Trás do Leviatã: ciência e política na filosofia do poder de Thomas Hobbes. 2014. Tese (Doutorado em Filosofia) – Instituto de Filosofia e Ciências Humanas, Universidade Estadual de Campinas, Campinas, SP, 2014.`,
+</a><a href="#h1-3-53" id="h1-3-53" class="d">-    },
+</a><a href="#h1-3-54" id="h1-3-54" class="d">-  },
+</a> ];
+ 
+ let currentType = null;
+<a href="#h1-4" id="h1-4" class="h">@@ -447,8 +310,7 @@ function escapeHtml(value) {
+</a> }
+ 
+ function documentMode() {
+<a href="#h1-4-3" id="h1-4-3" class="d">-  if (currentType === &quot;case&quot;) return &quot;case&quot;;
+</a><a href="#h1-4-4" id="h1-4-4" class="d">-  return draft.paperKind === &quot;project&quot; ? &quot;project&quot; : &quot;paper&quot;;
+</a><a href="#h1-4-5" id="h1-4-5" class="i">+  return &quot;case&quot;;
+</a> }
+ 
+ function isRequired(field) {
+<a href="#h1-5" id="h1-5" class="h">@@ -475,11 +337,7 @@ function renderField(field) {
+</a>   ].filter(Boolean).join(&quot; &quot;);
+   const hint = helpText ? `&lt;p class=&quot;field-hint&quot; id=&quot;${id}-hint&quot;&gt;${escapeHtml(helpText)}&lt;/p&gt;` : &quot;&quot;;
+   const required = isRequired(field);
+<a href="#h1-5-3" id="h1-5-3" class="d">-  const projectSupport = !required
+</a><a href="#h1-5-4" id="h1-5-4" class="d">-    &amp;&amp; documentMode() === &quot;paper&quot;
+</a><a href="#h1-5-5" id="h1-5-5" class="d">-    &amp;&amp; draft.paperKind !== &quot;project&quot;
+</a><a href="#h1-5-6" id="h1-5-6" class="d">-    &amp;&amp; field.requiredFor?.includes(&quot;project&quot;);
+</a><a href="#h1-5-7" id="h1-5-7" class="d">-  const badgeText = required ? &quot;Obrigatório para este PDF&quot; : omittedByPreset ? &quot;Ausente no original&quot; : projectSupport ? &quot;Apoio · não incluído&quot; : &quot;Opcional / apoio&quot;;
+</a><a href="#h1-5-8" id="h1-5-8" class="i">+  const badgeText = required ? &quot;Obrigatório para este PDF&quot; : omittedByPreset ? &quot;Ausente no original&quot; : &quot;Opcional / apoio&quot;;
+</a>   const badge = `&lt;span class=&quot;field-state ${required ? &quot;is-required&quot; : &quot;is-optional&quot;}&quot;&gt;${badgeText}&lt;/span&gt;`;
+   let input;
+   if (field.type === &quot;textarea&quot;) {
+<a href="#h1-6" id="h1-6" class="h">@@ -594,7 +452,7 @@ function onFieldChange(event) {
+</a>   generatedPdf = null;
+   const pdfButton = document.querySelector(&quot;#pdf-button&quot;);
+   if (pdfButton) pdfButton.disabled = true;
+<a href="#h1-6-3" id="h1-6-3" class="d">-  if (name === &quot;paperKind&quot; || name === &quot;profile&quot; || name === &quot;caseType&quot;) {
+</a><a href="#h1-6-4" id="h1-6-4" class="i">+  if (name === &quot;profile&quot; || name === &quot;caseType&quot;) {
+</a>     showWorkflow();
+     saveDraft();
+     return;
+<a href="#h1-7" id="h1-7" class="h">@@ -718,17 +576,16 @@ ${metadata.map((item) =&gt; `#align(center)[#text(${escapeTypstString(item)})]`).jo
+</a> #v(3cm)
+ #align(center)[#text(${escapeTypstString(location)})]
+ #pagebreak()
+<a href="#h1-7-3" id="h1-7-3" class="d">-#counter(page).update(${currentType === &quot;case&quot; ? 2 : 1})
+</a><a href="#h1-7-4" id="h1-7-4" class="i">+#counter(page).update(2)
+</a> #set page(numbering: &quot;1&quot;, number-align: top + right)`;
+ }
+ 
+ function titleAndAuthors() {
+   const facsure = draft.profile === &quot;facsure&quot;;
+<a href="#h1-7-10" id="h1-7-10" class="d">-  const kind = currentType === &quot;case&quot; ? &quot;Case&quot; : &quot;Mini-paper&quot;;
+</a>   const institution = draft.institution || &quot;instituição de ensino&quot;;
+   const discipline = draft.discipline || &quot;&quot;;
+   const note = facsure
+<a href="#h1-7-14" id="h1-7-14" class="d">-    ? `${kind} apresentado à disciplina ${discipline} da ${institution}.`
+</a><a href="#h1-7-15" id="h1-7-15" class="i">+    ? `Case apresentado à disciplina ${discipline} da ${institution}.`
+</a>     : &quot;Trabalho acadêmico.&quot;;
+   const role = facsure
+     ? `Discente do curso de ${draft.course || &quot;Direito&quot;} da ${institution}.`
+<a href="#h1-8" id="h1-8" class="h">@@ -777,65 +634,13 @@ function makeCaseDocument() {
+</a>   return makeDocument([coverPage(), ...parts]);
+ }
+ 
+<a href="#h1-8-3" id="h1-8-3" class="d">-function makePaperDocument() {
+</a><a href="#h1-8-4" id="h1-8-4" class="d">-  if (draft.paperKind === &quot;project&quot;) return makeProjectDocument();
+</a><a href="#h1-8-5" id="h1-8-5" class="d">-  const abstract = draft.abstract
+</a><a href="#h1-8-6" id="h1-8-6" class="d">-    ? `#par(first-line-indent: 0pt, leading: 1em)[#text(weight: &quot;bold&quot;, &quot;RESUMO: &quot;)#text(${escapeTypstString(draft.abstract)})]`
+</a><a href="#h1-8-7" id="h1-8-7" class="d">-    : &quot;&quot;;
+</a><a href="#h1-8-8" id="h1-8-8" class="d">-  const keywords = draft.keywords
+</a><a href="#h1-8-9" id="h1-8-9" class="d">-    ? `#par(first-line-indent: 0pt, leading: 1em)[#text(weight: &quot;bold&quot;, &quot;Palavras-chave: &quot;)#text(${escapeTypstString(draft.keywords)})]`
+</a><a href="#h1-8-10" id="h1-8-10" class="d">-    : &quot;&quot;;
+</a><a href="#h1-8-11" id="h1-8-11" class="d">-  const parts = [titleAndAuthors(), abstract, keywords, typstSection(&quot;1 INTRODUÇÃO&quot;, draft.introduction)];
+</a><a href="#h1-8-12" id="h1-8-12" class="d">-  let sectionNumber = 1;
+</a><a href="#h1-8-13" id="h1-8-13" class="d">-  for (let index = 1; index &lt;= 3; index += 1) {
+</a><a href="#h1-8-14" id="h1-8-14" class="d">-    const title = String(draft[`development${index}Title`] ?? &quot;&quot;).trim();
+</a><a href="#h1-8-15" id="h1-8-15" class="d">-    const content = draft[`development${index}`];
+</a><a href="#h1-8-16" id="h1-8-16" class="d">-    if (title || content) {
+</a><a href="#h1-8-17" id="h1-8-17" class="d">-      sectionNumber += 1;
+</a><a href="#h1-8-18" id="h1-8-18" class="d">-      parts.push(typstSection(`${sectionNumber} ${title || `DESENVOLVIMENTO ${index}`}`, content));
+</a><a href="#h1-8-19" id="h1-8-19" class="d">-    }
+</a><a href="#h1-8-20" id="h1-8-20" class="d">-  }
+</a><a href="#h1-8-21" id="h1-8-21" class="d">-  parts.push(typstSection(`${sectionNumber + 1} CONCLUSÃO`, draft.conclusion));
+</a><a href="#h1-8-22" id="h1-8-22" class="d">-  parts.push(typstSection(&quot;REFERÊNCIAS&quot;, draft.references));
+</a><a href="#h1-8-23" id="h1-8-23" class="d">-  parts.push(typstSection(&quot;NOTA SOBRE USO DE FERRAMENTAS DE IA&quot;, draft.aiNote));
+</a><a href="#h1-8-24" id="h1-8-24" class="d">-  return makeDocument([coverPage(), ...parts]);
+</a><a href="#h1-8-25" id="h1-8-25" class="d">-}
+</a><a href="#h1-8-26" id="h1-8-26" class="d">-
+</a><a href="#h1-8-27" id="h1-8-27" class="d">-function makeProjectDocument() {
+</a><a href="#h1-8-28" id="h1-8-28" class="d">-  const goalContent = [
+</a><a href="#h1-8-29" id="h1-8-29" class="d">-    draft.objectiveGeneral &amp;&amp; `Objetivo geral: ${draft.objectiveGeneral}`,
+</a><a href="#h1-8-30" id="h1-8-30" class="d">-    draft.objective1 &amp;&amp; `Objetivos específicos:\n${draft.objective1}`,
+</a><a href="#h1-8-31" id="h1-8-31" class="d">-    draft.objective2,
+</a><a href="#h1-8-32" id="h1-8-32" class="d">-    draft.objective3,
+</a><a href="#h1-8-33" id="h1-8-33" class="d">-  ].filter(Boolean).join(&quot;\n\n&quot;);
+</a><a href="#h1-8-34" id="h1-8-34" class="d">-  const method = [
+</a><a href="#h1-8-35" id="h1-8-35" class="d">-    draft.methodAuthor &amp;&amp; `Autor de metodologia adotado: ${draft.methodAuthor}.`,
+</a><a href="#h1-8-36" id="h1-8-36" class="d">-    draft.nature &amp;&amp; `Natureza: ${draft.nature}.`,
+</a><a href="#h1-8-37" id="h1-8-37" class="d">-    draft.approach &amp;&amp; `Abordagem: ${draft.approach}.`,
+</a><a href="#h1-8-38" id="h1-8-38" class="d">-    draft.ends &amp;&amp; `Fins: ${draft.ends}.`,
+</a><a href="#h1-8-39" id="h1-8-39" class="d">-    draft.procedure &amp;&amp; `Procedimentos: ${draft.procedure}.`,
+</a><a href="#h1-8-40" id="h1-8-40" class="d">-    draft.instruments,
+</a><a href="#h1-8-41" id="h1-8-41" class="d">-  ].filter(Boolean).join(&quot;\n\n&quot;);
+</a><a href="#h1-8-42" id="h1-8-42" class="d">-  return makeDocument([
+</a><a href="#h1-8-43" id="h1-8-43" class="d">-    coverPage(),
+</a><a href="#h1-8-44" id="h1-8-44" class="d">-    typstSection(&quot;1 TEMA E DELIMITAÇÃO&quot;, [draft.area, draft.delimitation, draft.researchObject].filter(Boolean).join(&quot;\n\n&quot;)),
+</a><a href="#h1-8-45" id="h1-8-45" class="d">-    typstSection(&quot;2 PROBLEMA DE PESQUISA&quot;, [draft.problemContext, draft.problem].filter(Boolean).join(&quot;\n\n&quot;)),
+</a><a href="#h1-8-46" id="h1-8-46" class="d">-    typstSection(&quot;3 HIPÓTESE&quot;, draft.hypothesis),
+</a><a href="#h1-8-47" id="h1-8-47" class="d">-    typstSection(&quot;4 JUSTIFICATIVA&quot;, draft.justification),
+</a><a href="#h1-8-48" id="h1-8-48" class="d">-    typstSection(&quot;5 OBJETIVOS&quot;, goalContent),
+</a><a href="#h1-8-49" id="h1-8-49" class="d">-    typstSection(&quot;6 REFERENCIAL TEÓRICO&quot;, draft.theory),
+</a><a href="#h1-8-50" id="h1-8-50" class="d">-    typstSection(&quot;7 METODOLOGIA&quot;, method),
+</a><a href="#h1-8-51" id="h1-8-51" class="d">-    typstSection(&quot;REFERÊNCIAS DO PROJETO&quot;, draft.references),
+</a><a href="#h1-8-52" id="h1-8-52" class="d">-  ]);
+</a><a href="#h1-8-53" id="h1-8-53" class="d">-}
+</a><a href="#h1-8-54" id="h1-8-54" class="d">-
+</a> function makeDocument(parts) {
+   const body = parts.filter(Boolean).join(&quot;\n\n#v(0.8em)\n\n&quot;);
+   return `#set page(paper: &quot;a4&quot;, margin: (top: 3cm, left: 3cm, bottom: 2cm, right: 2cm), numbering: &quot;1&quot;, number-align: top + right)\n#set text(font: &quot;Libertinus Serif&quot;, size: 12pt, lang: &quot;pt&quot;, region: &quot;BR&quot;)\n#set par(leading: 1.5em, first-line-indent: 1.25cm, justify: true)\n#set heading(numbering: none)\n#show heading: set text(size: 12pt, weight: &quot;bold&quot;)\n\n${body}\n`;
+ }
+ 
+ function makeDocumentSource() {
+<a href="#h1-8-61" id="h1-8-61" class="d">-  return currentType === &quot;case&quot; ? makeCaseDocument() : makePaperDocument();
+</a><a href="#h1-8-62" id="h1-8-62" class="i">+  return makeCaseDocument();
+</a> }
+ 
+ async function getTypst() {
+</pre>
+</div>
+</body>
+</html>

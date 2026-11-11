@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>test_projects.py - assistente-academico - Assistente Acadêmico v2
+</title>
+<link rel="icon" type="image/png" href="../../favicon.png" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed" href="../../atom.xml" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed (tags)" href="../../tags.xml" />
+<link rel="stylesheet" type="text/css" href="../../style.css" />
+</head>
+<body>
+<table><tr><td><a href="../../../"><img src="../../logo.png" alt="" width="32" height="32" /></a></td><td><h1>assistente-academico</h1><span class="desc">Assistente Acadêmico v2
+</span></td></tr><tr class="url"><td></td><td>git clone <a href="git://git.sivaldodavi.com.br/assistente-academico.git">git://git.sivaldodavi.com.br/assistente-academico.git</a></td></tr><tr><td></td><td>
+<a href="../../log.html">Log</a> | <a href="../../files.html">Files</a> | <a href="../../refs.html">Refs</a> | <a href="../../file/README.md.html">README</a></td></tr></table>
+<hr/>
+<div id="content">
+<p> test_projects.py (9233B)</p><hr/><pre id="blob">
+<a href="#l1" class="line" id="l1">      1</a> import json
+<a href="#l2" class="line" id="l2">      2</a> 
+<a href="#l3" class="line" id="l3">      3</a> 
+<a href="#l4" class="line" id="l4">      4</a> def login(client):
+<a href="#l5" class="line" id="l5">      5</a>     response = client.post(&quot;/auth/dev-login&quot;, data={&quot;email&quot;: &quot;ana@example.test&quot;, &quot;name&quot;: &quot;Ana&quot;})
+<a href="#l6" class="line" id="l6">      6</a>     assert response.status_code == 302
+<a href="#l7" class="line" id="l7">      7</a>     accepted = client.post(&quot;/account/settings/terms&quot;, data={&quot;csrf_token&quot;: csrf(client), &quot;accept&quot;: &quot;on&quot;})
+<a href="#l8" class="line" id="l8">      8</a>     assert accepted.status_code == 302
+<a href="#l9" class="line" id="l9">      9</a>     return response
+<a href="#l10" class="line" id="l10">     10</a> 
+<a href="#l11" class="line" id="l11">     11</a> 
+<a href="#l12" class="line" id="l12">     12</a> def csrf(client):
+<a href="#l13" class="line" id="l13">     13</a>     with client.session_transaction() as session:
+<a href="#l14" class="line" id="l14">     14</a>         return session[&quot;csrf_token&quot;]
+<a href="#l15" class="line" id="l15">     15</a> 
+<a href="#l16" class="line" id="l16">     16</a> 
+<a href="#l17" class="line" id="l17">     17</a> def test_login_create_and_open_case(client):
+<a href="#l18" class="line" id="l18">     18</a>     login(client)
+<a href="#l19" class="line" id="l19">     19</a>     response = client.post(&quot;/projects&quot;, data={&quot;csrf_token&quot;: csrf(client), &quot;project_type&quot;: &quot;case&quot;})
+<a href="#l20" class="line" id="l20">     20</a>     assert response.status_code == 302
+<a href="#l21" class="line" id="l21">     21</a>     editor = client.get(response.headers[&quot;Location&quot;])
+<a href="#l22" class="line" id="l22">     22</a>     assert editor.status_code == 200
+<a href="#l23" class="line" id="l23">     23</a>     body = editor.get_data(as_text=True)
+<a href="#l24" class="line" id="l24">     24</a>     assert &quot;Linha do Tempo dos Fatos&quot; not in body
+<a href="#l25" class="line" id="l25">     25</a>     assert &quot;Argumentação da tese A&quot; in body
+<a href="#l26" class="line" id="l26">     26</a>     assert &quot;Argumentação da tese B&quot; in body
+<a href="#l27" class="line" id="l27">     27</a>     assert &quot;Debate em grupo&quot; in body
+<a href="#l28" class="line" id="l28">     28</a>     assert &quot;Dissertação&quot; in body
+<a href="#l29" class="line" id="l29">     29</a> 
+<a href="#l30" class="line" id="l30">     30</a> 
+<a href="#l31" class="line" id="l31">     31</a> def test_editor_uses_sources_from_personal_library(client):
+<a href="#l32" class="line" id="l32">     32</a>     login(client)
+<a href="#l33" class="line" id="l33">     33</a>     client.post(&quot;/library/sources&quot;, data={&quot;csrf_token&quot;: csrf(client), &quot;title&quot;: &quot;Fonte do Case&quot;})
+<a href="#l34" class="line" id="l34">     34</a>     response = client.post(&quot;/projects&quot;, data={&quot;csrf_token&quot;: csrf(client), &quot;project_type&quot;: &quot;case&quot;})
+<a href="#l35" class="line" id="l35">     35</a>     editor = client.get(response.headers[&quot;Location&quot;])
+<a href="#l36" class="line" id="l36">     36</a>     body = editor.get_data(as_text=True)
+<a href="#l37" class="line" id="l37">     37</a>     assert &quot;Fonte do Case&quot; in body
+<a href="#l38" class="line" id="l38">     38</a>     assert &#39;data-fact-sources&#39; not in body
+<a href="#l39" class="line" id="l39">     39</a>     assert &#39;data-project-source&#39; in body
+<a href="#l40" class="line" id="l40">     40</a> 
+<a href="#l41" class="line" id="l41">     41</a> 
+<a href="#l42" class="line" id="l42">     42</a> def test_editor_can_create_source_without_opening_library(client):
+<a href="#l43" class="line" id="l43">     43</a>     login(client)
+<a href="#l44" class="line" id="l44">     44</a>     created = client.post(&quot;/projects&quot;, data={&quot;csrf_token&quot;: csrf(client), &quot;project_type&quot;: &quot;case&quot;})
+<a href="#l45" class="line" id="l45">     45</a>     project_id = created.headers[&quot;Location&quot;].rsplit(&quot;/&quot;, 1)[-1]
+<a href="#l46" class="line" id="l46">     46</a>     response = client.post(
+<a href="#l47" class="line" id="l47">     47</a>         f&quot;/projects/{project_id}/sources&quot;,
+<a href="#l48" class="line" id="l48">     48</a>         headers={&quot;X-CSRF-Token&quot;: csrf(client)},
+<a href="#l49" class="line" id="l49">     49</a>         json={&quot;title&quot;: &quot;Fonte inline&quot;, &quot;author&quot;: &quot;Autoria&quot;, &quot;kind&quot;: &quot;book&quot;, &quot;notes&quot;: &quot;Fichamento curto&quot;},
+<a href="#l50" class="line" id="l50">     50</a>     )
+<a href="#l51" class="line" id="l51">     51</a>     assert response.status_code == 200
+<a href="#l52" class="line" id="l52">     52</a>     source = response.get_json()[&quot;source&quot;]
+<a href="#l53" class="line" id="l53">     53</a>     assert source[&quot;title&quot;] == &quot;Fonte inline&quot;
+<a href="#l54" class="line" id="l54">     54</a>     assert source[&quot;notes&quot;] == &quot;Fichamento curto&quot;
+<a href="#l55" class="line" id="l55">     55</a>     saved = client.post(
+<a href="#l56" class="line" id="l56">     56</a>         f&quot;/projects/{project_id}/save&quot;,
+<a href="#l57" class="line" id="l57">     57</a>         headers={&quot;Content-Type&quot;: &quot;application/json&quot;, &quot;X-CSRF-Token&quot;: csrf(client)},
+<a href="#l58" class="line" id="l58">     58</a>         json={&quot;revision&quot;: 1, &quot;payload&quot;: {&quot;fields&quot;: {}, &quot;source_ids&quot;: [source[&quot;id&quot;]]}},
+<a href="#l59" class="line" id="l59">     59</a>     )
+<a href="#l60" class="line" id="l60">     60</a>     assert saved.status_code == 200
+<a href="#l61" class="line" id="l61">     61</a>     assert &quot;Fonte inline&quot; in client.get(f&quot;/projects/{project_id}&quot;).get_data(as_text=True)
+<a href="#l62" class="line" id="l62">     62</a> 
+<a href="#l63" class="line" id="l63">     63</a> 
+<a href="#l64" class="line" id="l64">     64</a> def test_save_rejects_stale_revision(client):
+<a href="#l65" class="line" id="l65">     65</a>     login(client)
+<a href="#l66" class="line" id="l66">     66</a>     created = client.post(&quot;/projects&quot;, data={&quot;csrf_token&quot;: csrf(client), &quot;project_type&quot;: &quot;case&quot;})
+<a href="#l67" class="line" id="l67">     67</a>     project_url = created.headers[&quot;Location&quot;]
+<a href="#l68" class="line" id="l68">     68</a>     project_id = project_url.rsplit(&quot;/&quot;, 1)[-1]
+<a href="#l69" class="line" id="l69">     69</a>     payload = {&quot;version&quot;: 1, &quot;fields&quot;: {&quot;title&quot;: &quot;Case inicial&quot;}}
+<a href="#l70" class="line" id="l70">     70</a>     headers = {&quot;Content-Type&quot;: &quot;application/json&quot;, &quot;X-CSRF-Token&quot;: csrf(client)}
+<a href="#l71" class="line" id="l71">     71</a>     first = client.post(f&quot;/projects/{project_id}/save&quot;, headers=headers, data=json.dumps({&quot;revision&quot;: 1, &quot;payload&quot;: payload}))
+<a href="#l72" class="line" id="l72">     72</a>     assert first.status_code == 200
+<a href="#l73" class="line" id="l73">     73</a>     stale = client.post(f&quot;/projects/{project_id}/save&quot;, headers=headers, data=json.dumps({&quot;revision&quot;: 1, &quot;payload&quot;: payload}))
+<a href="#l74" class="line" id="l74">     74</a>     assert stale.status_code == 409
+<a href="#l75" class="line" id="l75">     75</a>     assert stale.get_json()[&quot;error&quot;] == &quot;project_conflict&quot;
+<a href="#l76" class="line" id="l76">     76</a> 
+<a href="#l77" class="line" id="l77">     77</a> 
+<a href="#l78" class="line" id="l78">     78</a> def test_case_fields_are_saved_and_normalized_on_server(client):
+<a href="#l79" class="line" id="l79">     79</a>     login(client)
+<a href="#l80" class="line" id="l80">     80</a>     created = client.post(&quot;/projects&quot;, data={&quot;csrf_token&quot;: csrf(client), &quot;project_type&quot;: &quot;case&quot;})
+<a href="#l81" class="line" id="l81">     81</a>     project_id = created.headers[&quot;Location&quot;].rsplit(&quot;/&quot;, 1)[-1]
+<a href="#l82" class="line" id="l82">     82</a>     payload = {
+<a href="#l83" class="line" id="l83">     83</a>         &quot;version&quot;: 1,
+<a href="#l84" class="line" id="l84">     84</a>         &quot;fields&quot;: {&quot;title&quot;: &quot;  Caso de teste  &quot;, &quot;authors&quot;: &quot;Ana&quot;, &quot;facts&quot;: &quot;Fatos do caso&quot;, &quot;unknown&quot;: &quot;não salvar&quot;},
+<a href="#l85" class="line" id="l85">     85</a>         &quot;timeline&quot;: [],
+<a href="#l86" class="line" id="l86">     86</a>     }
+<a href="#l87" class="line" id="l87">     87</a>     response = client.post(
+<a href="#l88" class="line" id="l88">     88</a>         f&quot;/projects/{project_id}/save&quot;,
+<a href="#l89" class="line" id="l89">     89</a>         headers={&quot;Content-Type&quot;: &quot;application/json&quot;, &quot;X-CSRF-Token&quot;: csrf(client)},
+<a href="#l90" class="line" id="l90">     90</a>         json={&quot;revision&quot;: 1, &quot;payload&quot;: payload},
+<a href="#l91" class="line" id="l91">     91</a>     )
+<a href="#l92" class="line" id="l92">     92</a>     assert response.status_code == 200
+<a href="#l93" class="line" id="l93">     93</a>     editor = client.get(f&quot;/projects/{project_id}&quot;).get_data(as_text=True)
+<a href="#l94" class="line" id="l94">     94</a>     assert &quot;Caso de teste&quot; in editor
+<a href="#l95" class="line" id="l95">     95</a>     assert &quot;Fatos do caso&quot; in editor
+<a href="#l96" class="line" id="l96">     96</a>     assert &quot;não salvar&quot; not in editor
+<a href="#l97" class="line" id="l97">     97</a> 
+<a href="#l98" class="line" id="l98">     98</a> 
+<a href="#l99" class="line" id="l99">     99</a> def test_project_sources_and_criteria_are_saved_with_ownership_filter(client):
+<a href="#l100" class="line" id="l100">    100</a>     login(client)
+<a href="#l101" class="line" id="l101">    101</a>     client.post(&quot;/library/sources&quot;, data={&quot;csrf_token&quot;: csrf(client), &quot;title&quot;: &quot;Fonte autorizada&quot;})
+<a href="#l102" class="line" id="l102">    102</a>     from app.store.db import get_db
+<a href="#l103" class="line" id="l103">    103</a>     with client.application.app_context():
+<a href="#l104" class="line" id="l104">    104</a>         source_id = get_db().execute(&quot;SELECT id FROM sources LIMIT 1&quot;).fetchone()[&quot;id&quot;]
+<a href="#l105" class="line" id="l105">    105</a>     created = client.post(&quot;/projects&quot;, data={&quot;csrf_token&quot;: csrf(client), &quot;project_type&quot;: &quot;case&quot;})
+<a href="#l106" class="line" id="l106">    106</a>     project_id = created.headers[&quot;Location&quot;].rsplit(&quot;/&quot;, 1)[-1]
+<a href="#l107" class="line" id="l107">    107</a>     response = client.post(
+<a href="#l108" class="line" id="l108">    108</a>         f&quot;/projects/{project_id}/save&quot;,
+<a href="#l109" class="line" id="l109">    109</a>         headers={&quot;Content-Type&quot;: &quot;application/json&quot;, &quot;X-CSRF-Token&quot;: csrf(client)},
+<a href="#l110" class="line" id="l110">    110</a>         json={&quot;revision&quot;: 1, &quot;payload&quot;: {&quot;fields&quot;: {}, &quot;source_ids&quot;: [source_id, &quot;foreign-id&quot;], &quot;criteria&quot;: [{&quot;id&quot;: &quot;c1&quot;, &quot;title&quot;: &quot;Ponderação&quot;, &quot;definition&quot;: &quot;Definição&quot;, &quot;basis&quot;: &quot;CF&quot;}]}},
+<a href="#l111" class="line" id="l111">    111</a>     )
+<a href="#l112" class="line" id="l112">    112</a>     assert response.status_code == 200
+<a href="#l113" class="line" id="l113">    113</a>     editor = client.get(f&quot;/projects/{project_id}&quot;).get_data(as_text=True)
+<a href="#l114" class="line" id="l114">    114</a>     assert &quot;Ponderação&quot; in editor
+<a href="#l115" class="line" id="l115">    115</a>     assert &quot;Fonte autorizada&quot; in editor
+<a href="#l116" class="line" id="l116">    116</a> 
+<a href="#l117" class="line" id="l117">    117</a> 
+<a href="#l118" class="line" id="l118">    118</a> def test_paper_project_and_final_have_distinct_workflows(client):
+<a href="#l119" class="line" id="l119">    119</a>     login(client)
+<a href="#l120" class="line" id="l120">    120</a>     for project_type, expected in ((&quot;paper_project&quot;, &quot;Identificação e delimitação&quot;), (&quot;paper_final&quot;, &quot;Resumo&quot;)):
+<a href="#l121" class="line" id="l121">    121</a>         created = client.post(&quot;/projects&quot;, data={&quot;csrf_token&quot;: csrf(client), &quot;project_type&quot;: project_type})
+<a href="#l122" class="line" id="l122">    122</a>         editor = client.get(created.headers[&quot;Location&quot;])
+<a href="#l123" class="line" id="l123">    123</a>         assert editor.status_code == 200
+<a href="#l124" class="line" id="l124">    124</a>         body = editor.get_data(as_text=True)
+<a href="#l125" class="line" id="l125">    125</a>         assert expected in body
+<a href="#l126" class="line" id="l126">    126</a>         assert &quot;Entrega do Projeto de Paper&quot; in body
+<a href="#l127" class="line" id="l127">    127</a>         assert &quot;Entrega do Paper Final&quot; in body
+<a href="#l128" class="line" id="l128">    128</a> 
+<a href="#l129" class="line" id="l129">    129</a> 
+<a href="#l130" class="line" id="l130">    130</a> def test_project_creation_redirects_unaccepted_account_to_terms(client):
+<a href="#l131" class="line" id="l131">    131</a>     client.post(&quot;/auth/dev-login&quot;, data={&quot;email&quot;: &quot;sem-termos@example.test&quot;, &quot;name&quot;: &quot;Sem Termos&quot;})
+<a href="#l132" class="line" id="l132">    132</a>     response = client.post(&quot;/projects&quot;, data={&quot;csrf_token&quot;: csrf(client), &quot;project_type&quot;: &quot;case&quot;})
+<a href="#l133" class="line" id="l133">    133</a>     assert response.status_code == 302
+<a href="#l134" class="line" id="l134">    134</a>     assert &quot;/account/settings?required=terms&quot; in response.headers[&quot;Location&quot;]
+<a href="#l135" class="line" id="l135">    135</a> 
+<a href="#l136" class="line" id="l136">    136</a> 
+<a href="#l137" class="line" id="l137">    137</a> def test_schedule_is_saved_and_invalid_dates_are_discarded(client):
+<a href="#l138" class="line" id="l138">    138</a>     login(client)
+<a href="#l139" class="line" id="l139">    139</a>     created = client.post(&quot;/projects&quot;, data={&quot;csrf_token&quot;: csrf(client), &quot;project_type&quot;: &quot;case&quot;})
+<a href="#l140" class="line" id="l140">    140</a>     project_id = created.headers[&quot;Location&quot;].rsplit(&quot;/&quot;, 1)[-1]
+<a href="#l141" class="line" id="l141">    141</a>     response = client.post(
+<a href="#l142" class="line" id="l142">    142</a>         f&quot;/projects/{project_id}/save&quot;,
+<a href="#l143" class="line" id="l143">    143</a>         headers={&quot;Content-Type&quot;: &quot;application/json&quot;, &quot;X-CSRF-Token&quot;: csrf(client)},
+<a href="#l144" class="line" id="l144">    144</a>         json={&quot;revision&quot;: 1, &quot;payload&quot;: {&quot;fields&quot;: {}, &quot;schedule&quot;: {&quot;report_date&quot;: &quot;2026-10-30&quot;, &quot;debate_date&quot;: &quot;invalid&quot;, &quot;tasks&quot;: [{&quot;title&quot;: &quot;Ler fontes&quot;, &quot;date&quot;: &quot;2026-11-01&quot;}, {&quot;title&quot;: &quot;sem data&quot;, &quot;date&quot;: &quot;bad&quot;}]}}},
+<a href="#l145" class="line" id="l145">    145</a>     )
+<a href="#l146" class="line" id="l146">    146</a>     assert response.status_code == 200
+<a href="#l147" class="line" id="l147">    147</a>     body = client.get(f&quot;/projects/{project_id}&quot;).get_data(as_text=True)
+<a href="#l148" class="line" id="l148">    148</a>     assert &quot;2026-10-30&quot; in body
+<a href="#l149" class="line" id="l149">    149</a>     assert &quot;Ler fontes&quot; in body
+<a href="#l150" class="line" id="l150">    150</a> 
+<a href="#l151" class="line" id="l151">    151</a> 
+<a href="#l152" class="line" id="l152">    152</a> def test_account_shows_schedule_calendar_and_completed_tasks(client):
+<a href="#l153" class="line" id="l153">    153</a>     login(client)
+<a href="#l154" class="line" id="l154">    154</a>     created = client.post(&quot;/projects&quot;, data={&quot;csrf_token&quot;: csrf(client), &quot;project_type&quot;: &quot;case&quot;})
+<a href="#l155" class="line" id="l155">    155</a>     project_id = created.headers[&quot;Location&quot;].rsplit(&quot;/&quot;, 1)[-1]
+<a href="#l156" class="line" id="l156">    156</a>     saved = client.post(
+<a href="#l157" class="line" id="l157">    157</a>         f&quot;/projects/{project_id}/save&quot;,
+<a href="#l158" class="line" id="l158">    158</a>         headers={&quot;Content-Type&quot;: &quot;application/json&quot;, &quot;X-CSRF-Token&quot;: csrf(client)},
+<a href="#l159" class="line" id="l159">    159</a>         json={&quot;revision&quot;: 1, &quot;payload&quot;: {&quot;fields&quot;: {}, &quot;schedule&quot;: {&quot;report_date&quot;: &quot;2099-10-30&quot;, &quot;tasks&quot;: [{&quot;id&quot;: &quot;task-1&quot;, &quot;title&quot;: &quot;Conferir fontes&quot;, &quot;date&quot;: &quot;2099-10-29&quot;, &quot;done&quot;: True}]}}},
+<a href="#l160" class="line" id="l160">    160</a>     )
+<a href="#l161" class="line" id="l161">    161</a>     assert saved.status_code == 200
+<a href="#l162" class="line" id="l162">    162</a>     editor = client.get(f&quot;/projects/{project_id}&quot;).get_data(as_text=True)
+<a href="#l163" class="line" id="l163">    163</a>     assert &#39;data-task-field=&quot;done&quot; checked&#39; in editor
+<a href="#l164" class="line" id="l164">    164</a>     account = client.get(&quot;/account&quot;).get_data(as_text=True)
+<a href="#l165" class="line" id="l165">    165</a>     assert &quot;Agenda&quot; in account
+<a href="#l166" class="line" id="l166">    166</a>     assert &quot;Salvamentos por dia&quot; in account
+<a href="#l167" class="line" id="l167">    167</a>     assert &quot;Entrega do relatório&quot; in account
+<a href="#l168" class="line" id="l168">    168</a>     assert &quot;30/10/2099&quot; in account
+<a href="#l169" class="line" id="l169">    169</a>     assert f&quot;/projects/{project_id}&quot; in account
+<a href="#l170" class="line" id="l170">    170</a> 
+<a href="#l171" class="line" id="l171">    171</a> 
+<a href="#l172" class="line" id="l172">    172</a> def test_delete_project_requires_csrf_and_removes_owned_project(client):
+<a href="#l173" class="line" id="l173">    173</a>     login(client)
+<a href="#l174" class="line" id="l174">    174</a>     created = client.post(&quot;/projects&quot;, data={&quot;csrf_token&quot;: csrf(client), &quot;project_type&quot;: &quot;case&quot;})
+<a href="#l175" class="line" id="l175">    175</a>     project_id = created.headers[&quot;Location&quot;].rsplit(&quot;/&quot;, 1)[-1]
+<a href="#l176" class="line" id="l176">    176</a> 
+<a href="#l177" class="line" id="l177">    177</a>     missing_csrf = client.post(f&quot;/projects/{project_id}/delete&quot;)
+<a href="#l178" class="line" id="l178">    178</a>     assert missing_csrf.status_code in {400, 403}
+<a href="#l179" class="line" id="l179">    179</a>     assert client.get(f&quot;/projects/{project_id}&quot;).status_code == 200
+<a href="#l180" class="line" id="l180">    180</a> 
+<a href="#l181" class="line" id="l181">    181</a>     deleted = client.post(f&quot;/projects/{project_id}/delete&quot;, data={&quot;csrf_token&quot;: csrf(client)})
+<a href="#l182" class="line" id="l182">    182</a>     assert deleted.status_code == 302
+<a href="#l183" class="line" id="l183">    183</a>     assert &quot;deleted=1&quot; in deleted.headers[&quot;Location&quot;]
+<a href="#l184" class="line" id="l184">    184</a>     assert client.get(f&quot;/projects/{project_id}&quot;).status_code == 404
+<a href="#l185" class="line" id="l185">    185</a>     assert &quot;Trabalho excluído.&quot; in client.get(deleted.headers[&quot;Location&quot;]).get_data(as_text=True)
+<a href="#l186" class="line" id="l186">    186</a> 
+<a href="#l187" class="line" id="l187">    187</a>     from app.store.db import get_db
+<a href="#l188" class="line" id="l188">    188</a>     with client.application.app_context():
+<a href="#l189" class="line" id="l189">    189</a>         assert get_db().execute(&quot;SELECT project_used FROM accounts&quot;).fetchone()[&quot;project_used&quot;] == 0
+<a href="#l190" class="line" id="l190">    190</a> 
+<a href="#l191" class="line" id="l191">    191</a> 
+<a href="#l192" class="line" id="l192">    192</a> def test_delete_unknown_project_returns_not_found(client):
+<a href="#l193" class="line" id="l193">    193</a>     login(client)
+<a href="#l194" class="line" id="l194">    194</a>     response = client.post(&quot;/projects/does-not-exist/delete&quot;, data={&quot;csrf_token&quot;: csrf(client)})
+<a href="#l195" class="line" id="l195">    195</a>     assert response.status_code == 404
+</pre>
+</div>
+</body>
+</html>

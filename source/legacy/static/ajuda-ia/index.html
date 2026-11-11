@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Como a assistência por IA funciona e quais dados são enviados no Assistente Acadêmico.">
+    <meta name="theme-color" content="#090909">
+    <title>Ajuda e privacidade da IA — Roteiro</title>
+    <link rel="stylesheet" href="/css/main.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/">roteiro</a>
+      <a class="text-button" href="/">Voltar ao roteiro</a>
+    </header>
+    <main class="shell landing ai-help-page">
+      <p class="eyebrow">Ajuda e privacidade</p>
+      <h1>Assistência por IA</h1>
+      <p class="lede">Você escolhe quando pedir uma revisão, uma sugestão para a checklist ou uma conversa sobre o trabalho. A IA não altera campos sem sua confirmação.</p>
+
+      <section aria-labelledby="how-to-title">
+        <h2 id="how-to-title">Como usar</h2>
+        <ul>
+          <li><strong>Revisar este texto:</strong> disponível nos campos acadêmicos e no título. A resposta aponta aspectos claros, lacunas e melhorias; pode oferecer uma versão alternativa do próprio campo, que só será aplicada se você confirmar.</li>
+          <li><strong>Sugerir preenchimento:</strong> apresenta evidências claras para aceite individual ou conjunto. Nada é marcado até você aceitar; suas escolhas manuais não são sobrescritas, e você pode desfazer marcações aceitas.</li>
+          <li><strong>Conversar sobre este trabalho:</strong> faça perguntas sobre clareza, alinhamento, argumentação ou próximos passos. A conversa é temporária no navegador e não muda o projeto sozinha.</li>
+        </ul>
+        <p>A proposta ou as instruções do professor precisam estar preenchidas para a avaliação estruturada e para a assistência contextual. Isso não impede salvar ou exportar o trabalho. A explicação opcional de uma observação da análise de case usa somente o critério e os trechos pertinentes.</p>
+      </section>
+
+      <section aria-labelledby="sent-title">
+        <h2 id="sent-title">O que é enviado</h2>
+        <ul>
+          <li><strong>Revisão de campo e checklist:</strong> a proposta do professor e textos acadêmicos preenchidos que podem ajudar a interpretar o campo ou a etapa. Nome do estudante, dados da conta e lista de referências cadastradas não são incluídos.</li>
+          <li><strong>Revisão de uma referência:</strong> somente o registro escolhido — referência formatada e dados bibliográficos daquela fonte — além da proposta e do contexto acadêmico. A lista completa não é enviada.</li>
+          <li><strong>Conversa:</strong> a proposta é sempre enviada. Você pode desmarcar a opção de incluir outros textos do projeto. A conversa recente usada para manter o contexto também é enviada, mas não é salva no banco do aplicativo.</li>
+          <li><strong>Avaliação estruturada do relatório de case:</strong> campos necessários à avaliação e, quando presente, a proposta do professor. O enunciado original só é enviado ao pedir a avaliação da descrição do caso.</li>
+        </ul>
+        <p>Os serviços externos usados são <strong>TypeSafe AI (Jev)</strong> para a avaliação estruturada e <strong>DeepSeek</strong> para revisão contextual, conversa, sugestões de checklist e explicações. O aplicativo não armazena prompts nem respostas. Registra metadados de uso, como projeto, ação, provedor/modelo, tokens, custo estimado e data.</p>
+        <p>Não inclua dados pessoais desnecessários na proposta nem nos textos enviados. A confirmação aparece antes de cada chamada.</p>
+      </section>
+
+      <section aria-labelledby="limits-title">
+        <h2 id="limits-title">Como interpretar</h2>
+        <ul>
+          <li>As respostas são apoio formativo, não nota oficial, validação jurídica, pesquisa de fontes nem confirmação de que leis ou decisões estão corretas ou atualizadas.</li>
+          <li>O limiar interno de 70% usado para sugerir marcações não é uma probabilidade calibrada de acerto. Itens sem evidência clara ficam para conferência manual; tarefas externas, formatação e conferência de fontes continuam manuais.</li>
+          <li>Uma edição posterior do texto sinaliza as sugestões como desatualizadas, sem recalcular ou mudar caixas silenciosamente. Marcações aceitas ficam identificadas e podem ser alteradas ou desfeitas; a ferramenta não sobrescreve uma caixa que você já marcou.</li>
+          <li>Uma versão revisada substitui seu texto somente após confirmação explícita. Revise cuidadosamente qualquer sugestão antes de adotá-la.</li>
+          <li id="paper-final">Revisão, conversa e checklist assistida estão disponíveis para relatório de case, Projeto de Paper e Paper Final. O uso deve respeitar as instruções do professor; a ferramenta não deve redigir o trabalho integral nem inventar fontes.</li>
+        </ul>
+      </section>
+
+      <section aria-labelledby="quota-title">
+        <h2 id="quota-title">Cotas e custos</h2>
+        <p>Licenças regulares têm cinco avaliações estruturadas e cinco chamadas de assistência por período, em cotas separadas. A cota de assistência é compartilhada entre revisão, conversa, sugestões de checklist e explicações. Falhas também consomem uma chamada; as cotas reiniciam na renovação.</p>
+        <p>O custo estimado é registrado como metadado operacional e pode diferir da cobrança real do provedor. A conta do proprietário é ilimitada dentro do aplicativo.</p>
+      </section>
+
+      <p><a class="text-button" href="/">Voltar ao roteiro</a></p>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>__init__.py - assistente-academico - Assistente Acadêmico v2
+</title>
+<link rel="icon" type="image/png" href="../../favicon.png" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed" href="../../atom.xml" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed (tags)" href="../../tags.xml" />
+<link rel="stylesheet" type="text/css" href="../../style.css" />
+</head>
+<body>
+<table><tr><td><a href="../../../"><img src="../../logo.png" alt="" width="32" height="32" /></a></td><td><h1>assistente-academico</h1><span class="desc">Assistente Acadêmico v2
+</span></td></tr><tr class="url"><td></td><td>git clone <a href="git://git.sivaldodavi.com.br/assistente-academico.git">git://git.sivaldodavi.com.br/assistente-academico.git</a></td></tr><tr><td></td><td>
+<a href="../../log.html">Log</a> | <a href="../../files.html">Files</a> | <a href="../../refs.html">Refs</a> | <a href="../../file/README.md.html">README</a></td></tr></table>
+<hr/>
+<div id="content">
+<p> __init__.py (6121B)</p><hr/><pre id="blob">
+<a href="#l1" class="line" id="l1">      1</a> import os
+<a href="#l2" class="line" id="l2">      2</a> import time
+<a href="#l3" class="line" id="l3">      3</a> import threading
+<a href="#l4" class="line" id="l4">      4</a> from pathlib import Path
+<a href="#l5" class="line" id="l5">      5</a> 
+<a href="#l6" class="line" id="l6">      6</a> from flask import Flask, jsonify, request, g, abort
+<a href="#l7" class="line" id="l7">      7</a> 
+<a href="#l8" class="line" id="l8">      8</a> from .auth import csrf_token, current_account_id
+<a href="#l9" class="line" id="l9">      9</a> from .store.db import close_db, init_db
+<a href="#l10" class="line" id="l10">     10</a> from .config import SECURITY_HEADERS, RATE_LIMITS, RATE_LIMIT_WINDOW_SECONDS, _RATE_LIMIT_MAX_KEYS
+<a href="#l11" class="line" id="l11">     11</a> 
+<a href="#l12" class="line" id="l12">     12</a> 
+<a href="#l13" class="line" id="l13">     13</a> def _configured_secret(file_variable: str, value_variable: str, fallback: str = &quot;&quot;, allow_dev_auth: bool = False) -&gt; str:
+<a href="#l14" class="line" id="l14">     14</a>     &quot;&quot;&quot;Carrega secret de arquivo ou variável de ambiente. Falha se não configurado em produção.&quot;&quot;&quot;
+<a href="#l15" class="line" id="l15">     15</a>     path = os.environ.get(file_variable, &quot;&quot;)
+<a href="#l16" class="line" id="l16">     16</a>     if path:
+<a href="#l17" class="line" id="l17">     17</a>         try:
+<a href="#l18" class="line" id="l18">     18</a>             value = Path(path).read_text(encoding=&quot;utf-8&quot;).strip()
+<a href="#l19" class="line" id="l19">     19</a>         except OSError:
+<a href="#l20" class="line" id="l20">     20</a>             value = &quot;&quot;
+<a href="#l21" class="line" id="l21">     21</a>         if value:
+<a href="#l22" class="line" id="l22">     22</a>             return value
+<a href="#l23" class="line" id="l23">     23</a>     value = os.environ.get(value_variable, fallback)
+<a href="#l24" class="line" id="l24">     24</a>     if not value and not allow_dev_auth:
+<a href="#l25" class="line" id="l25">     25</a>         raise RuntimeError(f&quot;Secret obrigatório não configurado: {value_variable} ou {file_variable}&quot;)
+<a href="#l26" class="line" id="l26">     26</a>     return value
+<a href="#l27" class="line" id="l27">     27</a> 
+<a href="#l28" class="line" id="l28">     28</a> 
+<a href="#l29" class="line" id="l29">     29</a> # Rate limiting storage (in-memory, per-process)
+<a href="#l30" class="line" id="l30">     30</a> _rate_limit_lock = threading.Lock()
+<a href="#l31" class="line" id="l31">     31</a> _rate_limit_windows = {}
+<a href="#l32" class="line" id="l32">     32</a> 
+<a href="#l33" class="line" id="l33">     33</a> 
+<a href="#l34" class="line" id="l34">     34</a> def _check_rate_limit(action: str, account_id: str) -&gt; bool:
+<a href="#l35" class="line" id="l35">     35</a>     &quot;&quot;&quot;Verifica se a ação está dentro do limite de rate limiting.&quot;&quot;&quot;
+<a href="#l36" class="line" id="l36">     36</a>     limit = RATE_LIMITS.get(action)
+<a href="#l37" class="line" id="l37">     37</a>     if limit is None:
+<a href="#l38" class="line" id="l38">     38</a>         return True  # Sem limite definido = permitido
+<a href="#l39" class="line" id="l39">     39</a> 
+<a href="#l40" class="line" id="l40">     40</a>     now = time.monotonic()
+<a href="#l41" class="line" id="l41">     41</a>     cutoff = now - RATE_LIMIT_WINDOW_SECONDS
+<a href="#l42" class="line" id="l42">     42</a>     key = f&quot;{account_id}:{action}&quot;
+<a href="#l43" class="line" id="l43">     43</a> 
+<a href="#l44" class="line" id="l44">     44</a>     with _rate_limit_lock:
+<a href="#l45" class="line" id="l45">     45</a>         timestamps = [ts for ts in _rate_limit_windows.get(key, []) if ts &gt; cutoff]
+<a href="#l46" class="line" id="l46">     46</a>         allowed = len(timestamps) &lt; limit
+<a href="#l47" class="line" id="l47">     47</a>         if allowed:
+<a href="#l48" class="line" id="l48">     48</a>             timestamps.append(now)
+<a href="#l49" class="line" id="l49">     49</a>         _rate_limit_windows[key] = timestamps
+<a href="#l50" class="line" id="l50">     50</a> 
+<a href="#l51" class="line" id="l51">     51</a>         # Limpeza periódica para evitar memory leak (lazy cleanup a cada 1000 requests)
+<a href="#l52" class="line" id="l52">     52</a>         if len(_rate_limit_windows) &gt; _RATE_LIMIT_MAX_KEYS:
+<a href="#l53" class="line" id="l53">     53</a>             for k in list(_rate_limit_windows.keys()):
+<a href="#l54" class="line" id="l54">     54</a>                 _rate_limit_windows[k] = [ts for ts in _rate_limit_windows[k] if ts &gt; cutoff]
+<a href="#l55" class="line" id="l55">     55</a>                 if not _rate_limit_windows[k]:
+<a href="#l56" class="line" id="l56">     56</a>                     del _rate_limit_windows[k]
+<a href="#l57" class="line" id="l57">     57</a> 
+<a href="#l58" class="line" id="l58">     58</a>     return allowed
+<a href="#l59" class="line" id="l59">     59</a> 
+<a href="#l60" class="line" id="l60">     60</a> 
+<a href="#l61" class="line" id="l61">     61</a> def create_app(test_config=None):
+<a href="#l62" class="line" id="l62">     62</a>     app = Flask(
+<a href="#l63" class="line" id="l63">     63</a>         __name__,
+<a href="#l64" class="line" id="l64">     64</a>         instance_relative_config=True,
+<a href="#l65" class="line" id="l65">     65</a>         template_folder=&quot;../templates&quot;,
+<a href="#l66" class="line" id="l66">     66</a>         static_folder=&quot;../static&quot;,
+<a href="#l67" class="line" id="l67">     67</a>     )
+<a href="#l68" class="line" id="l68">     68</a>     configured_data_dir = os.environ.get(&quot;ASSISTENTE_V2_DATA_DIR&quot;)
+<a href="#l69" class="line" id="l69">     69</a>     default_data_dir = Path(configured_data_dir) if configured_data_dir else Path(app.instance_path) / &quot;data&quot;
+<a href="#l70" class="line" id="l70">     70</a> 
+<a href="#l71" class="line" id="l71">     71</a>     # Determine ALLOW_DEV_AUTH early (from test_config or env)
+<a href="#l72" class="line" id="l72">     72</a>     env_allow_dev = os.environ.get(&quot;ASSISTENTE_V2_ALLOW_DEV_AUTH&quot;, &quot;0&quot;) == &quot;1&quot;
+<a href="#l73" class="line" id="l73">     73</a>     test_allow_dev = test_config is not None and test_config.get(&quot;ALLOW_DEV_AUTH&quot;, False)
+<a href="#l74" class="line" id="l74">     74</a>     allow_dev_auth = env_allow_dev or test_allow_dev
+<a href="#l75" class="line" id="l75">     75</a> 
+<a href="#l76" class="line" id="l76">     76</a>     # Configuração de sessão segura
+<a href="#l77" class="line" id="l77">     77</a>     app.config.from_mapping(
+<a href="#l78" class="line" id="l78">     78</a>         SECRET_KEY=_configured_secret(&quot;ASSISTENTE_V2_SECRET_KEY_FILE&quot;, &quot;ASSISTENTE_V2_SECRET_KEY&quot;, allow_dev_auth=allow_dev_auth),
+<a href="#l79" class="line" id="l79">     79</a>         DATA_DIR=str(default_data_dir),
+<a href="#l80" class="line" id="l80">     80</a>         DATABASE=os.environ.get(&quot;ASSISTENTE_V2_DATABASE&quot;, str(default_data_dir / &quot;assistente_v2.sqlite3&quot;)),
+<a href="#l81" class="line" id="l81">     81</a>         ALLOW_DEV_AUTH=allow_dev_auth,
+<a href="#l82" class="line" id="l82">     82</a>         GOOGLE_CLIENT_ID=os.environ.get(&quot;ASSISTENTE_GOOGLE_CLIENT_ID&quot;, &quot;&quot;),
+<a href="#l83" class="line" id="l83">     83</a>         GOOGLE_CLIENT_SECRET=os.environ.get(&quot;ASSISTENTE_GOOGLE_CLIENT_SECRET&quot;, &quot;&quot;),
+<a href="#l84" class="line" id="l84">     84</a>         GOOGLE_REDIRECT_URI=os.environ.get(&quot;ASSISTENTE_GOOGLE_REDIRECT_URI&quot;, &quot;&quot;),
+<a href="#l85" class="line" id="l85">     85</a>         ADMIN_EMAILS={email.strip().lower() for email in os.environ.get(&quot;ASSISTENTE_V2_ADMIN_EMAILS&quot;, &quot;&quot;).split(&quot;,&quot;) if email.strip()},
+<a href="#l86" class="line" id="l86">     86</a>         # Session cookie security
+<a href="#l87" class="line" id="l87">     87</a>         SESSION_COOKIE_SECURE=True,
+<a href="#l88" class="line" id="l88">     88</a>         SESSION_COOKIE_HTTPONLY=True,
+<a href="#l89" class="line" id="l89">     89</a>         SESSION_COOKIE_SAMESITE=&quot;Lax&quot;,
+<a href="#l90" class="line" id="l90">     90</a>         SESSION_COOKIE_NAME=&quot;__Host-session&quot;,
+<a href="#l91" class="line" id="l91">     91</a>         PERMANENT_SESSION_LIFETIME=30 * 24 * 60 * 60,  # 30 dias
+<a href="#l92" class="line" id="l92">     92</a>     )
+<a href="#l93" class="line" id="l93">     93</a>     if test_config:
+<a href="#l94" class="line" id="l94">     94</a>         app.config.update(test_config)
+<a href="#l95" class="line" id="l95">     95</a> 
+<a href="#l96" class="line" id="l96">     96</a>     Path(app.config[&quot;DATA_DIR&quot;]).mkdir(parents=True, exist_ok=True)
+<a href="#l97" class="line" id="l97">     97</a>     app.teardown_appcontext(close_db)
+<a href="#l98" class="line" id="l98">     98</a> 
+<a href="#l99" class="line" id="l99">     99</a>     # Security headers middleware
+<a href="#l100" class="line" id="l100">    100</a>     @app.after_request
+<a href="#l101" class="line" id="l101">    101</a>     def add_security_headers(response):
+<a href="#l102" class="line" id="l102">    102</a>         for header, value in SECURITY_HEADERS.items():
+<a href="#l103" class="line" id="l103">    103</a>             response.headers[header] = value
+<a href="#l104" class="line" id="l104">    104</a>         # COOP/COEP para isolamento de origem
+<a href="#l105" class="line" id="l105">    105</a>         response.headers[&quot;Cross-Origin-Opener-Policy&quot;] = &quot;same-origin&quot;
+<a href="#l106" class="line" id="l106">    106</a>         response.headers[&quot;Cross-Origin-Embedder-Policy&quot;] = &quot;require-corp&quot;
+<a href="#l107" class="line" id="l107">    107</a>         return response
+<a href="#l108" class="line" id="l108">    108</a> 
+<a href="#l109" class="line" id="l109">    109</a>     # Rate limiting middleware - APLICA EFETIVAMENTE
+<a href="#l110" class="line" id="l110">    110</a>     @app.before_request
+<a href="#l111" class="line" id="l111">    111</a>     def check_rate_limit():
+<a href="#l112" class="line" id="l112">    112</a>         # Pular health check e rotas públicas não autenticadas
+<a href="#l113" class="line" id="l113">    113</a>         if request.path in (&quot;/healthz&quot;,):
+<a href="#l114" class="line" id="l114">    114</a>             return None
+<a href="#l115" class="line" id="l115">    115</a> 
+<a href="#l116" class="line" id="l116">    116</a>         # Aplicar rate limiting em rotas protegidas
+<a href="#l117" class="line" id="l117">    117</a>         if request.path.startswith((&quot;/api/&quot;, &quot;/projects/&quot;, &quot;/account/&quot;, &quot;/admin/&quot;)):
+<a href="#l118" class="line" id="l118">    118</a>             # Para rotas que precisam de account_id, validar via auth
+<a href="#l119" class="line" id="l119">    119</a>             # O rate limiting por ação será aplicado nas próprias rotas
+<a href="#l120" class="line" id="l120">    120</a>             pass
+<a href="#l121" class="line" id="l121">    121</a> 
+<a href="#l122" class="line" id="l122">    122</a>         return None
+<a href="#l123" class="line" id="l123">    123</a> 
+<a href="#l124" class="line" id="l124">    124</a>     from .routes.account import account_bp
+<a href="#l125" class="line" id="l125">    125</a>     from .routes.admin import admin_bp
+<a href="#l126" class="line" id="l126">    126</a>     from .routes.ai import ai_bp
+<a href="#l127" class="line" id="l127">    127</a>     from .routes.auth import auth_bp
+<a href="#l128" class="line" id="l128">    128</a>     from .routes.export import export_bp
+<a href="#l129" class="line" id="l129">    129</a>     from .routes.library import library_bp
+<a href="#l130" class="line" id="l130">    130</a>     from .routes.oauth import oauth_bp
+<a href="#l131" class="line" id="l131">    131</a>     from .routes.projects import projects_bp
+<a href="#l132" class="line" id="l132">    132</a>     from .routes.public import public_bp
+<a href="#l133" class="line" id="l133">    133</a> 
+<a href="#l134" class="line" id="l134">    134</a>     app.register_blueprint(public_bp)
+<a href="#l135" class="line" id="l135">    135</a>     app.register_blueprint(account_bp)
+<a href="#l136" class="line" id="l136">    136</a>     app.register_blueprint(admin_bp)
+<a href="#l137" class="line" id="l137">    137</a>     app.register_blueprint(ai_bp)
+<a href="#l138" class="line" id="l138">    138</a>     app.register_blueprint(auth_bp)
+<a href="#l139" class="line" id="l139">    139</a>     app.register_blueprint(export_bp)
+<a href="#l140" class="line" id="l140">    140</a>     app.register_blueprint(library_bp)
+<a href="#l141" class="line" id="l141">    141</a>     app.register_blueprint(oauth_bp)
+<a href="#l142" class="line" id="l142">    142</a>     app.register_blueprint(projects_bp)
+<a href="#l143" class="line" id="l143">    143</a> 
+<a href="#l144" class="line" id="l144">    144</a>     @app.context_processor
+<a href="#l145" class="line" id="l145">    145</a>     def inject_helpers():
+<a href="#l146" class="line" id="l146">    146</a>         from .auth import current_account_id
+<a href="#l147" class="line" id="l147">    147</a>         from .store.accounts import get_account
+<a href="#l148" class="line" id="l148">    148</a>         account_id = current_account_id()
+<a href="#l149" class="line" id="l149">    149</a>         return {&quot;csrf_token&quot;: csrf_token, &quot;navigation_account&quot;: get_account(account_id) if account_id else None}
+<a href="#l150" class="line" id="l150">    150</a> 
+<a href="#l151" class="line" id="l151">    151</a>     @app.get(&quot;/healthz&quot;)
+<a href="#l152" class="line" id="l152">    152</a>     def healthz():
+<a href="#l153" class="line" id="l153">    153</a>         return jsonify({&quot;status&quot;: &quot;ok&quot;, &quot;service&quot;: &quot;assistente-academico&quot;})
+<a href="#l154" class="line" id="l154">    154</a> 
+<a href="#l155" class="line" id="l155">    155</a>     with app.app_context():
+<a href="#l156" class="line" id="l156">    156</a>         init_db()
+<a href="#l157" class="line" id="l157">    157</a> 
+<a href="#l158" class="line" id="l158">    158</a>     return app
+</pre>
+</div>
+</body>
+</html>

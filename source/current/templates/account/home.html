@@ -1,0 +1,250 @@
+{% extends "base.html" %}
+{% block title %}Minha conta — Assistente Acadêmico{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">{% endblock %}
+{% block content %}
+<section class="page-heading">
+  <p class="eyebrow user-email">{{ account['email'] }}</p>
+  <h1>Minha conta</h1>
+</section>
+
+{% if not account['terms_accepted'] %}
+<section class="onboarding-card" aria-labelledby="onboarding-title">
+  <p class="eyebrow">Primeiros passos</p>
+  <h2 id="onboarding-title">Configure sua conta</h2>
+  <p>Antes de começar, confira os termos e escolha se deseja usar a assistência de IA.</p>
+  <div class="onboarding-items">
+    <div class="onboarding-item">
+      <div><strong>Termos de uso e privacidade</strong><small>Necessários para criar um trabalho</small></div>
+      <a class="button button-primary" href="{{ url_for('account.settings') }}#terms">Ler e aceitar</a>
+    </div>
+  </div>
+  <a class="onboarding-profile-link" href="{{ url_for('account.settings') }}">Abrir perfil e consentimento de IA</a>
+</section>
+{% endif %}
+
+<nav class="account-tabs" aria-label="Seções da conta" role="tablist">
+  <button type="button" role="tab" aria-selected="true" aria-controls="tab-projetos" data-tab="projetos">Meus Projetos</button>
+  <button type="button" role="tab" aria-selected="false" aria-controls="tab-biblioteca" data-tab="biblioteca">Minha Biblioteca</button>
+  <button type="button" role="tab" aria-selected="false" aria-controls="tab-conta" data-tab="conta">Minha Conta</button>
+  {% if account['is_admin'] %}
+  <button type="button" role="tab" aria-selected="false" aria-controls="tab-admin" data-tab="admin">Administração</button>
+  {% endif %}
+</nav>
+
+<!-- ABA 1: Meus Projetos -->
+<div class="tab-panel" id="tab-projetos" role="tabpanel" aria-labelledby="tab-projetos" hidden="false">
+  <section class="account-calendar{% if not account_calendar['has_dates'] and not account_calendar['has_activity'] %} account-calendar-no-dates{% endif %}" aria-labelledby="account-calendar-title">
+    <div class="account-calendar-heading">
+      <h2 id="account-calendar-title">Agenda</h2>
+      {% if account_calendar['has_dates'] or account_calendar['has_activity'] %}<span class="field-hint">{{ account_calendar['month_label'] }}</span>{% endif %}
+    </div>
+    {% if account_calendar['has_dates'] or account_calendar['has_activity'] %}
+    {% if account_calendar['month_has_dates'] or account_calendar['month_has_activity'] %}
+    {% if account_calendar['has_activity'] %}<p class="account-calendar-activity-note">Salvamentos por dia</p>{% endif %}
+    <div class="account-calendar-weekdays">
+      {% for day in account_calendar['weekdays'] %}<span>{{ day }}</span>{% endfor %}
+    </div>
+    <div class="account-calendar-grid">
+      {% for cell in account_calendar['cells'] %}
+        {% if cell is none %}<span class="account-calendar-empty" aria-hidden="true"></span>
+        {% else %}
+        <div class="account-calendar-day{% if cell['entries'] %} has-deadline{% endif %}{% if cell.get('edit_level') %} has-edits heat-{{ cell['edit_level'] }}{% endif %}" title="{{ cell.get('edit_label', '0 edições neste dia') }}">
+          <span class="account-calendar-number">{{ cell['number'] }}{% if cell.get('edit_count') %}<small>{{ cell['edit_count'] }}</small>{% endif %}</span>
+          {% for entry in cell['entries'] %}<a class="account-calendar-project" href="{{ url_for('projects.editor', project_id=entry['project_id']) }}" title="{{ entry['label'] }} · {{ entry['title'] }}">{{ entry['label'] }} · {{ entry['title'] }}</a>{% endfor %}
+          {% if cell['more'] %}<span class="account-calendar-more">+{{ cell['more'] }}</span>{% endif %}
+        </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+    {% else %}<p class="field-hint">Sem atividade ou entrega neste mês.</p>{% endif %}
+    {% if account_calendar['upcoming'] %}<div class="account-calendar-upcoming">
+      <strong>{{ account_calendar['upcoming_label'] }}</strong>
+      {% for entry in account_calendar['upcoming'] %}<a class="account-calendar-upcoming-row" href="{{ url_for('projects.editor', project_id=entry['project_id']) }}"><span><em class="account-calendar-kind">{{ entry['label'] }}</em> {{ entry['title'] }}</span><time datetime="{{ entry['date'] }}">{{ entry['date_label'] }}</time></a>{% endfor %}
+    </div>{% endif %}
+    {% else %}
+    <p class="field-hint">Abra um trabalho para começar a registrar atividade e datas.</p>
+    {% endif %}
+  </section>
+
+  <section class="project-list" aria-label="Trabalhos da conta">
+    {% if request.args.get('deleted') == '1' %}<p class="notice" role="status">Trabalho excluído.</p>{% endif %}
+    {% if request.args.get('error') == 'project_quota' %}<p class="notice" role="alert">Sua conta não possui crédito de projeto disponível. Consulte os planos abaixo para solicitar a liberação.</p>{% endif %}
+    {% for project in projects %}
+      <div class="project-row">
+        <a href="{{ url_for('projects.editor', project_id=project['id']) }}">
+          <span>
+            <strong>{{ project['title'] or 'Sem título' }}</strong>
+            <small>{% if project['project_type'] == 'case' %}Case{% elif project['project_type'] == 'paper_project' %}Projeto de Paper{% else %}Paper Final{% endif %}</small>
+            {% if project.get('schedule_summary', {}).get('has_dates') %}
+            <small class="project-schedule-summary">
+              {% set deadline = project['schedule_summary']['deadline'] %}
+              Próxima data: {{ deadline['label'] }} · {{ deadline['date_label'] }} · {{ project['schedule_summary']['task_done'] }}/{{ project['schedule_summary']['task_total'] }} tarefas concluídas
+            </small>
+            {% elif project.get('schedule_summary', {}).get('task_total') %}
+            <small class="project-schedule-summary">{{ project['schedule_summary']['task_done'] }}/{{ project['schedule_summary']['task_total'] }} tarefas concluídas</small>
+            {% endif %}
+          </span>
+        </a>
+        <div class="project-actions">
+          <form method="post" action="{{ url_for('projects.delete', project_id=project['id']) }}" onsubmit="return window.confirm('Excluir este trabalho? Essa ação não pode ser desfeita.');"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="quiet-button danger" type="submit">Excluir</button></form>
+        </div>
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        <p class="empty-state-title">Nenhum trabalho criado ainda</p>
+        <p class="empty-state-text">Clique em "Criar trabalho" para começar seu primeiro Case ou Paper.</p>
+      </div>
+    {% endfor %}
+  </section>
+
+  {% if account.get('plan_code', 'livre') == 'livre' %}
+  <section class="account-plan-options" aria-labelledby="account-plan-title">
+    <p class="eyebrow">Acesso</p>
+    <h2 id="account-plan-title">Planos e valores</h2>
+    <p>Consulte os planos disponíveis. A liberação é manual.</p>
+    <a class="button" href="{{ url_for('public.pricing') }}">Ver planos e valores</a>
+  </section>
+  {% else %}
+  <section class="account-plan-status" aria-label="Plano atual">
+    <p class="eyebrow">Acesso</p>
+    <p>Plano atual: <strong>{{ {'avulso_ai': 'Avulso com IA', 'sem_ia': 'Essencial', 'com_ia': 'Completo'}.get(account.get('plan_code'), account.get('plan_code')) }}</strong></p>
+  </section>
+  {% endif %}
+
+  {% if account['unlimited'] or account['project_remaining'] > 0 %}
+  <form class="create-form" method="post" action="{{ url_for('projects.create') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label for="project-type">Roteiro inicial
+      <select id="project-type" name="project_type" aria-describedby="project-type-help">
+        <option value="case">Case — relatório, debate e dissertação</option>
+        <option value="paper_project">Paper — começar pelo Projeto de Paper</option>
+      </select>
+    </label>
+    <p class="field-help" id="project-type-help">Paper: Projeto de Paper → Paper Final.</p>
+    <button class="btn btn-primary" type="submit">Criar trabalho</button>
+  </form>
+  {% else %}
+    <section class="account-plan-options account-plan-blocked"><p class="eyebrow">Acesso</p><p>Escolha um plano para criar um trabalho.</p><a class="button" href="{{ url_for('public.pricing') }}">Ver planos</a></section>
+  {% endif %}
+</div>
+
+<!-- ABA 2: Minha Biblioteca -->
+<div class="tab-panel" id="tab-biblioteca" role="tabpanel" aria-labelledby="tab-biblioteca" hidden>
+  <section class="page-heading">
+    <h2>Minha Biblioteca</h2>
+    <p class="lead">Gerencie suas fontes e anexe referências do catálogo jurídico.</p>
+  </section>
+  <div id="library-root">
+    <div class="library-header">
+      <form class="library-search" action="{{ url_for('library.home') }}" method="get">
+        <label for="library-search">Buscar na biblioteca</label>
+        <input type="search" id="library-search" name="q" placeholder="Título, autor, referência..." aria-label="Buscar fontes">
+        <button class="button button-primary" type="submit">Buscar</button>
+      </form>
+      <a class="button" href="{{ url_for('library.home') }}">Ver biblioteca completa</a>
+    </div>
+    <div class="library-summary">
+      <p>Use a biblioteca completa para cadastrar, editar e anexar fontes do catálogo jurídico aos seus trabalhos.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ABA 3: Minha Conta -->
+<div class="tab-panel" id="tab-conta" role="tabpanel" aria-labelledby="tab-conta" hidden>
+  <section class="page-heading">
+    <h2>Minha Conta</h2>
+    <p class="lead">Perfil, preferências de compartilhamento, créditos e exclusão de conta.</p>
+  </section>
+  <div class="account-subtabs">
+    <nav aria-label="Configurações da conta" role="tablist">
+      <button type="button" role="tab" aria-selected="true" aria-controls="subtab-perfil" data-subtab="perfil">Perfil</button>
+      <button type="button" role="tab" aria-selected="false" aria-controls="subtab-compartilhamento" data-subtab="compartilhamento">Compartilhamento</button>
+      <button type="button" role="tab" aria-selected="false" aria-controls="subtab-creditos" data-subtab="creditos">Créditos</button>
+      <button type="button" role="tab" aria-selected="false" aria-controls="subtab-exclusao" data-subtab="exclusao">Excluir conta</button>
+    </nav>
+
+    <div class="subtab-panel" id="subtab-perfil" role="tabpanel" aria-labelledby="subtab-perfil" hidden="false">
+      <a class="button" href="{{ url_for('account.settings') }}">Editar perfil, termos e consentimento de IA</a>
+      <p class="field-help">Seu plano atual: <strong>{{ {'livre': 'Sem plano', 'avulso_ai': 'Avulso com IA', 'sem_ia': 'Essencial', 'com_ia': 'Completo'}.get(account.get('plan_code'), account.get('plan_code')) }}</strong></p>
+      {% if account['is_admin'] %}<p class="field-help">Você tem acesso administrativo.</p>{% endif %}
+    </div>
+
+    <div class="subtab-panel" id="subtab-compartilhamento" role="tabpanel" aria-labelledby="subtab-compartilhamento" hidden>
+      <div id="sharing-prefs-root">
+        <h3>Preferências de compartilhamento administrativo</h3>
+        <p class="field-help">Defina o padrão para novos projetos. Projetos individuais podem sobrescrever.</p>
+        <form id="sharing-prefs-form" class="sharing-prefs-form">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <label class="check-row">
+            <input type="checkbox" name="allow_admin_view" id="allow_admin_view">
+            <span>Permitir que administradores visualizem meus projetos</span>
+          </label>
+          <label class="check-row">
+            <input type="checkbox" name="allow_admin_comments" id="allow_admin_comments">
+            <span>Permitir comentários administrativos (requer visualização)</span>
+          </label>
+          <label class="check-row">
+            <input type="checkbox" name="inherit_account_default" id="inherit_account_default" checked>
+            <span>Novos projetos herdam estas preferências por padrão</span>
+          </label>
+          <button class="button button-primary" type="submit">Salvar preferências</button>
+        </form>
+        <p id="sharing-prefs-status" class="field-hint" hidden></p>
+      </div>
+    </div>
+
+    <div class="subtab-panel" id="subtab-creditos" role="tabpanel" aria-labelledby="subtab-creditos" hidden>
+      <div id="grants-root">
+        <h3>Histórico de créditos (Grants)</h3>
+        <p class="field-help">Registro de todos os créditos concedidos à sua conta.</p>
+        <div id="grants-list" class="grants-list">Carregando...</div>
+      </div>
+    </div>
+
+    <div class="subtab-panel" id="subtab-exclusao" role="tabpanel" aria-labelledby="subtab-exclusao" hidden>
+      <div id="deletion-root" class="deletion-panel">
+        <h3>Exclusão da conta</h3>
+        <p class="field-help danger">Esta ação é irreversível. Todos os seus trabalhos, fontes, revisões e dados serão permanentemente removidos.</p>
+        <div id="deletion-status" class="deletion-status"></div>
+        <div id="deletion-actions">
+          <button type="button" id="btn-request-deletion" class="button danger">Solicitar exclusão</button>
+          <button type="button" id="btn-cancel-deletion" class="button" hidden>Cancelar solicitação</button>
+          <button type="button" id="btn-confirm-deletion" class="button danger" hidden>Confirmar exclusão definitiva</button>
+        </div>
+        <details class="deletion-info">
+          <summary>O que será excluído?</summary>
+          <ul>
+            <li>Todos os projetos (Case, Paper Projeto, Paper Final)</li>
+            <li>Todas as revisões e histórico</li>
+            <li>Todas as fontes da biblioteca pessoal</li>
+            <li>Comentários administrativos recebidos</li>
+            <li>Histórico de uso de IA e grants</li>
+            <li>Sessões e preferências</li>
+          </ul>
+        </details>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ABA 4: Administração (apenas para admins) -->
+{% if account['is_admin'] %}
+<div class="tab-panel" id="tab-admin" role="tabpanel" aria-labelledby="tab-admin" hidden>
+  <section class="page-heading">
+    <h2>Painel Administrativo</h2>
+    <p class="lead">Gerenciamento de contas, saúde do sistema e uso global.</p>
+  </section>
+  <div class="admin-dashboard-links">
+    <a class="button" href="{{ url_for('admin.accounts') }}">Gerenciar contas e planos</a>
+    <a class="button" href="{{ url_for('admin.projects') }}">Projetos compartilhados</a>
+    <a class="button" href="{{ url_for('admin.index') }}health" target="_blank">Health Check</a>
+    <a class="button" href="{{ url_for('admin.index') }}usage" target="_blank">Uso Global</a>
+  </div>
+</div>
+{% endif %}
+
+{% endblock %}
+{% block extra_scripts %}
+<script type="module" src="{{ url_for('static', filename='js/account.js') }}"></script>
+{% endblock %}

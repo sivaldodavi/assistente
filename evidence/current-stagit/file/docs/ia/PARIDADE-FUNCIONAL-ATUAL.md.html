@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PARIDADE-FUNCIONAL-ATUAL.md - assistente-academico - Assistente Acadêmico v2
+</title>
+<link rel="icon" type="image/png" href="../../../favicon.png" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed" href="../../../atom.xml" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed (tags)" href="../../../tags.xml" />
+<link rel="stylesheet" type="text/css" href="../../../style.css" />
+</head>
+<body>
+<table><tr><td><a href="../../../../"><img src="../../../logo.png" alt="" width="32" height="32" /></a></td><td><h1>assistente-academico</h1><span class="desc">Assistente Acadêmico v2
+</span></td></tr><tr class="url"><td></td><td>git clone <a href="git://git.sivaldodavi.com.br/assistente-academico.git">git://git.sivaldodavi.com.br/assistente-academico.git</a></td></tr><tr><td></td><td>
+<a href="../../../log.html">Log</a> | <a href="../../../files.html">Files</a> | <a href="../../../refs.html">Refs</a> | <a href="../../../file/README.md.html">README</a></td></tr></table>
+<hr/>
+<div id="content">
+<p> PARIDADE-FUNCIONAL-ATUAL.md (7249B)</p><hr/><pre id="blob">
+<a href="#l1" class="line" id="l1">      1</a> # Paridade funcional atual
+<a href="#l2" class="line" id="l2">      2</a> 
+<a href="#l3" class="line" id="l3">      3</a> Este documento é a referência permanente para comparar a experiência do Assistente com o produto de referência preservado no repositório legado. A comparação é feita pelo comportamento percebido pela pessoa usuária, não pela quantidade de arquivos ou pela linguagem usada.
+<a href="#l4" class="line" id="l4">      4</a> 
+<a href="#l5" class="line" id="l5">      5</a> ## Correções que fazem parte do contrato atual
+<a href="#l6" class="line" id="l6">      6</a> 
+<a href="#l7" class="line" id="l7">      7</a> - A vitrine oferece três modelos preenchidos em modo somente leitura, navegáveis pelo roteiro correto de Case, Projeto de Paper e Paper Final. O conteúdo de cada seção é associado ao título canônico da etapa; os cabeçalhos vazios preservados no modelo legado não podem deslocar o texto para outra etapa. Os campos visíveis usam os valores do modelo anonimizado e, quando o roteiro novo separa um campo que antes estava agregado, somente trechos literais ou diretamente identificáveis do mesmo conteúdo são reutilizados.
+<a href="#l8" class="line" id="l8">      8</a> - A conta sem plano exibe planos e valores em uma tela direta (`/planos`). O link não deve obrigar a pessoa a voltar à home e localizar manualmente a seção de preços. Pagamentos continuam manuais; não existe pagamento automático.
+<a href="#l9" class="line" id="l9">      9</a> - A criação de projetos respeita créditos de projeto de forma atômica. A conta administrativa configurada não fica limitada; as demais contas são bloqueadas quando o saldo chega a zero. A duplicação usa a mesma regra.
+<a href="#l10" class="line" id="l10">     10</a> - Paper Final é uma transição do Projeto de Paper pelo fluxo do próprio projeto. Não é uma terceira opção inicial no formulário da conta. Registros existentes desse tipo continuam legíveis.
+<a href="#l11" class="line" id="l11">     11</a> - Compartilhamento e comentários ficam no topo do editor, próximos do planejamento, em formulário separado do autosave. A revogação de comentários impede que a administração continue vendo comentários depois da alteração.
+<a href="#l12" class="line" id="l12">     12</a> - A assistência aparece de forma compacta e contextual. Resultados vazios não exibem barra vertical, reserva de altura ou cartão vazio. Nomes de provedores e detalhes internos não aparecem na interface.
+<a href="#l13" class="line" id="l13">     13</a> - A revisão e entrega do relatório permanecem como etapa própria do Case. A narrativa dos fatos fica na descrição do caso; não existe cronologia dos fatos, histórico de versões ou restauração.
+<a href="#l14" class="line" id="l14">     14</a> - A Biblioteca Pessoal contém fontes e fichamentos privados. O catálogo jurídico interno não é uma aba da Biblioteca: ele é usado apenas quando a pessoa pede fundamentação contextual no Case.
+<a href="#l15" class="line" id="l15">     15</a> - A agenda fica disponível na conta e no topo recolhível do editor. Case mostra relatório, debate e dissertação; Paper mostra Projeto de Paper e Paper Final. Tarefas podem usar o roteiro sugerido, ser concluídas e permanecer salvas; a conta exibe prazos e um mapa de calor cuja intensidade é a quantidade de salvamentos por dia, sem enviar mensagens.
+<a href="#l16" class="line" id="l16">     16</a> - A Dissertação do Case é uma etapa de escrita com introdução, desenvolvimento/fundamentação e conclusão, seguida por uma revisão e entrega própria. Referências não são uma etapa obrigatória separada; fontes podem ser adicionadas dentro do próprio editor.
+<a href="#l17" class="line" id="l17">     17</a> 
+<a href="#l18" class="line" id="l18">     18</a> ## Funcionalidades implementadas nas Fases 1-3
+<a href="#l19" class="line" id="l19">     19</a> 
+<a href="#l20" class="line" id="l20">     20</a> ### Fase 1: UX/Design System (Concluída)
+<a href="#l21" class="line" id="l21">     21</a> - Sistema de design tokens centralizado (`static/css/tokens.css`) - cores, espaçamento, tipografia, bordas, sombras, transições
+<a href="#l22" class="line" id="l22">     22</a> - CSS refatorado usando tokens em todos os 6 arquivos (app.css, editor.css, marketing.css, admin.css, library.css, profile.css)
+<a href="#l23" class="line" id="l23">     23</a> - JavaScript modularizado em ES Modules:
+<a href="#l24" class="line" id="l24">     24</a>   - `autosave.js` - Salvamento automático otimista
+<a href="#l25" class="line" id="l25">     25</a>   - `project-schedule.js` - Editor de cronograma
+<a href="#l26" class="line" id="l26">     26</a>   - `project-ai.js` - Assistência contextual rica
+<a href="#l27" class="line" id="l27">     27</a>   - `pdf-export.js` - Exportação Quarto
+<a href="#l28" class="line" id="l28">     28</a>   - `duplicate.js` - Duplicação de projetos
+<a href="#l29" class="line" id="l29">     29</a>   - `revisions.js` - Histórico de revisões
+<a href="#l30" class="line" id="l30">     30</a>   - `jev-panel.js` - Painel JEV (seção, relatório, explicação)
+<a href="#l31" class="line" id="l31">     31</a> 
+<a href="#l32" class="line" id="l32">     32</a> ### Fase 2: Operational IA/PDF (Concluída)
+<a href="#l33" class="line" id="l33">     33</a> - Timeouts configuráveis para todos os provedores (DeepSeek, Gemini, JEV) via variáveis de ambiente
+<a href="#l34" class="line" id="l34">     34</a> - AbortController no frontend para cancelamento de requisições de IA
+<a href="#l35" class="line" id="l35">     35</a> - Indicador visual de loading com spinner CSS animado
+<a href="#l36" class="line" id="l36">     36</a> - Fallback gracioso DeepSeek → Gemini → JEV preservado
+<a href="#l37" class="line" id="l37">     37</a> - Melhorias na UX de loading e feedback ao usuário
+<a href="#l38" class="line" id="l38">     38</a> 
+<a href="#l39" class="line" id="l39">     39</a> ### Fase 3: Quality/Maintainability (Concluída)
+<a href="#l40" class="line" id="l40">     40</a> - Contratos TypedDict em `app/domain/types.py` para todos os modelos de dados
+<a href="#l41" class="line" id="l41">     41</a> - Configuração centralizada em `app/config.py` (elimina constantes mágicas)
+<a href="#l42" class="line" id="l42">     42</a> - Rate limiting granular por ação preservado
+<a href="#l43" class="line" id="l43">     43</a> - Security headers (CSP, HSTS, Permissions-Policy, COOP/COEP) preservados
+<a href="#l44" class="line" id="l44">     44</a> 
+<a href="#l45" class="line" id="l45">     45</a> ### Fase 4: Visual Design System Fixes (Concluída - Outubro 2026)
+<a href="#l46" class="line" id="l46">     46</a> - **Tokens &amp; Tipografia** (`tokens.css`): base 13px→15px, clamp fluido body, contraste #c0c0c0/#909090, spacing gaps preenchidos, focus ring 3px/4px, z-dropdown 55&gt;50, sidebar tokens, containers semânticos
+<a href="#l47" class="line" id="l47">     47</a> - **Containers &amp; Layout**: refs semânticas em 7 arquivos CSS, sidebar responsiva (1100/900/680px), pricing 2-col (~1000px), library grid fix
+<a href="#l48" class="line" id="l48">     48</a> - **Componentes**: hardcoded #393939→token, select reset SVG, botões .btn* padronizados, empty-state, user-email, FAQ padding, timeline connector, mockup containers, footer spacing
+<a href="#l49" class="line" id="l49">     49</a> - **Templates**: 13 redundâncias removidas (menu duplicado, sair duplicado, textos repetidos, WhatsApp isolado, mockup/buttons duplicados, typo &quot;Autorrespondidas&quot;), pricing simplificado, FAQ limpo
+<a href="#l50" class="line" id="l50">     50</a> 
+<a href="#l51" class="line" id="l51">     51</a> ## Diferenças que ainda devem ser tratadas como lacunas
+<a href="#l52" class="line" id="l52">     52</a> 
+<a href="#l53" class="line" id="l53">     53</a> Estas capacidades não devem ser anunciadas como equivalentes sem implementação e teste específicos:
+<a href="#l54" class="line" id="l54">     54</a> 
+<a href="#l55" class="line" id="l55">     55</a> - vínculos acadêmicos completos entre fonte, citação, tese, critério e localizador;
+<a href="#l56" class="line" id="l56">     56</a> - conferências e registros acadêmicos completos das fases de Debate e Dissertação;
+<a href="#l57" class="line" id="l57">     57</a> - requisitos de Paper, entrega por fase e transição completa para Paper Final;
+<a href="#l58" class="line" id="l58">     58</a> - expiração/revogação server-side da sessão, política de origem e testes de cookie/logout equivalentes ao legado;
+<a href="#l59" class="line" id="l59">     59</a> - deploy atômico com rollback ensaiado. O backup do banco já possui rotina diária, validação de integridade, restauração temporária de teste e retenção de 14 dias; o procedimento está em `docs/ia/OPERACAO-BACKUP.md`.
+<a href="#l60" class="line" id="l60">     60</a> 
+<a href="#l61" class="line" id="l61">     61</a> Quando este documento fala em &quot;conferências e registros acadêmicos completos&quot;, não está falando de uma tecnologia nova ou de um recurso misterioso. Significa apenas garantir que Debate, Dissertação e Paper tenham os mesmos campos obrigatórios, checklists, estados de entrega e transições que existiam no fluxo de referência. Isso é uma regra de funcionamento do trabalho acadêmico, não uma obrigação de exportar dados da conta.
+<a href="#l62" class="line" id="l62">     62</a> 
+<a href="#l63" class="line" id="l63">     63</a> ## Fora do produto
+<a href="#l64" class="line" id="l64">     64</a> 
+<a href="#l65" class="line" id="l65">     65</a> Não reintroduzir cronologia dos fatos, histórico/diff/restauração de versões, pagamento automático ou integração automática de WhatsApp. O contato manual de suporte/Pix, quando exibido em página pública, é apenas um link externo e não cria dados, fila ou serviço no Assistente.
+<a href="#l66" class="line" id="l66">     66</a> 
+<a href="#l67" class="line" id="l67">     67</a> ## Regra para novos agentes
+<a href="#l68" class="line" id="l68">     68</a> 
+<a href="#l69" class="line" id="l69">     69</a> Antes de alterar uma tela, comparar o template, o CSS, o JavaScript e o contrato do legado correspondente. Não criar um redesign por preferência própria quando a solicitação for de equivalência. Para cada diferença encontrada, classificar como correção necessária, decisão explícita de produto ou lacuna ainda não implementada; nunca esconder uma lacuna apenas mudando o rótulo da interface.
+</pre>
+</div>
+</body>
+</html>

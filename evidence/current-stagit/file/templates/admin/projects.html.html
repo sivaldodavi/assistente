@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>projects.html - assistente-academico - Assistente Acadêmico v2
+</title>
+<link rel="icon" type="image/png" href="../../../favicon.png" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed" href="../../../atom.xml" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed (tags)" href="../../../tags.xml" />
+<link rel="stylesheet" type="text/css" href="../../../style.css" />
+</head>
+<body>
+<table><tr><td><a href="../../../../"><img src="../../../logo.png" alt="" width="32" height="32" /></a></td><td><h1>assistente-academico</h1><span class="desc">Assistente Acadêmico v2
+</span></td></tr><tr class="url"><td></td><td>git clone <a href="git://git.sivaldodavi.com.br/assistente-academico.git">git://git.sivaldodavi.com.br/assistente-academico.git</a></td></tr><tr><td></td><td>
+<a href="../../../log.html">Log</a> | <a href="../../../files.html">Files</a> | <a href="../../../refs.html">Refs</a> | <a href="../../../file/README.md.html">README</a></td></tr></table>
+<hr/>
+<div id="content">
+<p> projects.html (944B)</p><hr/><pre id="blob">
+<a href="#l1" class="line" id="l1">      1</a> {% extends &quot;base.html&quot; %}
+<a href="#l2" class="line" id="l2">      2</a> {% block title %}Projetos compartilhados — Assistente Acadêmico{% endblock %}
+<a href="#l3" class="line" id="l3">      3</a> {% block extra_css %}&lt;link rel=&quot;stylesheet&quot; href=&quot;{{ url_for(&#39;static&#39;, filename=&#39;css/admin.css&#39;) }}&quot;&gt;{% endblock %}
+<a href="#l4" class="line" id="l4">      4</a> {% block content %}
+<a href="#l5" class="line" id="l5">      5</a> &lt;section class=&quot;page-heading&quot;&gt;&lt;p class=&quot;eyebrow&quot;&gt;Administração&lt;/p&gt;&lt;h1&gt;Projetos compartilhados&lt;/h1&gt;&lt;p class=&quot;lead&quot;&gt;Apenas projetos cujo proprietário autorizou leitura aparecem aqui.&lt;/p&gt;&lt;p&gt;&lt;a class=&quot;button&quot; href=&quot;{{ url_for(&#39;admin.accounts&#39;) }}&quot;&gt;Contas e planos&lt;/a&gt;&lt;/p&gt;&lt;/section&gt;
+<a href="#l6" class="line" id="l6">      6</a> &lt;section class=&quot;project-list&quot;&gt;{% for project in projects %}&lt;a class=&quot;project-row&quot; href=&quot;{{ url_for(&#39;admin.project&#39;, project_id=project[&#39;id&#39;]) }}&quot;&gt;&lt;span&gt;&lt;strong&gt;{{ project[&#39;title&#39;] or &#39;Sem título&#39; }}&lt;/strong&gt;&lt;small&gt;{{ project[&#39;project_type&#39;] }} · {{ project[&#39;email&#39;] }}&lt;/small&gt;&lt;/span&gt;&lt;span&gt;Visualizar&lt;/span&gt;&lt;/a&gt;{% else %}&lt;p class=&quot;empty-state&quot;&gt;Nenhum projeto foi compartilhado.&lt;/p&gt;{% endfor %}&lt;/section&gt;
+<a href="#l7" class="line" id="l7">      7</a> {% endblock %}
+</pre>
+</div>
+</body>
+</html>

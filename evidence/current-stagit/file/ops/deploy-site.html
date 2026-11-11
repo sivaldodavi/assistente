@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>deploy-site - assistente-academico - Assistente Acadêmico v2
+</title>
+<link rel="icon" type="image/png" href="../../favicon.png" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed" href="../../atom.xml" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed (tags)" href="../../tags.xml" />
+<link rel="stylesheet" type="text/css" href="../../style.css" />
+</head>
+<body>
+<table><tr><td><a href="../../../"><img src="../../logo.png" alt="" width="32" height="32" /></a></td><td><h1>assistente-academico</h1><span class="desc">Assistente Acadêmico v2
+</span></td></tr><tr class="url"><td></td><td>git clone <a href="git://git.sivaldodavi.com.br/assistente-academico.git">git://git.sivaldodavi.com.br/assistente-academico.git</a></td></tr><tr><td></td><td>
+<a href="../../log.html">Log</a> | <a href="../../files.html">Files</a> | <a href="../../refs.html">Refs</a> | <a href="../../file/README.md.html">README</a></td></tr></table>
+<hr/>
+<div id="content">
+<p> deploy-site (2241B)</p><hr/><pre id="blob">
+<a href="#l1" class="line" id="l1">      1</a> #!/bin/bash
+<a href="#l2" class="line" id="l2">      2</a> # Uso: deploy-site &lt;website|direito|teologia|assistente-academico&gt; [ref]
+<a href="#l3" class="line" id="l3">      3</a> # Instalar em /opt/servidor/deploy-site. Push Git não dispara deploy.
+<a href="#l4" class="line" id="l4">      4</a> set -euo pipefail
+<a href="#l5" class="line" id="l5">      5</a> cd /
+<a href="#l6" class="line" id="l6">      6</a> unset GIT_DIR GIT_WORK_TREE
+<a href="#l7" class="line" id="l7">      7</a> SERVIDOR_DIR=&quot;/opt/servidor&quot;
+<a href="#l8" class="line" id="l8">      8</a> REPOS_DIR=&quot;/home/git/repos&quot;
+<a href="#l9" class="line" id="l9">      9</a> REPO=&quot;${1:-}&quot;; REF=&quot;${2:-main}&quot;
+<a href="#l10" class="line" id="l10">     10</a> case &quot;$REPO&quot; in
+<a href="#l11" class="line" id="l11">     11</a>   website) SITE_DIR=&quot;pessoal&quot;; SERVICE=&quot;pessoal&quot; ;;
+<a href="#l12" class="line" id="l12">     12</a>   direito) SITE_DIR=&quot;direito&quot;; SERVICE=&quot;direito&quot; ;;
+<a href="#l13" class="line" id="l13">     13</a>   teologia) SITE_DIR=&quot;teologia&quot;; SERVICE=&quot;teologia&quot; ;;
+<a href="#l14" class="line" id="l14">     14</a>   assistente-academico) SITE_DIR=&quot;assistente-academico&quot;; SERVICE=&quot;assistente-academico&quot; ;;
+<a href="#l15" class="line" id="l15">     15</a>   *) echo &quot;Uso: deploy-site &lt;website|direito|teologia|assistente-academico&gt; [ref]&quot;; exit 1 ;;
+<a href="#l16" class="line" id="l16">     16</a> esac
+<a href="#l17" class="line" id="l17">     17</a> GIT_REPO=&quot;$REPOS_DIR/$REPO.git&quot;
+<a href="#l18" class="line" id="l18">     18</a> DEST=&quot;$SERVIDOR_DIR/sites/$SITE_DIR&quot;
+<a href="#l19" class="line" id="l19">     19</a> [ -d &quot;$GIT_REPO&quot; ] || { echo &quot;ERRO: repositório não existe&quot;; exit 1; }
+<a href="#l20" class="line" id="l20">     20</a> [ -d &quot;$DEST&quot; ] || { echo &quot;ERRO: diretório de publicação não existe&quot;; exit 1; }
+<a href="#l21" class="line" id="l21">     21</a> exec 9&gt;&quot;/tmp/deploy-site-$SITE_DIR.lock&quot;
+<a href="#l22" class="line" id="l22">     22</a> flock 9
+<a href="#l23" class="line" id="l23">     23</a> STAGE=&quot;$(mktemp -d &quot;$SERVIDOR_DIR/sites/.deploy-$SITE_DIR.XXXXXX&quot;)&quot;
+<a href="#l24" class="line" id="l24">     24</a> trap &#39;rm -rf &quot;$STAGE&quot;&#39; EXIT
+<a href="#l25" class="line" id="l25">     25</a> git --git-dir=&quot;$GIT_REPO&quot; archive &quot;$REF&quot; | tar -x -C &quot;$STAGE&quot;
+<a href="#l26" class="line" id="l26">     26</a> if [ &quot;$REPO&quot; = &quot;assistente-academico&quot; ]; then
+<a href="#l27" class="line" id="l27">     27</a>   for file in Dockerfile requirements.txt wsgi.py app/__init__.py app/store/schema.sql; do
+<a href="#l28" class="line" id="l28">     28</a>     [ -s &quot;$STAGE/$file&quot; ] || { echo &quot;ERRO: falta $file na aplicação Python; deploy cancelado&quot;; exit 1; }
+<a href="#l29" class="line" id="l29">     29</a>   done
+<a href="#l30" class="line" id="l30">     30</a>   [ -d &quot;$STAGE/templates&quot; ] &amp;&amp; [ -d &quot;$STAGE/static&quot; ] || exit 1
+<a href="#l31" class="line" id="l31">     31</a> elif [ ! -d &quot;$STAGE/content&quot; ] || [ -z &quot;$(ls -A &quot;$STAGE/content&quot;)&quot; ]; then
+<a href="#l32" class="line" id="l32">     32</a>   echo &quot;ERRO: o commit não tem content/; deploy cancelado&quot;
+<a href="#l33" class="line" id="l33">     33</a>   exit 1
+<a href="#l34" class="line" id="l34">     34</a> fi
+<a href="#l35" class="line" id="l35">     35</a> if docker compose version &gt;/dev/null 2&gt;&amp;1; then DC=(docker compose); else DC=(docker-compose); fi
+<a href="#l36" class="line" id="l36">     36</a> COMPOSE_ARGS=(--project-directory &quot;$SERVIDOR_DIR&quot; -f &quot;$SERVIDOR_DIR/docker-compose.yml&quot;)
+<a href="#l37" class="line" id="l37">     37</a> if [ &quot;$REPO&quot; = &quot;assistente-academico&quot; ]; then
+<a href="#l38" class="line" id="l38">     38</a>   COMPOSE_ARGS+=(-f &quot;$SERVIDOR_DIR/docker-compose.production.yml&quot;)
+<a href="#l39" class="line" id="l39">     39</a> fi
+<a href="#l40" class="line" id="l40">     40</a> &quot;${DC[@]}&quot; &quot;${COMPOSE_ARGS[@]}&quot; config --quiet
+<a href="#l41" class="line" id="l41">     41</a> # Só código: banco, secrets e catálogo ficam fora de sites/.
+<a href="#l42" class="line" id="l42">     42</a> find &quot;$DEST&quot; -mindepth 1 -maxdepth 1 -exec rm -rf {} +
+<a href="#l43" class="line" id="l43">     43</a> cp -a &quot;$STAGE&quot;/. &quot;$DEST&quot;/
+<a href="#l44" class="line" id="l44">     44</a> echo &quot;==&gt; [$REPO] construindo e publicando $REF&quot;
+<a href="#l45" class="line" id="l45">     45</a> &quot;${DC[@]}&quot; &quot;${COMPOSE_ARGS[@]}&quot; up -d --build --no-deps &quot;$SERVICE&quot;
+<a href="#l46" class="line" id="l46">     46</a> echo &quot;==&gt; [$REPO] container atualizado; verificar healthcheck e domínio.&quot;
+</pre>
+</div>
+</body>
+</html>

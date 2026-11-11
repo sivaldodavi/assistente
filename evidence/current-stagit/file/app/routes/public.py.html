@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>public.py - assistente-academico - Assistente Acadêmico v2
+</title>
+<link rel="icon" type="image/png" href="../../../favicon.png" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed" href="../../../atom.xml" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed (tags)" href="../../../tags.xml" />
+<link rel="stylesheet" type="text/css" href="../../../style.css" />
+</head>
+<body>
+<table><tr><td><a href="../../../../"><img src="../../../logo.png" alt="" width="32" height="32" /></a></td><td><h1>assistente-academico</h1><span class="desc">Assistente Acadêmico v2
+</span></td></tr><tr class="url"><td></td><td>git clone <a href="git://git.sivaldodavi.com.br/assistente-academico.git">git://git.sivaldodavi.com.br/assistente-academico.git</a></td></tr><tr><td></td><td>
+<a href="../../../log.html">Log</a> | <a href="../../../files.html">Files</a> | <a href="../../../refs.html">Refs</a> | <a href="../../../file/README.md.html">README</a></td></tr></table>
+<hr/>
+<div id="content">
+<p> public.py (11398B)</p><hr/><pre id="blob">
+<a href="#l1" class="line" id="l1">      1</a> import json
+<a href="#l2" class="line" id="l2">      2</a> import re
+<a href="#l3" class="line" id="l3">      3</a> import unicodedata
+<a href="#l4" class="line" id="l4">      4</a> from copy import deepcopy
+<a href="#l5" class="line" id="l5">      5</a> from pathlib import Path
+<a href="#l6" class="line" id="l6">      6</a> 
+<a href="#l7" class="line" id="l7">      7</a> from flask import Blueprint, abort, current_app, jsonify, render_template, request, send_from_directory
+<a href="#l8" class="line" id="l8">      8</a> 
+<a href="#l9" class="line" id="l9">      9</a> from ..auth import require_csrf
+<a href="#l10" class="line" id="l10">     10</a> from ..domain.workflow import workflow_sections
+<a href="#l11" class="line" id="l11">     11</a> from ..services.research import ResearchUnavailable, search_catalog, entries_by_ids
+<a href="#l12" class="line" id="l12">     12</a> 
+<a href="#l13" class="line" id="l13">     13</a> 
+<a href="#l14" class="line" id="l14">     14</a> public_bp = Blueprint(&quot;public&quot;, __name__)
+<a href="#l15" class="line" id="l15">     15</a> 
+<a href="#l16" class="line" id="l16">     16</a> 
+<a href="#l17" class="line" id="l17">     17</a> def _camel_case(value):
+<a href="#l18" class="line" id="l18">     18</a>     return re.sub(r&quot;_([a-z])&quot;, lambda match: match.group(1).upper(), value)
+<a href="#l19" class="line" id="l19">     19</a> 
+<a href="#l20" class="line" id="l20">     20</a> 
+<a href="#l21" class="line" id="l21">     21</a> def _demo_workflow_key(model_id, workflow):
+<a href="#l22" class="line" id="l22">     22</a>     if model_id == &quot;civil-personality&quot;:
+<a href="#l23" class="line" id="l23">     23</a>         return &quot;case&quot;, &quot;report&quot;
+<a href="#l24" class="line" id="l24">     24</a>     if model_id == &quot;projeto-paper-modelo&quot;:
+<a href="#l25" class="line" id="l25">     25</a>         return &quot;paper_project&quot;, &quot;paper_project&quot;
+<a href="#l26" class="line" id="l26">     26</a>     if model_id == &quot;paper-final-modelo&quot;:
+<a href="#l27" class="line" id="l27">     27</a>         return &quot;paper_final&quot;, &quot;paper_final&quot;
+<a href="#l28" class="line" id="l28">     28</a>     if workflow.get(&quot;fields&quot;, {}).get(&quot;paperKind&quot;) == &quot;project&quot;:
+<a href="#l29" class="line" id="l29">     29</a>         return &quot;paper_project&quot;, &quot;paper_project&quot;
+<a href="#l30" class="line" id="l30">     30</a>     return &quot;paper_final&quot;, &quot;paper_final&quot;
+<a href="#l31" class="line" id="l31">     31</a> 
+<a href="#l32" class="line" id="l32">     32</a> 
+<a href="#l33" class="line" id="l33">     33</a> def _normalise_demo_title(value):
+<a href="#l34" class="line" id="l34">     34</a>     value = unicodedata.normalize(&quot;NFD&quot;, str(value or &quot;&quot;).casefold())
+<a href="#l35" class="line" id="l35">     35</a>     value = &quot;&quot;.join(character for character in value if unicodedata.category(character) != &quot;Mn&quot;)
+<a href="#l36" class="line" id="l36">     36</a>     return &quot; &quot;.join(value.replace(&quot;·&quot;, &quot; &quot;).replace(&quot;.&quot;, &quot; &quot;).split())
+<a href="#l37" class="line" id="l37">     37</a> 
+<a href="#l38" class="line" id="l38">     38</a> 
+<a href="#l39" class="line" id="l39">     39</a> def _demo_stage_sections(model_id, stage_title, sections):
+<a href="#l40" class="line" id="l40">     40</a>     &quot;&quot;&quot;Relaciona o conteúdo preenchido ao mesmo estágio usado no editor.
+<a href="#l41" class="line" id="l41">     41</a> 
+<a href="#l42" class="line" id="l42">     42</a>     Os modelos legados têm subtítulos vazios (por exemplo, cabeçalhos de
+<a href="#l43" class="line" id="l43">     43</a>     agrupamento). Por isso, a associação não deve depender da posição bruta
+<a href="#l44" class="line" id="l44">     44</a>     da lista de parágrafos: o título do estágio e o título textual da seção
+<a href="#l45" class="line" id="l45">     45</a>     são as identidades estáveis.
+<a href="#l46" class="line" id="l46">     46</a>     &quot;&quot;&quot;
+<a href="#l47" class="line" id="l47">     47</a>     maps = {
+<a href="#l48" class="line" id="l48">     48</a>         &quot;civil-personality&quot;: {
+<a href="#l49" class="line" id="l49">     49</a>             &quot;1 · Descrição do caso&quot;: (&quot;1 descricao do caso&quot;,),
+<a href="#l50" class="line" id="l50">     50</a>             &quot;2.1 · Decisões possíveis&quot;: (&quot;2 1 descricao das decisoes possiveis&quot;,),
+<a href="#l51" class="line" id="l51">     51</a>             &quot;2.2.1 · Argumentação da tese A&quot;: (&quot;2 2 1&quot;,),
+<a href="#l52" class="line" id="l52">     52</a>             &quot;2.2.2 · Argumentação da tese B&quot;: (&quot;2 2 2&quot;,),
+<a href="#l53" class="line" id="l53">     53</a>             &quot;2.3 · Critérios e valores&quot;: (&quot;2 3 descricao dos criterios e valores&quot;,),
+<a href="#l54" class="line" id="l54">     54</a>         },
+<a href="#l55" class="line" id="l55">     55</a>         &quot;projeto-paper-modelo&quot;: {
+<a href="#l56" class="line" id="l56">     56</a>             &quot;Identificação e delimitação&quot;: (&quot;1 tema&quot;, &quot;2 titulo e delimitacao do tema&quot;),
+<a href="#l57" class="line" id="l57">     57</a>             &quot;Problema de pesquisa&quot;: (&quot;3 problema&quot;,),
+<a href="#l58" class="line" id="l58">     58</a>             &quot;Hipótese&quot;: (&quot;4 hipoteses&quot;,),
+<a href="#l59" class="line" id="l59">     59</a>             &quot;Justificativa&quot;: (&quot;5 justificativa&quot;,),
+<a href="#l60" class="line" id="l60">     60</a>             &quot;Objetivos&quot;: (&quot;6 objetivos gerais e especificos&quot;,),
+<a href="#l61" class="line" id="l61">     61</a>             &quot;Referencial teórico&quot;: (&quot;7 referencial teorico&quot;,),
+<a href="#l62" class="line" id="l62">     62</a>             &quot;Metodologia&quot;: (&quot;8 metodologia&quot;,),
+<a href="#l63" class="line" id="l63">     63</a>             &quot;Referências do projeto&quot;: (&quot;9 referencias&quot;,),
+<a href="#l64" class="line" id="l64">     64</a>         },
+<a href="#l65" class="line" id="l65">     65</a>         &quot;paper-final-modelo&quot;: {
+<a href="#l66" class="line" id="l66">     66</a>             &quot;Introdução&quot;: (&quot;1 introducao&quot;,),
+<a href="#l67" class="line" id="l67">     67</a>             &quot;Desenvolvimento&quot;: (&quot;2 o inquerito policial&quot;, &quot;3 a lei&quot;, &quot;4 valor probatorio&quot;),
+<a href="#l68" class="line" id="l68">     68</a>             &quot;Conclusão&quot;: (&quot;5 conclusao&quot;,),
+<a href="#l69" class="line" id="l69">     69</a>             &quot;Referências finais&quot;: (&quot;referencias&quot;,),
+<a href="#l70" class="line" id="l70">     70</a>         },
+<a href="#l71" class="line" id="l71">     71</a>     }
+<a href="#l72" class="line" id="l72">     72</a>     patterns = maps.get(model_id, {}).get(stage_title, ())
+<a href="#l73" class="line" id="l73">     73</a>     if not patterns:
+<a href="#l74" class="line" id="l74">     74</a>         return ()
+<a href="#l75" class="line" id="l75">     75</a>     normalized_sections = [_normalise_demo_title(section.get(&quot;title&quot;)) for section in sections]
+<a href="#l76" class="line" id="l76">     76</a>     return tuple(
+<a href="#l77" class="line" id="l77">     77</a>         index
+<a href="#l78" class="line" id="l78">     78</a>         for index, title in enumerate(normalized_sections)
+<a href="#l79" class="line" id="l79">     79</a>         if any(title.startswith(pattern) for pattern in patterns)
+<a href="#l80" class="line" id="l80">     80</a>     )
+<a href="#l81" class="line" id="l81">     81</a> 
+<a href="#l82" class="line" id="l82">     82</a> 
+<a href="#l83" class="line" id="l83">     83</a> def _build_demo_stages(model_id, workflow, sections):
+<a href="#l84" class="line" id="l84">     84</a>     workflow_key, phase = _demo_workflow_key(model_id, workflow)
+<a href="#l85" class="line" id="l85">     85</a>     values = workflow.get(&quot;fields&quot;, {}) if isinstance(workflow, dict) else {}
+<a href="#l86" class="line" id="l86">     86</a>     stages = []
+<a href="#l87" class="line" id="l87">     87</a>     for index, original in enumerate(workflow_sections(workflow_key)):
+<a href="#l88" class="line" id="l88">     88</a>         if original.get(&quot;phase&quot;, &quot;report&quot;) != phase:
+<a href="#l89" class="line" id="l89">     89</a>             continue
+<a href="#l90" class="line" id="l90">     90</a>         stage = deepcopy(original)
+<a href="#l91" class="line" id="l91">     91</a>         fields = []
+<a href="#l92" class="line" id="l92">     92</a>         for field in stage.get(&quot;fields&quot;, []):
+<a href="#l93" class="line" id="l93">     93</a>             field = deepcopy(field)
+<a href="#l94" class="line" id="l94">     94</a>             field_id = str(field.get(&quot;id&quot;) or &quot;&quot;)
+<a href="#l95" class="line" id="l95">     95</a>             candidates = [field_id, _camel_case(field_id)]
+<a href="#l96" class="line" id="l96">     96</a>             if field_id == &quot;authors&quot;:
+<a href="#l97" class="line" id="l97">     97</a>                 candidates.insert(0, &quot;author&quot;)
+<a href="#l98" class="line" id="l98">     98</a>             field[&quot;value&quot;] = next((values[key] for key in candidates if key in values), &quot;&quot;)
+<a href="#l99" class="line" id="l99">     99</a>             fields.append(field)
+<a href="#l100" class="line" id="l100">    100</a>         stage[&quot;fields&quot;] = fields
+<a href="#l101" class="line" id="l101">    101</a>         if stage.get(&quot;custom&quot;) == &quot;criteria&quot;:
+<a href="#l102" class="line" id="l102">    102</a>             stage[&quot;criteria_text&quot;] = values.get(&quot;criteriaText&quot;, &quot;&quot;)
+<a href="#l103" class="line" id="l103">    103</a>         if stage.get(&quot;custom&quot;) == &quot;development&quot;:
+<a href="#l104" class="line" id="l104">    104</a>             stage[&quot;development_sections&quot;] = values.get(&quot;developmentSections&quot;, [])
+<a href="#l105" class="line" id="l105">    105</a>         stage[&quot;demo_sections&quot;] = [
+<a href="#l106" class="line" id="l106">    106</a>             deepcopy(sections[item])
+<a href="#l107" class="line" id="l107">    107</a>             for item in _demo_stage_sections(model_id, stage.get(&quot;title&quot;, &quot;&quot;), sections)
+<a href="#l108" class="line" id="l108">    108</a>             if item &lt; len(sections)
+<a href="#l109" class="line" id="l109">    109</a>         ]
+<a href="#l110" class="line" id="l110">    110</a>         stages.append(stage)
+<a href="#l111" class="line" id="l111">    111</a>     return stages
+<a href="#l112" class="line" id="l112">    112</a> 
+<a href="#l113" class="line" id="l113">    113</a> 
+<a href="#l114" class="line" id="l114">    114</a> # A demonstração pública usa somente conteúdo estático, anonimizado e versionado.
+<a href="#l115" class="line" id="l115">    115</a> # A fonte de verdade foi extraída dos modelos preenchidos do projeto de referência;
+<a href="#l116" class="line" id="l116">    116</a> # não há conta, projeto ou dado de produção neste arquivo.
+<a href="#l117" class="line" id="l117">    117</a> def _load_demo_models():
+<a href="#l118" class="line" id="l118">    118</a>     source = Path(__file__).resolve().parents[1] / &quot;domain&quot; / &quot;public-models.json&quot;
+<a href="#l119" class="line" id="l119">    119</a>     raw_models = json.loads(source.read_text(encoding=&quot;utf-8&quot;))
+<a href="#l120" class="line" id="l120">    120</a>     models = []
+<a href="#l121" class="line" id="l121">    121</a>     for raw in raw_models:
+<a href="#l122" class="line" id="l122">    122</a>         raw_sections = []
+<a href="#l123" class="line" id="l123">    123</a>         for section in raw.get(&quot;sections&quot;, []):
+<a href="#l124" class="line" id="l124">    124</a>             paragraphs = []
+<a href="#l125" class="line" id="l125">    125</a>             for item in section.get(&quot;paragraphs&quot;, []):
+<a href="#l126" class="line" id="l126">    126</a>                 if isinstance(item, dict) and item.get(&quot;quote&quot;):
+<a href="#l127" class="line" id="l127">    127</a>                     value = f&#39;“{item[&quot;quote&quot;]}”&#39;
+<a href="#l128" class="line" id="l128">    128</a>                 else:
+<a href="#l129" class="line" id="l129">    129</a>                     value = str(item)
+<a href="#l130" class="line" id="l130">    130</a>                 if value.strip():
+<a href="#l131" class="line" id="l131">    131</a>                     paragraphs.append(value)
+<a href="#l132" class="line" id="l132">    132</a>             paragraphs = tuple(paragraphs)
+<a href="#l133" class="line" id="l133">    133</a>             raw_sections.append({&quot;title&quot;: section.get(&quot;title&quot;, &quot;Seção&quot;), &quot;paragraphs&quot;: paragraphs})
+<a href="#l134" class="line" id="l134">    134</a>         sections = [section for section in raw_sections if section[&quot;paragraphs&quot;]]
+<a href="#l135" class="line" id="l135">    135</a>         model_id = raw.get(&quot;id&quot;, &quot;&quot;)
+<a href="#l136" class="line" id="l136">    136</a>         if model_id == &quot;civil-personality&quot;:
+<a href="#l137" class="line" id="l137">    137</a>             question_label = &quot;Questão do caso&quot;
+<a href="#l138" class="line" id="l138">    138</a>             question = next((paragraph for section in sections for paragraph in section[&quot;paragraphs&quot;] if &quot;quais são os limites&quot; in paragraph.lower()), &quot;&quot;)
+<a href="#l139" class="line" id="l139">    139</a>         elif model_id == &quot;projeto-paper-modelo&quot;:
+<a href="#l140" class="line" id="l140">    140</a>             question_label = &quot;Problema de pesquisa&quot;
+<a href="#l141" class="line" id="l141">    141</a>             question = next((section[&quot;paragraphs&quot;][-1] for section in sections if &quot;problema&quot; in section[&quot;title&quot;].lower() and section[&quot;paragraphs&quot;]), &quot;&quot;)
+<a href="#l142" class="line" id="l142">    142</a>         else:
+<a href="#l143" class="line" id="l143">    143</a>             question_label = &quot;Resumo&quot;
+<a href="#l144" class="line" id="l144">    144</a>             question = raw.get(&quot;abstract&quot;, &quot;&quot;)
+<a href="#l145" class="line" id="l145">    145</a>         workflow = deepcopy(raw.get(&quot;workflow&quot;, {}))
+<a href="#l146" class="line" id="l146">    146</a>         field_values = dict(workflow.get(&quot;fields&quot;, {}))
+<a href="#l147" class="line" id="l147">    147</a>         field_values.setdefault(&quot;title&quot;, raw.get(&quot;title&quot;, &quot;&quot;))
+<a href="#l148" class="line" id="l148">    148</a>         field_values.setdefault(&quot;author&quot;, raw.get(&quot;authors&quot;, &quot;&quot;))
+<a href="#l149" class="line" id="l149">    149</a>         field_values.setdefault(&quot;discipline&quot;, raw.get(&quot;discipline&quot;, &quot;&quot;))
+<a href="#l150" class="line" id="l150">    150</a>         field_values.setdefault(&quot;teacher&quot;, raw.get(&quot;teacher&quot;, &quot;&quot;))
+<a href="#l151" class="line" id="l151">    151</a>         field_values.setdefault(&quot;city&quot;, raw.get(&quot;city&quot;, &quot;&quot;))
+<a href="#l152" class="line" id="l152">    152</a>         field_values.setdefault(&quot;year&quot;, raw.get(&quot;year&quot;, &quot;&quot;))
+<a href="#l153" class="line" id="l153">    153</a>         class_info = raw.get(&quot;classInfo&quot;, &quot;&quot;)
+<a href="#l154" class="line" id="l154">    154</a>         if class_info:
+<a href="#l155" class="line" id="l155">    155</a>             field_values.setdefault(&quot;classInfo&quot;, class_info)
+<a href="#l156" class="line" id="l156">    156</a>             field_values.setdefault(&quot;shift&quot;, class_info.split(&quot;,&quot;, 1)[0].strip())
+<a href="#l157" class="line" id="l157">    157</a>             if &quot;,&quot; in class_info:
+<a href="#l158" class="line" id="l158">    158</a>                 field_values.setdefault(&quot;period&quot;, class_info.split(&quot;,&quot;, 1)[1].strip())
+<a href="#l159" class="line" id="l159">    159</a>         workflow[&quot;fields&quot;] = field_values
+<a href="#l160" class="line" id="l160">    160</a>         models.append({
+<a href="#l161" class="line" id="l161">    161</a>             &quot;id&quot;: model_id,
+<a href="#l162" class="line" id="l162">    162</a>             &quot;type_label&quot;: raw.get(&quot;typeLabel&quot;, &quot;Modelo preenchido&quot;),
+<a href="#l163" class="line" id="l163">    163</a>             &quot;title&quot;: raw.get(&quot;title&quot;, &quot;&quot;),
+<a href="#l164" class="line" id="l164">    164</a>             &quot;authors&quot;: raw.get(&quot;authors&quot;, &quot;&quot;),
+<a href="#l165" class="line" id="l165">    165</a>             &quot;discipline&quot;: raw.get(&quot;discipline&quot;, &quot;&quot;),
+<a href="#l166" class="line" id="l166">    166</a>             &quot;teacher&quot;: raw.get(&quot;teacher&quot;, &quot;&quot;),
+<a href="#l167" class="line" id="l167">    167</a>             &quot;class_info&quot;: raw.get(&quot;classInfo&quot;, &quot;&quot;),
+<a href="#l168" class="line" id="l168">    168</a>             &quot;delivery_date&quot;: raw.get(&quot;deliveryDate&quot;, &quot;&quot;),
+<a href="#l169" class="line" id="l169">    169</a>             &quot;city&quot;: raw.get(&quot;city&quot;, &quot;&quot;),
+<a href="#l170" class="line" id="l170">    170</a>             &quot;year&quot;: raw.get(&quot;year&quot;, &quot;&quot;),
+<a href="#l171" class="line" id="l171">    171</a>             &quot;question_label&quot;: question_label,
+<a href="#l172" class="line" id="l172">    172</a>             &quot;question&quot;: question,
+<a href="#l173" class="line" id="l173">    173</a>             &quot;summary&quot;: raw.get(&quot;summary&quot;, &quot;Modelo preenchido em modo somente leitura.&quot;),
+<a href="#l174" class="line" id="l174">    174</a>             &quot;abstract&quot;: raw.get(&quot;abstract&quot;, &quot;&quot;),
+<a href="#l175" class="line" id="l175">    175</a>             &quot;keywords&quot;: raw.get(&quot;keywords&quot;, []),
+<a href="#l176" class="line" id="l176">    176</a>             &quot;sections&quot;: sections,
+<a href="#l177" class="line" id="l177">    177</a>             &quot;citations&quot;: raw.get(&quot;citations&quot;, []),
+<a href="#l178" class="line" id="l178">    178</a>             &quot;sources&quot;: raw.get(&quot;sources&quot;, []),
+<a href="#l179" class="line" id="l179">    179</a>             &quot;workflow&quot;: workflow,
+<a href="#l180" class="line" id="l180">    180</a>             &quot;stages&quot;: _build_demo_stages(model_id, workflow, raw_sections),
+<a href="#l181" class="line" id="l181">    181</a>         })
+<a href="#l182" class="line" id="l182">    182</a>     return tuple(models)
+<a href="#l183" class="line" id="l183">    183</a> 
+<a href="#l184" class="line" id="l184">    184</a> 
+<a href="#l185" class="line" id="l185">    185</a> PUBLIC_DEMO_MODELS = _load_demo_models()
+<a href="#l186" class="line" id="l186">    186</a> _PUBLIC_PIX_NAMES = frozenset({&quot;avulso-ai.svg&quot;, &quot;sem-ia.svg&quot;, &quot;com-ia.svg&quot;})
+<a href="#l187" class="line" id="l187">    187</a> 
+<a href="#l188" class="line" id="l188">    188</a> 
+<a href="#l189" class="line" id="l189">    189</a> @public_bp.get(&quot;/&quot;)
+<a href="#l190" class="line" id="l190">    190</a> def home():
+<a href="#l191" class="line" id="l191">    191</a>     return render_template(
+<a href="#l192" class="line" id="l192">    192</a>         &quot;public/home.html&quot;,
+<a href="#l193" class="line" id="l193">    193</a>         demo_models=PUBLIC_DEMO_MODELS,
+<a href="#l194" class="line" id="l194">    194</a>         google_login=request.args.get(&quot;google_login&quot;, &quot;&quot;),
+<a href="#l195" class="line" id="l195">    195</a>         pricing_only=False,
+<a href="#l196" class="line" id="l196">    196</a>     )
+<a href="#l197" class="line" id="l197">    197</a> 
+<a href="#l198" class="line" id="l198">    198</a> 
+<a href="#l199" class="line" id="l199">    199</a> @public_bp.get(&quot;/planos&quot;, strict_slashes=False)
+<a href="#l200" class="line" id="l200">    200</a> def pricing():
+<a href="#l201" class="line" id="l201">    201</a>     return render_template(
+<a href="#l202" class="line" id="l202">    202</a>         &quot;public/home.html&quot;,
+<a href="#l203" class="line" id="l203">    203</a>         demo_models=PUBLIC_DEMO_MODELS,
+<a href="#l204" class="line" id="l204">    204</a>         google_login=&quot;&quot;,
+<a href="#l205" class="line" id="l205">    205</a>         pricing_only=True,
+<a href="#l206" class="line" id="l206">    206</a>     )
+<a href="#l207" class="line" id="l207">    207</a> 
+<a href="#l208" class="line" id="l208">    208</a> 
+<a href="#l209" class="line" id="l209">    209</a> @public_bp.get(&quot;/termos&quot;, strict_slashes=False)
+<a href="#l210" class="line" id="l210">    210</a> def terms():
+<a href="#l211" class="line" id="l211">    211</a>     return render_template(&quot;public/terms.html&quot;)
+<a href="#l212" class="line" id="l212">    212</a> 
+<a href="#l213" class="line" id="l213">    213</a> 
+<a href="#l214" class="line" id="l214">    214</a> @public_bp.get(&quot;/privacidade&quot;, strict_slashes=False)
+<a href="#l215" class="line" id="l215">    215</a> def privacy():
+<a href="#l216" class="line" id="l216">    216</a>     return render_template(&quot;public/privacy.html&quot;)
+<a href="#l217" class="line" id="l217">    217</a> 
+<a href="#l218" class="line" id="l218">    218</a> 
+<a href="#l219" class="line" id="l219">    219</a> @public_bp.get(&quot;/ajuda-ia&quot;, strict_slashes=False)
+<a href="#l220" class="line" id="l220">    220</a> def ai_help():
+<a href="#l221" class="line" id="l221">    221</a>     return render_template(&quot;public/ai-help.html&quot;)
+<a href="#l222" class="line" id="l222">    222</a> 
+<a href="#l223" class="line" id="l223">    223</a> 
+<a href="#l224" class="line" id="l224">    224</a> @public_bp.get(&quot;/jornada&quot;, strict_slashes=False)
+<a href="#l225" class="line" id="l225">    225</a> def journey():
+<a href="#l226" class="line" id="l226">    226</a>     return render_template(&quot;public/journey.html&quot;)
+<a href="#l227" class="line" id="l227">    227</a> 
+<a href="#l228" class="line" id="l228">    228</a> 
+<a href="#l229" class="line" id="l229">    229</a> @public_bp.get(&quot;/pix/&lt;path:filename&gt;&quot;)
+<a href="#l230" class="line" id="l230">    230</a> def pix_asset(filename):
+<a href="#l231" class="line" id="l231">    231</a>     if filename not in _PUBLIC_PIX_NAMES:
+<a href="#l232" class="line" id="l232">    232</a>         abort(404)
+<a href="#l233" class="line" id="l233">    233</a>     # Use safe_join to prevent path traversal
+<a href="#l234" class="line" id="l234">    234</a>     static_folder = Path(current_app.static_folder)
+<a href="#l235" class="line" id="l235">    235</a>     pix_dir = static_folder / &quot;pix&quot;
+<a href="#l236" class="line" id="l236">    236</a>     # Ensure the resolved path is within pix_dir
+<a href="#l237" class="line" id="l237">    237</a>     file_path = pix_dir / filename
+<a href="#l238" class="line" id="l238">    238</a>     try:
+<a href="#l239" class="line" id="l239">    239</a>         file_path.resolve().relative_to(pix_dir.resolve())
+<a href="#l240" class="line" id="l240">    240</a>     except ValueError:
+<a href="#l241" class="line" id="l241">    241</a>         abort(404)
+<a href="#l242" class="line" id="l242">    242</a>     return send_from_directory(pix_dir, filename, mimetype=&quot;image/svg+xml&quot;, max_age=3600)
+<a href="#l243" class="line" id="l243">    243</a> 
+<a href="#l244" class="line" id="l244">    244</a> 
+<a href="#l245" class="line" id="l245">    245</a> # ──────────────────────────────────────────────
+<a href="#l246" class="line" id="l246">    246</a> # Research Catalog (Public API)
+<a href="#l247" class="line" id="l247">    247</a> # ──────────────────────────────────────────────
+<a href="#l248" class="line" id="l248">    248</a> 
+<a href="#l249" class="line" id="l249">    249</a> @public_bp.get(&quot;/api/research/catalog&quot;)
+<a href="#l250" class="line" id="l250">    250</a> def research_catalog():
+<a href="#l251" class="line" id="l251">    251</a>     &quot;&quot;&quot;Catálogo jurídico público com metadata para auxiliar IA/JEV.&quot;&quot;&quot;
+<a href="#l252" class="line" id="l252">    252</a>     q = request.args.get(&quot;q&quot;, &quot;&quot;).strip()
+<a href="#l253" class="line" id="l253">    253</a>     kind = request.args.get(&quot;kind&quot;)
+<a href="#l254" class="line" id="l254">    254</a>     limit = request.args.get(&quot;limit&quot;, 20, type=int)
+<a href="#l255" class="line" id="l255">    255</a>     limit = max(1, min(limit, 100))
+<a href="#l256" class="line" id="l256">    256</a> 
+<a href="#l257" class="line" id="l257">    257</a>     try:
+<a href="#l258" class="line" id="l258">    258</a>         result = search_catalog(q, kind=kind, limit=limit)
+<a href="#l259" class="line" id="l259">    259</a>     except ResearchUnavailable:
+<a href="#l260" class="line" id="l260">    260</a>         return jsonify({&quot;error&quot;: &quot;catalog_unavailable&quot;, &quot;message&quot;: &quot;O catálogo jurídico não está disponível no momento.&quot;}), 503
+<a href="#l261" class="line" id="l261">    261</a> 
+<a href="#l262" class="line" id="l262">    262</a>     return jsonify({&quot;ok&quot;: True, **result})
+<a href="#l263" class="line" id="l263">    263</a> 
+<a href="#l264" class="line" id="l264">    264</a> 
+<a href="#l265" class="line" id="l265">    265</a> @public_bp.post(&quot;/api/research/catalog/entries&quot;)
+<a href="#l266" class="line" id="l266">    266</a> @require_csrf
+<a href="#l267" class="line" id="l267">    267</a> def research_catalog_entries():
+<a href="#l268" class="line" id="l268">    268</a>     &quot;&quot;&quot;Obtém entradas completas do catálogo por IDs.&quot;&quot;&quot;
+<a href="#l269" class="line" id="l269">    269</a>     body = request.get_json(silent=True) or {}
+<a href="#l270" class="line" id="l270">    270</a>     ids = body.get(&quot;ids&quot;)
+<a href="#l271" class="line" id="l271">    271</a>     if not isinstance(ids, list) or not ids:
+<a href="#l272" class="line" id="l272">    272</a>         return jsonify({&quot;error&quot;: &quot;invalid_ids&quot;, &quot;message&quot;: &quot;Informe uma lista de IDs.&quot;}), 400
+<a href="#l273" class="line" id="l273">    273</a>     ids = [str(id_) for id_ in ids if isinstance(id_, str)][:50]
+<a href="#l274" class="line" id="l274">    274</a> 
+<a href="#l275" class="line" id="l275">    275</a>     try:
+<a href="#l276" class="line" id="l276">    276</a>         entries = entries_by_ids(ids)
+<a href="#l277" class="line" id="l277">    277</a>     except ResearchUnavailable:
+<a href="#l278" class="line" id="l278">    278</a>         return jsonify({&quot;error&quot;: &quot;catalog_unavailable&quot;, &quot;message&quot;: &quot;O catálogo jurídico não está disponível no momento.&quot;}), 503
+<a href="#l279" class="line" id="l279">    279</a> 
+<a href="#l280" class="line" id="l280">    280</a>     return jsonify({&quot;ok&quot;: True, &quot;entries&quot;: entries})
+</pre>
+</div>
+</body>
+</html>

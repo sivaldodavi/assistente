@@ -1,0 +1,637 @@
+[
+  {
+    "id": "civil-personality",
+    "typeLabel": "Relatório de case · Modelo preenchido",
+    "pdfDataAttribute": "caseModelPdf",
+    "title": "Direito da Personalidade",
+    "authors": "Estudante 1\nEstudante 2",
+    "discipline": "Direito Civil I",
+    "teacher": "Docente de demonstração",
+    "classInfo": "Noturno, 2º período",
+    "deliveryDate": "29/09/2026",
+    "city": "Pinheiro — MA",
+    "year": "2026",
+    "sections": [
+      {
+        "title": "1 DESCRIÇÃO DO CASO",
+        "paragraphs": [
+          "Helena, uma influenciadora digital com um grande número de seguidores nas redes sociais, estava produzindo uma série de vídeos sobre uma clínica de estética. Durante uma visita ao local, percebeu um intenso alvoroço e decidiu verificar o que estava acontecendo. Ao chegar, constatou que uma paciente encontrava-se em estado de euforia, manifestando forte insatisfação com o procedimento estético realizado.",
+          "Diante da possibilidade de gerar um conteúdo viral, Helena iniciou a gravação, registrando imagens da fachada e do interior da clínica, bem como do médico responsável, Dr. Rafael, e de uma paciente identificada como Marina. Posteriormente, publicou o vídeo acompanhado da seguinte legenda: “Até quando clínicas poderão esconder dos pacientes o que realmente acontece dentro de seus consultórios?”.",
+          "O vídeo alcançou aproximadamente 600 mil visualizações, gerando ampla repercussão. Em razão disso, o Dr. Rafael ingressou com ação judicial, alegando ter sofrido prejuízos significativos em decorrência da circulação do vídeo, o qual, segundo ele, induzia o público a acreditar que realizava procedimentos ilegais. Marina também ajuizou ação por danos morais contra Helena, sustentando que fora filmada sem consentimento, o que teria acarretado grave prejuízo à sua reputação.",
+          "Diante do ocorrido, quais são os limites da liberdade de expressão quando esta colide com direitos de terceiros, especialmente no que se refere à proteção da honra, da imagem e da reputação?"
+        ]
+      },
+      {
+        "title": "2 IDENTIFICAÇÃO E ANÁLISE DO CASO",
+        "paragraphs": []
+      },
+      {
+        "title": "2.1. Descrição das decisões possíveis",
+        "paragraphs": [
+          "O caso apresenta o limite do direito a liberdade de expressão frente ao direito da personalidade. Pelo primeiro, \"todo ser humano tem direito à liberdade de opinião e expressão; este direito inclui a liberdade de [...] procurar, receber e transmitir informações e ideias por quaisquer meios[...]\" (Declaração Universal dos Direitos Humanos, 1948); pelo segundo \"[se tem] o direito da pessoa de defender o que lhe é próprio, ou seja, a sua integridade física [...], a sua integridade intelectual [...] e a sua integridade moral [...]\" (Diniz, 2025, p. 218).",
+          "Ambos os direitos tem previsão legal: liberdade de expressão esta prevista na Constituição Federal (art. 5º, incisos IV e IX; art. 220), já a personalidade, em especial, no Código Civil (arts. 11 a 21). Além disso, o Marco Civil da Internet, o qual rege as relações entre os internautas, prevê em seu artigo 19 a responsabilidade civil e liberdade no contexto internético (que se aplica ao caso, pois foi feita divulgação pública e informática das imagens).",
+          "No caso concreto, a Helena se utiliza da liberdade de expressão mas, conforme alega a defesa do Dr. Rafael e da Marina, não observa que existe direito da personalidade, atingindo-lhes [os ofendidos] a honra, imagem e reputação. Os dois direitos devem ser ponderados, a fim de entender qual deles prevalecerá.",
+          "Diante dessa análise, existem duas soluções juridicamente possíveis:",
+          "a) Os limites da liberdade de expressão findam quando se atinge o direito de terceiros, principalmente a honra e a imagem.\nb) Os limites da liberdade de expressão não findam, mesmo que se atinja a honra e a imagem de terceiros, quando há denúncia de interesse público."
+        ]
+      },
+      {
+        "title": "2.2 Descrição dos argumentos",
+        "paragraphs": []
+      },
+      {
+        "title": "2.2.1 Os limites da liberdade de expressão findam quando se atinge o direito de terceiros, principalmente a honra e a imagem",
+        "paragraphs": [
+          "A liberdade de expressão é, como todos direito fundamental, não absoluto. Assim, quando esbarra em outro, como o da personalidade, pode ser limitada em favor da defesa de outro bem jurídico mais importante; no caso concreto: a imagem e honra.",
+          "É garantia da Constituição Federal de 1988 a liberdade de expressão, conforme o artigo 5º, inciso IV: “é livre a manifestação do pensamento, sendo vedado o anonimato” (Brasil, Constituição, 1988). Desse modo, o direito de expressão do cidadão brasileiro possui amparo constitucional sendo lícito o seu pleno exercício. Segundo Bentivegna (2019), a liberdade de expressão abrange, de forma ampla, a livre manifestação do pensamento e da opinião. Este é um dos direitos que integram o rol dos direitos da personalidade previstos no Código Civil de 2002.",
+          "A dignidade da pessoa humana, assim como a honra e a privacidade, são outros direitos da personalidade garantidos pelo ordenamento jurídico brasileiro. Segundo Bentivegna, a personalidade pode ser compreendida sob dois diferentes aspectos:",
+          {
+            "quote": "Para parte da doutrina o termo personalidade não é unívoco, podendo ser considerado sob dois diferentes aspectos: a) um ponto de vista estrutural, porquanto respeite à estrutura das situações jurídicas subjetivas, em que a pessoa “tomada em sua subjetividade, identifica-se como o elemento subjetivo das relações jurídicas”. Nesta acepção, é o atributo da pessoa que a habilita a ser titular de relações jurídicas, ou seja, a ser sujeito de direitos e deveres; b) um outro ponto de vista que concebe a personalidade como o conjunto de características e atributos da pessoa e objeto de proteção por parte do ordenamento jurídico (Bentivegna, 2019, p. 6)."
+          },
+          "Percebe-se que, para o autor, a doutrina - embora diferencie as duas visões em aspectos formais e materiais - concorda no sentido de reconhecer que a personalidade possui direito à tutela jurídica.",
+          "No caso concreto, a defesa de Helena sustentou que estava exercendo seu direito à liberdade de expressão e que a retirada do vídeo configuraria censura. Contudo, o Código Civil de 2002, em seu artigo 20, dispõe:",
+          {
+            "quote": "Salvo se autorizadas, ou se necessárias à administração da justiça ou à manutenção da ordem pública, a divulgação de escritos, a transmissão da palavra, ou a publicação, a exposição ou a utilização da imagem de uma pessoa poderão ser proibidas, a seu requerimento e sem prejuízo da indenização que couber, se lhe atingirem a honra, a boa fama ou a respeitabilidade, ou se se destinarem a fins comerciais (Brasil, Código Civil, 2002, art. 20)."
+          },
+          "Na situação em análise, verificou-se, além da violação à honra e à imagem, que o Dr. Rafael comprovou prejuízos materiais, como a perda de contratos profissionais e o cancelamento de consultas, decorrentes da associação de sua imagem a supostas irregularidades. A paciente Mariana, por sua vez, teve sua imagem divulgada sem consentimento, o que expôs aspectos de sua vida privada e gerou constrangimento social e exposição indevida de sua intimidade, em clara violação ao artigo 20 do Código Civil. Assim, conclui-se que a alegação de Helena não encontra respaldo no ordenamento jurídico brasileiro, uma vez que a publicação dos vídeos ocasionou prejuízos ao Dr. Rafael e à paciente Mariana. Dessa forma, a retirada dos vídeos é juridicamente possível, sem que se configure censura. Esses elementos demonstram que a liberdade de expressão, quando exercida de forma abusiva, pode gerar não apenas danos morais, mas também patrimoniais, exigindo limites jurídicos.",
+          "Nesse contexto, Souza e Giacomelli (2018) sustentam que a liberdade de expressão encontra limites quando se choca com outros direitos, como a honra e a imagem. O artigo 220, caput e § 1º, da Constituição Federal dispõe que é livre a manifestação do pensamento no Brasil, desde que resguardados os direitos previstos no artigo 5º (Brasil, 1988). Assim, reafirma-se que nenhum direito é absoluto, impondo-se a necessária ponderação entre princípios constitucionais.",
+          "Essa compreensão também é acolhida pela jurisprudência do Supremo Tribunal Federal. Na ADPF 130/DF, ao tratar da liberdade de imprensa, o STF afirmou que não há direito fundamental absoluto, devendo-se sempre realizar a ponderação entre princípios constitucionais em conflito. Nesse julgamento, destacou-se que a liberdade de expressão, embora essencial à democracia, não pode servir de escudo para práticas que violem a honra, a imagem ou a dignidade da pessoa humana, impondo-se a responsabilização posterior por eventuais abusos.",
+          "Em síntese, a liberdade de expressão possui respaldo constitucional e seu exercício é plenamente válido no ordenamento jurídico brasileiro. Contudo, tanto a legislação quanto a jurisprudência reconhecem que nenhum direito é absoluto, impondo-se a necessária ponderação conforme o artigo 5º da Constituição Federal, que trata dos direitos e garantias fundamentais. Na hipótese examinada, a defesa de Helena sustentou que estava em gozo de seu direito e, por isso, não poderia ser penalizada. Entretanto, o Dr. Rafael e a paciente Mariana são assegurados pela justiça brasileira no sentido de que seus direitos não podem ser violados em razão do exercício abusivo de direitos de terceiros. Dessa forma, prevalece o entendimento de que, diante da colisão de princípios, a honra e a imagem dos requerentes devem ser protegidas, ainda que isso implique restrição proporcional à liberdade de expressão de Helena."
+        ]
+      },
+      {
+        "title": "2.2.2 Os limites da liberdade de expressão não findam, mesmo que se atinja a honra e a imagem de terceiros, quando há denúncia de interesse público",
+        "paragraphs": [
+          "A liberdade de expressão é um direito fundamental, previsto constitucionalmente no artigo 5, inciso IV, cujo diz que “é livre a manifestação do pensamento, sendo vedado o anonimato” (Brasil, Constituição, 1988). A honra e a imagem de terceiros, portanto direitos de personalidade, não prevalecem quando se trata assuntos de pessoa notória e de interesse público.",
+          "O médico responsável pela clinica é notório no contexto de sua atividade profissional, sendo ele, conforme as lições de Cavalieri Filho, (2026, p. 142) “profissionalmente ligado ao público”, não podendo “reclamar um direito de imagem com a mesma extensão daquele conferido aos particulares não comprometidos com a publicidade”. Ora, não se pode aplicar o direito a imagem ao dr. Rafael, naquele contexto, da mesma forma que se aplicaria a um civil.",
+          "Seguindo o mesmo entendimento do doutrinador, a ministra Nancy Andrighi, do STJ, em voto no REsp 1.082.878/RJ, ponderou que a \"doutrina e jurisprudência são pacíficas no entendimento de que pessoas públicas e/ou notórias têm seu direito de imagem mais restrito que pessoas que não ostentem tal característica\" (Brasil, 2008, p. 6).",
+          "Além disso, o fato ocorreu em um local de acesso ao público (o interior da clínica), durante o atendimento, não em um local estritamente privado, mas um ambiente de prestação de serviço de interesse coletivo. Portanto, é à coletividade, e não individualidade, que interessa.",
+          "E o interesse coletivo se demonstra, ainda mais, em face da denúncia, que consistiu na divulgação de possíveis irregularidades. A importância se prova, pois, envolve a saúde, o que concorda Bittar (2015, p. 158) ao dizer que “o direito à imagem sofre, como todos os direitos privados, certas limitações decorrentes de exigências da coleti- vidade”.",
+          "O atual ministro do STF, Luís Roberto Barroso (2026, p. 227), entende que há “alguns [...] elementos a serem ponderados no conflito entre liberdade de expressão/informação e direitos da personalidade”, citando entre estes a “personalidade pública ou privada da pessoa objeto da notícia” e a “existência de interesse público na divulgação do fato”. Assim, tanto a personalidade, no contexto, é notória e, portanto pública; quanto o assunto é de interesse público demonstrado.",
+          "Com isso, a liberdade de expressão não ultrapassou os limites do direito da personalidade, validando-se por se tratar de uma denúncia pública de interesse coletivo e notável relevância."
+        ]
+      },
+      {
+        "title": "2.3. Descrição dos critérios e valores",
+        "paragraphs": [
+          "A solução do caso deve ser orientada pelos seguintes critérios e valores jurídicos:",
+          "a) Direito da personalidade: é o direito a personalidade própria, que inclui integridade física (ex.: imagem e corpo) e psicológica;\nb) Liberdade de expressão: direito que possibilita expressa opinião e pensamento livremente.\nC) Ponderação: aplicação de um princípio/direito em detrimento a outro a depender do caso concreto, sem hierarquizá-los genericamente."
+        ]
+      }
+    ],
+    "citations": [
+      {
+        "type": "Citação direta",
+        "text": "“todo ser humano tem direito à liberdade de opinião e expressão; este direito inclui a liberdade de [...] procurar, receber e transmitir informações e ideias por quaisquer meios[...]” (Declaração Universal dos Direitos Humanos, 1948)."
+      },
+      {
+        "type": "Citação direta",
+        "text": "“é livre a manifestação do pensamento, sendo vedado o anonimato” (Brasil, Constituição, 1988)."
+      },
+      {
+        "type": "Citação indireta narrativa",
+        "text": "Segundo Bentivegna (2019), a liberdade de expressão abrange, de forma ampla, a livre manifestação do pensamento e da opinião."
+      },
+      {
+        "type": "Citação direta longa",
+        "text": "Trecho em bloco, sem aspas externas, com autoria, ano e página ao final: (Bentivegna, 2019, p. 6)."
+      },
+      {
+        "type": "Citação jurisprudencial",
+        "text": "“doutrina e jurisprudência são pacíficas no entendimento de que pessoas públicas e/ou notórias têm seu direito de imagem mais restrito que pessoas que não ostentem tal característica” (Brasil, 2008, p. 6)."
+      }
+    ],
+    "sources": [
+      {
+        "category": "Doutrinária",
+        "reference": "BARROSO, Luís R. Curso de Direito Constitucional Contemporâneo. 14. ed. Rio de Janeiro: SRV, 2026. E-book. ISBN 9786551771620. Disponível em: https://integrada.minhabiblioteca.com.br/reader/books/9786551771620/. Acesso em: 29 set. 2026."
+      },
+      {
+        "category": "Doutrinária",
+        "reference": "BENTIVEGNA, Carlos Frederico B. Liberdade de expressão, honra, imagem e privacidade: os limites entre o lícito e o ilícito. Barueri: Manole, 2019. ISBN 9788520463321. Disponível em: https://integrada.minhabiblioteca.com.br/reader/books/9788520463321/. Acesso em: 19 set. 2026."
+      },
+      {
+        "category": "Doutrinária",
+        "reference": "BITTAR, Carlos A. Os Direitos da Personalidade. 8. ed. Rio de Janeiro: Saraiva Jur, 2015. E-book. ISBN 9788502208292. Disponível em: https://integrada.minhabiblioteca.com.br/reader/books/9788502208292/. Acesso em: 29 set. 2026."
+      },
+      {
+        "category": "Legal",
+        "reference": "BRASIL. [Constituição (1988)]. Constituição da República Federativa do Brasil de 1988. Brasília, DF: Presidência da República, [2016]. Disponível em: https://www.planalto.gov.br/ccivil_03/constituicao/constituicao.htm. Acesso em: 28 set. 2026."
+      },
+      {
+        "category": "Legal",
+        "reference": "BRASIL. Lei nº 10.406, de 10 de janeiro de 2002. Institui o Código Civil. Brasília, DF: Presidência da República, [2002]. Disponível em: https://www.planalto.gov.br/ccivil_03/leis/2002/l10406compilada.htm. Acesso em: 29 set. 2026."
+      },
+      {
+        "category": "Legal",
+        "reference": "BRASIL. Lei nº 12.965, de 23 de abril de 2014. Estabelece princípios, garantias, direitos e deveres para o uso da Internet no Brasil. Brasília, DF: Presidência da República, 2014. Disponível em: https://www.planalto.gov.br/ccivil_03/_ato2011-2014/2014/lei/l12965.htm. Acesso em: 29 set. 2026."
+      },
+      {
+        "category": "Jurisprudencial",
+        "reference": "BRASIL. Superior Tribunal de Justiça. Recurso Especial nº 1.082.878/RJ. Brasília, DF: Superior Tribunal de Justiça, [2008]. Disponível em: https://www.stj.jus.br/websecstj/cgi/revista/REJ.cgi/ATC?seq=4291616&. Acesso em: 29 set. 2026."
+      },
+      {
+        "category": "Jurisprudencial",
+        "reference": "BRASIL. Supremo Tribunal Federal. Tema 562 da Repercussão Geral. Brasília, DF: Supremo Tribunal Federal, [2020]. Disponível em: https://portal.stf.jus.br/jurisprudenciaRepercussao/tema.asp?num=562. Acesso em: 29 set. 2026."
+      },
+      {
+        "category": "Jurisprudencial",
+        "reference": "BRASIL. Supremo Tribunal Federal (Tribunal Pleno). Arguição de Descumprimento de Preceito Fundamental nº 130/DF. Requerente: Partido Trabalhista Brasileiro – PTB. Interessado: Congresso Nacional e Presidente da República. Relator: Min. Carlos Ayres Britto. Julgamento em: 30 abr. 2009. Informa Jurídico, [S. l.], 30 abr. 2009. Disponível em: https://www.stf.jus.br/arquivo/cms/publicacaoBOInternet/anexo/link_download/casos_relevantes/pt/ADPF_130.pdf. Acesso em: 29 set. 2026."
+      },
+      {
+        "category": "Doutrinária",
+        "reference": "CAVALIERI FILHO, Sergio. Programa de Responsabilidade Civil. 17. ed. Rio de Janeiro: Atlas, 2026. E-book. ISBN 9786559778706. Disponível em: https://integrada.minhabiblioteca.com.br/reader/books/9786559778706/. Acesso em: 29 set. 2026."
+      },
+      {
+        "category": "Doutrinária",
+        "reference": "DINIZ, Maria H. Dicionário Jurídico Universitário. 5. ed. Rio de Janeiro: SRV, 2025. ISBN 9788553623594. Disponível em: https://integrada.minhabiblioteca.com.br/reader/books/9788553623594/. Acesso em: 29 set. 2026."
+      },
+      {
+        "category": "Legal",
+        "reference": "ORGANIZAÇÃO DAS NAÇÕES UNIDAS (ONU). Declaração Universal dos Direitos Humanos. Adotada em 10 de dez. de 1948. Resolução 217 A (III). Paris, 1948. Disponível em: https://www.unicef.org/brazil/declaracao-universal-dos-direitos-humanos. Acesso em: 19 set. 2026."
+      },
+      {
+        "category": "Doutrinária",
+        "reference": "SOUSA, Cássio V. S.; GIACOMELLI, Cinthia L. F. Direito civil I. Porto Alegre: SAGAH, 2018. ISBN 9788595024441. Disponível em: https://integrada.minhabiblioteca.com.br/reader/books/9788595024441/. Acesso em: 19 set. 2026."
+      }
+    ],
+    "workflow": {
+      "projectType": "case",
+      "fields": {
+        "title": "Direito da Personalidade",
+        "author": "Estudante 1\nEstudante 2",
+        "profile": "facsure",
+        "institution": "Faculdade Supremo Redentor — FACSUR",
+        "course": "Direito",
+        "discipline": "Direito Civil I",
+        "teacher": "Docente de demonstração",
+        "classInfo": "Noturno, 2º período",
+        "deliveryDate": "29/09/2026",
+        "city": "Pinheiro — MA",
+        "year": "2026",
+        "facts": "Helena, uma influenciadora digital com um grande número de seguidores nas redes sociais, estava produzindo uma série de vídeos sobre uma clínica de estética. Durante uma visita ao local, percebeu um intenso alvoroço e decidiu verificar o que estava acontecendo. Ao chegar, constatou que uma paciente encontrava-se em estado de euforia, manifestando forte insatisfação com o procedimento estético realizado.\n\nDiante da possibilidade de gerar um conteúdo viral, Helena iniciou a gravação, registrando imagens da fachada e do interior da clínica, bem como do médico responsável, Dr. Rafael, e de uma paciente identificada como Marina. Posteriormente, publicou o vídeo acompanhado da seguinte legenda: “Até quando clínicas poderão esconder dos pacientes o que realmente acontece dentro de seus consultórios?”.\n\nO vídeo alcançou aproximadamente 600 mil visualizações, gerando ampla repercussão. Em razão disso, o Dr. Rafael ingressou com ação judicial, alegando ter sofrido prejuízos significativos em decorrência da circulação do vídeo, o qual, segundo ele, induzia o público a acreditar que realizava procedimentos ilegais. Marina também ajuizou ação por danos morais contra Helena, sustentando que fora filmada sem consentimento, o que teria acarretado grave prejuízo à sua reputação.",
+        "problem": "Diante do ocorrido, quais são os limites da liberdade de expressão quando esta colide com direitos de terceiros, especialmente no que se refere à proteção da honra, da imagem e da reputação?",
+        "decisionBasis": "O caso apresenta o limite do direito a liberdade de expressão frente ao direito da personalidade. Pelo primeiro, \"todo ser humano tem direito à liberdade de opinião e expressão; este direito inclui a liberdade de [...] procurar, receber e transmitir informações e ideias por quaisquer meios[...]\" (Declaração Universal dos Direitos Humanos, 1948); pelo segundo \"[se tem] o direito da pessoa de defender o que lhe é próprio, ou seja, a sua integridade física [...], a sua integridade intelectual [...] e a sua integridade moral [...]\" (Diniz, 2025, p. 218).\n\nAmbos os direitos tem previsão legal: liberdade de expressão esta prevista na Constituição Federal (art. 5º, incisos IV e IX; art. 220), já a personalidade, em especial, no Código Civil (arts. 11 a 21). Além disso, o Marco Civil da Internet, o qual rege as relações entre os internautas, prevê em seu artigo 19 a responsabilidade civil e liberdade no contexto internético (que se aplica ao caso, pois foi feita divulgação pública e informática das imagens).\n\nNo caso concreto, a Helena se utiliza da liberdade de expressão mas, conforme alega a defesa do Dr. Rafael e da Marina, não observa que existe direito da personalidade, atingindo-lhes [os ofendidos] a honra, imagem e reputação. Os dois direitos devem ser ponderados, a fim de entender qual deles prevalecerá.\n\nDiante dessa análise, existem duas soluções juridicamente possíveis:",
+        "decisionA": "Os limites da liberdade de expressão findam quando se atinge o direito de terceiros, principalmente a honra e a imagem.",
+        "decisionB": "Os limites da liberdade de expressão não findam, mesmo que se atinja a honra e a imagem de terceiros, quando há denúncia de interesse público.",
+        "thesisATitle": "Os limites da liberdade de expressão findam quando se atinge o direito de terceiros, principalmente a honra e a imagem",
+        "thesisA": "A liberdade de expressão é, como todos direito fundamental, não absoluto. Assim, quando esbarra em outro, como o da personalidade, pode ser limitada em favor da defesa de outro bem jurídico mais importante; no caso concreto: a imagem e honra.\n\nÉ garantia da Constituição Federal de 1988 a liberdade de expressão, conforme o artigo 5º, inciso IV: “é livre a manifestação do pensamento, sendo vedado o anonimato” (Brasil, Constituição, 1988). Desse modo, o direito de expressão do cidadão brasileiro possui amparo constitucional sendo lícito o seu pleno exercício. Segundo Bentivegna (2019), a liberdade de expressão abrange, de forma ampla, a livre manifestação do pensamento e da opinião. Este é um dos direitos que integram o rol dos direitos da personalidade previstos no Código Civil de 2002.\n\nA dignidade da pessoa humana, assim como a honra e a privacidade, são outros direitos da personalidade garantidos pelo ordenamento jurídico brasileiro. Segundo Bentivegna, a personalidade pode ser compreendida sob dois diferentes aspectos:\n\nPara parte da doutrina o termo personalidade não é unívoco, podendo ser considerado sob dois diferentes aspectos: a) um ponto de vista estrutural, porquanto respeite à estrutura das situações jurídicas subjetivas, em que a pessoa “tomada em sua subjetividade, identifica-se como o elemento subjetivo das relações jurídicas”. Nesta acepção, é o atributo da pessoa que a habilita a ser titular de relações jurídicas, ou seja, a ser sujeito de direitos e deveres; b) um outro ponto de vista que concebe a personalidade como o conjunto de características e atributos da pessoa e objeto de proteção por parte do ordenamento jurídico (Bentivegna, 2019, p. 6).\n\nPercebe-se que, para o autor, a doutrina - embora diferencie as duas visões em aspectos formais e materiais - concorda no sentido de reconhecer que a personalidade possui direito à tutela jurídica.\n\nNo caso concreto, a defesa de Helena sustentou que estava exercendo seu direito à liberdade de expressão e que a retirada do vídeo configuraria censura. Contudo, o Código Civil de 2002, em seu artigo 20, dispõe:\n\nSalvo se autorizadas, ou se necessárias à administração da justiça ou à manutenção da ordem pública, a divulgação de escritos, a transmissão da palavra, ou a publicação, a exposição ou a utilização da imagem de uma pessoa poderão ser proibidas, a seu requerimento e sem prejuízo da indenização que couber, se lhe atingirem a honra, a boa fama ou a respeitabilidade, ou se se destinarem a fins comerciais (Brasil, Código Civil, 2002, art. 20).\n\nNa situação em análise, verificou-se, além da violação à honra e à imagem, que o Dr. Rafael comprovou prejuízos materiais, como a perda de contratos profissionais e o cancelamento de consultas, decorrentes da associação de sua imagem a supostas irregularidades. A paciente Mariana, por sua vez, teve sua imagem divulgada sem consentimento, o que expôs aspectos de sua vida privada e gerou constrangimento social e exposição indevida de sua intimidade, em clara violação ao artigo 20 do Código Civil. Assim, conclui-se que a alegação de Helena não encontra respaldo no ordenamento jurídico brasileiro, uma vez que a publicação dos vídeos ocasionou prejuízos ao Dr. Rafael e à paciente Mariana. Dessa forma, a retirada dos vídeos é juridicamente possível, sem que se configure censura. Esses elementos demonstram que a liberdade de expressão, quando exercida de forma abusiva, pode gerar não apenas danos morais, mas também patrimoniais, exigindo limites jurídicos.\n\nNesse contexto, Souza e Giacomelli (2018) sustentam que a liberdade de expressão encontra limites quando se choca com outros direitos, como a honra e a imagem. O artigo 220, caput e § 1º, da Constituição Federal dispõe que é livre a manifestação do pensamento no Brasil, desde que resguardados os direitos previstos no artigo 5º (Brasil, 1988). Assim, reafirma-se que nenhum direito é absoluto, impondo-se a necessária ponderação entre princípios constitucionais.\n\nEssa compreensão também é acolhida pela jurisprudência do Supremo Tribunal Federal. Na ADPF 130/DF, ao tratar da liberdade de imprensa, o STF afirmou que não há direito fundamental absoluto, devendo-se sempre realizar a ponderação entre princípios constitucionais em conflito. Nesse julgamento, destacou-se que a liberdade de expressão, embora essencial à democracia, não pode servir de escudo para práticas que violem a honra, a imagem ou a dignidade da pessoa humana, impondo-se a responsabilização posterior por eventuais abusos.\n\nEm síntese, a liberdade de expressão possui respaldo constitucional e seu exercício é plenamente válido no ordenamento jurídico brasileiro. Contudo, tanto a legislação quanto a jurisprudência reconhecem que nenhum direito é absoluto, impondo-se a necessária ponderação conforme o artigo 5º da Constituição Federal, que trata dos direitos e garantias fundamentais. Na hipótese examinada, a defesa de Helena sustentou que estava em gozo de seu direito e, por isso, não poderia ser penalizada. Entretanto, o Dr. Rafael e a paciente Mariana são assegurados pela justiça brasileira no sentido de que seus direitos não podem ser violados em razão do exercício abusivo de direitos de terceiros. Dessa forma, prevalece o entendimento de que, diante da colisão de princípios, a honra e a imagem dos requerentes devem ser protegidas, ainda que isso implique restrição proporcional à liberdade de expressão de Helena.",
+        "thesisBTitle": "Os limites da liberdade de expressão não findam, mesmo que se atinja a honra e a imagem de terceiros, quando há denúncia de interesse público",
+        "thesisB": "A liberdade de expressão é um direito fundamental, previsto constitucionalmente no artigo 5, inciso IV, cujo diz que “é livre a manifestação do pensamento, sendo vedado o anonimato” (Brasil, Constituição, 1988). A honra e a imagem de terceiros, portanto direitos de personalidade, não prevalecem quando se trata assuntos de pessoa notória e de interesse público.\n\nO médico responsável pela clinica é notório no contexto de sua atividade profissional, sendo ele, conforme as lições de Cavalieri Filho, (2026, p. 142) “profissionalmente ligado ao público”, não podendo “reclamar um direito de imagem com a mesma extensão daquele conferido aos particulares não comprometidos com a publicidade”. Ora, não se pode aplicar o direito a imagem ao dr. Rafael, naquele contexto, da mesma forma que se aplicaria a um civil.\n\nSeguindo o mesmo entendimento do doutrinador, a ministra Nancy Andrighi, do STJ, em voto no REsp 1.082.878/RJ, ponderou que a \"doutrina e jurisprudência são pacíficas no entendimento de que pessoas públicas e/ou notórias têm seu direito de imagem mais restrito que pessoas que não ostentem tal característica\" (Brasil, 2008, p. 6).\n\nAlém disso, o fato ocorreu em um local de acesso ao público (o interior da clínica), durante o atendimento, não em um local estritamente privado, mas um ambiente de prestação de serviço de interesse coletivo. Portanto, é à coletividade, e não individualidade, que interessa.\n\nE o interesse coletivo se demonstra, ainda mais, em face da denúncia, que consistiu na divulgação de possíveis irregularidades. A importância se prova, pois, envolve a saúde, o que concorda Bittar (2015, p. 158) ao dizer que “o direito à imagem sofre, como todos os direitos privados, certas limitações decorrentes de exigências da coleti- vidade”.\n\nO atual ministro do STF, Luís Roberto Barroso (2026, p. 227), entende que há “alguns [...] elementos a serem ponderados no conflito entre liberdade de expressão/informação e direitos da personalidade”, citando entre estes a “personalidade pública ou privada da pessoa objeto da notícia” e a “existência de interesse público na divulgação do fato”. Assim, tanto a personalidade, no contexto, é notória e, portanto pública; quanto o assunto é de interesse público demonstrado.\n\nCom isso, a liberdade de expressão não ultrapassou os limites do direito da personalidade, validando-se por se tratar de uma denúncia pública de interesse coletivo e notável relevância.",
+        "criteriaText": "A solução do caso deve ser orientada pelos seguintes critérios e valores jurídicos:\n\na) Direito da personalidade: é o direito a personalidade própria, que inclui integridade física (ex.: imagem e corpo) e psicológica;\nb) Liberdade de expressão: direito que possibilita expressa opinião e pensamento livremente.\nC) Ponderação: aplicação de um princípio/direito em detrimento a outro a depender do caso concreto, sem hierarquizá-los genericamente."
+      },
+      "checks": {},
+      "sources": [
+        {
+          "category": "doctrine",
+          "referenceType": "manual",
+          "reference": "BARROSO, Luís R. Curso de Direito Constitucional Contemporâneo. 14. ed. Rio de Janeiro: SRV, 2026. E-book. ISBN 9786551771620. Disponível em: https://integrada.minhabiblioteca.com.br/reader/books/9786551771620/. Acesso em: 29 set. 2026.",
+          "cited": true
+        },
+        {
+          "category": "doctrine",
+          "referenceType": "manual",
+          "reference": "BENTIVEGNA, Carlos Frederico B. Liberdade de expressão, honra, imagem e privacidade: os limites entre o lícito e o ilícito. Barueri: Manole, 2019. ISBN 9788520463321. Disponível em: https://integrada.minhabiblioteca.com.br/reader/books/9788520463321/. Acesso em: 19 set. 2026.",
+          "cited": true
+        },
+        {
+          "category": "doctrine",
+          "referenceType": "manual",
+          "reference": "BITTAR, Carlos A. Os Direitos da Personalidade. 8. ed. Rio de Janeiro: Saraiva Jur, 2015. E-book. ISBN 9788502208292. Disponível em: https://integrada.minhabiblioteca.com.br/reader/books/9788502208292/. Acesso em: 29 set. 2026.",
+          "cited": true
+        },
+        {
+          "category": "legal",
+          "referenceType": "legislation",
+          "reference": "BRASIL. [Constituição (1988)]. Constituição da República Federativa do Brasil de 1988. Brasília, DF: Presidência da República, [2016]. Disponível em: https://www.planalto.gov.br/ccivil_03/constituicao/constituicao.htm. Acesso em: 28 set. 2026.",
+          "cited": true
+        },
+        {
+          "category": "legal",
+          "referenceType": "legislation",
+          "reference": "BRASIL. Lei nº 10.406, de 10 de janeiro de 2002. Institui o Código Civil. Brasília, DF: Presidência da República, [2002]. Disponível em: https://www.planalto.gov.br/ccivil_03/leis/2002/l10406compilada.htm. Acesso em: 29 set. 2026.",
+          "cited": true
+        },
+        {
+          "category": "legal",
+          "referenceType": "legislation",
+          "reference": "BRASIL. Lei nº 12.965, de 23 de abril de 2014. Estabelece princípios, garantias, direitos e deveres para o uso da Internet no Brasil. Brasília, DF: Presidência da República, 2014. Disponível em: https://www.planalto.gov.br/ccivil_03/_ato2011-2014/2014/lei/l12965.htm. Acesso em: 29 set. 2026.",
+          "cited": true
+        },
+        {
+          "category": "case-law",
+          "referenceType": "case-law",
+          "reference": "BRASIL. Superior Tribunal de Justiça. Recurso Especial nº 1.082.878/RJ. Brasília, DF: Superior Tribunal de Justiça, [2008]. Disponível em: https://www.stj.jus.br/websecstj/cgi/revista/REJ.cgi/ATC?seq=4291616&. Acesso em: 29 set. 2026.",
+          "cited": true
+        },
+        {
+          "category": "case-law",
+          "referenceType": "case-law",
+          "reference": "BRASIL. Supremo Tribunal Federal. Tema 562 da Repercussão Geral. Brasília, DF: Supremo Tribunal Federal, [2020]. Disponível em: https://portal.stf.jus.br/jurisprudenciaRepercussao/tema.asp?num=562. Acesso em: 29 set. 2026.",
+          "cited": true
+        },
+        {
+          "category": "case-law",
+          "referenceType": "case-law",
+          "reference": "BRASIL. Supremo Tribunal Federal (Tribunal Pleno). Arguição de Descumprimento de Preceito Fundamental nº 130/DF. Requerente: Partido Trabalhista Brasileiro – PTB. Interessado: Congresso Nacional e Presidente da República. Relator: Min. Carlos Ayres Britto. Julgamento em: 30 abr. 2009. Informa Jurídico, [S. l.], 30 abr. 2009. Disponível em: https://www.stf.jus.br/arquivo/cms/publicacaoBOInternet/anexo/link_download/casos_relevantes/pt/ADPF_130.pdf. Acesso em: 29 set. 2026.",
+          "cited": true
+        },
+        {
+          "category": "doctrine",
+          "referenceType": "manual",
+          "reference": "CAVALIERI FILHO, Sergio. Programa de Responsabilidade Civil. 17. ed. Rio de Janeiro: Atlas, 2026. E-book. ISBN 9786559778706. Disponível em: https://integrada.minhabiblioteca.com.br/reader/books/9786559778706/. Acesso em: 29 set. 2026.",
+          "cited": true
+        },
+        {
+          "category": "doctrine",
+          "referenceType": "manual",
+          "reference": "DINIZ, Maria H. Dicionário Jurídico Universitário. 5. ed. Rio de Janeiro: SRV, 2025. ISBN 9788553623594. Disponível em: https://integrada.minhabiblioteca.com.br/reader/books/9788553623594/. Acesso em: 29 set. 2026.",
+          "cited": true
+        },
+        {
+          "category": "legal",
+          "referenceType": "online",
+          "reference": "ORGANIZAÇÃO DAS NAÇÕES UNIDAS (ONU). Declaração Universal dos Direitos Humanos. Adotada em 10 de dez. de 1948. Resolução 217 A (III). Paris, 1948. Disponível em: https://www.unicef.org/brazil/declaracao-universal-dos-direitos-humanos. Acesso em: 19 set. 2026.",
+          "cited": true
+        },
+        {
+          "category": "doctrine",
+          "referenceType": "manual",
+          "reference": "SOUSA, Cássio V. S.; GIACOMELLI, Cinthia L. F. Direito civil I. Porto Alegre: SAGAH, 2018. ISBN 9788595024441. Disponível em: https://integrada.minhabiblioteca.com.br/reader/books/9788595024441/. Acesso em: 19 set. 2026.",
+          "cited": true
+        }
+      ]
+    }
+  },
+  {
+    "id": "projeto-paper-modelo",
+    "typeLabel": "Projeto de Paper",
+    "title": "O CONTRADITÓRIO NO INQUÉRITO POLICIAL APÓS A LEI Nº 13.245/2016: reflexos no valor probatório",
+    "authors": "Estudante 1\nEstudante 2",
+    "discipline": "Metodologia Científica",
+    "teacher": "Docente de demonstração",
+    "classInfo": "Noturno, 5º período",
+    "deliveryDate": "",
+    "city": "Pinheiro — MA",
+    "year": "2026",
+    "summary": "Modelo de projeto de paper no padrão do manual da disciplina (4 pontos): tema, título e delimitação, problema, hipóteses, justificativa, objetivos, referencial teórico, metodologia e referências.",
+    "sections": [
+      {
+        "title": "1 TEMA",
+        "paragraphs": [
+          "Inquérito policial e garantias da defesa: a participação do advogado na investigação criminal."
+        ]
+      },
+      {
+        "title": "2 TÍTULO E DELIMITAÇÃO DO TEMA",
+        "paragraphs": [
+          "O CONTRADITÓRIO NO INQUÉRITO POLICIAL APÓS A LEI Nº 13.245/2016: reflexos no valor probatório.",
+          "Delimitação: investigação criminal no Brasil a partir da alteração do art. 7º do Estatuto da OAB pela Lei nº 13.245/2016, com foco na participação do advogado e no valor probatório dos atos do inquérito."
+        ]
+      },
+      {
+        "title": "3 PROBLEMA",
+        "paragraphs": [
+          "Desde a Lei nº 13.245/2016, o advogado pode examinar autos de investigação e acompanhar o interrogatório e os depoimentos do cliente investigado. Como o inquérito policial é tradicionalmente tratado como peça informativa, sem contraditório, a alteração legislativa levanta dúvidas sobre o alcance prático da presença da defesa nessa fase e sobre o peso que seus atos podem ter no processo.",
+          "A participação da defesa técnica na fase investigatória altera o valor probatório dos atos do inquérito policial?"
+        ]
+      },
+      {
+        "title": "4 HIPÓTESES",
+        "paragraphs": [
+          "H1. A presença do advogado confere maior regularidade e confiabilidade aos atos do inquérito, o que amplia sua utilidade para a defesa.",
+          "H2. A participação defensiva não converte o inquérito em processo judicial; os atos investigatórios continuam dependendo de confirmação em juízo para fundamentar a condenação, conforme o art. 155 do Código de Processo Penal."
+        ]
+      },
+      {
+        "title": "5 JUSTIFICATIVA",
+        "paragraphs": [
+          "O tema interessa à formação jurídica porque define como a defesa atua desde o início da persecução penal e quais elementos podem chegar ao processo. A pesquisa busca organizar os argumentos doutrinários sobre uma alteração legislativa com impacto prático na atuação dos advogados e na análise das nulidades."
+        ]
+      },
+      {
+        "title": "6 OBJETIVOS GERAIS E ESPECÍFICOS",
+        "paragraphs": [
+          "6.1 Objetivo geral: Analisar se a participação da defesa técnica no inquérito policial altera o valor probatório dos atos investigatórios.",
+          "6.2 Objetivos específicos:",
+          "a) Caracterizar o inquérito policial e sua finalidade.",
+          "b) Examinar as alterações promovidas pela Lei nº 13.245/2016 no art. 7º do Estatuto da OAB.",
+          "c) Discutir os limites do art. 155 do Código de Processo Penal diante dessa mudança."
+        ]
+      },
+      {
+        "title": "7 REFERENCIAL TEÓRICO",
+        "paragraphs": [
+          "A pesquisa apoia-se na Constituição Federal (art. 5º, LV), no Código de Processo Penal (arts. 9º e 155) e no Estatuto da OAB, alterado pela Lei nº 13.245/2016. Na doutrina, o estudo parte dos manuais de processo penal, que tratam o inquérito como procedimento preparatório e discutem sua inquisitividade, e da Súmula Vinculante nº 14 do Supremo Tribunal Federal, sobre o acesso do defensor aos elementos de prova já documentados."
+        ]
+      },
+      {
+        "title": "8 METODOLOGIA",
+        "paragraphs": [
+          "Pesquisa bibliográfica e documental, de abordagem qualitativa e método dedutivo. O levantamento será feito em livros e artigos jurídicos publicados após 2016, na legislação e na jurisprudência do Supremo Tribunal Federal disponível em bases oficiais. Cada fonte será registrada com referência completa e as informações serão organizadas em fichamentos antes da redação dos tópicos."
+        ]
+      },
+      {
+        "title": "9 REFERÊNCIAS",
+        "paragraphs": [
+          "BRASIL. Constituição da República Federativa do Brasil de 1988. Brasília, DF: Presidência da República, 1988.",
+          "BRASIL. Decreto-Lei nº 3.689, de 3 de outubro de 1941. Código de Processo Penal. Rio de Janeiro: Presidência da República, 1941.",
+          "BRASIL. Lei nº 8.906, de 4 de julho de 1994. Dispõe sobre o Estatuto da Advocacia e a Ordem dos Advogados do Brasil (OAB). Brasília, DF: Presidência da República, 1994.",
+          "BRASIL. Lei nº 13.245, de 12 de janeiro de 2016. Altera a Lei nº 8.906, de 4 de julho de 1994, para assegurar a participação do advogado na investigação criminal. Brasília, DF: Presidência da República, 2016.",
+          "BRASIL. Supremo Tribunal Federal. Súmula Vinculante nº 14. Brasília, DF: STF, 2009.",
+          "CAPEZ, Fernando. Curso de processo penal. [edição]. São Paulo: Saraiva, [ano].",
+          "LOPES JR., Aury. Direito processual penal. [edição]. São Paulo: Saraiva, [ano]."
+        ]
+      }
+    ],
+    "citations": [],
+    "sources": [
+      {
+        "category": "Legal",
+        "reference": "BRASIL. Constituição da República Federativa do Brasil de 1988. Brasília, DF: Presidência da República, 1988."
+      },
+      {
+        "category": "Legal",
+        "reference": "BRASIL. Decreto-Lei nº 3.689, de 3 de outubro de 1941. Código de Processo Penal. Rio de Janeiro: Presidência da República, 1941."
+      },
+      {
+        "category": "Legal",
+        "reference": "BRASIL. Lei nº 8.906, de 4 de julho de 1994. Dispõe sobre o Estatuto da Advocacia e a Ordem dos Advogados do Brasil (OAB). Brasília, DF: Presidência da República, 1994."
+      },
+      {
+        "category": "Legal",
+        "reference": "BRASIL. Lei nº 13.245, de 12 de janeiro de 2016. Altera a Lei nº 8.906, de 4 de julho de 1994, para assegurar a participação do advogado na investigação criminal. Brasília, DF: Presidência da República, 2016."
+      },
+      {
+        "category": "Legal",
+        "reference": "BRASIL. Supremo Tribunal Federal. Súmula Vinculante nº 14. Brasília, DF: STF, 2009."
+      },
+      {
+        "category": "Doutrinária",
+        "reference": "CAPEZ, Fernando. Curso de processo penal. [edição]. São Paulo: Saraiva, [ano]."
+      },
+      {
+        "category": "Doutrinária",
+        "reference": "LOPES JR., Aury. Direito processual penal. [edição]. São Paulo: Saraiva, [ano]."
+      }
+    ],
+    "workflow": {
+      "projectType": "paper",
+      "fields": {
+        "paperKind": "project",
+        "title": "O CONTRADITÓRIO NO INQUÉRITO POLICIAL APÓS A LEI Nº 13.245/2016: reflexos no valor probatório",
+        "author": "Estudante 1\nEstudante 2",
+        "institution": "Faculdade Supremo Redentor — FACSUR",
+        "course": "Direito",
+        "discipline": "Metodologia Científica",
+        "teacher": "Docente de demonstração",
+        "classInfo": "Noturno, 5º período",
+        "city": "Pinheiro — MA",
+        "year": "2026",
+        "problemContext": "Desde a Lei nº 13.245/2016, o advogado pode examinar autos de investigação e acompanhar o interrogatório e os depoimentos do cliente investigado. Como o inquérito policial é tradicionalmente tratado como peça informativa, sem contraditório, a alteração legislativa levanta dúvidas sobre o alcance prático da presença da defesa nessa fase e sobre o peso que seus atos podem ter no processo.",
+        "problem": "A participação da defesa técnica na fase investigatória altera o valor probatório dos atos do inquérito policial?",
+        "hypothesis": "H1. A presença do advogado confere maior regularidade e confiabilidade aos atos do inquérito, o que amplia sua utilidade para a defesa.\n\nH2. A participação defensiva não converte o inquérito em processo judicial; os atos investigatórios continuam dependendo de confirmação em juízo para fundamentar a condenação, conforme o art. 155 do Código de Processo Penal.",
+        "objectiveGeneral": "Analisar se a participação da defesa técnica no inquérito policial altera o valor probatório dos atos investigatórios.",
+        "objective1": "Caracterizar o inquérito policial e sua finalidade.",
+        "objective2": "Examinar as alterações promovidas pela Lei nº 13.245/2016 no art. 7º do Estatuto da OAB.",
+        "objective3": "Discutir os limites do art. 155 do Código de Processo Penal diante dessa mudança.",
+        "justification": "O tema interessa à formação jurídica porque define como a defesa atua desde o início da persecução penal e quais elementos podem chegar ao processo. A pesquisa busca organizar os argumentos doutrinários sobre uma alteração legislativa com impacto prático na atuação dos advogados e na análise das nulidades.",
+        "theory": "A pesquisa apoia-se na Constituição Federal (art. 5º, LV), no Código de Processo Penal (arts. 9º e 155) e no Estatuto da OAB, alterado pela Lei nº 13.245/2016. Na doutrina, o estudo parte dos manuais de processo penal, que tratam o inquérito como procedimento preparatório e discutem sua inquisitividade, e da Súmula Vinculante nº 14 do Supremo Tribunal Federal, sobre o acesso do defensor aos elementos de prova já documentados.",
+        "instruments": "Pesquisa bibliográfica e documental, de abordagem qualitativa e método dedutivo. O levantamento será feito em livros e artigos jurídicos publicados após 2016, na legislação e na jurisprudência do Supremo Tribunal Federal disponível em bases oficiais. Cada fonte será registrada com referência completa e as informações serão organizadas em fichamentos antes da redação dos tópicos.",
+        "profile": "facsure",
+        "delimitation": "investigação criminal no Brasil a partir da alteração do art. 7º do Estatuto da OAB pela Lei nº 13.245/2016, com foco na participação do advogado e no valor probatório dos atos do inquérito.",
+        "researchContext": "Desde a Lei nº 13.245/2016, o advogado pode examinar autos de investigação e acompanhar o interrogatório e os depoimentos do cliente investigado. Como o inquérito policial é tradicionalmente tratado como peça informativa, sem contraditório, a alteração legislativa levanta dúvidas sobre o alcance prático da presença da defesa nessa fase e sobre o peso que seus atos podem ter no processo.",
+        "researchObject": "A participação da defesa técnica na fase investigatória e o valor probatório dos atos do inquérito policial.",
+        "nature": "Bibliográfica e documental",
+        "approach": "Qualitativa",
+        "procedure": "Levantamento em livros e artigos jurídicos publicados após 2016, na legislação e na jurisprudência do Supremo Tribunal Federal disponível em bases oficiais."
+      },
+      "sources": [
+        {
+          "category": "legal",
+          "reference": "BRASIL. Constituição da República Federativa do Brasil de 1988. Brasília, DF: Presidência da República, 1988.",
+          "cited": true
+        },
+        {
+          "category": "legal",
+          "reference": "BRASIL. Decreto-Lei nº 3.689, de 3 de outubro de 1941. Código de Processo Penal. Rio de Janeiro: Presidência da República, 1941.",
+          "cited": true
+        },
+        {
+          "category": "legal",
+          "reference": "BRASIL. Lei nº 8.906, de 4 de julho de 1994. Dispõe sobre o Estatuto da Advocacia e a Ordem dos Advogados do Brasil (OAB). Brasília, DF: Presidência da República, 1994.",
+          "cited": true
+        },
+        {
+          "category": "legal",
+          "reference": "BRASIL. Lei nº 13.245, de 12 de janeiro de 2016. Altera a Lei nº 8.906, de 4 de julho de 1994, para assegurar a participação do advogado na investigação criminal. Brasília, DF: Presidência da República, 2016.",
+          "cited": true
+        },
+        {
+          "category": "legal",
+          "reference": "BRASIL. Supremo Tribunal Federal. Súmula Vinculante nº 14. Brasília, DF: STF, 2009.",
+          "cited": true
+        },
+        {
+          "category": "doctrine",
+          "reference": "CAPEZ, Fernando. Curso de processo penal. [edição]. São Paulo: Saraiva, [ano].",
+          "cited": true
+        },
+        {
+          "category": "doctrine",
+          "reference": "LOPES JR., Aury. Direito processual penal. [edição]. São Paulo: Saraiva, [ano].",
+          "cited": true
+        }
+      ]
+    }
+  },
+  {
+    "id": "paper-final-modelo",
+    "typeLabel": "Paper Final",
+    "title": "A LEI Nº 13.245/2016 E O VALOR PROBATÓRIO DO INQUÉRITO POLICIAL: a participação da defesa na investigação criminal",
+    "authors": "Estudante 1\nEstudante 2",
+    "discipline": "Processual Penal I",
+    "teacher": "Docente de demonstração",
+    "classInfo": "Noturno, 5º período",
+    "deliveryDate": "",
+    "city": "Pinheiro — MA",
+    "year": "2026",
+    "summary": "Modelo de paper final no padrão do manual da disciplina: resumo, palavras-chave, introdução com problema, hipótese e objetivos, dois ou três tópicos de desenvolvimento, conclusão com desfecho e referências.",
+    "abstract": "A Lei nº 13.245/2016 alterou o art. 7º da Lei nº 8.906/1994 (Estatuto da Advocacia e da OAB) para ampliar a atuação do advogado na investigação criminal, ao permitir o exame de autos de investigações de qualquer natureza e a presença do defensor nos interrogatórios e depoimentos do cliente investigado. A mudança reacendeu a discussão sobre a natureza informativa do inquérito policial, tradicionalmente afastado do contraditório e da ampla defesa, e sobre a possibilidade de seus elementos influenciarem a formação da convicção no processo penal. Este trabalho analisa, por meio de pesquisa bibliográfica e documental, se a participação da defesa técnica nessa fase altera o valor probatório dos atos investigatórios. Examinam-se a finalidade do inquérito, o alcance do art. 155 do Código de Processo Penal, a Súmula Vinculante nº 14 do Supremo Tribunal Federal e a garantia constitucional do contraditório e da ampla defesa. Conclui-se que a presença do advogado não converte o inquérito em processo judicial, mas reforça a regularidade dos atos e a confiabilidade dos elementos colhidos, sem dispensar sua confirmação em juízo para fundamentar a condenação.",
+    "keywords": "Ampla defesa. Contraditório. Inquérito policial. Lei nº 13.245/2016. Valor probatório.",
+    "sections": [
+      {
+        "title": "1 INTRODUÇÃO",
+        "paragraphs": [
+          "O inquérito policial é o principal instrumento de apuração de infrações penais no Brasil. Por muito tempo, prevaleceu a leitura de que se trata de procedimento administrativo, inquisitivo e destinado a reunir elementos para que o titular da ação penal decida sobre sua propositura. Essa concepção explica por que, como regra, seus atos não eram submetidos ao contraditório nem ao exercício pleno da ampla defesa.",
+          "A Lei nº 13.245, de 12 de janeiro de 2016, alterou esse cenário ao modificar o art. 7º da Lei nº 8.906, de 4 de julho de 1994 (BRASIL, 2016). A norma ampliou o direito de o advogado examinar autos de investigações e autorizou sua presença durante o interrogatório e os depoimentos do cliente investigado. O tema é relevante porque afeta a forma como a defesa atua desde o início da persecução penal e o tipo de material que pode chegar ao processo.",
+          "Diante disso, o problema que orienta este trabalho é o seguinte: a participação da defesa técnica na fase investigatória altera o valor probatório dos atos do inquérito policial? A hipótese inicial é que a presença do defensor qualifica a regularidade dos atos sem convertê-los em prova plena, que continua dependendo de confirmação em juízo. O objetivo geral é analisar essa alteração à luz do texto legal, da Constituição Federal, da doutrina e da jurisprudência do Supremo Tribunal Federal.",
+          "Como objetivos específicos, busca-se caracterizar o inquérito policial e sua finalidade, examinar as modificações introduzidas pela Lei nº 13.245/2016 e discutir os limites do art. 155 do Código de Processo Penal diante da nova disciplina. A pesquisa é bibliográfica e documental, de abordagem qualitativa e método dedutivo, partindo dos princípios constitucionais do contraditório e da ampla defesa para avaliar a norma infraconstitucional."
+        ]
+      },
+      {
+        "title": "2 O INQUÉRITO POLICIAL: NATUREZA, FINALIDADE E INFORMATIVIDADE",
+        "paragraphs": [
+          "O inquérito policial é um procedimento administrativo, presidido pela autoridade policial, que reúne elementos sobre a materialidade e a autoria de infração penal (CAPEZ, [ano]). Sua função imediata é subsidiar o titular da ação penal na decisão de denunciar ou de requerer o arquivamento. A doutrina costuma destacar que se trata de peça dispensável, pois a ação penal pode ser proposta com base em outros elementos de convicção, além de ser, em regra, escrita e sigilosa, nos termos do Código de Processo Penal (BRASIL, 1941).",
+          "Quanto à inquisitividade, a leitura tradicional sustenta que, nessa fase, não há contraditório nem ampla defesa, porque ainda não existe acusação formal contra o investigado. Essa característica se relaciona à regra do art. 155 do Código de Processo Penal, segundo a qual o juiz não pode fundamentar a decisão exclusivamente em elementos informativos colhidos na investigação. A exceção se restringe às provas cautelares, não repetíveis e antecipadas, cuja produção antes do processo se justifica pela urgência ou pela impossibilidade de repetição (BRASIL, 1941).",
+          "Daí a conhecida informatividade do inquérito: seus atos orientam a acusação, mas não bastam, por si, para sustentar a condenação. A Súmula Vinculante nº 14 do Supremo Tribunal Federal reforça essa lógica ao garantir ao defensor acesso amplo aos elementos de prova já documentados que digam respeito ao exercício do direito de defesa (BRASIL, 2009). A súmula, porém, trata do acesso às provas, não da participação do defensor na produção delas, o que deixa em aberto o ponto central deste trabalho."
+        ]
+      },
+      {
+        "title": "3 A LEI Nº 13.245/2016 E A PRESENÇA DA DEFESA NA INVESTIGAÇÃO",
+        "paragraphs": [
+          "A Lei nº 13.245/2016 alterou dois incisos do art. 7º do Estatuto da OAB (BRASIL, 2016). O inciso XIV passou a garantir ao advogado o exame de autos de investigação conduzida por qualquer instituição, e não apenas em repartições policiais, abrangendo investigações de qualquer natureza, findas ou em andamento, ainda que conclusas à autoridade. O advogado pode copiar peças e tomar apontamentos, em meio físico ou digital, mesmo sem procuração, o que lhe permite avaliar o caso antes de firmar contrato (BRASIL, 1994).",
+          "O inciso XXI, incluído pela mesma lei, assegura ao advogado assistir ao cliente investigado durante a apuração de infrações. A lei condiciona a validade do interrogatório ou do depoimento a essa assistência, sob pena de nulidade absoluta do ato e dos elementos investigatórios e probatórios dele decorrentes, direta ou indiretamente. Nessa fase, o defensor pode apresentar razões e quesitos (BRASIL, 1994). A redação indica que a presença do advogado é uma garantia do investigado, e não uma obrigação imposta à defesa, que pode optar por acompanhar ou não o ato quando a assistência não for exigida.",
+          "Essas alterações produzem um efeito prático relevante: a defesa passa a ter meios de controlar a legalidade da coleta de declarações e de registrar sua participação. Se o ato for realizado sem a assistência que a lei exige, a consequência é a nulidade, o que torna o próprio procedimento objeto de controle pela defesa desde a fase inicial."
+        ]
+      },
+      {
+        "title": "4 VALOR PROBATÓRIO DOS ATOS INVESTIGATÓRIOS E LIMITES DO CONTRADITÓRIO",
+        "paragraphs": [
+          "A doutrina se divide diante dessas mudanças. Uma corrente sustenta que a presença do advogado não altera a natureza do inquérito, que permanece informativo, porque não há acusação formalizada nem relação processual (LOPES JR., [ano]). Outra corrente entende que a participação defensiva introduz uma forma de contraditório na investigação, conferindo maior confiabilidade aos atos e fortalecendo sua utilização no processo.",
+          "A discussão se concentra no conceito de contraditório. Em sentido estrito, ele pressupõe a relação processual e a possibilidade de influir na decisão. Em sentido amplo, abrange a possibilidade de a parte acompanhar a produção da prova e de apresentar sua versão. A Constituição Federal assegura o contraditório e a ampla defesa aos litigantes em processo judicial ou administrativo e aos acusados em geral (BRASIL, 1988, art. 5º, LV). Assim, mesmo sem processo judicial, a presença da defesa na investigação se aproxima da garantia constitucional, sem se confundir com ela.",
+          "Esse ponto leva de volta ao art. 155 do Código de Processo Penal. A regra continua exigindo que a condenação se apoie em prova produzida em contraditório judicial, e os elementos do inquérito não bastam, por si, para fundamentar a decisão (BRASIL, 1941). Mesmo que a participação do advogado torne o ato mais confiável, o juiz deverá verificar se a prova foi repetida ou confirmada em juízo, ressalvadas as exceções legais.",
+          "Conclui-se que a Lei nº 13.245/2016 aumenta a qualidade do material colhido na investigação, mas não lhe atribui valor de prova plena. A alteração influencia, sobretudo, a legitimidade dos atos e a possibilidade de a defesa impugnar nulidades, e não a regra de que a condenação exige contraditório judicial."
+        ]
+      },
+      {
+        "title": "5 CONCLUSÃO",
+        "paragraphs": [
+          "A análise permitiu responder ao problema proposto. A participação da defesa técnica na fase investigatória, introduzida pela Lei nº 13.245/2016, altera a forma como os atos do inquérito são praticados e controlados, mas não modifica, por si, a natureza informativa dessa fase. A hipótese inicial, de que a presença do defensor qualifica a regularidade dos atos sem convertê-los em prova plena, foi confirmada pelo exame do texto legal e do art. 155 do Código de Processo Penal.",
+          "Os objetivos foram atingidos: o inquérito foi caracterizado como procedimento administrativo de finalidade preparatória, as alterações do art. 7º do Estatuto da OAB foram examinadas e os limites da convicção judicial foram discutidos a partir do contraditório judicial. Resta, contudo, uma questão aberta, sobre como a defesa deve documentar sua participação para que o registro tenha utilidade no processo, tema que pode ser objeto de pesquisa posterior.",
+          "Por fim, a presença do advogado no inquérito é um instrumento de garantia que fortalece o devido processo legal desde o início da persecução penal. Seu valor, porém, depende de confirmação em juízo. A defesa deve atuar não apenas para acompanhar o ato, mas para assegurar que ele seja reproduzido e examinado sob o contraditório judicial."
+        ]
+      },
+      {
+        "title": "REFERÊNCIAS",
+        "paragraphs": [
+          "BRASIL. Constituição da República Federativa do Brasil de 1988. Brasília, DF: Presidência da República, 1988.",
+          "BRASIL. Decreto-Lei nº 3.689, de 3 de outubro de 1941. Código de Processo Penal. Rio de Janeiro: Presidência da República, 1941.",
+          "BRASIL. Lei nº 8.906, de 4 de julho de 1994. Dispõe sobre o Estatuto da Advocacia e a Ordem dos Advogados do Brasil (OAB). Brasília, DF: Presidência da República, 1994.",
+          "BRASIL. Lei nº 13.245, de 12 de janeiro de 2016. Altera a Lei nº 8.906, de 4 de julho de 1994, para assegurar a participação do advogado na investigação criminal. Brasília, DF: Presidência da República, 2016.",
+          "BRASIL. Supremo Tribunal Federal. Súmula Vinculante nº 14. Brasília, DF: STF, 2009.",
+          "CAPEZ, Fernando. Curso de processo penal. [edição]. São Paulo: Saraiva, [ano].",
+          "LOPES JR., Aury. Direito processual penal. [edição]. São Paulo: Saraiva, [ano]."
+        ]
+      }
+    ],
+    "citations": [
+      {
+        "type": "Citação indireta",
+        "text": "A Lei nº 13.245/2016 ampliou a atuação do advogado na investigação (BRASIL, 2016)."
+      },
+      {
+        "type": "Citação direta curta",
+        "text": "Trecho de até três linhas, entre aspas, com autor, ano e página."
+      },
+      {
+        "type": "Citação de norma",
+        "text": "Art. 155 do Código de Processo Penal, referenciado como BRASIL, 1941."
+      }
+    ],
+    "sources": [
+      {
+        "category": "Legal",
+        "reference": "BRASIL. Constituição da República Federativa do Brasil de 1988. Brasília, DF: Presidência da República, 1988."
+      },
+      {
+        "category": "Legal",
+        "reference": "BRASIL. Decreto-Lei nº 3.689, de 3 de outubro de 1941. Código de Processo Penal. Rio de Janeiro: Presidência da República, 1941."
+      },
+      {
+        "category": "Legal",
+        "reference": "BRASIL. Lei nº 8.906, de 4 de julho de 1994. Dispõe sobre o Estatuto da Advocacia e a Ordem dos Advogados do Brasil (OAB). Brasília, DF: Presidência da República, 1994."
+      },
+      {
+        "category": "Legal",
+        "reference": "BRASIL. Lei nº 13.245, de 12 de janeiro de 2016. Altera a Lei nº 8.906, de 4 de julho de 1994, para assegurar a participação do advogado na investigação criminal. Brasília, DF: Presidência da República, 2016."
+      },
+      {
+        "category": "Legal",
+        "reference": "BRASIL. Supremo Tribunal Federal. Súmula Vinculante nº 14. Brasília, DF: STF, 2009."
+      },
+      {
+        "category": "Doutrinária",
+        "reference": "CAPEZ, Fernando. Curso de processo penal. [edição]. São Paulo: Saraiva, [ano]."
+      },
+      {
+        "category": "Doutrinária",
+        "reference": "LOPES JR., Aury. Direito processual penal. [edição]. São Paulo: Saraiva, [ano]."
+      }
+    ],
+    "workflow": {
+      "projectType": "paper",
+      "fields": {
+        "paperKind": "final",
+        "title": "A LEI Nº 13.245/2016 E O VALOR PROBATÓRIO DO INQUÉRITO POLICIAL: a participação da defesa na investigação criminal",
+        "author": "Estudante 1\nEstudante 2",
+        "institution": "Faculdade Supremo Redentor — FACSUR",
+        "course": "Direito",
+        "discipline": "Processual Penal I",
+        "teacher": "Docente de demonstração",
+        "classInfo": "Noturno, 5º período",
+        "city": "Pinheiro — MA",
+        "year": "2026",
+        "abstract": "A Lei nº 13.245/2016 alterou o art. 7º da Lei nº 8.906/1994 (Estatuto da Advocacia e da OAB) para ampliar a atuação do advogado na investigação criminal, ao permitir o exame de autos de investigações de qualquer natureza e a presença do defensor nos interrogatórios e depoimentos do cliente investigado. A mudança reacendeu a discussão sobre a natureza informativa do inquérito policial, tradicionalmente afastado do contraditório e da ampla defesa, e sobre a possibilidade de seus elementos influenciarem a formação da convicção no processo penal. Este trabalho analisa, por meio de pesquisa bibliográfica e documental, se a participação da defesa técnica nessa fase altera o valor probatório dos atos investigatórios. Examinam-se a finalidade do inquérito, o alcance do art. 155 do Código de Processo Penal, a Súmula Vinculante nº 14 do Supremo Tribunal Federal e a garantia constitucional do contraditório e da ampla defesa. Conclui-se que a presença do advogado não converte o inquérito em processo judicial, mas reforça a regularidade dos atos e a confiabilidade dos elementos colhidos, sem dispensar sua confirmação em juízo para fundamentar a condenação.",
+        "keywords": "Ampla defesa. Contraditório. Inquérito policial. Lei nº 13.245/2016. Valor probatório.",
+        "introduction": "O inquérito policial é o principal instrumento de apuração de infrações penais no Brasil. Por muito tempo, prevaleceu a leitura de que se trata de procedimento administrativo, inquisitivo e destinado a reunir elementos para que o titular da ação penal decida sobre sua propositura. Essa concepção explica por que, como regra, seus atos não eram submetidos ao contraditório nem ao exercício pleno da ampla defesa.\n\nA Lei nº 13.245, de 12 de janeiro de 2016, alterou esse cenário ao modificar o art. 7º da Lei nº 8.906, de 4 de julho de 1994 (BRASIL, 2016). A norma ampliou o direito de o advogado examinar autos de investigações e autorizou sua presença durante o interrogatório e os depoimentos do cliente investigado. O tema é relevante porque afeta a forma como a defesa atua desde o início da persecução penal e o tipo de material que pode chegar ao processo.\n\nDiante disso, o problema que orienta este trabalho é o seguinte: a participação da defesa técnica na fase investigatória altera o valor probatório dos atos do inquérito policial? A hipótese inicial é que a presença do defensor qualifica a regularidade dos atos sem convertê-los em prova plena, que continua dependendo de confirmação em juízo. O objetivo geral é analisar essa alteração à luz do texto legal, da Constituição Federal, da doutrina e da jurisprudência do Supremo Tribunal Federal.\n\nComo objetivos específicos, busca-se caracterizar o inquérito policial e sua finalidade, examinar as modificações introduzidas pela Lei nº 13.245/2016 e discutir os limites do art. 155 do Código de Processo Penal diante da nova disciplina. A pesquisa é bibliográfica e documental, de abordagem qualitativa e método dedutivo, partindo dos princípios constitucionais do contraditório e da ampla defesa para avaliar a norma infraconstitucional.",
+        "developmentSections": [
+          {
+            "id": "model-paper-final-topic-1",
+            "title": "O INQUÉRITO POLICIAL: NATUREZA, FINALIDADE E INFORMATIVIDADE",
+            "content": "O inquérito policial é um procedimento administrativo, presidido pela autoridade policial, que reúne elementos sobre a materialidade e a autoria de infração penal (CAPEZ, [ano]). Sua função imediata é subsidiar o titular da ação penal na decisão de denunciar ou de requerer o arquivamento. A doutrina costuma destacar que se trata de peça dispensável, pois a ação penal pode ser proposta com base em outros elementos de convicção, além de ser, em regra, escrita e sigilosa, nos termos do Código de Processo Penal (BRASIL, 1941).\n\nQuanto à inquisitividade, a leitura tradicional sustenta que, nessa fase, não há contraditório nem ampla defesa, porque ainda não existe acusação formal contra o investigado. Essa característica se relaciona à regra do art. 155 do Código de Processo Penal, segundo a qual o juiz não pode fundamentar a decisão exclusivamente em elementos informativos colhidos na investigação. A exceção se restringe às provas cautelares, não repetíveis e antecipadas, cuja produção antes do processo se justifica pela urgência ou pela impossibilidade de repetição (BRASIL, 1941).\n\nDaí a conhecida informatividade do inquérito: seus atos orientam a acusação, mas não bastam, por si, para sustentar a condenação. A Súmula Vinculante nº 14 do Supremo Tribunal Federal reforça essa lógica ao garantir ao defensor acesso amplo aos elementos de prova já documentados que digam respeito ao exercício do direito de defesa (BRASIL, 2009). A súmula, porém, trata do acesso às provas, não da participação do defensor na produção delas, o que deixa em aberto o ponto central deste trabalho."
+          },
+          {
+            "id": "model-paper-final-topic-2",
+            "title": "A LEI Nº 13.245/2016 E A PRESENÇA DA DEFESA NA INVESTIGAÇÃO",
+            "content": "A Lei nº 13.245/2016 alterou dois incisos do art. 7º do Estatuto da OAB (BRASIL, 2016). O inciso XIV passou a garantir ao advogado o exame de autos de investigação conduzida por qualquer instituição, e não apenas em repartições policiais, abrangendo investigações de qualquer natureza, findas ou em andamento, ainda que conclusas à autoridade. O advogado pode copiar peças e tomar apontamentos, em meio físico ou digital, mesmo sem procuração, o que lhe permite avaliar o caso antes de firmar contrato (BRASIL, 1994).\n\nO inciso XXI, incluído pela mesma lei, assegura ao advogado assistir ao cliente investigado durante a apuração de infrações. A lei condiciona a validade do interrogatório ou do depoimento a essa assistência, sob pena de nulidade absoluta do ato e dos elementos investigatórios e probatórios dele decorrentes, direta ou indiretamente. Nessa fase, o defensor pode apresentar razões e quesitos (BRASIL, 1994). A redação indica que a presença do advogado é uma garantia do investigado, e não uma obrigação imposta à defesa, que pode optar por acompanhar ou não o ato quando a assistência não for exigida.\n\nEssas alterações produzem um efeito prático relevante: a defesa passa a ter meios de controlar a legalidade da coleta de declarações e de registrar sua participação. Se o ato for realizado sem a assistência que a lei exige, a consequência é a nulidade, o que torna o próprio procedimento objeto de controle pela defesa desde a fase inicial."
+          },
+          {
+            "id": "model-paper-final-topic-3",
+            "title": "VALOR PROBATÓRIO DOS ATOS INVESTIGATÓRIOS E LIMITES DO CONTRADITÓRIO",
+            "content": "A doutrina se divide diante dessas mudanças. Uma corrente sustenta que a presença do advogado não altera a natureza do inquérito, que permanece informativo, porque não há acusação formalizada nem relação processual (LOPES JR., [ano]). Outra corrente entende que a participação defensiva introduz uma forma de contraditório na investigação, conferindo maior confiabilidade aos atos e fortalecendo sua utilização no processo.\n\nA discussão se concentra no conceito de contraditório. Em sentido estrito, ele pressupõe a relação processual e a possibilidade de influir na decisão. Em sentido amplo, abrange a possibilidade de a parte acompanhar a produção da prova e de apresentar sua versão. A Constituição Federal assegura o contraditório e a ampla defesa aos litigantes em processo judicial ou administrativo e aos acusados em geral (BRASIL, 1988, art. 5º, LV). Assim, mesmo sem processo judicial, a presença da defesa na investigação se aproxima da garantia constitucional, sem se confundir com ela.\n\nEsse ponto leva de volta ao art. 155 do Código de Processo Penal. A regra continua exigindo que a condenação se apoie em prova produzida em contraditório judicial, e os elementos do inquérito não bastam, por si, para fundamentar a decisão (BRASIL, 1941). Mesmo que a participação do advogado torne o ato mais confiável, o juiz deverá verificar se a prova foi repetida ou confirmada em juízo, ressalvadas as exceções legais.\n\nConclui-se que a Lei nº 13.245/2016 aumenta a qualidade do material colhido na investigação, mas não lhe atribui valor de prova plena. A alteração influencia, sobretudo, a legitimidade dos atos e a possibilidade de a defesa impugnar nulidades, e não a regra de que a condenação exige contraditório judicial."
+          }
+        ],
+        "conclusion": "A análise permitiu responder ao problema proposto. A participação da defesa técnica na fase investigatória, introduzida pela Lei nº 13.245/2016, altera a forma como os atos do inquérito são praticados e controlados, mas não modifica, por si, a natureza informativa dessa fase. A hipótese inicial, de que a presença do defensor qualifica a regularidade dos atos sem convertê-los em prova plena, foi confirmada pelo exame do texto legal e do art. 155 do Código de Processo Penal.\n\nOs objetivos foram atingidos: o inquérito foi caracterizado como procedimento administrativo de finalidade preparatória, as alterações do art. 7º do Estatuto da OAB foram examinadas e os limites da convicção judicial foram discutidos a partir do contraditório judicial. Resta, contudo, uma questão aberta, sobre como a defesa deve documentar sua participação para que o registro tenha utilidade no processo, tema que pode ser objeto de pesquisa posterior.\n\nPor fim, a presença do advogado no inquérito é um instrumento de garantia que fortalece o devido processo legal desde o início da persecução penal. Seu valor, porém, depende de confirmação em juízo. A defesa deve atuar não apenas para acompanhar o ato, mas para assegurar que ele seja reproduzido e examinado sob o contraditório judicial.",
+        "profile": "facsure"
+      },
+      "sources": [
+        {
+          "category": "legal",
+          "reference": "BRASIL. Constituição da República Federativa do Brasil de 1988. Brasília, DF: Presidência da República, 1988.",
+          "cited": true
+        },
+        {
+          "category": "legal",
+          "reference": "BRASIL. Decreto-Lei nº 3.689, de 3 de outubro de 1941. Código de Processo Penal. Rio de Janeiro: Presidência da República, 1941.",
+          "cited": true
+        },
+        {
+          "category": "legal",
+          "reference": "BRASIL. Lei nº 8.906, de 4 de julho de 1994. Dispõe sobre o Estatuto da Advocacia e a Ordem dos Advogados do Brasil (OAB). Brasília, DF: Presidência da República, 1994.",
+          "cited": true
+        },
+        {
+          "category": "legal",
+          "reference": "BRASIL. Lei nº 13.245, de 12 de janeiro de 2016. Altera a Lei nº 8.906, de 4 de julho de 1994, para assegurar a participação do advogado na investigação criminal. Brasília, DF: Presidência da República, 2016.",
+          "cited": true
+        },
+        {
+          "category": "legal",
+          "reference": "BRASIL. Supremo Tribunal Federal. Súmula Vinculante nº 14. Brasília, DF: STF, 2009.",
+          "cited": true
+        },
+        {
+          "category": "doctrine",
+          "reference": "CAPEZ, Fernando. Curso de processo penal. [edição]. São Paulo: Saraiva, [ano].",
+          "cited": true
+        },
+        {
+          "category": "doctrine",
+          "reference": "LOPES JR., Aury. Direito processual penal. [edição]. São Paulo: Saraiva, [ano].",
+          "cited": true
+        }
+      ]
+    }
+  }
+]

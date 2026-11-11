@@ -1,0 +1,19 @@
+baseURL = "/"
+title = "Roteiro"
+disableKinds = ["taxonomy", "term"]
+
+[params]
+  description = "Roteiros guiados para elaborar relatórios de case, Projetos de Paper e Papers Finais, com exportação opcional em Typst."
+
+[module]
+  [[module.mounts]]
+    source = "static"
+    target = "static"
+  [[module.mounts]]
+    source = "node_modules/@myriaddreamin/typst-ts-web-compiler/pkg"
+    target = "static/wasm/compiler"
+    files = ["typst_ts_web_compiler_bg.wasm"]
+  [[module.mounts]]
+    source = "node_modules/@myriaddreamin/typst-ts-renderer/pkg"
+    target = "static/wasm/renderer"
+    files = ["typst_ts_renderer_bg.wasm"]

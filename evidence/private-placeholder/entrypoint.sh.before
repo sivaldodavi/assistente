@@ -1,0 +1,56 @@
+#!/bin/bash
+
+EMAIL="git@sivaldodavi.com"
+OBF="<span class=\"offview\">g<span>x</span>i<span>x</span>t<span>x</span>@<span>x</span>s<span>x</span>i<span>x</span>v<span>x</span>a<span>x</span>l<span>x</span>d<span>x</span>o<span>x</span>d<span>x</span>a<span>x</span>v<span>x</span>i<span>x</span>.<span>x</span>c<span>x</span>o<span>x</span>m</span>"
+
+obfuscate() {
+    find "$1" -name '*.html' -exec sed -i "s#<a href=\"mailto:${EMAIL}\">${EMAIL}</a>#${OBF}#g" {} +
+    find "$1" -name '*.xml' -exec sed -i "s#<email>${EMAIL}#<email>[oculto]#g" {} +
+}
+
+generate_one() {
+    repo="$1"
+    [ -e "$repo" ] || return
+    repo_name=$(basename "$repo" .git)
+    mkdir -p "/www/$repo_name"
+    (
+        cd "/www/$repo_name" || exit
+        stagit "$repo"
+        [ -f "/app/style.css" ] && cp "/app/style.css" style.css
+    )
+    obfuscate "/www/$repo_name"
+    echo "Repositório $repo_name atualizado."
+}
+
+generate_index() {
+    stagit-index /repos/*.git > /www/index.html
+    [ -f "/app/style.css" ] && cp "/app/style.css" /www/style.css
+    obfuscate "/www/index.html"
+    echo "Índice atualizado."
+}
+
+generate_all() {
+    for repo in /repos/*.git; do
+        generate_one "$repo"
+    done
+    generate_index
+}
+
+case "$1" in
+    --repo)
+        generate_one "/repos/$2.git"
+        generate_index
+        ;;
+    --once)
+        generate_all
+        ;;
+    *)
+        generate_all
+        while true; do
+            sleep 3600
+            generate_all
+        done
+        ;;
+esac
+
+echo "Concluído em $(date)"

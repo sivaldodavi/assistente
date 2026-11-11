@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>case_rubric.py - assistente-academico - Assistente Acadêmico v2
+</title>
+<link rel="icon" type="image/png" href="../../../favicon.png" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed" href="../../../atom.xml" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed (tags)" href="../../../tags.xml" />
+<link rel="stylesheet" type="text/css" href="../../../style.css" />
+</head>
+<body>
+<table><tr><td><a href="../../../../"><img src="../../../logo.png" alt="" width="32" height="32" /></a></td><td><h1>assistente-academico</h1><span class="desc">Assistente Acadêmico v2
+</span></td></tr><tr class="url"><td></td><td>git clone <a href="git://git.sivaldodavi.com.br/assistente-academico.git">git://git.sivaldodavi.com.br/assistente-academico.git</a></td></tr><tr><td></td><td>
+<a href="../../../log.html">Log</a> | <a href="../../../files.html">Files</a> | <a href="../../../refs.html">Refs</a> | <a href="../../../file/README.md.html">README</a></td></tr></table>
+<hr/>
+<div id="content">
+<p> case_rubric.py (17321B)</p><hr/><pre id="blob">
+<a href="#l1" class="line" id="l1">      1</a> &quot;&quot;&quot;Rubrica e checklists do case usados pela IA e pela revisão.&quot;&quot;&quot;
+<a href="#l2" class="line" id="l2">      2</a> 
+<a href="#l3" class="line" id="l3">      3</a> AI_CASE_RUBRIC = {
+<a href="#l4" class="line" id="l4">      4</a>     &quot;case_description&quot;: {
+<a href="#l5" class="line" id="l5">      5</a>         &quot;title&quot;: &quot;Descrição do caso e decisões possíveis&quot;,
+<a href="#l6" class="line" id="l6">      6</a>         &quot;max_points&quot;: 0.5,
+<a href="#l7" class="line" id="l7">      7</a>         &quot;instructions&quot;: (
+<a href="#l8" class="line" id="l8">      8</a>             &quot;Score this 0.5-point criterion using the official FACSUR case-report rubric only: &quot;
+<a href="#l9" class="line" id="l9">      9</a>             &quot;whether the topic is legally delimited and specific, the case narrative makes the &quot;
+<a href="#l10" class="line" id="l10">     10</a>             &quot;relevant characters, context and legal conflict clear, the legal problem is &quot;
+<a href="#l11" class="line" id="l11">     11</a>             &quot;objective, and possible decisions can be identified. Do not reduce the score for &quot;
+<a href="#l12" class="line" id="l12">     12</a>             &quot;optional advice in the student&#39;s supplementary guide, such as requiring the final &quot;
+<a href="#l13" class="line" id="l13">     13</a>             &quot;sentence to be an interrogative, using a particular section order, or adding a &quot;
+<a href="#l14" class="line" id="l14">     14</a>             &quot;separate conceptual subsection, unless the professor&#39;s instructions for this &quot;
+<a href="#l15" class="line" id="l15">     15</a>             &quot;assignment explicitly require it. Do not insist on a fixed Thesis A-versus-B &quot;
+<a href="#l16" class="line" id="l16">     16</a>             &quot;dichotomy when the report describes an open case; assess whether it identifies &quot;
+<a href="#l17" class="line" id="l17">     17</a>             &quot;the legal issue and relevant possible positions. Do not decide which position is &quot;
+<a href="#l18" class="line" id="l18">     18</a>             &quot;legally correct.&quot;
+<a href="#l19" class="line" id="l19">     19</a>         ),
+<a href="#l20" class="line" id="l20">     20</a>     },
+<a href="#l21" class="line" id="l21">     21</a>     &quot;legal_writing_foundation&quot;: {
+<a href="#l22" class="line" id="l22">     22</a>         &quot;title&quot;: &quot;Redação jurídica e fundamentação&quot;,
+<a href="#l23" class="line" id="l23">     23</a>         &quot;max_points&quot;: 2.5,
+<a href="#l24" class="line" id="l24">     24</a>         &quot;instructions&quot;: (
+<a href="#l25" class="line" id="l25">     25</a>             &quot;Score this 2.5-point criterion against the official FACSUR case-report rubric. &quot;
+<a href="#l26" class="line" id="l26">     26</a>             &quot;Insufficient performance includes missing legal foundation, doctrine, or possible &quot;
+<a href="#l27" class="line" id="l27">     27</a>             &quot;decisions. Partial performance includes superficial sources, citations without a &quot;
+<a href="#l28" class="line" id="l28">     28</a>             &quot;clear relation to the case, or jurisprudence mentioned without explaining its &quot;
+<a href="#l29" class="line" id="l29">     29</a>             &quot;connection. Adequate performance requires a clear case narrative and legal &quot;
+<a href="#l30" class="line" id="l30">     30</a>             &quot;problem, at least three relevant works visibly used, direct identification of &quot;
+<a href="#l31" class="line" id="l31">     31</a>             &quot;applicable legal provisions, and decisions/arguments coherent with the case. &quot;
+<a href="#l32" class="line" id="l32">     32</a>             &quot;Count only distinct works identifiable in the supplied argument text; the &quot;
+<a href="#l33" class="line" id="l33">     33</a>             &quot;reference list and library catalog are not supplied, so do not claim that a work &quot;
+<a href="#l34" class="line" id="l34">     34</a>             &quot;belongs to the FACSUR Virtual Library or verify that any source exists, is current, &quot;
+<a href="#l35" class="line" id="l35">     35</a>             &quot;or legally accurate. Do not assess the later debate or individual dissertation&#39;s &quot;
+<a href="#l36" class="line" id="l36">     36</a>             &quot;final choice as part of the report-stage criterion. The student&#39;s supplementary &quot;
+<a href="#l37" class="line" id="l37">     37</a>             &quot;guide includes optional ways to improve the work; do not lower this score for not &quot;
+<a href="#l38" class="line" id="l38">     38</a>             &quot;following them, including using four works with two per thesis, reaching a suggested &quot;
+<a href="#l39" class="line" id="l39">     39</a>             &quot;page count, writing exclusively in third person, following a particular thesis &quot;
+<a href="#l40" class="line" id="l40">     40</a>             &quot;opening/development/closing pattern, integrating every source in each paragraph, &quot;
+<a href="#l41" class="line" id="l41">     41</a>             &quot;or commenting after every quotation, unless the professor&#39;s assignment expressly &quot;
+<a href="#l42" class="line" id="l42">     42</a>             &quot;requires a specific item. If useful, identify such points as optional suggestions &quot;
+<a href="#l43" class="line" id="l43">     43</a>             &quot;separate from the rubric score. Do not infer page count or formatting from plain text.&quot;
+<a href="#l44" class="line" id="l44">     44</a>         ),
+<a href="#l45" class="line" id="l45">     45</a>     },
+<a href="#l46" class="line" id="l46">     46</a>     &quot;criteria_and_values&quot;: {
+<a href="#l47" class="line" id="l47">     47</a>         &quot;title&quot;: &quot;Critérios e valores&quot;,
+<a href="#l48" class="line" id="l48">     48</a>         &quot;max_points&quot;: 0.5,
+<a href="#l49" class="line" id="l49">     49</a>         &quot;instructions&quot;: (
+<a href="#l50" class="line" id="l50">     50</a>             &quot;Score this 0.5-point criterion using the official FACSUR case-report rubric only: &quot;
+<a href="#l51" class="line" id="l51">     51</a>             &quot;whether the possible legal solution is coherent and justified by normative &quot;
+<a href="#l52" class="line" id="l52">     52</a>             &quot;criteria or legal values. A separate, comprehensive glossary defining every &quot;
+<a href="#l53" class="line" id="l53">     53</a>             &quot;technical term is an optional improvement in the student&#39;s supplementary guide, &quot;
+<a href="#l54" class="line" id="l54">     54</a>             &quot;not a score requirement unless the professor&#39;s instructions for this assignment &quot;
+<a href="#l55" class="line" id="l55">     55</a>             &quot;explicitly require it. Do not require definitions for ordinary legal vocabulary. &quot;
+<a href="#l56" class="line" id="l56">     56</a>             &quot;Do not verify the legal correctness of concepts or sources.&quot;
+<a href="#l57" class="line" id="l57">     57</a>         ),
+<a href="#l58" class="line" id="l58">     58</a>     },
+<a href="#l59" class="line" id="l59">     59</a> }
+<a href="#l60" class="line" id="l60">     60</a> 
+<a href="#l61" class="line" id="l61">     61</a> DEEPSEEK_EVIDENCE_LABELS = {
+<a href="#l62" class="line" id="l62">     62</a>     &quot;case_description&quot;: {
+<a href="#l63" class="line" id="l63">     63</a>         &quot;case_facts&quot;: &quot;Fatos do caso&quot;,
+<a href="#l64" class="line" id="l64">     64</a>         &quot;legal_question&quot;: &quot;Pergunta jurídica&quot;,
+<a href="#l65" class="line" id="l65">     65</a>         &quot;possible_decision_a&quot;: &quot;Decisão possível A&quot;,
+<a href="#l66" class="line" id="l66">     66</a>         &quot;possible_decision_b&quot;: &quot;Decisão possível B&quot;,
+<a href="#l67" class="line" id="l67">     67</a>     },
+<a href="#l68" class="line" id="l68">     68</a>     &quot;legal_writing_foundation&quot;: {
+<a href="#l69" class="line" id="l69">     69</a>         &quot;case_facts&quot;: &quot;Fatos do caso&quot;,
+<a href="#l70" class="line" id="l70">     70</a>         &quot;legal_question&quot;: &quot;Pergunta jurídica&quot;,
+<a href="#l71" class="line" id="l71">     71</a>         &quot;conceptual_basis&quot;: &quot;Base conceitual&quot;,
+<a href="#l72" class="line" id="l72">     72</a>         &quot;thesis_a_title&quot;: &quot;Título da tese A&quot;,
+<a href="#l73" class="line" id="l73">     73</a>         &quot;thesis_a_argument&quot;: &quot;Tese A&quot;,
+<a href="#l74" class="line" id="l74">     74</a>         &quot;thesis_b_title&quot;: &quot;Título da tese B&quot;,
+<a href="#l75" class="line" id="l75">     75</a>         &quot;thesis_b_argument&quot;: &quot;Tese B&quot;,
+<a href="#l76" class="line" id="l76">     76</a>     },
+<a href="#l77" class="line" id="l77">     77</a>     &quot;criteria_and_values&quot;: {
+<a href="#l78" class="line" id="l78">     78</a>         &quot;thesis_a_argument&quot;: &quot;Argumentação da tese A&quot;,
+<a href="#l79" class="line" id="l79">     79</a>         &quot;thesis_b_argument&quot;: &quot;Argumentação da tese B&quot;,
+<a href="#l80" class="line" id="l80">     80</a>         &quot;criteria_and_values&quot;: &quot;Critérios e valores&quot;,
+<a href="#l81" class="line" id="l81">     81</a>     },
+<a href="#l82" class="line" id="l82">     82</a> }
+<a href="#l83" class="line" id="l83">     83</a> 
+<a href="#l84" class="line" id="l84">     84</a> AI_CASE_GRADE_RANGES = [
+<a href="#l85" class="line" id="l85">     85</a>     &quot;0 — 0.00 to 0.87 of the 3.50 assessable content points.&quot;,
+<a href="#l86" class="line" id="l86">     86</a>     &quot;1 — 0.88 to 1.75 of the 3.50 assessable content points.&quot;,
+<a href="#l87" class="line" id="l87">     87</a>     &quot;2 — 1.76 to 2.62 of the 3.50 assessable content points.&quot;,
+<a href="#l88" class="line" id="l88">     88</a>     &quot;3 — 2.63 to 3.50 of the 3.50 assessable content points.&quot;,
+<a href="#l89" class="line" id="l89">     89</a> ]
+<a href="#l90" class="line" id="l90">     90</a> 
+<a href="#l91" class="line" id="l91">     91</a> AI_CASE_GRADE_QUESTION = {
+<a href="#l92" class="line" id="l92">     92</a>     &quot;title&quot;: &quot;Faixa de pontuação provável do conteúdo&quot;,
+<a href="#l93" class="line" id="l93">     93</a>     &quot;instructions&quot;: (
+<a href="#l94" class="line" id="l94">     94</a>         &quot;Estimate the most likely point range for this FACSUR case report using only its &quot;
+<a href="#l95" class="line" id="l95">     95</a>         &quot;three assessable content criteria: case description/possible decisions (0.5), legal &quot;
+<a href="#l96" class="line" id="l96">     96</a>         &quot;writing/foundation (2.5), and criteria/values (0.5), total 3.5 points. Select 0 for &quot;
+<a href="#l97" class="line" id="l97">     97</a>         &quot;0.00-0.87, 1 for 0.88-1.75, 2 for 1.76-2.62, or 3 for 2.63-3.50. These are equal &quot;
+<a href="#l98" class="line" id="l98">     98</a>         &quot;technical bands for an indicative estimate, not cutoffs defined by the manual; &quot;
+<a href="#l99" class="line" id="l99">     99</a>         &quot;the per-criterion 0-3 probability scale is also an internal estimate, not an official &quot;
+<a href="#l100" class="line" id="l100">    100</a>         &quot;grading scale. Follow only the official rubric when estimating points. Do not include &quot;
+<a href="#l101" class="line" id="l101">    101</a>         &quot;optional improvements from supplementary guides in the score. &quot;
+<a href="#l102" class="line" id="l102">    102</a>         &quot;Do not include the separate 0.5 formal/ABNT criterion, debate, or final dissertation. &quot;
+<a href="#l103" class="line" id="l103">    103</a>         &quot;This scoring call must not draft or rewrite any part of the work. Never invent legal &quot;
+<a href="#l104" class="line" id="l104">    104</a>         &quot;authorities or claim this is an official grade. Base the estimate on the supplied report &quot;
+<a href="#l105" class="line" id="l105">    105</a>         &quot;content only.&quot;
+<a href="#l106" class="line" id="l106">    106</a>     ),
+<a href="#l107" class="line" id="l107">    107</a> }
+<a href="#l108" class="line" id="l108">    108</a> 
+<a href="#l109" class="line" id="l109">    109</a> AI_CASE_SCORE_LEVELS = [
+<a href="#l110" class="line" id="l110">    110</a>     &quot;0 — Insuficiente: the criterion is absent or the text shows a substantial deficiency.&quot;,
+<a href="#l111" class="line" id="l111">    111</a>     &quot;1 — Partial, closer to insufficient: some evidence exists, but major gaps remain. This is an internal estimate, not a separate level in the official rubric.&quot;,
+<a href="#l112" class="line" id="l112">    112</a>     &quot;2 — Partial, closer to adequate: substantial evidence exists, with relevant gaps remaining. This is an internal estimate, not a separate level in the official rubric.&quot;,
+<a href="#l113" class="line" id="l113">    113</a>     &quot;3 — Adequado: the supplied text substantially meets the criterion described in the manual.&quot;,
+<a href="#l114" class="line" id="l114">    114</a> ]
+<a href="#l115" class="line" id="l115">    115</a> 
+<a href="#l116" class="line" id="l116">    116</a> AI_CASE_PROBABILITY_THRESHOLD = 0.7
+<a href="#l117" class="line" id="l117">    117</a> 
+<a href="#l118" class="line" id="l118">    118</a> AI_CASE_CHECKLIST_LEVELS = [
+<a href="#l119" class="line" id="l119">    119</a>     &quot;This is a formative self-review of the selected checklist item, not the professor&#39;s official grade. Assess only the exact item being checked; do not turn optional style or structure suggestions into requirements.&quot;,
+<a href="#l120" class="line" id="l120">    120</a>     &quot;0 — The supplied text contains no evidence that this checklist item is met.&quot;,
+<a href="#l121" class="line" id="l121">    121</a>     &quot;1 — Weak evidence: the item appears mostly unmet or materially incomplete.&quot;,
+<a href="#l122" class="line" id="l122">    122</a>     &quot;2 — Partial evidence: some requirements are met, but relevant gaps remain.&quot;,
+<a href="#l123" class="line" id="l123">    123</a>     &quot;3 — Clear evidence in the supplied text that this checklist item is met.&quot;,
+<a href="#l124" class="line" id="l124">    124</a> ]
+<a href="#l125" class="line" id="l125">    125</a> 
+<a href="#l126" class="line" id="l126">    126</a> AI_CASE_CHECKLISTS = {
+<a href="#l127" class="line" id="l127">    127</a>     &quot;case_description&quot;: {
+<a href="#l128" class="line" id="l128">    128</a>         &quot;title&quot;: &quot;Descrição do caso&quot;,
+<a href="#l129" class="line" id="l129">    129</a>         &quot;fields&quot;: (&quot;assignment_prompt&quot;, &quot;case_facts&quot;, &quot;legal_question&quot;),
+<a href="#l130" class="line" id="l130">    130</a>         &quot;checks&quot;: {
+<a href="#l131" class="line" id="l131">    131</a>             &quot;facts-neutral&quot;: {
+<a href="#l132" class="line" id="l132">    132</a>                 &quot;label&quot;: &quot;Mantive a descrição sem antecipar solução ou julgamento.&quot;,
+<a href="#l133" class="line" id="l133">    133</a>                 &quot;instructions&quot;: &quot;Assess only whether the facts narrative itself presents events neutrally without arguing for a legal outcome. Do not treat ordinary factual selection as bias. This is a formative writing suggestion, not an official grading requirement unless the professor expressly requires it.&quot;,
+<a href="#l134" class="line" id="l134">    134</a>             },
+<a href="#l135" class="line" id="l135">    135</a>             &quot;facts-relevant&quot;: {
+<a href="#l136" class="line" id="l136">    136</a>                 &quot;label&quot;: &quot;Apresentei quem, o que, contexto e conflito e cortei o que não altera o caso.&quot;,
+<a href="#l137" class="line" id="l137">    137</a>                 &quot;instructions&quot;: &quot;Assess whether the supplied narrative identifies relevant actors, events, context and the dispute, and appears focused on facts connected to the legal question. Do not require facts absent from the source prompt. Treat cutting every nonessential detail as a writing suggestion, not a separate official score requirement.&quot;,
+<a href="#l138" class="line" id="l138">    138</a>             },
+<a href="#l139" class="line" id="l139">    139</a>             &quot;problem-question&quot;: {
+<a href="#l140" class="line" id="l140">    140</a>                 &quot;label&quot;: &quot;A seção termina com uma pergunta jurídica clara, não respondível apenas com sim ou não.&quot;,
+<a href="#l141" class="line" id="l141">    141</a>                 &quot;instructions&quot;: &quot;Assess whether the legal problem is clearly phrased and connected to the supplied facts. A literal question mark, open-question phrasing, or this exact placement at the end is a suggested presentation technique, not a score requirement unless the professor expressly requires it.&quot;,
+<a href="#l142" class="line" id="l142">    142</a>             },
+<a href="#l143" class="line" id="l143">    143</a>             &quot;facts-original&quot;: {
+<a href="#l144" class="line" id="l144">    144</a>                 &quot;label&quot;: &quot;Reescrevi os fatos com minhas próprias palavras, sem copiar o enunciado.&quot;,
+<a href="#l145" class="line" id="l145">    145</a>                 &quot;instructions&quot;: (
+<a href="#l146" class="line" id="l146">    146</a>                     &quot;The guide requires an original facts narrative in the student&#39;s own words. &quot;
+<a href="#l147" class="line" id="l147">    147</a>                     &quot;Use the professor&#39;s text in assignment_prompt as the comparison source only &quot;
+<a href="#l148" class="line" id="l148">    148</a>                     &quot;when it includes the original case narrative. If it contains only general &quot;
+<a href="#l149" class="line" id="l149">    149</a>                     &quot;instructions or no source narrative, do not infer what the original said and &quot;
+<a href="#l150" class="line" id="l150">    150</a>                     &quot;mark the comparison as uncertain. Assess only distinctive wording that appears &quot;
+<a href="#l151" class="line" id="l151">    151</a>                     &quot;copied, not whether the underlying &quot;
+<a href="#l152" class="line" id="l152">    152</a>                     &quot;facts or legal problem are the same. Ignore unavoidable overlap such as names, &quot;
+<a href="#l153" class="line" id="l153">    153</a>                     &quot;dates, legal terms, statutory language, facts necessary to describe the dispute, &quot;
+<a href="#l154" class="line" id="l154">    154</a>                     &quot;and short common phrases. Similar meaning with genuinely different wording is &quot;
+<a href="#l155" class="line" id="l155">    155</a>                     &quot;paraphrase, not copying. If wording is common, legally prescribed, or ambiguous, &quot;
+<a href="#l156" class="line" id="l156">    156</a>                     &quot;choose an uncertain/partial level. Never accuse the student of plagiarism or &quot;
+<a href="#l157" class="line" id="l157">    157</a>                     &quot;provide a plagiarism percentage; assess only textual evidence in these two texts.&quot;
+<a href="#l158" class="line" id="l158">    158</a>                 ),
+<a href="#l159" class="line" id="l159">    159</a>             },
+<a href="#l160" class="line" id="l160">    160</a>         },
+<a href="#l161" class="line" id="l161">    161</a>     },
+<a href="#l162" class="line" id="l162">    162</a>     &quot;case_decisions&quot;: {
+<a href="#l163" class="line" id="l163">    163</a>         &quot;title&quot;: &quot;Decisões possíveis&quot;,
+<a href="#l164" class="line" id="l164">    164</a>         &quot;fields&quot;: (
+<a href="#l165" class="line" id="l165">    165</a>             &quot;case_facts&quot;,
+<a href="#l166" class="line" id="l166">    166</a>             &quot;legal_question&quot;,
+<a href="#l167" class="line" id="l167">    167</a>             &quot;conceptual_basis&quot;,
+<a href="#l168" class="line" id="l168">    168</a>             &quot;possible_decision_a&quot;,
+<a href="#l169" class="line" id="l169">    169</a>             &quot;possible_decision_b&quot;,
+<a href="#l170" class="line" id="l170">    170</a>         ),
+<a href="#l171" class="line" id="l171">    171</a>         &quot;checks&quot;: {
+<a href="#l172" class="line" id="l172">    172</a>             &quot;decisions-clear&quot;: {
+<a href="#l173" class="line" id="l173">    173</a>                 &quot;label&quot;: &quot;As duas decisões possíveis estão formuladas com clareza.&quot;,
+<a href="#l174" class="line" id="l174">    174</a>                 &quot;instructions&quot;: &quot;Assess whether possible decisions are clearly identifiable and stated as legal outcomes rather than repetitions of facts. A separate conceptual subsection or a fixed a/b layout is optional unless the professor expressly requires it. Do not demand a fixed two-thesis format if the supplied report identifies the case as open.&quot;,
+<a href="#l175" class="line" id="l175">    175</a>             },
+<a href="#l176" class="line" id="l176">    176</a>             &quot;decisions-balanced&quot;: {
+<a href="#l177" class="line" id="l177">    177</a>                 &quot;label&quot;: &quot;As alternativas têm peso jurídico comparável.&quot;,
+<a href="#l178" class="line" id="l178">    178</a>                 &quot;instructions&quot;: &quot;Compare whether the alternatives are presented as plausible positions with reasonably comparable framing, without deciding which is legally correct. For a case identified as open, assess whether competing lines are explored without prematurely declaring a winner.&quot;,
+<a href="#l179" class="line" id="l179">    179</a>             },
+<a href="#l180" class="line" id="l180">    180</a>             &quot;decisions-neutral&quot;: {
+<a href="#l181" class="line" id="l181">    181</a>                 &quot;label&quot;: &quot;A base conceitual e a apresentação não indicam uma preferência.&quot;,
+<a href="#l182" class="line" id="l182">    182</a>                 &quot;instructions&quot;: &quot;As a formative suggestion, assess whether the presentation of alternatives is reasonably balanced and avoids prejudging the outcome. This is not a separate official grading requirement unless the professor expressly requires it.&quot;,
+<a href="#l183" class="line" id="l183">    183</a>             },
+<a href="#l184" class="line" id="l184">    184</a>         },
+<a href="#l185" class="line" id="l185">    185</a>     },
+<a href="#l186" class="line" id="l186">    186</a>     &quot;thesis_a&quot;: {
+<a href="#l187" class="line" id="l187">    187</a>         &quot;title&quot;: &quot;Argumentação da tese A&quot;,
+<a href="#l188" class="line" id="l188">    188</a>         &quot;fields&quot;: (
+<a href="#l189" class="line" id="l189">    189</a>             &quot;case_facts&quot;,
+<a href="#l190" class="line" id="l190">    190</a>             &quot;legal_question&quot;,
+<a href="#l191" class="line" id="l191">    191</a>             &quot;conceptual_basis&quot;,
+<a href="#l192" class="line" id="l192">    192</a>             &quot;thesis_a_title&quot;,
+<a href="#l193" class="line" id="l193">    193</a>             &quot;thesis_a_argument&quot;,
+<a href="#l194" class="line" id="l194">    194</a>         ),
+<a href="#l195" class="line" id="l195">    195</a>         &quot;checks&quot;: {
+<a href="#l196" class="line" id="l196">    196</a>             &quot;thesis-a-integrated&quot;: {
+<a href="#l197" class="line" id="l197">    197</a>                 &quot;label&quot;: &quot;Entrelacei legislação, doutrina e jurisprudência na argumentação.&quot;,
+<a href="#l198" class="line" id="l198">    198</a>                 &quot;instructions&quot;: &quot;As a formative suggestion, assess whether legislation, doctrine, and jurisprudence support the argument and relate to the case. The official rubric&#39;s three-or-more-work threshold applies to the whole report and cannot be checked from this single-thesis excerpt; do not require a fixed number of works in this section or two per thesis. Interweaving every source type in each paragraph is optional. Do not claim works belong to the FACSUR Virtual Library or verify existence, currency, or legal accuracy.&quot;,
+<a href="#l199" class="line" id="l199">    199</a>             },
+<a href="#l200" class="line" id="l200">    200</a>             &quot;thesis-a-comment&quot;: {
+<a href="#l201" class="line" id="l201">    201</a>                 &quot;label&quot;: &quot;Expliquei com palavras próprias a relevância das citações para o caso.&quot;,
+<a href="#l202" class="line" id="l202">    202</a>                 &quot;instructions&quot;: &quot;As a formative suggestion, assess whether the student explains how cited law, doctrine, and judicial holdings relate to the case. Commentary after every direct quotation is not a separate official grading requirement unless the professor expressly requires it.&quot;,
+<a href="#l203" class="line" id="l203">    203</a>             },
+<a href="#l204" class="line" id="l204">    204</a>             &quot;thesis-a-neutral&quot;: {
+<a href="#l205" class="line" id="l205">    205</a>                 &quot;label&quot;: &quot;Mantive a análise equilibrada e redigida em terceira pessoa.&quot;,
+<a href="#l206" class="line" id="l206">    206</a>                 &quot;instructions&quot;: &quot;As a formative suggestion, note first-person phrasing or opportunities to present the argument fairly. Exclusive third-person writing is not a separate official grading requirement unless the professor expressly requires it. Do not penalize ordinary attribution of arguments to parties. The report should not be required to choose the final winning position if that belongs to a later dissertation.&quot;,
+<a href="#l207" class="line" id="l207">    207</a>             },
+<a href="#l208" class="line" id="l208">    208</a>         },
+<a href="#l209" class="line" id="l209">    209</a>     },
+<a href="#l210" class="line" id="l210">    210</a>     &quot;thesis_b&quot;: {
+<a href="#l211" class="line" id="l211">    211</a>         &quot;title&quot;: &quot;Argumentação da tese B&quot;,
+<a href="#l212" class="line" id="l212">    212</a>         &quot;fields&quot;: (
+<a href="#l213" class="line" id="l213">    213</a>             &quot;case_facts&quot;,
+<a href="#l214" class="line" id="l214">    214</a>             &quot;legal_question&quot;,
+<a href="#l215" class="line" id="l215">    215</a>             &quot;conceptual_basis&quot;,
+<a href="#l216" class="line" id="l216">    216</a>             &quot;thesis_b_title&quot;,
+<a href="#l217" class="line" id="l217">    217</a>             &quot;thesis_b_argument&quot;,
+<a href="#l218" class="line" id="l218">    218</a>         ),
+<a href="#l219" class="line" id="l219">    219</a>         &quot;checks&quot;: {
+<a href="#l220" class="line" id="l220">    220</a>             &quot;thesis-b-integrated&quot;: {
+<a href="#l221" class="line" id="l221">    221</a>                 &quot;label&quot;: &quot;Entrelacei legislação, doutrina e jurisprudência na argumentação.&quot;,
+<a href="#l222" class="line" id="l222">    222</a>                 &quot;instructions&quot;: &quot;As a formative suggestion, assess whether legislation, doctrine, and jurisprudence support the argument and relate to the case. The official rubric&#39;s three-or-more-work threshold applies to the whole report and cannot be checked from this single-thesis excerpt; do not require a fixed number of works in this section or two per thesis. Interweaving every source type in each paragraph is optional. Do not claim works belong to the FACSUR Virtual Library or verify existence, currency, or legal accuracy.&quot;,
+<a href="#l223" class="line" id="l223">    223</a>             },
+<a href="#l224" class="line" id="l224">    224</a>             &quot;thesis-b-comment&quot;: {
+<a href="#l225" class="line" id="l225">    225</a>                 &quot;label&quot;: &quot;Expliquei com palavras próprias a relevância das citações para o caso.&quot;,
+<a href="#l226" class="line" id="l226">    226</a>                 &quot;instructions&quot;: &quot;As a formative suggestion, assess whether the student explains how cited law, doctrine, and judicial holdings relate to the case. Commentary after every direct quotation is not a separate official grading requirement unless the professor expressly requires it.&quot;,
+<a href="#l227" class="line" id="l227">    227</a>             },
+<a href="#l228" class="line" id="l228">    228</a>             &quot;thesis-b-neutral&quot;: {
+<a href="#l229" class="line" id="l229">    229</a>                 &quot;label&quot;: &quot;Mantive a análise equilibrada e redigida em terceira pessoa.&quot;,
+<a href="#l230" class="line" id="l230">    230</a>                 &quot;instructions&quot;: &quot;As a formative suggestion, note first-person phrasing or opportunities to present the argument fairly. Exclusive third-person writing is not a separate official grading requirement unless the professor expressly requires it. Do not penalize ordinary attribution of arguments to parties. The report should not be required to choose the final winning position if that belongs to a later dissertation.&quot;,
+<a href="#l231" class="line" id="l231">    231</a>             },
+<a href="#l232" class="line" id="l232">    232</a>         },
+<a href="#l233" class="line" id="l233">    233</a>     },
+<a href="#l234" class="line" id="l234">    234</a>     &quot;criteria_and_values&quot;: {
+<a href="#l235" class="line" id="l235">    235</a>         &quot;title&quot;: &quot;Critérios e valores&quot;,
+<a href="#l236" class="line" id="l236">    236</a>         &quot;fields&quot;: (&quot;thesis_a_argument&quot;, &quot;thesis_b_argument&quot;, &quot;criteria_and_values&quot;),
+<a href="#l237" class="line" id="l237">    237</a>         &quot;checks&quot;: {
+<a href="#l238" class="line" id="l238">    238</a>             &quot;criteria-defined&quot;: {
+<a href="#l239" class="line" id="l239">    239</a>                 &quot;label&quot;: &quot;Defini os conceitos técnicos relevantes e indiquei o fundamento de cada definição.&quot;,
+<a href="#l240" class="line" id="l240">    240</a>                 &quot;instructions&quot;: &quot;As a formative suggestion, assess whether listed concepts have clear definitions and a stated normative or ethical basis. A separate glossary defining every term is optional unless the professor expressly requires it.&quot;,
+<a href="#l241" class="line" id="l241">    241</a>             },
+<a href="#l242" class="line" id="l242">    242</a>             &quot;criteria-covered&quot;: {
+<a href="#l243" class="line" id="l243">    243</a>                 &quot;label&quot;: &quot;Conferi se os termos técnicos usados nas teses estão explicados nesta seção.&quot;,
+<a href="#l244" class="line" id="l244">    244</a>                 &quot;instructions&quot;: &quot;As a formative suggestion, compare important case-specific concepts in the arguments with those explained in this section. A comprehensive glossary is optional unless the professor expressly requires one. Ignore ordinary legal vocabulary.&quot;
+<a href="#l245" class="line" id="l245">    245</a>             },
+<a href="#l246" class="line" id="l246">    246</a>         },
+<a href="#l247" class="line" id="l247">    247</a>     },
+<a href="#l248" class="line" id="l248">    248</a> }
+<a href="#l249" class="line" id="l249">    249</a> 
+<a href="#l250" class="line" id="l250">    250</a> AI_CASE_UNASSESSABLE_CHECKS = {
+<a href="#l251" class="line" id="l251">    251</a>     &quot;case_description&quot;: (&quot;facts-original&quot;,),
+<a href="#l252" class="line" id="l252">    252</a>     &quot;case_decisions&quot;: (),
+<a href="#l253" class="line" id="l253">    253</a>     &quot;thesis_a&quot;: (&quot;thesis-a-length&quot;,),
+<a href="#l254" class="line" id="l254">    254</a>     &quot;thesis_b&quot;: (&quot;thesis-b-length&quot;,),
+<a href="#l255" class="line" id="l255">    255</a>     &quot;criteria_and_values&quot;: (),
+<a href="#l256" class="line" id="l256">    256</a> }
+</pre>
+</div>
+</body>
+</html>

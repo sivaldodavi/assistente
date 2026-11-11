@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ops: adicionar monitor tecnico da v2 - assistente-academico - Assistente Acadêmico v2
+</title>
+<link rel="icon" type="image/png" href="../favicon.png" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed" href="../atom.xml" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed (tags)" href="../tags.xml" />
+<link rel="stylesheet" type="text/css" href="../style.css" />
+</head>
+<body>
+<table><tr><td><a href="../../"><img src="../logo.png" alt="" width="32" height="32" /></a></td><td><h1>assistente-academico</h1><span class="desc">Assistente Acadêmico v2
+</span></td></tr><tr class="url"><td></td><td>git clone <a href="git://git.sivaldodavi.com.br/assistente-academico.git">git://git.sivaldodavi.com.br/assistente-academico.git</a></td></tr><tr><td></td><td>
+<a href="../log.html">Log</a> | <a href="../files.html">Files</a> | <a href="../refs.html">Refs</a> | <a href="../file/README.md.html">README</a></td></tr></table>
+<hr/>
+<div id="content">
+<pre><b>commit</b> <a href="../commit/66820a8b888abc50a6d72619cd2a919adcdad34d.html">66820a8b888abc50a6d72619cd2a919adcdad34d</a>
+<b>parent</b> <a href="../commit/4b4675767b2ae0ec3af3ebe13a520ee696978935.html">4b4675767b2ae0ec3af3ebe13a520ee696978935</a>
+<b>Author:</b> Sivaldo Davi &lt;<span class="offview">g<span>x</span>i<span>x</span>t<span>x</span>@<span>x</span>s<span>x</span>i<span>x</span>v<span>x</span>a<span>x</span>l<span>x</span>d<span>x</span>o<span>x</span>d<span>x</span>a<span>x</span>v<span>x</span>i<span>x</span>.<span>x</span>c<span>x</span>o<span>x</span>m</span>&gt;
+<b>Date:</b>   Mon, 26 Oct 2026 16:55:13 +0000
+
+ops: adicionar monitor tecnico da v2
+
+<b>Diffstat:</b>
+<table><tr><td class="A">A</td><td><a href="#h0">ops/assistente_monitor.py</a></td><td> | </td><td class="num">70</td><td><span class="i">++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="A">A</td><td><a href="#h1">services/assistente-monitor.service</a></td><td> | </td><td class="num">27</td><td><span class="i">+++++++++++++++++++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="A">A</td><td><a href="#h2">services/assistente-monitor.timer</a></td><td> | </td><td class="num">12</td><td><span class="i">++++++++++++</span><span class="d"></span></td></tr>
+</table></pre><pre>3 files changed, 109 insertions(+), 0 deletions(-)
+<hr/><b>diff --git a/<a id="h0" href="../file/ops/assistente_monitor.py.html">ops/assistente_monitor.py</a> b/<a href="../file/ops/assistente_monitor.py.html">ops/assistente_monitor.py</a></b>
+<a href="#h0-0" id="h0-0" class="h">@@ -0,0 +1,70 @@
+</a><a href="#h0-0-0" id="h0-0-0" class="i">+#!/usr/bin/env python3
+</a><a href="#h0-0-1" id="h0-0-1" class="i">+import json
+</a><a href="#h0-0-2" id="h0-0-2" class="i">+import os
+</a><a href="#h0-0-3" id="h0-0-3" class="i">+import shutil
+</a><a href="#h0-0-4" id="h0-0-4" class="i">+import sqlite3
+</a><a href="#h0-0-5" id="h0-0-5" class="i">+import subprocess
+</a><a href="#h0-0-6" id="h0-0-6" class="i">+import sys
+</a><a href="#h0-0-7" id="h0-0-7" class="i">+from urllib.error import URLError
+</a><a href="#h0-0-8" id="h0-0-8" class="i">+from urllib.request import Request, urlopen
+</a><a href="#h0-0-9" id="h0-0-9" class="i">+
+</a><a href="#h0-0-10" id="h0-0-10" class="i">+SITE_URL = os.environ.get(&quot;ASSISTENTE_SITE_URL&quot;, &quot;https://trab.sivaldodavi.com.br&quot;).rstrip(&quot;/&quot;)
+</a><a href="#h0-0-11" id="h0-0-11" class="i">+CONTAINER = os.environ.get(&quot;ASSISTENTE_CONTAINER&quot;, &quot;site-assistente-academico&quot;)
+</a><a href="#h0-0-12" id="h0-0-12" class="i">+DATABASE = os.environ.get(&quot;ASSISTENTE_DATABASE&quot;, &quot;/opt/servidor/data/assistente-academico/assistente_v2.sqlite3&quot;)
+</a><a href="#h0-0-13" id="h0-0-13" class="i">+STATE = os.environ.get(&quot;ASSISTENTE_MONITOR_STATE&quot;, &quot;/var/lib/assistente-monitor/state.json&quot;)
+</a><a href="#h0-0-14" id="h0-0-14" class="i">+
+</a><a href="#h0-0-15" id="h0-0-15" class="i">+
+</a><a href="#h0-0-16" id="h0-0-16" class="i">+def command(*args: str) -&gt; tuple[str, int]:
+</a><a href="#h0-0-17" id="h0-0-17" class="i">+    try:
+</a><a href="#h0-0-18" id="h0-0-18" class="i">+        result = subprocess.run(args, capture_output=True, text=True, timeout=15, check=False)
+</a><a href="#h0-0-19" id="h0-0-19" class="i">+    except (OSError, subprocess.TimeoutExpired) as error:
+</a><a href="#h0-0-20" id="h0-0-20" class="i">+        return type(error).__name__, 1
+</a><a href="#h0-0-21" id="h0-0-21" class="i">+    return result.stdout.strip(), result.returncode
+</a><a href="#h0-0-22" id="h0-0-22" class="i">+
+</a><a href="#h0-0-23" id="h0-0-23" class="i">+
+</a><a href="#h0-0-24" id="h0-0-24" class="i">+def checks() -&gt; list[str]:
+</a><a href="#h0-0-25" id="h0-0-25" class="i">+    issues = []
+</a><a href="#h0-0-26" id="h0-0-26" class="i">+    try:
+</a><a href="#h0-0-27" id="h0-0-27" class="i">+        request = Request(SITE_URL + &quot;/healthz&quot;, method=&quot;GET&quot;)
+</a><a href="#h0-0-28" id="h0-0-28" class="i">+        with urlopen(request, timeout=10) as response:
+</a><a href="#h0-0-29" id="h0-0-29" class="i">+            if response.status != 200:
+</a><a href="#h0-0-30" id="h0-0-30" class="i">+                issues.append(&quot;site_http&quot;)
+</a><a href="#h0-0-31" id="h0-0-31" class="i">+    except (OSError, URLError):
+</a><a href="#h0-0-32" id="h0-0-32" class="i">+        issues.append(&quot;site_http&quot;)
+</a><a href="#h0-0-33" id="h0-0-33" class="i">+
+</a><a href="#h0-0-34" id="h0-0-34" class="i">+    health, code = command(&quot;docker&quot;, &quot;inspect&quot;, &quot;--format&quot;, &quot;{{.State.Health.Status}}&quot;, CONTAINER)
+</a><a href="#h0-0-35" id="h0-0-35" class="i">+    if code or health != &quot;healthy&quot;:
+</a><a href="#h0-0-36" id="h0-0-36" class="i">+        issues.append(&quot;container_health&quot;)
+</a><a href="#h0-0-37" id="h0-0-37" class="i">+
+</a><a href="#h0-0-38" id="h0-0-38" class="i">+    try:
+</a><a href="#h0-0-39" id="h0-0-39" class="i">+        connection = sqlite3.connect(f&quot;file:{DATABASE}?mode=ro&quot;, uri=True, timeout=3)
+</a><a href="#h0-0-40" id="h0-0-40" class="i">+        if connection.execute(&quot;PRAGMA integrity_check&quot;).fetchone()[0] != &quot;ok&quot;:
+</a><a href="#h0-0-41" id="h0-0-41" class="i">+            issues.append(&quot;database_integrity&quot;)
+</a><a href="#h0-0-42" id="h0-0-42" class="i">+        pending = connection.execute(&quot;SELECT COUNT(*) FROM notification_outbox WHERE status IN (&#39;pending&#39;, &#39;retry&#39;)&quot;).fetchone()[0]
+</a><a href="#h0-0-43" id="h0-0-43" class="i">+        old = connection.execute(&quot;SELECT COUNT(*) FROM notification_outbox WHERE status IN (&#39;pending&#39;, &#39;retry&#39;) AND next_attempt_at &lt; strftime(&#39;%s&#39;,&#39;now&#39;) - 86400&quot;).fetchone()[0]
+</a><a href="#h0-0-44" id="h0-0-44" class="i">+        if old:
+</a><a href="#h0-0-45" id="h0-0-45" class="i">+            issues.append(&quot;whatsapp_queue_old&quot;)
+</a><a href="#h0-0-46" id="h0-0-46" class="i">+        if pending &gt; 100:
+</a><a href="#h0-0-47" id="h0-0-47" class="i">+            issues.append(&quot;whatsapp_queue_high&quot;)
+</a><a href="#h0-0-48" id="h0-0-48" class="i">+        connection.close()
+</a><a href="#h0-0-49" id="h0-0-49" class="i">+    except (OSError, sqlite3.Error):
+</a><a href="#h0-0-50" id="h0-0-50" class="i">+        issues.append(&quot;database&quot;)
+</a><a href="#h0-0-51" id="h0-0-51" class="i">+
+</a><a href="#h0-0-52" id="h0-0-52" class="i">+    usage = shutil.disk_usage(&quot;/opt/servidor&quot;)
+</a><a href="#h0-0-53" id="h0-0-53" class="i">+    if usage.free &lt; 2 * 1024**3:
+</a><a href="#h0-0-54" id="h0-0-54" class="i">+        issues.append(&quot;disk_low&quot;)
+</a><a href="#h0-0-55" id="h0-0-55" class="i">+    return issues
+</a><a href="#h0-0-56" id="h0-0-56" class="i">+
+</a><a href="#h0-0-57" id="h0-0-57" class="i">+
+</a><a href="#h0-0-58" id="h0-0-58" class="i">+def main() -&gt; int:
+</a><a href="#h0-0-59" id="h0-0-59" class="i">+    issues = checks()
+</a><a href="#h0-0-60" id="h0-0-60" class="i">+    payload = {&quot;ok&quot;: not issues, &quot;issues&quot;: issues}
+</a><a href="#h0-0-61" id="h0-0-61" class="i">+    os.makedirs(os.path.dirname(STATE), exist_ok=True)
+</a><a href="#h0-0-62" id="h0-0-62" class="i">+    with open(STATE, &quot;w&quot;, encoding=&quot;utf-8&quot;) as handle:
+</a><a href="#h0-0-63" id="h0-0-63" class="i">+        json.dump(payload, handle, ensure_ascii=False)
+</a><a href="#h0-0-64" id="h0-0-64" class="i">+    print(json.dumps(payload, ensure_ascii=False, sort_keys=True))
+</a><a href="#h0-0-65" id="h0-0-65" class="i">+    return 1 if issues else 0
+</a><a href="#h0-0-66" id="h0-0-66" class="i">+
+</a><a href="#h0-0-67" id="h0-0-67" class="i">+
+</a><a href="#h0-0-68" id="h0-0-68" class="i">+if __name__ == &quot;__main__&quot;:
+</a><a href="#h0-0-69" id="h0-0-69" class="i">+    sys.exit(main())
+</a><b>diff --git a/<a id="h1" href="../file/services/assistente-monitor.service.html">services/assistente-monitor.service</a> b/<a href="../file/services/assistente-monitor.service.html">services/assistente-monitor.service</a></b>
+<a href="#h1-0" id="h1-0" class="h">@@ -0,0 +1,27 @@
+</a><a href="#h1-0-0" id="h1-0-0" class="i">+[Unit]
+</a><a href="#h1-0-1" id="h1-0-1" class="i">+Description=Monitor técnico do Assistente Acadêmico v2
+</a><a href="#h1-0-2" id="h1-0-2" class="i">+After=network-online.target docker.service
+</a><a href="#h1-0-3" id="h1-0-3" class="i">+Wants=network-online.target
+</a><a href="#h1-0-4" id="h1-0-4" class="i">+
+</a><a href="#h1-0-5" id="h1-0-5" class="i">+[Service]
+</a><a href="#h1-0-6" id="h1-0-6" class="i">+Type=oneshot
+</a><a href="#h1-0-7" id="h1-0-7" class="i">+User=root
+</a><a href="#h1-0-8" id="h1-0-8" class="i">+WorkingDirectory=/opt/servidor/sites/assistente-academico
+</a><a href="#h1-0-9" id="h1-0-9" class="i">+Environment=ASSISTENTE_SITE_URL=https://trab.sivaldodavi.com.br
+</a><a href="#h1-0-10" id="h1-0-10" class="i">+Environment=ASSISTENTE_CONTAINER=site-assistente-academico
+</a><a href="#h1-0-11" id="h1-0-11" class="i">+Environment=ASSISTENTE_DATABASE=/opt/servidor/data/assistente-academico/assistente_v2.sqlite3
+</a><a href="#h1-0-12" id="h1-0-12" class="i">+Environment=ASSISTENTE_MONITOR_STATE=/var/lib/assistente-monitor/state.json
+</a><a href="#h1-0-13" id="h1-0-13" class="i">+ExecStart=/usr/bin/python3 /opt/servidor/sites/assistente-academico/ops/assistente_monitor.py
+</a><a href="#h1-0-14" id="h1-0-14" class="i">+NoNewPrivileges=true
+</a><a href="#h1-0-15" id="h1-0-15" class="i">+PrivateTmp=true
+</a><a href="#h1-0-16" id="h1-0-16" class="i">+PrivateDevices=true
+</a><a href="#h1-0-17" id="h1-0-17" class="i">+ProtectHome=true
+</a><a href="#h1-0-18" id="h1-0-18" class="i">+ProtectKernelTunables=true
+</a><a href="#h1-0-19" id="h1-0-19" class="i">+ProtectKernelModules=true
+</a><a href="#h1-0-20" id="h1-0-20" class="i">+ProtectControlGroups=true
+</a><a href="#h1-0-21" id="h1-0-21" class="i">+ReadWritePaths=/var/lib/assistente-monitor
+</a><a href="#h1-0-22" id="h1-0-22" class="i">+RestrictSUIDSGID=true
+</a><a href="#h1-0-23" id="h1-0-23" class="i">+LockPersonality=true
+</a><a href="#h1-0-24" id="h1-0-24" class="i">+RestrictRealtime=true
+</a><a href="#h1-0-25" id="h1-0-25" class="i">+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+</a><a href="#h1-0-26" id="h1-0-26" class="i">+UMask=0077
+</a><b>diff --git a/<a id="h2" href="../file/services/assistente-monitor.timer.html">services/assistente-monitor.timer</a> b/<a href="../file/services/assistente-monitor.timer.html">services/assistente-monitor.timer</a></b>
+<a href="#h2-0" id="h2-0" class="h">@@ -0,0 +1,12 @@
+</a><a href="#h2-0-0" id="h2-0-0" class="i">+[Unit]
+</a><a href="#h2-0-1" id="h2-0-1" class="i">+Description=Verificação periódica do Assistente Acadêmico v2
+</a><a href="#h2-0-2" id="h2-0-2" class="i">+
+</a><a href="#h2-0-3" id="h2-0-3" class="i">+[Timer]
+</a><a href="#h2-0-4" id="h2-0-4" class="i">+OnBootSec=2min
+</a><a href="#h2-0-5" id="h2-0-5" class="i">+OnUnitActiveSec=5min
+</a><a href="#h2-0-6" id="h2-0-6" class="i">+RandomizedDelaySec=30s
+</a><a href="#h2-0-7" id="h2-0-7" class="i">+Persistent=true
+</a><a href="#h2-0-8" id="h2-0-8" class="i">+Unit=assistente-monitor.service
+</a><a href="#h2-0-9" id="h2-0-9" class="i">+
+</a><a href="#h2-0-10" id="h2-0-10" class="i">+[Install]
+</a><a href="#h2-0-11" id="h2-0-11" class="i">+WantedBy=timers.target
+</a></pre>
+</div>
+</body>
+</html>

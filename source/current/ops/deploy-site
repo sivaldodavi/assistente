@@ -1,0 +1,46 @@
+#!/bin/bash
+# Uso: deploy-site <website|direito|teologia|assistente-academico> [ref]
+# Instalar em /opt/servidor/deploy-site. Push Git não dispara deploy.
+set -euo pipefail
+cd /
+unset GIT_DIR GIT_WORK_TREE
+SERVIDOR_DIR="/opt/servidor"
+REPOS_DIR="/home/git/repos"
+REPO="${1:-}"; REF="${2:-main}"
+case "$REPO" in
+  website) SITE_DIR="pessoal"; SERVICE="pessoal" ;;
+  direito) SITE_DIR="direito"; SERVICE="direito" ;;
+  teologia) SITE_DIR="teologia"; SERVICE="teologia" ;;
+  assistente-academico) SITE_DIR="assistente-academico"; SERVICE="assistente-academico" ;;
+  *) echo "Uso: deploy-site <website|direito|teologia|assistente-academico> [ref]"; exit 1 ;;
+esac
+GIT_REPO="$REPOS_DIR/$REPO.git"
+DEST="$SERVIDOR_DIR/sites/$SITE_DIR"
+[ -d "$GIT_REPO" ] || { echo "ERRO: repositório não existe"; exit 1; }
+[ -d "$DEST" ] || { echo "ERRO: diretório de publicação não existe"; exit 1; }
+exec 9>"/tmp/deploy-site-$SITE_DIR.lock"
+flock 9
+STAGE="$(mktemp -d "$SERVIDOR_DIR/sites/.deploy-$SITE_DIR.XXXXXX")"
+trap 'rm -rf "$STAGE"' EXIT
+git --git-dir="$GIT_REPO" archive "$REF" | tar -x -C "$STAGE"
+if [ "$REPO" = "assistente-academico" ]; then
+  for file in Dockerfile requirements.txt wsgi.py app/__init__.py app/store/schema.sql; do
+    [ -s "$STAGE/$file" ] || { echo "ERRO: falta $file na aplicação Python; deploy cancelado"; exit 1; }
+  done
+  [ -d "$STAGE/templates" ] && [ -d "$STAGE/static" ] || exit 1
+elif [ ! -d "$STAGE/content" ] || [ -z "$(ls -A "$STAGE/content")" ]; then
+  echo "ERRO: o commit não tem content/; deploy cancelado"
+  exit 1
+fi
+if docker compose version >/dev/null 2>&1; then DC=(docker compose); else DC=(docker-compose); fi
+COMPOSE_ARGS=(--project-directory "$SERVIDOR_DIR" -f "$SERVIDOR_DIR/docker-compose.yml")
+if [ "$REPO" = "assistente-academico" ]; then
+  COMPOSE_ARGS+=(-f "$SERVIDOR_DIR/docker-compose.production.yml")
+fi
+"${DC[@]}" "${COMPOSE_ARGS[@]}" config --quiet
+# Só código: banco, secrets e catálogo ficam fora de sites/.
+find "$DEST" -mindepth 1 -maxdepth 1 -exec rm -rf {} +
+cp -a "$STAGE"/. "$DEST"/
+echo "==> [$REPO] construindo e publicando $REF"
+"${DC[@]}" "${COMPOSE_ARGS[@]}" up -d --build --no-deps "$SERVICE"
+echo "==> [$REPO] container atualizado; verificar healthcheck e domínio."

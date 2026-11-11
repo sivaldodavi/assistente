@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>docs: consolidar operacao e backup - assistente-academico - Assistente Acadêmico v2
+</title>
+<link rel="icon" type="image/png" href="../favicon.png" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed" href="../atom.xml" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed (tags)" href="../tags.xml" />
+<link rel="stylesheet" type="text/css" href="../style.css" />
+</head>
+<body>
+<table><tr><td><a href="../../"><img src="../logo.png" alt="" width="32" height="32" /></a></td><td><h1>assistente-academico</h1><span class="desc">Assistente Acadêmico v2
+</span></td></tr><tr class="url"><td></td><td>git clone <a href="git://git.sivaldodavi.com.br/assistente-academico.git">git://git.sivaldodavi.com.br/assistente-academico.git</a></td></tr><tr><td></td><td>
+<a href="../log.html">Log</a> | <a href="../files.html">Files</a> | <a href="../refs.html">Refs</a> | <a href="../file/README.md.html">README</a></td></tr></table>
+<hr/>
+<div id="content">
+<pre><b>commit</b> <a href="../commit/0fcd513b5210573a55ea81c5caa0e49d80dcd918.html">0fcd513b5210573a55ea81c5caa0e49d80dcd918</a>
+<b>parent</b> <a href="../commit/efb6d6742495ad55bc9b5c5009285d9e1324d1f4.html">efb6d6742495ad55bc9b5c5009285d9e1324d1f4</a>
+<b>Author:</b> Sivaldo Davi &lt;<span class="offview">g<span>x</span>i<span>x</span>t<span>x</span>@<span>x</span>s<span>x</span>i<span>x</span>v<span>x</span>a<span>x</span>l<span>x</span>d<span>x</span>o<span>x</span>d<span>x</span>a<span>x</span>v<span>x</span>i<span>x</span>.<span>x</span>c<span>x</span>o<span>x</span>m</span>&gt;
+<b>Date:</b>   Mon, 26 Oct 2026 20:44:49 +0000
+
+docs: consolidar operacao e backup
+
+Co-authored-by: Manus &lt;dev-agent@manus.ai&gt;
+
+<b>Diffstat:</b>
+<table><tr><td class="M">M</td><td><a href="#h0">AGENTS.md</a></td><td> | </td><td class="num">8</td><td><span class="i">++++++</span><span class="d">--</span></td></tr>
+<tr><td class="M">M</td><td><a href="#h1">README.md</a></td><td> | </td><td class="num">2</td><td><span class="i">++</span><span class="d"></span></td></tr>
+<tr><td class="M">M</td><td><a href="#h2">docs/ia/COMPARACAO-LEGADO-E-PLANO-LIMPEZA.md</a></td><td> | </td><td class="num">198</td><td><span class="i">++++++++</span><span class="d">-----------------------------------------------------------------------</span></td></tr>
+<tr><td class="M">M</td><td><a href="#h3">docs/ia/ESTADO.md</a></td><td> | </td><td class="num">4</td><td><span class="i">+++</span><span class="d">-</span></td></tr>
+<tr><td class="A">A</td><td><a href="#h4">docs/ia/OPERACAO-BACKUP.md</a></td><td> | </td><td class="num">34</td><td><span class="i">++++++++++++++++++++++++++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="M">M</td><td><a href="#h5">docs/ia/PARIDADE-FUNCIONAL-ATUAL.md</a></td><td> | </td><td class="num">10</td><td><span class="i">++++++</span><span class="d">----</span></td></tr>
+<tr><td class="M">M</td><td><a href="#h6">docs/ia/PENDENCIAS.md</a></td><td> | </td><td class="num">4</td><td><span class="i">++</span><span class="d">--</span></td></tr>
+<tr><td class="A">A</td><td><a href="#h7">ops/assistente-db-backup</a></td><td> | </td><td class="num">76</td><td><span class="i">++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="A">A</td><td><a href="#h8">services/assistente-db-backup.service</a></td><td> | </td><td class="num">16</td><td><span class="i">++++++++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="A">A</td><td><a href="#h9">services/assistente-db-backup.timer</a></td><td> | </td><td class="num">11</td><td><span class="i">+++++++++++</span><span class="d"></span></td></tr>
+</table></pre><pre>10 files changed, 174 insertions(+), 189 deletions(-)
+<hr/><b>diff --git a/<a id="h0" href="../file/AGENTS.md.html">AGENTS.md</a> b/<a href="../file/AGENTS.md.html">AGENTS.md</a></b>
+<a href="#h0-0" id="h0-0" class="h">@@ -10,8 +10,10 @@ Leia, nesta ordem:
+</a> 2. `docs/ia/ARQUITETURA.md`;
+ 3. `docs/ia/DECISOES.md`;
+ 4. `docs/ia/INTERFACE.md`;
+<a href="#h0-0-3" id="h0-0-3" class="d">-5. `docs/ia/PLANO-PESQUISA-JURIDICA-E-IA.md` quando a mudança envolver biblioteca, catálogo, pesquisa ou IA;
+</a><a href="#h0-0-4" id="h0-0-4" class="d">-6. a documentação do domínio que será alterado.
+</a><a href="#h0-0-5" id="h0-0-5" class="i">+5. `docs/ia/PARIDADE-FUNCIONAL-ATUAL.md`;
+</a><a href="#h0-0-6" id="h0-0-6" class="i">+6. `docs/ia/OPERACAO-BACKUP.md` quando a mudança envolver banco, operação ou deploy;
+</a><a href="#h0-0-7" id="h0-0-7" class="i">+7. `docs/ia/PLANO-PESQUISA-JURIDICA-E-IA.md` quando a mudança envolver biblioteca, catálogo, pesquisa ou IA;
+</a><a href="#h0-0-8" id="h0-0-8" class="i">+8. a documentação do domínio que será alterado.
+</a> 
+ Para qualquer alteração de assistência, JEV, pesquisa jurídica ou modelos públicos, leia também `docs/ia/IA-EDITOR-JEV.md` antes de editar templates, JavaScript ou provedores.
+ 
+<a href="#h0-1" id="h0-1" class="h">@@ -41,3 +43,5 @@ python3 -m compileall -q app ops wsgi.py
+</a> ```
+ 
+ O build Docker e a medição de RAM entram antes de qualquer pré-produção. O domínio atual só muda após aceite explícito e rollback testado.
+<a href="#h0-1-3" id="h0-1-3" class="i">+
+</a><a href="#h0-1-4" id="h0-1-4" class="i">+O backup diário deve ser mantido por uma única rotina versionada em `ops/assistente-db-backup`; não criar cópias paralelas ou alterar retenção, caminho e permissões sem atualizar também `services/assistente-db-backup.*` e `docs/ia/OPERACAO-BACKUP.md`.
+</a><b>diff --git a/<a id="h1" href="../file/README.md.html">README.md</a> b/<a href="../file/README.md.html">README.md</a></b>
+<a href="#h1-0" id="h1-0" class="h">@@ -25,6 +25,8 @@ Copie `.env.example` apenas para um ambiente local. Os valores reais nunca entra
+</a> 
+ O domínio público `https://trab.sivaldodavi.com.br` usa o serviço `site-assistente-academico`. O banco novo fica em `/opt/servidor/data/assistente-academico/assistente_v2.sqlite3`. O código e os dados anteriores permanecem disponíveis em `/opt/servidor/sites/assistente-academico-legado/` e `/opt/servidor/data/assistente-academico-legado/`; o legado não é iniciado pelo domínio principal.
+ 
+<a href="#h1-0-3" id="h1-0-3" class="i">+O backup diário do banco é mantido pelo timer `assistente-db-backup.timer`. Ele valida a cópia e uma restauração temporária antes de mantê-la, com retenção de 14 dias. Leia `docs/ia/OPERACAO-BACKUP.md` antes de alterar banco, deploy ou recuperação.
+</a><a href="#h1-0-4" id="h1-0-4" class="i">+
+</a> ## Princípios do produto
+ 
+ O usuário verá o mesmo tipo de editor, etapas e documentos do site atual. A implementação é diferente: templates server-side, módulos pequenos, operações explícitas e testes por contratos de fluxo. A IA fica dentro das etapas: pode revisar campos, sugerir pergunta-problema, teses, critérios e referências, ler checklists e chamar o JEV para avaliação orientativa. Nenhuma sugestão altera o texto sem confirmação. A descrição dos fatos permanece na etapa própria do Case; não existe módulo de cronologia. Os modelos públicos completos são mantidos em `app/domain/public-models.json`, com conteúdo anonimizado portado do legado.
+<b>diff --git a/<a id="h2" href="../file/docs/ia/COMPARACAO-LEGADO-E-PLANO-LIMPEZA.md.html">docs/ia/COMPARACAO-LEGADO-E-PLANO-LIMPEZA.md</a> b/<a href="../file/docs/ia/COMPARACAO-LEGADO-E-PLANO-LIMPEZA.md.html">docs/ia/COMPARACAO-LEGADO-E-PLANO-LIMPEZA.md</a></b>
+<a href="#h2-0" id="h2-0" class="h">@@ -1,197 +1,35 @@
+</a><a href="#h2-0-0" id="h2-0-0" class="d">-# Comparação de experiência com o legado e plano de limpeza do WhatsApp
+</a><a href="#h2-0-1" id="h2-0-1" class="i">+# Comparação permanente com o legado
+</a> 
+<a href="#h2-0-3" id="h2-0-3" class="d">-**Status:** auditoria concluída e corte automático aprovado. O relatório permanece como histórico; a execução será registrada em commit separado após testes.
+</a><a href="#h2-0-4" id="h2-0-4" class="i">+Este documento explica o que a aplicação principal preserva do produto de referência e quais diferenças ainda existem. Ele não é um diário de commits nem uma lista de tarefas temporária. Para regras visuais, consulte `PARIDADE-FUNCIONAL-ATUAL.md`; para o backup, consulte `OPERACAO-BACKUP.md`; para IA e avaliação, consulte `IA-EDITOR-JEV.md`.
+</a> 
+<a href="#h2-0-6" id="h2-0-6" class="d">-**Escopo:** comparar a aplicação principal (`/home/ubuntu/work-assistente-academico`) com a experiência e as funções observáveis do produto preservado em `/home/ubuntu/work-assistente-reconcile`, e planejar a remoção do WhatsApp **do Assistente**. A comparação não é uma comparação de implementação, de framework ou de bancos: é uma comparação de experiência e função do usuário, incluindo garantias operacionais que mudam o resultado visível para a pessoa usuária.
+</a><a href="#h2-0-7" id="h2-0-7" class="i">+## O que foi preservado
+</a> 
+<a href="#h2-0-9" id="h2-0-9" class="d">-**Regra de interpretação:** `igual` significa que o contrato observável e suas garantias relevantes coincidem; `quase igual` significa que o núcleo da jornada coincide, com diferenças restritas e não bloqueantes; `parcial` significa que há a mesma intenção ou uma parte da jornada, mas faltam etapas, garantias ou capacidades relevantes; `ausente` significa que não há equivalente utilizável; `melhor` significa uma melhoria localizada da aplicação principal, sem implicar paridade do conjunto da área. Não se deve anunciar “paridade” apenas porque existe uma rota, um campo ou uma tela com o mesmo nome.
+</a><a href="#h2-0-10" id="h2-0-10" class="i">+A aplicação principal mantém a vitrine pública, login Google, conta, perfil, termos, consentimento separado de assistência, Case, Projeto de Paper, Paper Final, Biblioteca Pessoal, fontes, fichamentos, agenda local, autosave, duplicação vazia, exclusão de projeto, compartilhamento revogável, comentários separados, revisão/entrega, assistência contextual, avaliação por etapa, pesquisa jurídica por Lei/Jurisprudência/Doutrina e exportação HTML/PDF com Typst/ABNT portado do legado.
+</a> 
+<a href="#h2-0-12" id="h2-0-12" class="d">-## 1. Resumo executivo
+</a><a href="#h2-0-13" id="h2-0-13" class="i">+Os três modelos públicos são conteúdos preenchidos e navegáveis em modo somente leitura. Cada modelo usa seu roteiro próprio: Case, Projeto de Paper ou Paper Final. A Biblioteca Pessoal mostra somente fontes e fichamentos da conta; o catálogo jurídico é um insumo interno da assistência e não uma tela de índice para a pessoa usuária.
+</a> 
+<a href="#h2-0-15" id="h2-0-15" class="d">-A aplicação principal preserva a identidade visual, os roteiros acadêmicos essenciais, a navegação por etapas, o autosave, a biblioteca pessoal separada, o catálogo jurídico interno e o núcleo do login Google. Isso é uma base funcional real, mas a auditoria não encontrou nenhuma área ampla que possa ser declarada integralmente igual ao legado. A classificação geral é **parcial**: foram preservadas várias jornadas, porém faltam garantias e funções que o usuário efetivamente utilizava, especialmente composição ABNT/PDF, prévia e entrega, fontes/citações, pesquisa contextual e avaliação estruturada, créditos e limites, exportação/exclusão de conta, histórico, calendário e observabilidade.
+</a><a href="#h2-0-16" id="h2-0-16" class="i">+## Decisões explícitas de produto
+</a> 
+<a href="#h2-0-18" id="h2-0-18" class="d">-A ausência de **Linha do Tempo/Cronologia dos Fatos não é um defeito nem uma lacuna desta auditoria**. `docs/ia/INTERFACE.md:23`, `AGENTS.md:27` e as decisões de produto determinam que esse recurso não existe e não deve ser reintroduzido no editor, payload, testes, exportação ou documentação de domínio.
+</a><a href="#h2-0-19" id="h2-0-19" class="i">+A aplicação não possui cronologia dos fatos, Linha do Tempo, histórico de versões, diff ou restauração de trabalhos. Backup operacional existe apenas para proteger o banco em caso de falha; não é um recurso de versões visível na conta.
+</a> 
+<a href="#h2-0-21" id="h2-0-21" class="d">-A remoção do WhatsApp é tecnicamente separável do editor, da biblioteca, da exportação, do OAuth, do CSRF e da assistência de IA. Ela não deve remover login, sessões, consentimento de IA, projetos, agenda local, autosave, fontes ou PDF. Deve remover a promessa e a integração de mensagens do Assistente: telefone/opt-in, boas-vindas, lembretes, alertas de login, outbox, worker, unidades systemd, configuração, referências de deploy, testes e textos públicos. O bare repository `/home/git/repos/zap-go.git` é o único artefato do gateway a preservar. O container, checkout, banco, lock, secret e índice stagit do gateway serão removidos; o contato manual público permanece apenas como link externo.
+</a><a href="#h2-0-22" id="h2-0-22" class="i">+Não há pagamento automático, importação de contas/projetos do banco legado, integração automática de mensagens ou dependência do gateway de mensagens. O contato manual de atendimento/Pix, quando exibido, é somente um link externo.
+</a> 
+<a href="#h2-0-24" id="h2-0-24" class="d">-O canal manual de Pix/suporte continua sendo o WhatsApp do administrador por link público. A mudança remove apenas automação, armazenamento e envio pelo sistema; a pessoa continuará abrindo a conversa manualmente.
+</a><a href="#h2-0-25" id="h2-0-25" class="i">+Paper Final não é uma terceira opção inicial independente: ele é alcançado pela transição do Projeto de Paper. A administração de planos e créditos é manual, sem checkout automático.
+</a> 
+<a href="#h2-0-27" id="h2-0-27" class="d">-A auditoria também não confirmou a existência física de `/home/git` nesta sandbox nem consultou VPS, produção, banco ou secrets. Os caminhos de repositório, serviços e unidades abaixo são inventário documental/código a validar no host autorizado, não uma autorização para apagar recursos reais.
+</a><a href="#h2-0-28" id="h2-0-28" class="i">+## Diferenças que ainda são reais
+</a> 
+<a href="#h2-0-30" id="h2-0-30" class="d">-## 2. Matriz consolidada por área
+</a><a href="#h2-0-31" id="h2-0-31" class="i">+A equivalência acadêmica ainda não é total em quatro pontos. Primeiro, fontes ainda não possuem todos os vínculos finos do legado entre trecho, citação, tese, critério e localizador. Segundo, Debate e Dissertação ainda precisam das conferências e transições completas do fluxo de referência. Terceiro, Paper ainda precisa reproduzir integralmente todas as exigências, estados de entrega e regras de transição do legado. Quarto, a sessão ainda pode receber endurecimentos operacionais de expiração, revogação e política de origem.
+</a> 
+<a href="#h2-0-33" id="h2-0-33" class="d">-| Área | Principal | Legado | Classificação honesta | Evidência da comparação |
+</a><a href="#h2-0-34" id="h2-0-34" class="d">-|---|---|---|---|---|
+</a><a href="#h2-0-35" id="h2-0-35" class="d">-| Vitrine pública e páginas institucionais | Vitrine server-rendered em `/`, Case/Paper, recursos, três modelos, três planos Pix, FAQ, login Google e páginas públicas; demonstração reduzida a resumo, títulos e trechos. | Vitrine comercial equivalente, mas com demonstração navegável por etapas, campos, critérios, fontes, citações, revisão, documento integral e PDF do Case; Jornada, Ajuda, Termos e Privacidade mais detalhados. | **parcial** | Principal: `app/routes/public.py:11-160`, `templates/public/home.html:8-193`, `static/js/app.js:52-118`; legado: `layouts/partials/marketing.html`, `assets/js/marketing.mjs`, `assets/js/main.js:838-989`, `assets/js/content/models.mjs`. O principal mantém os preços e a estrutura, mas não entrega a promessa completa de “percorrer as etapas” e “ler o documento final”. |
+</a><a href="#h2-0-36" id="h2-0-36" class="d">-| Google OAuth, sessão, CSRF e logout | Authorization Code com state, nonce e PKCE; validação do ID token; conta bloqueada; sessão Flask assinada; logout POST com CSRF e limpeza da sessão. | Jornada Google semelhante, além de sessão server-side com hash, expiração de 30 dias, revogação efetiva, atributos de cookie explícitos e verificação de mesma origem/Sec-Fetch-Site. | **parcial** — núcleo OAuth **quase igual**, garantias de sessão/logout não | Principal: `app/routes/oauth.py`, `app/services/google_oauth.py`, `app/auth.py`, `app/routes/auth.py`; legado: `server.py:120-329,615-913`, `store/accounts.py:11-72`. Faltam expiração/revogação persistida, política explícita de cookies, defesa de origem e mensagem distinta para cancelamento Google. |
+</a><a href="#h2-0-37" id="h2-0-37" class="d">-| Conta, perfil, termos e consentimentos | Perfil com dados pessoais e listas reutilizáveis; termos obrigatórios; IA separada e revogável; atendimento manual externo; projetos, compartilhamento por projeto e exclusão própria. | Além disso, compartilhamento global com herança/override, exportação de dados, resposta a solicitação, plano/créditos/limites visíveis e experiência de conta mais ampla. | **parcial** | Principal: `app/routes/account.py`, `app/routes/projects.py`, `templates/account/settings.html`, `app/store/accounts.py`; legado: `assets/js/main.js:1240-1420,1529-1621,1794-1878`, `server.py:731-742,914-944,1305-1362`. Exportação, compartilhamento global e resumo de plano/saldo estão ausentes; exclusão própria foi adicionada. |
+</a><a href="#h2-0-38" id="h2-0-38" class="d">-| Criação, listagem, duplicação e agenda | Cria Case, `paper_project` e `paper_final`; lista mínima; duplicação vazia; datas e tarefas manuais locais; sem calendário; sem aplicação de `project_limit`. | Lista com estado, atualização, créditos e ações; calendário; Paper Final como modo do mesmo projeto/crédito; tarefas concluíveis, roteiro sugerido e duplicação com preservação estrutural e limpeza de dados privados. | **parcial** | Principal: `app/routes/projects.py`, `app/store/projects.py`, `templates/account/home.html`, `templates/projects/editor.html`, `app/domain/schedule.py`; legado: `assets/js/main.js:1506-1695,1839-1871`, `store/projects.py:115-158,403-545`. A agenda local pode permanecer após a remoção do WhatsApp, mas não é equivalente ao calendário/roteiro/estado do legado. |
+</a><a href="#h2-0-39" id="h2-0-39" class="d">-| Editor de Case, Debate e Dissertação | Painel de uma etapa, 14 etapas, fases, autosave/revisão otimista, campos, agenda, fontes por seleção, prévia/PDF e revisão genérica. | Entrega por fase, gate do Debate, grupos antes/depois, conversa persistida, matriz de critérios e fontes, citações estruturadas, assistentes especializados, preflight e composição ABNT. | **parcial** | Principal: `app/domain/academic-workflows.json`, `templates/projects/editor.html`, `static/js/project-editor.js`, `app/routes/projects.py`; legado: `assets/js/main.js:2285-2468,3029-3081`, `ai_support.py`, `quarto_documents.py`. O principal não persiste entrega, vínculos de citação ou preparação assistida do Debate. Histórico/diff/restauração não fazem parte do escopo aprovado. |
+</a><a href="#h2-0-40" id="h2-0-40" class="d">-| Projeto de Paper e Paper Final | Roteiros, painel único, autosave/conflito, checks editáveis, tópicos, fontes, revisão genérica, HTML/PDF e troca de modo no mesmo ID. | Requisitos efetivos de checks, faixa do resumo, fontes institucionais, entrega/desfazer, edição posterior, rascunho de introdução na transição e exportação Quarto/Typst ABNT específica. | **parcial** | Principal: `app/domain/paper.py`, `app/services/export.py`, `static/js/project-editor.js`; legado: `assets/js/main.js:626-706,2674-2876,4392-4468`, `store/projects.py:215-328`, `quarto_documents.py`. O progresso principal pode aparentar 100% sem satisfazer requisitos acadêmicos do legado; histórico de versões não será implementado. |
+</a><a href="#h2-0-41" id="h2-0-41" class="d">-| Biblioteca, fontes e fichamentos | Biblioteca pessoal própria, CRUD, fichamento privado, filtros e tipos; projeto guarda `source_ids` owner-scoped. O catálogo jurídico não aparece nesta tela. | Fontes no contexto do trabalho com metadados estruturados, função/categoria, citação/localizador, status de uso, vínculos tese/critério, matriz de fundamentação, origem e abertura do projeto. | **parcial** | Principal: `templates/library/home.html`, `app/routes/library.py`, `app/store/sources.py`, `templates/projects/editor.html`; legado: `assets/js/main.js:2372-2671`, `store/projects.py:160-198`. O acervo é reutilizável, mas faltam vínculos acadêmicos e cadastro contextual. |
+</a><a href="#h2-0-42" id="h2-0-42" class="d">-| Catálogo jurídico interno | Catálogo externo somente leitura, sem importação automática para contas. Não é exibido como tela na Biblioteca. | Consulta contextualizada no trabalho, candidatos separados por Lei/Jurisprudência/Doutrina e assistência sob ação manual. | **implementado** | Principal: `app/services/research.py`, `app/services/legal_recommendations.py`; legado: `research_catalog.py`, `ai_support.py`. A Biblioteca mantém somente fontes e fichamentos pessoais. |
+</a><a href="#h2-0-43" id="h2-0-43" class="d">-| DeepSeek, JEV, consentimento e limites | Revisão DeepSeek genérica por campo, proposta limitada, consentimento separado e rota JEV não ligada ao editor; contadores não aplicados. | Assistentes por etapa/campo, conversa, checklist, pesquisa, JEV por rubrica, validação de sugestões, confirmação e aplicação manual, reserva idempotente, finish/refund, quota e saldo visível. | **parcial**; várias capacidades são **ausentes** | Principal: `app/routes/ai.py`, `app/services/assistant.py`, `templates/projects/editor.html`; legado: `ai_support.py`, `server.py:1017-1299`, `store/usage.py`, `assets/js/main.js:1989-2237,3622-4106`. Não há reserva, ledger, idempotência, saldo do usuário nem limites efetivos; há corte silencioso de contexto. |
+</a><a href="#h2-0-44" id="h2-0-44" class="d">-| Prévia HTML, PDF, modelos e composição acadêmica | Rota HTML e PDF autenticados, compositor Typst/ABNT portado do legado, modelos públicos resumidos; aceita fases extras. | Preflight, iframe de PDF, download após render válido, ABNT Quarto/Typst, capas/metadados, layouts Case/Paper, citações e referências estruturadas; Dissertação não gerava PDF. | **parcial** | Principal: `app/routes/export.py`, `app/services/export.py`, `templates/projects/editor.html`; legado: `quarto_documents.py`, `_extensions/abnt`, `server.py:977-1016`, `assets/js/main.js:2832-2876,4518-4676`. A prévia HTML e o PDF usam agora a extensão Typst/ABNT do legado; a validação visual completa dos modelos continua sendo uma pendência separada. |
+</a><a href="#h2-0-45" id="h2-0-45" class="d">-| Administração, planos, créditos, compartilhamento e comentários | Contas, selo de plano, ajuste manual de saldo, bloqueio, projetos compartilhados e comentários; limites não aplicados; comentários não filtrados pela autorização efetiva/revisão. | Ledger de grants, quota atômica, reserva de IA, saldo, painel de saúde/uso, compartilhamento global com herança, comentários por revisão e auditoria. | **parcial** | Principal: `app/routes/admin.py`, `app/store/admin.py`, `app/store/sharing.py`, `app/store/schema.sql`; legado: `store/usage.py`, `store/accounts.py`, `store/sharing.py`, `assets/js/main.js:991-1238,1240-1485,1698-1849`. O ajuste administrativo de contadores não equivale às regras de consumo. |
+</a><a href="#h2-0-46" id="h2-0-46" class="d">-| Deploy, secrets, banco, backup, monitor e integrações | Compose/staging, imagem não-root, healthcheck básico, SQLite WAL, secrets externos e monitor que verifica site, container, banco, fila e disco; sem backup executável coerente/rollback atômico. | Backup/restore verificável, timer de backup, health administrativo, monitor de OAuth/worker/backup/5xx/outbox/disco e publicação com rollback documentado; WhatsApp integrado ao worker. | **parcial** | Principal: `Dockerfile`, `compose.staging.yml`, `ops/deploy-site`, `ops/assistente_monitor.py`, `services/*`; legado: `server.py:1509-1518`, `ops/assistente_monitor.py`, `docs/ia/OPERACAO-VPS.md`. O monitor e deploy atuais não provam backup, restauração ou recuperação. |
+</a><a href="#h2-0-47" id="h2-0-47" class="i">+“Conferências e transições completas” significa algo simples: quando uma pessoa termina uma etapa, o sistema deve verificar os mesmos campos e requisitos que o fluxo de referência verificava; ao passar de uma fase para outra, deve preservar o que precisa ser preservado e bloquear somente o que realmente falta. Isso não significa criar uma nova tecnologia, nem exportar dados da conta, nem inventar uma tela adicional.
+</a> 
+<a href="#h2-0-49" id="h2-0-49" class="d">-### Leitura correta da matriz
+</a><a href="#h2-0-50" id="h2-0-50" class="i">+A administração também pode ganhar indicadores operacionais mais amplos e o deploy pode receber troca atômica com rollback ensaiado. Essas são melhorias de operação, não funcionalidades que precisam aparecer para o usuário comum.
+</a> 
+<a href="#h2-0-52" id="h2-0-52" class="d">-A matriz não diz que o principal é inutilizável. Diz que “mesma tela”, “mesmo nome de etapa” ou “mesmo endpoint” não bastam para igualar a experiência: quotas não aplicadas, entrega sem estado, PDF sem composição ABNT, fonte sem citação e rota JEV sem acionamento são diferenças funcionais para o usuário. As áreas a priorizar antes de anunciar paridade integral são: composição/exportação; regras de uso e créditos; fontes/citações; assistentes/JEV/pesquisa; entrega/histórico; conta e operação.
+</a><a href="#h2-0-53" id="h2-0-53" class="i">+## Operação protegida
+</a> 
+<a href="#h2-0-55" id="h2-0-55" class="d">-## 3. Inventário preciso do que remover para eliminar WhatsApp do Assistente
+</a><a href="#h2-0-56" id="h2-0-56" class="i">+O banco principal é independente do legado. O backup diário usa `/usr/local/sbin/assistente-db-backup`, o timer `assistente-db-backup.timer`, integridade SQLite, restauração temporária de teste e retenção de 14 dias. O código versionado correspondente está em `ops/assistente-db-backup` e `services/assistente-db-backup.*`.
+</a> 
+<a href="#h2-0-58" id="h2-0-58" class="d">-O inventário abaixo é do **Assistente** e deve ser executado somente após aprovação, backup verificável e confirmação no host autorizado. Ele não autoriza qualquer alteração no repositório, serviço, volume ou segredo do `zap-go`.
+</a><a href="#h2-0-59" id="h2-0-59" class="i">+O monitor técnico registra saúde local no journal e não envia mensagens. O catálogo jurídico é montado separadamente em modo somente leitura. Secrets, banco, catálogo e dados de conta não entram no Git.
+</a> 
+<a href="#h2-0-61" id="h2-0-61" class="d">-### 3.1 Superfície de usuário e textos
+</a><a href="#h2-0-62" id="h2-0-62" class="i">+## Regra para futuras alterações
+</a> 
+<a href="#h2-0-64" id="h2-0-64" class="d">-Remover ou substituir, sem deixar controles órfãos:
+</a><a href="#h2-0-65" id="h2-0-65" class="d">-
+</a><a href="#h2-0-66" id="h2-0-66" class="d">-- `templates/public/home.html:169-186`: instrução de enviar comprovante/e-mail, link `wa.me` de pagamento, texto/botão de suporte e FAQ de liberação manual. Antes da remoção, decidir canal substituto; se não existir, ocultar ou marcar explicitamente a ativação manual como indisponível, sem manter os três planos como se houvesse caminho funcional.
+</a><a href="#h2-0-67" id="h2-0-67" class="d">-- `templates/public/terms.html`, `templates/public/privacy.html` e `templates/public/ai-help.html`: parágrafos que prometem WhatsApp, gateway, mensagens, consentimentos ou atendimento pelo canal. Preservar os textos de termos, privacidade e IA que não dependem de WhatsApp.
+</a><a href="#h2-0-68" id="h2-0-68" class="d">-- `templates/account/settings.html`: telefone, normalização, checkbox/opt-in e textos de boas-vindas, lembretes e alertas de login. Não remover a aba de Termos nem o consentimento independente de IA.
+</a><a href="#h2-0-69" id="h2-0-69" class="d">-- `templates/account/home.html`: onboarding/cartão “Mensagens úteis”, condição, âncora e promessa de mensagens. Manter a criação/listagem de projetos, perfil e logout.
+</a><a href="#h2-0-70" id="h2-0-70" class="d">-- `templates/projects/editor.html:15-18`: frase de que lembretes dependem de autorização/WhatsApp e qualquer controle de lembretes por esse canal. Manter datas e tarefas como agenda local, sem prometer notificação.
+</a><a href="#h2-0-71" id="h2-0-71" class="d">-- Qualquer JavaScript, formulário, link, `href`, `data-*`, copy ou teste de UI que ainda use `whatsapp`, `wa.me`, telefone/opt-in, alerta, boas-vindas ou lembrete como capacidade ativa do Assistente.
+</a><a href="#h2-0-72" id="h2-0-72" class="d">-
+</a><a href="#h2-0-73" id="h2-0-73" class="d">-### 3.2 Código de aplicação e chamadas
+</a><a href="#h2-0-74" id="h2-0-74" class="d">-
+</a><a href="#h2-0-75" id="h2-0-75" class="d">-Remover o domínio de notificação e suas chamadas, sem remover autenticação ou agenda:
+</a><a href="#h2-0-76" id="h2-0-76" class="d">-
+</a><a href="#h2-0-77" id="h2-0-77" class="d">-- `app/routes/oauth.py` e `app/routes/auth.py`: imports/chamadas a `queue_admin_login_alert` no callback Google e no dev-login. O login, bloqueio, CSRF, logout e criação de conta continuam.
+</a><a href="#h2-0-78" id="h2-0-78" class="d">-- `app/routes/account.py`: tratamento de `save_whatsapp_preferences`, telefone, opt-in e mensagens associadas; manter perfil, termos e consentimento de IA.
+</a><a href="#h2-0-79" id="h2-0-79" class="d">-- Endpoints/handlers de preferências WhatsApp, inclusive `save_whatsapp_preferences` e equivalentes, após confirmar que nenhum cliente legítimo restante os usa.
+</a><a href="#h2-0-80" id="h2-0-80" class="d">-- `app/store/notifications.py`: enfileiramento de boas-vindas, lembretes e alertas de login, retry, estados da fila e health específico de WhatsApp. Se houver funções compartilhadas com monitoramento geral, extrair a parte neutra antes de apagar.
+</a><a href="#h2-0-81" id="h2-0-81" class="d">-- `workers/notification_worker.py`: worker que lê `notification_outbox`, `whatsapp_opt_in` e datas para envio. As datas/tarefas permanecem no projeto; somente o envio é removido.
+</a><a href="#h2-0-82" id="h2-0-82" class="d">-- Adaptadores/clientes de gateway, inclusive carregamento de `ZAP_URL`, token e destino administrativo; não portar nem copiar código para o Assistente a partir do `zap-go`.
+</a><a href="#h2-0-83" id="h2-0-83" class="d">-- `ops/assistente_monitor.py`: remover contagem, retry, idade e alertas da fila WhatsApp; manter verificações neutras ainda necessárias, como site, container, SQLite e disco. O monitor não deve tratar “fila WhatsApp vazia” como saúde.
+</a><a href="#h2-0-84" id="h2-0-84" class="d">-
+</a><a href="#h2-0-85" id="h2-0-85" class="d">-### 3.3 Banco e migrações
+</a><a href="#h2-0-86" id="h2-0-86" class="d">-
+</a><a href="#h2-0-87" id="h2-0-87" class="d">-Não fazer `DROP` destrutivo como primeiro passo e não apagar contas, projetos, fontes, créditos ou histórico acadêmico:
+</a><a href="#h2-0-88" id="h2-0-88" class="d">-
+</a><a href="#h2-0-89" id="h2-0-89" class="d">-- `app/store/schema.sql:10-31`: remover, em migração coordenada, colunas `whatsapp_*`/telefone/opt-in das contas somente depois da janela de compatibilidade e do tratamento dos registros.
+</a><a href="#h2-0-90" id="h2-0-90" class="d">-- `app/store/schema.sql:61-77` e demais definições relacionadas: retirar `notification_outbox` e índices/estados exclusivos de mensagens apenas após política explícita para itens pendentes.
+</a><a href="#h2-0-91" id="h2-0-91" class="d">-- Fazer backup SQLite verificável antes da migração; registrar contagem de pendências, estados e data do corte sem expor conteúdo privado.
+</a><a href="#h2-0-92" id="h2-0-92" class="d">-- Primeiro impedir novas gravações/enfileiramentos; depois drenar, cancelar ou marcar como expiradas as pendências conforme decisão aprovada. Não reencaminhar mensagens para outro número e não enviar testes reais.
+</a><a href="#h2-0-93" id="h2-0-93" class="d">-- Usar migração expand/contract: uma versão pode manter colunas legadas somente para leitura/compatibilidade; a remoção física pode ocorrer em janela posterior, após confirmar que não há código, job ou rollback dependente delas.
+</a><a href="#h2-0-94" id="h2-0-94" class="d">-- Não alterar tabelas do `zap-go`, banco do gateway, banco de produção não autorizado ou catálogo de pesquisa. O `zap-go` não é fonte de migração do Assistente.
+</a><a href="#h2-0-95" id="h2-0-95" class="d">-
+</a><a href="#h2-0-96" id="h2-0-96" class="d">-### 3.4 Units, timers e processos
+</a><a href="#h2-0-97" id="h2-0-97" class="d">-
+</a><a href="#h2-0-98" id="h2-0-98" class="d">-No host autorizado, após cessar o enfileiramento e confirmar a política de outbox:
+</a><a href="#h2-0-99" id="h2-0-99" class="d">-
+</a><a href="#h2-0-100" id="h2-0-100" class="d">-- Desabilitar/parar/máscarar `services/assistente-notifications.service` e `services/assistente-notifications.timer` (ou suas unidades instaladas equivalentes).
+</a><a href="#h2-0-101" id="h2-0-101" class="d">-- Remover a execução do `notification_worker.py` de Compose, systemd, cron, supervisor ou entrypoint.
+</a><a href="#h2-0-102" id="h2-0-102" class="d">-- Ajustar `services/assistente-monitor.service` e `.timer` para que o monitor não dependa de worker/fila WhatsApp; manter o monitor somente se suas verificações restantes forem úteis.
+</a><a href="#h2-0-103" id="h2-0-103" class="d">-- Não parar, mascarar, editar ou reiniciar unidades do `zap-go`, nem unidades compartilhadas sem provar que pertencem exclusivamente ao Assistente.
+</a><a href="#h2-0-104" id="h2-0-104" class="d">-- Registrar resultado de `systemctl cat/status`, timers e processos sem incluir secrets ou conteúdo de mensagens.
+</a><a href="#h2-0-105" id="h2-0-105" class="d">-
+</a><a href="#h2-0-106" id="h2-0-106" class="d">-### 3.5 Compose, secrets, volumes e ambiente
+</a><a href="#h2-0-107" id="h2-0-107" class="d">-
+</a><a href="#h2-0-108" id="h2-0-108" class="d">-Retirar apenas recursos pertencentes ao Assistente:
+</a><a href="#h2-0-109" id="h2-0-109" class="d">-
+</a><a href="#h2-0-110" id="h2-0-110" class="d">-- Remover de `compose.staging.yml`, `docker-compose.yml`, overrides e arquivos de ambiente externos as variáveis `ZAP_URL`, `ZAP_TOKEN_FILE`, `ASSISTENTE_ADMIN_WHATSAPP` e equivalentes; confirmar todas as fontes de injeção fora do repositório.
+</a><a href="#h2-0-111" id="h2-0-111" class="d">-- Remover mounts/secret files usados exclusivamente para o token do gateway pelo Assistente. Não apagar o arquivo de segredo do `zap-go`, nem um secret/volume compartilhado sem inventário de proprietários.
+</a><a href="#h2-0-112" id="h2-0-112" class="d">-- Remover o serviço/container do worker e a configuração de fila do Assistente; não remover o container ou volume do gateway independente.
+</a><a href="#h2-0-113" id="h2-0-113" class="d">-- Preservar volumes do SQLite principal, backups, contas, projetos, fontes, catálogo e documentos. Um volume de outbox só pode ser arquivado/removido após backup, retenção definida e verificação de que não é usado pelo `zap-go`.
+</a><a href="#h2-0-114" id="h2-0-114" class="d">-- Atualizar healthchecks e variáveis esperadas para que o aplicativo não falhe procurando uma integração que deixou de existir.
+</a><a href="#h2-0-115" id="h2-0-115" class="d">-
+</a><a href="#h2-0-116" id="h2-0-116" class="d">-### 3.6 Documentação, testes e inventário operacional
+</a><a href="#h2-0-117" id="h2-0-117" class="d">-
+</a><a href="#h2-0-118" id="h2-0-118" class="d">-- Atualizar/remover `docs/ia/WHATSAPP.md`, referências de WhatsApp em `docs/ia/CONTRATOS-CONTAS.md`, `docs/ia/INTERFACE.md`, `docs/ia/ESTADO.md`, textos públicos e runbooks que descrevam a integração como ativa.
+</a><a href="#h2-0-119" id="h2-0-119" class="d">-- Corrigir `docs/ia/OPERACAO-GIT-VPS.md`, `docs/ia/OPERACAO-VPS.md`, `ops/deploy-site` e documentos de Compose para não prescrever o repositório, checkout, worker, timer ou deploy do Assistente como dependência do gateway.
+</a><a href="#h2-0-120" id="h2-0-120" class="d">-- Os documentos do Assistente podem registrar somente que o gateway é um serviço externo independente, preservado fora do ciclo do Assistente; detalhes de operação, protocolo e secrets devem ficar no repositório `zap-go`, não serem duplicados na aplicação.
+</a><a href="#h2-0-121" id="h2-0-121" class="d">-- Remover fixtures, mocks e testes que pressupõem telefone, opt-in, outbox ou envio WhatsApp; adicionar regressões que provem: login funciona sem alerta, perfil não coleta telefone, criação/agenda/PDF/IA funcionam sem worker, nenhum endpoint cria outbox, e o monitor não sinaliza fila WhatsApp.
+</a><a href="#h2-0-122" id="h2-0-122" class="d">-- Fazer busca controlada no código e documentação por `whatsapp`, `wa.me`, `ZAP_`, `ASSISTENTE_ADMIN_WHATSAPP`, `notification_outbox`, `notification_worker`, `queue_admin_login_alert` e `assistente-notifications`, classificando cada ocorrência antes de removê-la. A busca não deve incluir conteúdo de secrets.
+</a><a href="#h2-0-123" id="h2-0-123" class="d">-
+</a><a href="#h2-0-124" id="h2-0-124" class="d">-## 4. Ordem técnica recomendada de remoção
+</a><a href="#h2-0-125" id="h2-0-125" class="d">-
+</a><a href="#h2-0-126" id="h2-0-126" class="d">-A ordem abaixo reduz dependências quebradas e conserva rollback:
+</a><a href="#h2-0-127" id="h2-0-127" class="d">-
+</a><a href="#h2-0-128" id="h2-0-128" class="d">-1. **Decisão e inventário prévio.** Aprovar canal substituto para suporte/comprovante/liberação; congelar novos recursos WhatsApp; inventariar no host autorizado processos, units, Compose, secrets, mounts, volumes, bancos e os caminhos `/home/git/repos/assistente-academico*`. Identificar explicitamente o `zap-go` como intocável. Fazer backup e registrar hashes/versões dos artefatos do Assistente.
+</a><a href="#h2-0-129" id="h2-0-129" class="d">-2. **Código de aplicação.** Retirar imports, chamadas de enfileiramento, rotas de preferências e o domínio de notificações; desacoplar OAuth/dev-login, conta, monitor e agenda. Manter auth, CSRF, logout, consentimento de IA, datas/tarefas e exportação.
+</a><a href="#h2-0-130" id="h2-0-130" class="d">-3. **Templates e textos visíveis.** Remover telefone/opt-in, onboarding, lembretes, links `wa.me`, suporte/FAQ dependentes do canal e promessas dos textos institucionais. Reescrever a ativação de Pix com o canal aprovado ou retirar a promessa de ativação manual.
+</a><a href="#h2-0-131" id="h2-0-131" class="d">-4. **Banco e migração.** Com backup verificado, bloquear novos writes da outbox, decidir drenagem/cancelamento/retenção das pendências, migrar de forma aditiva/expand-contract e somente depois retirar colunas/tabelas exclusivas. Não apagar dados acadêmicos, contas ou o banco do gateway.
+</a><a href="#h2-0-132" id="h2-0-132" class="d">-5. **Units e timers.** Desabilitar worker e timer do Assistente depois de o código não enfileirar mais; retirar o worker do processo de execução; adaptar/remover checks de fila do monitor. Confirmar que nenhuma unidade pertence ao `zap-go` ou é compartilhada.
+</a><a href="#h2-0-133" id="h2-0-133" class="d">-6. **Compose, secrets e volumes.** Remover variáveis, mounts, serviços e volumes exclusivos do Assistente; revisar arquivos de ambiente e secrets externos; preservar volumes, units e secrets do `zap-go`; fazer `docker compose config` e validação de referência sem iniciar produção.
+</a><a href="#h2-0-134" id="h2-0-134" class="d">-7. **Documentação e testes.** Atualizar contratos, operação, deploy, README, textos legais e inventários; retirar fixtures/fakes de WhatsApp; acrescentar testes negativos e de regressão. Atualizar este relatório ou registrar uma decisão posterior se o canal substituto mudar.
+</a><a href="#h2-0-135" id="h2-0-135" class="d">-8. **Deploy controlado.** Construir artefato versionado; aplicar primeiro em banco/cópia temporária e staging isolado; executar migração em ordem; não executar `ops/deploy-site` contra produção durante esta auditoria. O deploy do Assistente não deve tocar no checkout, serviço, volume, secret ou repositório `zap-go`.
+</a><a href="#h2-0-136" id="h2-0-136" class="d">-9. **Verificação pós-deploy.** Executar testes unitários/integrados e smoke de login Google fake, logout/CSRF, criação, autosave, agenda local, biblioteca, pesquisa, IA fake, HTML/PDF, administração e healthcheck. Fazer grep de referências, verificar ausência de processos/timers/outbox novos, revisar logs sem conteúdo privado e confirmar que o suporte/Pix tem caminho honesto.
+</a><a href="#h2-0-137" id="h2-0-137" class="d">-10. **Encerramento e retenção.** Guardar backup, manifesto de migração, contagens antes/depois, logs de verificação e instruções de rollback. Só após a janela de retenção aprovada remover artefatos obsoletos do Assistente. O gateway `zap-go` permanece fora desse ciclo.
+</a><a href="#h2-0-138" id="h2-0-138" class="d">-
+</a><a href="#h2-0-139" id="h2-0-139" class="d">-## 5. O que fica deliberadamente fora da aplicação
+</a><a href="#h2-0-140" id="h2-0-140" class="d">-
+</a><a href="#h2-0-141" id="h2-0-141" class="d">-O seguinte não deve ser implementado, duplicado ou administrado pelo Assistente:
+</a><a href="#h2-0-142" id="h2-0-142" class="d">-
+</a><a href="#h2-0-143" id="h2-0-143" class="d">-- O código-fonte, bare repository, checkout, hooks, unidades, volumes, secrets, banco e serviço do `zap-go`; continuam sob responsabilidade própria, preservados em `/home/git` conforme a decisão operacional.
+</a><a href="#h2-0-144" id="h2-0-144" class="d">-- O protocolo interno do gateway, formato de mensagens, autenticação por token, rotação de secrets, filas e runbook de operação do `zap-go`. Esses detalhes devem ser documentados **somente no próprio repositório `zap-go`**; a aplicação pode ter no máximo uma declaração neutra de que não oferece mais integração WhatsApp.
+</a><a href="#h2-0-145" id="h2-0-145" class="d">-- Uma nova ponte, proxy ou fallback de WhatsApp dentro do Assistente. Remover o canal significa remover a dependência, não substituí-la silenciosamente por outra integração ao mesmo gateway.
+</a><a href="#h2-0-146" id="h2-0-146" class="d">-- Pagamento automático, importação de contas/projetos antigos, junção dos bancos principal e legado, troca de provedor/credencial e qualquer execução do backend antigo como parte da aplicação, conforme `docs/ia/PENDENCIAS.md:21-23`.
+</a><a href="#h2-0-147" id="h2-0-147" class="d">-- Linha do Tempo/Cronologia dos Fatos. Sua ausência é deliberada e deve permanecer fora do editor, payload, exportação e critérios de paridade.
+</a><a href="#h2-0-148" id="h2-0-148" class="d">-- Testes que enviem mensagens, consultem Google, DeepSeek, JEV ou o gateway real. Usar fixtures, banco temporário e provedores falsos; uso autorizado normal deve ser observado sem disparos por conta própria.
+</a><a href="#h2-0-149" id="h2-0-149" class="d">-
+</a><a href="#h2-0-150" id="h2-0-150" class="d">-## 6. Riscos, controles e rollback
+</a><a href="#h2-0-151" id="h2-0-151" class="d">-
+</a><a href="#h2-0-152" id="h2-0-152" class="d">-### Riscos principais
+</a><a href="#h2-0-153" id="h2-0-153" class="d">-
+</a><a href="#h2-0-154" id="h2-0-154" class="d">-- **Perda ou reprocessamento da outbox:** parar o worker sem política pode perder mensagens pendentes; deixar o worker ativo enquanto o código muda pode duplicar envios. Controlar com contagem, backup, bloqueio de novos writes, drenagem/cancelamento explícito e idempotência durante a janela.
+</a><a href="#h2-0-155" id="h2-0-155" class="d">-- **Quebra de login:** remover o módulo inteiro de notificações pode quebrar imports em OAuth/dev-login. Controlar removendo apenas chamadas e testando callback, bloqueio, sessão, logout e CSRF.
+</a><a href="#h2-0-156" id="h2-0-156" class="d">-- **Promessa pública sem canal:** remover `wa.me` sem substituto deixa pagamento, suporte e liberação manual sem caminho. Controlar decidindo o canal antes do deploy e alterando planos/FAQ/termos de forma coerente.
+</a><a href="#h2-0-157" id="h2-0-157" class="d">-- **Migração destrutiva ou incompatível:** apagar colunas/tabela antes de todos os binários serem atualizados impede rollback. Controlar com expand/contract, migração aditiva, backup restaurável e janela de compatibilidade.
+</a><a href="#h2-0-158" id="h2-0-158" class="d">-- **Interferência no gateway:** secrets, volumes, timers ou paths podem ser compartilhados ou mal identificados. Controlar com inventário de proprietário, allowlist de recursos do Assistente, dry-run e regra de não tocar no `zap-go`.
+</a><a href="#h2-0-159" id="h2-0-159" class="d">-- **Monitor falso ou cego:** remover a fila sem adaptar o monitor pode causar alertas falsos; apagar verificações sem substituição reduz observabilidade. Controlar mantendo checks neutros de HTTP/container/SQLite/disco e validando logs/journal.
+</a><a href="#h2-0-160" id="h2-0-160" class="d">-- **Deploy não atômico:** `ops/deploy-site` remove o destino antes de copiar e não oferece rollback automático completo. Controlar com artefato versionado, staging, backup, troca atômica quando possível e rollback manual ensaiado.
+</a><a href="#h2-0-161" id="h2-0-161" class="d">-- **Perda de capacidade não relacionada:** uma limpeza ampla pode remover agenda, IA, biblioteca, PDF ou consentimentos. Controlar com testes de regressão e revisão dos diff/rotas por domínio; remover somente o canal de mensagens.
+</a><a href="#h2-0-162" id="h2-0-162" class="d">-- **Dados e secrets expostos:** inventário de VPS pode vazar tokens, telefones ou conteúdo de mensagens. Controlar exibindo apenas nomes, hashes e contagens, nunca valores; não ler banco/secrets de produção para esta auditoria.
+</a><a href="#h2-0-163" id="h2-0-163" class="d">-
+</a><a href="#h2-0-164" id="h2-0-164" class="d">-### Rollback proposto
+</a><a href="#h2-0-165" id="h2-0-165" class="d">-
+</a><a href="#h2-0-166" id="h2-0-166" class="d">-1. **Antes da migração:** guardar cópia privada e verificada do SQLite e manifesto de versão; testar restauração em diretório temporário sem inicializar/migrar a origem.
+</a><a href="#h2-0-167" id="h2-0-167" class="d">-2. **Durante a fase expand:** reimplantar o artefato anterior contra o schema compatível, reabilitar somente o worker do Assistente se a integração precisar voltar e ainda estiver autorizada; não tocar no `zap-go` para fazer rollback.
+</a><a href="#h2-0-168" id="h2-0-168" class="d">-3. **Após a fase contract:** se colunas/tabelas já foram removidas, restaurar o backup do banco em uma cópia, validar integridade e escolher janela de recuperação; não misturar uma aplicação antiga com schema incompatível sem migração de retorno.
+</a><a href="#h2-0-169" id="h2-0-169" class="d">-4. **Se o problema for público:** restaurar o artefato anterior de templates/código ou publicar correção do novo canal, mantendo a decisão de não reativar promessas WhatsApp sem canal aprovado.
+</a><a href="#h2-0-170" id="h2-0-170" class="d">-5. **Após qualquer rollback:** testar login/logout, projetos, autosave, biblioteca, agenda, exportação, IA fake, healthcheck e ausência de impacto no `zap-go`; registrar incidente, versão e decisão de seguir ou abortar.
+</a><a href="#h2-0-171" id="h2-0-171" class="d">-
+</a><a href="#h2-0-172" id="h2-0-172" class="d">-Rollback não significa restaurar o WhatsApp automaticamente. A reativação exige autorização, secrets válidos, destino confirmado, política de consentimento e revisão da promessa pública. O plano preferencial é tornar o corte reversível no código e no banco, mantendo o gateway independente e intocado.
+</a><a href="#h2-0-173" id="h2-0-173" class="d">-
+</a><a href="#h2-0-174" id="h2-0-174" class="d">-## 7. Paridade ainda faltante e prioridades
+</a><a href="#h2-0-175" id="h2-0-175" class="d">-
+</a><a href="#h2-0-176" id="h2-0-176" class="d">-As lacunas abaixo permanecem deliberadamente visíveis; não devem ser descritas como resolvidas apenas porque a aplicação possui uma tela correspondente:
+</a><a href="#h2-0-177" id="h2-0-177" class="d">-
+</a><a href="#h2-0-178" id="h2-0-178" class="d">-1. **Documentos e modelos:** composição ABNT/Typst/Quarto por tipo, capa e metadados, semântica de decisões, citações e referências, preflight, PDF inline, validação de assinatura/tamanho/concorrência e modelos públicos integrais.
+</a><a href="#h2-0-179" id="h2-0-179" class="d">-2. **Case/Debate/Dissertação:** estado de entrega por fase, gate do Debate, grupos antes/depois, conversa persistida, matriz de critérios, vínculos de fonte/tese e assistentes especializados. Histórico, diff e restauração de versões não fazem parte do produto.
+</a><a href="#h2-0-180" id="h2-0-180" class="d">-3. **Paper/Paper Final:** requisitos efetivos de checks, faixa do resumo, suficiência de tópicos/fontes, entrega/desfazer, edição posterior, transição que monta rascunho de introdução e exportação ABNT distinta.
+</a><a href="#h2-0-181" id="h2-0-181" class="d">-4. **Bibliografia:** metadados estruturados, funções/categorias, citação direta/localizador, status de citação, vínculos fonte→tese/critério, matriz de fundamentação, projetos que usam a fonte, cadastro contextual e tratamento transacional de exclusão.
+</a><a href="#h2-0-182" id="h2-0-182" class="d">-5. **Pesquisa e IA:** pesquisa contextual no projeto, eventual pesquisa web institucional autorizada, candidatos e ranking JEV, assistentes por etapa, confirmação/aplicação/descartar, consentimento versionado, reserva idempotente, finish/refund, quotas efetivas, ledger de custo/uso e saldo visível.
+</a><a href="#h2-0-183" id="h2-0-183" class="d">-6. **Conta e administração:** exportação, compartilhamento global com herança/override, comentários filtrados por autorização, plano/saldo para o usuário, grants e limites aplicados atomicamente, Paper/Paper Final com crédito coerente. Exclusão autenticada de projeto já está disponível; exclusão/exportação da conta continuam fora.
+</a><a href="#h2-0-184" id="h2-0-184" class="d">-7. **Projetos e agenda:** limite de criação/duplicação, listagem com estado/atualização, calendário da conta, datas distintas do Paper, tarefas concluíveis e roteiro sugerido; a exclusão de projeto já exige confirmação e não tem restauração; decidir formalmente se `paper_final` continuará sendo criado como tipo separado.
+</a><a href="#h2-0-185" id="h2-0-185" class="d">-8. **Segurança de sessão:** expiração/revogação server-side ou equivalente, atributos explícitos de cookie, verificação de origem e testes dedicados de logout, cookie antigo, expiração e cancelamento OAuth.
+</a><a href="#h2-0-186" id="h2-0-186" class="d">-9. **Operação:** backup/restore executável e testado, timer de backup, health administrativo, monitor de 5xx/worker/backup/outbox, deploy atômico/rollback e falha fechada para chave de sessão ausente. A limpeza do WhatsApp não resolve essas lacunas.
+</a><a href="#h2-0-187" id="h2-0-187" class="d">-10. **Textos institucionais:** Jornada, Ajuda de IA, Termos e Privacidade precisam recuperar ou reescrever honestamente o detalhamento relevante; links para recursos não implementados devem ser restaurados ou removidos.
+</a><a href="#h2-0-188" id="h2-0-188" class="d">-
+</a><a href="#h2-0-189" id="h2-0-189" class="d">-A **Linha do Tempo/Cronologia continua fora desta lista** por decisão explícita. Também não é objetivo desta auditoria recuperar toda a paridade antes da limpeza: são frentes distintas, e a remoção do WhatsApp deve ser feita sem mascarar as demais diferenças.
+</a><a href="#h2-0-190" id="h2-0-190" class="d">-
+</a><a href="#h2-0-191" id="h2-0-191" class="d">-## 8. Critérios de aceite do corte do WhatsApp
+</a><a href="#h2-0-192" id="h2-0-192" class="d">-
+</a><a href="#h2-0-193" id="h2-0-193" class="d">-O corte só pode ser considerado concluído quando, em ambiente temporário/staging e sem chamadas reais:
+</a><a href="#h2-0-194" id="h2-0-194" class="d">-
+</a><a href="#h2-0-195" id="h2-0-195" class="d">-- `grep`/inventário não encontrar referências ativas a `whatsapp`, `wa.me`, `ZAP_URL`, `ZAP_TOKEN_FILE`, `ASSISTENTE_ADMIN_WHATSAPP`, `notification_outbox`, `notification_worker` ou `assistente-notifications` no código, templates, Compose e units do Assistente, salvo uma nota neutra de histórico/limite de escopo explicitamente aprovada;
+</a><a href="#h2-0-196" id="h2-0-196" class="d">-- nenhum formulário, rota ou job do Assistente aceitar telefone/opt-in ou criar mensagem;
+</a><a href="#h2-0-197" id="h2-0-197" class="d">-- login Google, logout, CSRF, conta bloqueada, perfil sem telefone, aceite/retirada de IA e criação de projeto funcionarem;
+</a><a href="#h2-0-198" id="h2-0-198" class="d">-- agenda local, autosave, biblioteca, índice, pesquisa local, revisão fake e exportação HTML/PDF funcionarem sem worker/gateway;
+</a><a href="#h2-0-199" id="h2-0-199" class="d">-- planos Pix, suporte e liberação manual exibirem canal alternativo real ou não prometerem ativação;
+</a><a href="#h2-0-200" id="h2-0-200" class="d">-- o banco temporário passar por backup, migração, integridade e restauração, com contagem documentada de pendências tratadas;
+</a><a href="#h2-0-201" id="h2-0-201" class="d">-- units/timers do Assistente estiverem removidos/desabilitados e o monitor não depender de fila WhatsApp;
+</a><a href="#h2-0-202" id="h2-0-202" class="d">-- nenhum comando, deploy ou teste tocar no repositório, serviço, volume ou secret do `zap-go`;
+</a><a href="#h2-0-203" id="h2-0-203" class="d">-- smoke pós-deploy e rollback ensaiado forem registrados, sem acessar produção ou secrets fora da autorização.
+</a><a href="#h2-0-204" id="h2-0-204" class="d">-
+</a><a href="#h2-0-205" id="h2-0-205" class="d">-**Conclusão:** o principal é uma reescrita funcionalmente significativa, mas ainda de paridade parcial. A remoção do WhatsApp é viável e deve ser feita como corte de integração do Assistente, não como remoção do `zap-go`; suporte/Pix precisam de decisão substituta, e as diferenças de paridade devem permanecer explícitas até serem implementadas e testadas.
+</a><a href="#h2-0-206" id="h2-0-206" class="d">-
+</a><a href="#h2-0-207" id="h2-0-207" class="d">-## 9. Execução aprovada
+</a><a href="#h2-0-208" id="h2-0-208" class="d">-
+</a><a href="#h2-0-209" id="h2-0-209" class="d">-A integração automática foi removida do Assistente: não há telefone/opt-in, boas-vindas, lembretes, alertas de login, outbox, worker ou timer na aplicação. A migração do banco remove as colunas e a tabela de outbox existentes. O link público de WhatsApp para comprovante e suporte continua sendo um contato manual externo, sem leitura, sincronização, fila ou secret no Assistente.
+</a><a href="#h2-0-210" id="h2-0-210" class="d">-
+</a><a href="#h2-0-211" id="h2-0-211" class="d">-O gateway operacional, seu banco, lock, secret, checkout e página stagit foram retirados do VPS. O único artefato preservado é `/home/git/repos/zap-go.git`, que contém um guia futuro de reconstrução. O bare repository e seu histórico não foram reescritos.
+</a><a href="#h2-0-212" id="h2-0-212" class="d">-
+</a><a href="#h2-0-213" id="h2-0-213" class="d">-A remoção não declara paridade funcional total com o legado. As lacunas da matriz continuam válidas, e a exportação será corrigida pela cadeia Typst/ABNT do produto de referência, não por LaTeX.
+</a><a href="#h2-0-214" id="h2-0-214" class="i">+Uma diferença só deve ser corrigida depois de comparar template, CSS, JavaScript, rota, persistência e experiência de navegador com o legado correspondente. Se a diferença for uma decisão explícita desta aplicação, documentá-la como decisão de produto. Se for uma lacuna real, descrevê-la com o comportamento que falta; não esconder a lacuna trocando apenas o texto da interface.
+</a><b>diff --git a/<a id="h3" href="../file/docs/ia/ESTADO.md.html">docs/ia/ESTADO.md</a> b/<a href="../file/docs/ia/ESTADO.md.html">docs/ia/ESTADO.md</a></b>
+<a href="#h3-0" id="h3-0" class="h">@@ -34,6 +34,8 @@ O bare repository principal é `/home/git/repos/assistente-academico.git`; o leg
+</a> 
+ O monitor técnico registra somente indicadores locais de site, container, banco e disco. O contato manual de atendimento fica fora da aplicação. Quarto 1.10.19 e a cadeia Typst/ABNT fazem parte da imagem/documentação de exportação.
+ 
+<a href="#h3-0-3" id="h3-0-3" class="i">+O backup diário do banco é executado por `assistente-db-backup.timer`. A rotina versionada em `ops/assistente-db-backup` faz cópia consistente do SQLite, valida a integridade da cópia, testa uma restauração temporária e mantém arquivos por 14 dias. O procedimento operacional está em `docs/ia/OPERACAO-BACKUP.md`.
+</a><a href="#h3-0-4" id="h3-0-4" class="i">+
+</a> ## Regras que não mudam
+ 
+<a href="#h3-0-7" id="h3-0-7" class="d">-Pagamentos automáticos continuam fora do escopo. Nenhum dado do legado é importado automaticamente. O monitor técnico não envia mensagens e não depende de gateway. Nenhuma IA altera campos sem ação manual. Nenhum administrador é criado automaticamente; a lista é configuração externa.
+</a><a href="#h3-0-8" id="h3-0-8" class="i">+Pagamentos automáticos continuam fora do escopo. Nenhum dado do legado é importado automaticamente. O monitor técnico não envia mensagens e não depende de gateway. Nenhuma IA altera campos sem ação manual. Nenhum administrador é criado automaticamente; a lista é configuração externa. As regras acadêmicas pendentes significam somente campos, conferências e transições completas de Debate, Dissertação e Paper; não significam exportação de dados da conta.
+</a><b>diff --git a/<a id="h4" href="../file/docs/ia/OPERACAO-BACKUP.md.html">docs/ia/OPERACAO-BACKUP.md</a> b/<a href="../file/docs/ia/OPERACAO-BACKUP.md.html">docs/ia/OPERACAO-BACKUP.md</a></b>
+<a href="#h4-0" id="h4-0" class="h">@@ -0,0 +1,34 @@
+</a><a href="#h4-0-0" id="h4-0-0" class="i">+# Backup e restauração do Assistente Acadêmico
+</a><a href="#h4-0-1" id="h4-0-1" class="i">+
+</a><a href="#h4-0-2" id="h4-0-2" class="i">+O banco principal da aplicação fica em `/opt/servidor/data/assistente-academico/assistente_v2.sqlite3`. O diretório de cópias fica em `/opt/servidor/backups/`. O backup não inclui secrets, código, o banco legado, o catálogo jurídico nem qualquer recurso do `zap-go`.
+</a><a href="#h4-0-3" id="h4-0-3" class="i">+
+</a><a href="#h4-0-4" id="h4-0-4" class="i">+## Rotina automática
+</a><a href="#h4-0-5" id="h4-0-5" class="i">+
+</a><a href="#h4-0-6" id="h4-0-6" class="i">+O timer `assistente-db-backup.timer` executa uma vez por dia às 03:15, com atraso aleatório de até 20 minutos. A opção `Persistent=true` faz o systemd executar a rotina depois que o VPS voltar caso o horário tenha sido perdido. A unidade é oneshot: ela executa, valida e termina; não fica mantendo processo aberto.
+</a><a href="#h4-0-7" id="h4-0-7" class="i">+
+</a><a href="#h4-0-8" id="h4-0-8" class="i">+A rotina versionada está em `ops/assistente-db-backup`. No VPS ela é instalada em `/usr/local/sbin/assistente-db-backup`, acompanhada por `services/assistente-db-backup.service` e `services/assistente-db-backup.timer`.
+</a><a href="#h4-0-9" id="h4-0-9" class="i">+
+</a><a href="#h4-0-10" id="h4-0-10" class="i">+Cada execução usa o mecanismo de backup do SQLite para copiar um banco em uso sem simplesmente duplicar um arquivo WAL. Depois da cópia, executa `PRAGMA integrity_check`. Em seguida restaura a cópia para um arquivo temporário e valida novamente a integridade e a presença de tabelas. Só depois dessas verificações o arquivo recebe o nome definitivo. Cópias com mais de 14 dias são removidas automaticamente.
+</a><a href="#h4-0-11" id="h4-0-11" class="i">+
+</a><a href="#h4-0-12" id="h4-0-12" class="i">+## Verificação operacional
+</a><a href="#h4-0-13" id="h4-0-13" class="i">+
+</a><a href="#h4-0-14" id="h4-0-14" class="i">+```sh
+</a><a href="#h4-0-15" id="h4-0-15" class="i">+systemctl status assistente-db-backup.timer --no-pager
+</a><a href="#h4-0-16" id="h4-0-16" class="i">+systemctl list-timers assistente-db-backup.timer --no-pager
+</a><a href="#h4-0-17" id="h4-0-17" class="i">+systemctl start assistente-db-backup.service
+</a><a href="#h4-0-18" id="h4-0-18" class="i">+systemctl status assistente-db-backup.service --no-pager -l
+</a><a href="#h4-0-19" id="h4-0-19" class="i">+journalctl -u assistente-db-backup.service -n 30 --no-pager
+</a><a href="#h4-0-20" id="h4-0-20" class="i">+find /opt/servidor/backups -maxdepth 1 -type f -name &#39;assistente-db-*.sqlite3&#39; -printf &#39;%TY-%Tm-%Td %TH:%TM %s %p\n&#39; | sort
+</a><a href="#h4-0-21" id="h4-0-21" class="i">+```
+</a><a href="#h4-0-22" id="h4-0-22" class="i">+
+</a><a href="#h4-0-23" id="h4-0-23" class="i">+A saída esperada da execução manual é o caminho de uma nova cópia e o status `code=exited, status=0/SUCCESS`. Falha de integridade, falha de restauração ou impossibilidade de gravar a cópia deve deixar a unidade com erro e aparecer no journal; não se deve apagar o banco original para “corrigir” um backup que falhou.
+</a><a href="#h4-0-24" id="h4-0-24" class="i">+
+</a><a href="#h4-0-25" id="h4-0-25" class="i">+## Restauração segura
+</a><a href="#h4-0-26" id="h4-0-26" class="i">+
+</a><a href="#h4-0-27" id="h4-0-27" class="i">+Nunca restaure diretamente por cima do banco em produção como primeiro teste. Para inspecionar uma cópia, use um diretório temporário, abra o arquivo em modo somente leitura e execute `PRAGMA integrity_check`. Para uma recuperação real, pare somente o serviço do Assistente, preserve o banco atual com outro nome, copie a versão escolhida para o caminho principal, ajuste proprietário/permissões para o UID/GID do serviço e inicie o serviço novamente. Depois valide `/healthz`, login, listagem de trabalhos e leitura de um projeto.
+</a><a href="#h4-0-28" id="h4-0-28" class="i">+
+</a><a href="#h4-0-29" id="h4-0-29" class="i">+Uma restauração é uma operação destrutiva sobre o estado atual e deve ser autorizada explicitamente antes de ser aplicada. O legado, o catálogo, o `zap-go` e seus volumes não fazem parte dessa operação.
+</a><a href="#h4-0-30" id="h4-0-30" class="i">+
+</a><a href="#h4-0-31" id="h4-0-31" class="i">+## Regras para agentes
+</a><a href="#h4-0-32" id="h4-0-32" class="i">+
+</a><a href="#h4-0-33" id="h4-0-33" class="i">+Não criar outro mecanismo de backup em paralelo. Antes de alterar o caminho do banco, o horário, a retenção ou as permissões, atualizar o script, as units e este documento juntos. Nunca colocar banco, cópia, token, segredo ou conteúdo de conta no Git. O backup é proteção operacional; não é histórico de versões do produto e não deve ser apresentado à pessoa usuária como recurso de restauração de trabalhos.
+</a><b>diff --git a/<a id="h5" href="../file/docs/ia/PARIDADE-FUNCIONAL-ATUAL.md.html">docs/ia/PARIDADE-FUNCIONAL-ATUAL.md</a> b/<a href="../file/docs/ia/PARIDADE-FUNCIONAL-ATUAL.md.html">docs/ia/PARIDADE-FUNCIONAL-ATUAL.md</a></b>
+<a href="#h5-0" id="h5-0" class="h">@@ -18,11 +18,13 @@ Este documento é a referência permanente para comparar a experiência do Assis
+</a> Estas capacidades não devem ser anunciadas como equivalentes sem implementação e teste específicos:
+ 
+ - vínculos acadêmicos completos entre fonte, citação, tese, critério e localizador;
+<a href="#h5-0-3" id="h5-0-3" class="d">-- gate e registro completo das fases de Debate e Dissertação;
+</a><a href="#h5-0-4" id="h5-0-4" class="d">-- requisitos acadêmicos efetivos de Paper, entrega por fase e transição completa para Paper Final;
+</a><a href="#h5-0-5" id="h5-0-5" class="d">-- exportação de dados/conta, calendário de conta e observabilidade administrativa mais ampla;
+</a><a href="#h5-0-6" id="h5-0-6" class="i">+- conferências e registros acadêmicos completos das fases de Debate e Dissertação;
+</a><a href="#h5-0-7" id="h5-0-7" class="i">+- requisitos de Paper, entrega por fase e transição completa para Paper Final;
+</a><a href="#h5-0-8" id="h5-0-8" class="i">+- calendário de conta e observabilidade administrativa mais ampla;
+</a> - expiração/revogação server-side da sessão, política de origem e testes de cookie/logout equivalentes ao legado;
+<a href="#h5-0-10" id="h5-0-10" class="d">-- backup/restauração verificável, health administrativo e deploy atômico com rollback ensaiado.
+</a><a href="#h5-0-11" id="h5-0-11" class="i">+- deploy atômico com rollback ensaiado. O backup do banco já possui rotina diária, validação de integridade, restauração temporária de teste e retenção de 14 dias; o procedimento está em `docs/ia/OPERACAO-BACKUP.md`.
+</a><a href="#h5-0-12" id="h5-0-12" class="i">+
+</a><a href="#h5-0-13" id="h5-0-13" class="i">+Quando este documento fala em “conferências e registros acadêmicos completos”, não está falando de uma tecnologia nova ou de um recurso misterioso. Significa apenas garantir que Debate, Dissertação e Paper tenham os mesmos campos obrigatórios, checklists, estados de entrega e transições que existiam no fluxo de referência. Isso é uma regra de funcionamento do trabalho acadêmico, não uma obrigação de exportar dados da conta.
+</a> 
+ ## Fora do produto
+ 
+<b>diff --git a/<a id="h6" href="../file/docs/ia/PENDENCIAS.md.html">docs/ia/PENDENCIAS.md</a> b/<a href="../file/docs/ia/PENDENCIAS.md.html">docs/ia/PENDENCIAS.md</a></b>
+<a href="#h6-0" id="h6-0" class="h">@@ -14,9 +14,9 @@ Não retirar essas diferenças da lista apenas porque uma tela equivalente exist
+</a> 
+ ## Verificação operacional
+ 
+<a href="#h6-0-3" id="h6-0-3" class="d">-Conferir restart, healthcheck, logs sem conteúdo privado, integridade do backup e recuperação. Catálogo de pesquisa deve permanecer somente leitura, separado do banco de contas. Monitor técnico registra no journal e não depende de mensagens.
+</a><a href="#h6-0-4" id="h6-0-4" class="i">+Conferir restart, healthcheck e logs sem conteúdo privado. O backup diário do banco já está ativo em `assistente-db-backup.timer`: ele usa cópia consistente do SQLite, executa integridade, restaura uma cópia temporária para validação e retém 14 dias. O procedimento de recuperação está em `docs/ia/OPERACAO-BACKUP.md`. O catálogo de pesquisa deve permanecer somente leitura, separado do banco de contas. O monitor técnico registra no journal e não depende de mensagens.
+</a> 
+<a href="#h6-0-6" id="h6-0-6" class="d">-O teste de navegador com banco temporário verifica etapas, fases, autosave, perfil, biblioteca, índice e responsividade. OAuth real deve ser observado somente durante uso autorizado normal; o contato manual externo não é chamado em testes.
+</a><a href="#h6-0-7" id="h6-0-7" class="i">+O teste de navegador com banco temporário verifica etapas, fases, autosave, perfil, Biblioteca Pessoal sem índice público e responsividade. OAuth real deve ser observado somente durante uso autorizado normal; o contato manual externo não é chamado em testes.
+</a> 
+ ## Fora do escopo autorizado
+ 
+<b>diff --git a/<a id="h7" href="../file/ops/assistente-db-backup.html">ops/assistente-db-backup</a> b/<a href="../file/ops/assistente-db-backup.html">ops/assistente-db-backup</a></b>
+<a href="#h7-0" id="h7-0" class="h">@@ -0,0 +1,76 @@
+</a><a href="#h7-0-0" id="h7-0-0" class="i">+#!/usr/bin/env bash
+</a><a href="#h7-0-1" id="h7-0-1" class="i">+set -euo pipefail
+</a><a href="#h7-0-2" id="h7-0-2" class="i">+
+</a><a href="#h7-0-3" id="h7-0-3" class="i">+SOURCE=/opt/servidor/data/assistente-academico/assistente_v2.sqlite3
+</a><a href="#h7-0-4" id="h7-0-4" class="i">+DEST_DIR=/opt/servidor/backups
+</a><a href="#h7-0-5" id="h7-0-5" class="i">+RETENTION_DAYS=14
+</a><a href="#h7-0-6" id="h7-0-6" class="i">+STAMP=$(date +%Y%m%dT%H%M%S%z)
+</a><a href="#h7-0-7" id="h7-0-7" class="i">+DEST=&quot;$DEST_DIR/assistente-db-$STAMP.sqlite3&quot;
+</a><a href="#h7-0-8" id="h7-0-8" class="i">+TMP=&quot;$DEST.tmp.$$&quot;
+</a><a href="#h7-0-9" id="h7-0-9" class="i">+RESTORE=&quot;$DEST_DIR/.assistente-restore-check.$$&quot;
+</a><a href="#h7-0-10" id="h7-0-10" class="i">+
+</a><a href="#h7-0-11" id="h7-0-11" class="i">+cleanup() { rm -f &quot;$TMP&quot; &quot;$RESTORE&quot;; }
+</a><a href="#h7-0-12" id="h7-0-12" class="i">+trap cleanup EXIT
+</a><a href="#h7-0-13" id="h7-0-13" class="i">+
+</a><a href="#h7-0-14" id="h7-0-14" class="i">+install -d -m 0700 &quot;$DEST_DIR&quot;
+</a><a href="#h7-0-15" id="h7-0-15" class="i">+
+</a><a href="#h7-0-16" id="h7-0-16" class="i">+python3 - &quot;$SOURCE&quot; &quot;$TMP&quot; &lt;&lt;&#39;PY&#39;
+</a><a href="#h7-0-17" id="h7-0-17" class="i">+import os
+</a><a href="#h7-0-18" id="h7-0-18" class="i">+import sqlite3
+</a><a href="#h7-0-19" id="h7-0-19" class="i">+import sys
+</a><a href="#h7-0-20" id="h7-0-20" class="i">+
+</a><a href="#h7-0-21" id="h7-0-21" class="i">+source_path, target_path = sys.argv[1:]
+</a><a href="#h7-0-22" id="h7-0-22" class="i">+source = sqlite3.connect(f&quot;file:{source_path}?mode=ro&quot;, uri=True)
+</a><a href="#h7-0-23" id="h7-0-23" class="i">+target = sqlite3.connect(target_path)
+</a><a href="#h7-0-24" id="h7-0-24" class="i">+try:
+</a><a href="#h7-0-25" id="h7-0-25" class="i">+    source.backup(target)
+</a><a href="#h7-0-26" id="h7-0-26" class="i">+    target.execute(&quot;PRAGMA journal_mode=DELETE&quot;)
+</a><a href="#h7-0-27" id="h7-0-27" class="i">+    target.commit()
+</a><a href="#h7-0-28" id="h7-0-28" class="i">+finally:
+</a><a href="#h7-0-29" id="h7-0-29" class="i">+    target.close()
+</a><a href="#h7-0-30" id="h7-0-30" class="i">+    source.close()
+</a><a href="#h7-0-31" id="h7-0-31" class="i">+os.chmod(target_path, 0o600)
+</a><a href="#h7-0-32" id="h7-0-32" class="i">+
+</a><a href="#h7-0-33" id="h7-0-33" class="i">+check = sqlite3.connect(f&quot;file:{target_path}?mode=ro&quot;, uri=True)
+</a><a href="#h7-0-34" id="h7-0-34" class="i">+try:
+</a><a href="#h7-0-35" id="h7-0-35" class="i">+    result = check.execute(&quot;PRAGMA integrity_check&quot;).fetchone()[0]
+</a><a href="#h7-0-36" id="h7-0-36" class="i">+    if result != &quot;ok&quot;:
+</a><a href="#h7-0-37" id="h7-0-37" class="i">+        raise SystemExit(f&quot;integrity_check failed: {result}&quot;)
+</a><a href="#h7-0-38" id="h7-0-38" class="i">+finally:
+</a><a href="#h7-0-39" id="h7-0-39" class="i">+    check.close()
+</a><a href="#h7-0-40" id="h7-0-40" class="i">+PY
+</a><a href="#h7-0-41" id="h7-0-41" class="i">+
+</a><a href="#h7-0-42" id="h7-0-42" class="i">+mv -f &quot;$TMP&quot; &quot;$DEST&quot;
+</a><a href="#h7-0-43" id="h7-0-43" class="i">+
+</a><a href="#h7-0-44" id="h7-0-44" class="i">+# Verifica que o arquivo também pode ser restaurado para uma cópia temporária.
+</a><a href="#h7-0-45" id="h7-0-45" class="i">+python3 - &quot;$DEST&quot; &quot;$RESTORE&quot; &lt;&lt;&#39;PY&#39;
+</a><a href="#h7-0-46" id="h7-0-46" class="i">+import os
+</a><a href="#h7-0-47" id="h7-0-47" class="i">+import sqlite3
+</a><a href="#h7-0-48" id="h7-0-48" class="i">+import sys
+</a><a href="#h7-0-49" id="h7-0-49" class="i">+
+</a><a href="#h7-0-50" id="h7-0-50" class="i">+backup_path, restore_path = sys.argv[1:]
+</a><a href="#h7-0-51" id="h7-0-51" class="i">+source = sqlite3.connect(f&quot;file:{backup_path}?mode=ro&quot;, uri=True)
+</a><a href="#h7-0-52" id="h7-0-52" class="i">+target = sqlite3.connect(restore_path)
+</a><a href="#h7-0-53" id="h7-0-53" class="i">+try:
+</a><a href="#h7-0-54" id="h7-0-54" class="i">+    source.backup(target)
+</a><a href="#h7-0-55" id="h7-0-55" class="i">+    target.execute(&quot;PRAGMA journal_mode=DELETE&quot;)
+</a><a href="#h7-0-56" id="h7-0-56" class="i">+    target.commit()
+</a><a href="#h7-0-57" id="h7-0-57" class="i">+finally:
+</a><a href="#h7-0-58" id="h7-0-58" class="i">+    target.close()
+</a><a href="#h7-0-59" id="h7-0-59" class="i">+    source.close()
+</a><a href="#h7-0-60" id="h7-0-60" class="i">+os.chmod(restore_path, 0o600)
+</a><a href="#h7-0-61" id="h7-0-61" class="i">+
+</a><a href="#h7-0-62" id="h7-0-62" class="i">+check = sqlite3.connect(f&quot;file:{restore_path}?mode=ro&quot;, uri=True)
+</a><a href="#h7-0-63" id="h7-0-63" class="i">+try:
+</a><a href="#h7-0-64" id="h7-0-64" class="i">+    result = check.execute(&quot;PRAGMA integrity_check&quot;).fetchone()[0]
+</a><a href="#h7-0-65" id="h7-0-65" class="i">+    if result != &quot;ok&quot;:
+</a><a href="#h7-0-66" id="h7-0-66" class="i">+        raise SystemExit(f&quot;restore integrity_check failed: {result}&quot;)
+</a><a href="#h7-0-67" id="h7-0-67" class="i">+    tables = check.execute(&quot;SELECT COUNT(*) FROM sqlite_master WHERE type=&#39;table&#39;&quot;).fetchone()[0]
+</a><a href="#h7-0-68" id="h7-0-68" class="i">+    if tables &lt; 1:
+</a><a href="#h7-0-69" id="h7-0-69" class="i">+        raise SystemExit(&quot;restore validation found no tables&quot;)
+</a><a href="#h7-0-70" id="h7-0-70" class="i">+finally:
+</a><a href="#h7-0-71" id="h7-0-71" class="i">+    check.close()
+</a><a href="#h7-0-72" id="h7-0-72" class="i">+PY
+</a><a href="#h7-0-73" id="h7-0-73" class="i">+
+</a><a href="#h7-0-74" id="h7-0-74" class="i">+find &quot;$DEST_DIR&quot; -maxdepth 1 -type f -name &#39;assistente-db-*.sqlite3&#39; -mtime +&quot;$RETENTION_DAYS&quot; -delete
+</a><a href="#h7-0-75" id="h7-0-75" class="i">+printf &#39;%s\n&#39; &quot;$DEST&quot;
+</a><b>diff --git a/<a id="h8" href="../file/services/assistente-db-backup.service.html">services/assistente-db-backup.service</a> b/<a href="../file/services/assistente-db-backup.service.html">services/assistente-db-backup.service</a></b>
+<a href="#h8-0" id="h8-0" class="h">@@ -0,0 +1,16 @@
+</a><a href="#h8-0-0" id="h8-0-0" class="i">+[Unit]
+</a><a href="#h8-0-1" id="h8-0-1" class="i">+Description=Backup SQLite do Assistente Acadêmico
+</a><a href="#h8-0-2" id="h8-0-2" class="i">+After=local-fs.target
+</a><a href="#h8-0-3" id="h8-0-3" class="i">+
+</a><a href="#h8-0-4" id="h8-0-4" class="i">+[Service]
+</a><a href="#h8-0-5" id="h8-0-5" class="i">+Type=oneshot
+</a><a href="#h8-0-6" id="h8-0-6" class="i">+ExecStart=/usr/local/sbin/assistente-db-backup
+</a><a href="#h8-0-7" id="h8-0-7" class="i">+User=root
+</a><a href="#h8-0-8" id="h8-0-8" class="i">+NoNewPrivileges=true
+</a><a href="#h8-0-9" id="h8-0-9" class="i">+PrivateTmp=true
+</a><a href="#h8-0-10" id="h8-0-10" class="i">+ProtectSystem=full
+</a><a href="#h8-0-11" id="h8-0-11" class="i">+ProtectHome=true
+</a><a href="#h8-0-12" id="h8-0-12" class="i">+PrivateDevices=true
+</a><a href="#h8-0-13" id="h8-0-13" class="i">+ProtectKernelTunables=true
+</a><a href="#h8-0-14" id="h8-0-14" class="i">+ProtectControlGroups=true
+</a><a href="#h8-0-15" id="h8-0-15" class="i">+ReadWritePaths=/opt/servidor/backups
+</a><b>diff --git a/<a id="h9" href="../file/services/assistente-db-backup.timer.html">services/assistente-db-backup.timer</a> b/<a href="../file/services/assistente-db-backup.timer.html">services/assistente-db-backup.timer</a></b>
+<a href="#h9-0" id="h9-0" class="h">@@ -0,0 +1,11 @@
+</a><a href="#h9-0-0" id="h9-0-0" class="i">+[Unit]
+</a><a href="#h9-0-1" id="h9-0-1" class="i">+Description=Backup diário do banco do Assistente Acadêmico
+</a><a href="#h9-0-2" id="h9-0-2" class="i">+
+</a><a href="#h9-0-3" id="h9-0-3" class="i">+[Timer]
+</a><a href="#h9-0-4" id="h9-0-4" class="i">+OnCalendar=*-*-* 03:15:00
+</a><a href="#h9-0-5" id="h9-0-5" class="i">+RandomizedDelaySec=20m
+</a><a href="#h9-0-6" id="h9-0-6" class="i">+Persistent=true
+</a><a href="#h9-0-7" id="h9-0-7" class="i">+Unit=assistente-db-backup.service
+</a><a href="#h9-0-8" id="h9-0-8" class="i">+
+</a><a href="#h9-0-9" id="h9-0-9" class="i">+[Install]
+</a><a href="#h9-0-10" id="h9-0-10" class="i">+WantedBy=timers.target
+</a></pre>
+</div>
+</body>
+</html>

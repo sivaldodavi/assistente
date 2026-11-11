@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Minha biblioteca pessoal — Assistente Acadêmico{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/library.css') }}">{% endblock %}
+{% block content %}
+<section class="page-heading library-heading"><p class="eyebrow">Fontes salvas</p><h1>Minha biblioteca pessoal</h1><p class="lead">Suas referências e fichamentos privados para reutilizar nos trabalhos.</p></section>
+{% if saved %}<p class="notice" role="status">{% if saved == 'source-deleted' %}Fonte excluída.{% elif saved == 'source-updated' %}Fonte e fichamento atualizados.{% else %}Fonte adicionada.{% endif %}</p>{% endif %}
+<section id="library-sources" aria-label="Suas fontes">
+  <details class="library-add" {% if not sources %}open{% endif %}><summary>Adicionar fonte</summary>
+    <form class="library-add-form" method="post" action="{{ url_for('library.add_source') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="library-fields"><label>Título<input name="title" maxlength="240" required placeholder="Livro, artigo, lei ou decisão"></label><label>Autor ou órgão<input name="author" maxlength="240"></label><label>Tipo<select name="kind">{% for value,label in source_kind_labels.items() %}<option value="{{ value }}">{{ label }}</option>{% endfor %}</select></label><label>Referência<input name="reference" maxlength="500" placeholder="Dados bibliográficos ou link"></label></div>
+      <details class="source-note"><summary>Fichamento pessoal (opcional)</summary><label>Suas anotações<textarea name="notes" maxlength="5000" rows="4"></textarea></label></details>
+      <button class="button button-primary" type="submit">Adicionar à biblioteca</button>
+    </form>
+  </details>
+  {% if sources %}<label class="library-filter">Buscar nas suas fontes<input type="search" data-source-filter placeholder="Título, autor, referência ou fichamento"></label>{% endif %}
+  <section class="source-list" aria-label="Suas fontes">
+    {% for source in sources %}
+      <article class="source-row{% if editing_id == source['id'] %} is-editing{% endif %}">
+        <div class="source-row-head">
+          <div><p class="eyebrow">{{ source_kind_labels.get(source['kind'], "Outro") }}{% if source['author'] %} · {{ source['author'] }}{% endif %}</p><h3>{{ source['title'] }}</h3></div>
+          <div class="source-actions"><a class="text-button" href="{{ url_for('library.edit_source', source_id=source['id']) }}">Editar</a><form method="post" action="{{ url_for('library.delete_source_route', source_id=source['id']) }}" onsubmit="return confirm('Excluir esta fonte e seu fichamento pessoal?');"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="text-button danger-text" type="submit">Excluir</button></form></div>
+        </div>
+        {% if source['reference'] %}<p class="source-reference">{{ source['reference'] }}</p>{% endif %}
+        {% if source['notes'] %}<details class="source-note"><summary>Fichamento pessoal</summary><p>{{ source['notes'] }}</p></details>{% else %}<p class="source-no-note">Sem fichamento pessoal.</p>{% endif %}
+        <details class="source-editor"{% if editing_id == source['id'] %} open{% endif %}><summary>Editar dados e fichamento</summary>
+          <form method="post" action="{{ url_for('library.save_source', source_id=source['id']) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><div class="source-edit-grid"><label for="edit-title-{{ source['id'] }}">Título<input id="edit-title-{{ source['id'] }}" name="title" maxlength="240" required value="{{ source['title'] }}"></label><label for="edit-author-{{ source['id'] }}">Autor ou órgão<input id="edit-author-{{ source['id'] }}" name="author" maxlength="240" value="{{ source['author'] }}"></label><label for="edit-kind-{{ source['id'] }}">Tipo<select id="edit-kind-{{ source['id'] }}" name="kind">{% for value, label in source_kind_labels.items() %}<option value="{{ value }}"{% if value == source['kind'] %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></label><label for="edit-reference-{{ source['id'] }}">Referência<input id="edit-reference-{{ source['id'] }}" name="reference" maxlength="500" value="{{ source['reference'] }}"></label><label class="source-edit-notes" for="edit-notes-{{ source['id'] }}">Fichamento pessoal<textarea id="edit-notes-{{ source['id'] }}" name="notes" maxlength="5000" rows="6" placeholder="O que devo lembrar desta fonte?">{{ source['notes'] }}</textarea></label></div><div class="source-edit-actions"><button class="button button-primary" type="submit">Salvar alterações</button><a class="button" href="{{ url_for('library.home') }}">Cancelar</a></div></form>
+        </details>
+      </article>
+    {% else %}<p class="empty-state">Sua biblioteca ainda está vazia. Adicione uma fonte para começar seu acervo pessoal.</p>{% endfor %}
+  </section>
+</section>
+{% endblock %}
+{% block extra_scripts %}<script type="module" src="{{ url_for('static', filename='js/library.js') }}"></script>{% endblock %}

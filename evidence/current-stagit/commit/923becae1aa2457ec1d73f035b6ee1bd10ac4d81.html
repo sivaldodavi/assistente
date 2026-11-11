@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>feat: integrar validacao JEV - assistente-academico - Assistente Acadêmico v2
+</title>
+<link rel="icon" type="image/png" href="../favicon.png" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed" href="../atom.xml" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed (tags)" href="../tags.xml" />
+<link rel="stylesheet" type="text/css" href="../style.css" />
+</head>
+<body>
+<table><tr><td><a href="../../"><img src="../logo.png" alt="" width="32" height="32" /></a></td><td><h1>assistente-academico</h1><span class="desc">Assistente Acadêmico v2
+</span></td></tr><tr class="url"><td></td><td>git clone <a href="git://git.sivaldodavi.com.br/assistente-academico.git">git://git.sivaldodavi.com.br/assistente-academico.git</a></td></tr><tr><td></td><td>
+<a href="../log.html">Log</a> | <a href="../files.html">Files</a> | <a href="../refs.html">Refs</a> | <a href="../file/README.md.html">README</a></td></tr></table>
+<hr/>
+<div id="content">
+<pre><b>commit</b> <a href="../commit/923becae1aa2457ec1d73f035b6ee1bd10ac4d81.html">923becae1aa2457ec1d73f035b6ee1bd10ac4d81</a>
+<b>parent</b> <a href="../commit/29ca0f13575bf4fb9891e77605efa978320e3989.html">29ca0f13575bf4fb9891e77605efa978320e3989</a>
+<b>Author:</b> Sivaldo Davi &lt;<span class="offview">g<span>x</span>i<span>x</span>t<span>x</span>@<span>x</span>s<span>x</span>i<span>x</span>v<span>x</span>a<span>x</span>l<span>x</span>d<span>x</span>o<span>x</span>d<span>x</span>a<span>x</span>v<span>x</span>i<span>x</span>.<span>x</span>c<span>x</span>o<span>x</span>m</span>&gt;
+<b>Date:</b>   Mon, 26 Oct 2026 16:30:51 +0000
+
+feat: integrar validacao JEV
+
+<b>Diffstat:</b>
+<table><tr><td class="M">M</td><td><a href="#h0">app/routes/ai.py</a></td><td> | </td><td class="num">29</td><td><span class="i">+++++++++++++++++++++++++++</span><span class="d">--</span></td></tr>
+<tr><td class="M">M</td><td><a href="#h1">app/services/assistant.py</a></td><td> | </td><td class="num">9</td><td><span class="i">+++++++++</span><span class="d"></span></td></tr>
+<tr><td class="M">M</td><td><a href="#h2">docs/ia/PROVEDORES-IA.md</a></td><td> | </td><td class="num">2</td><td><span class="i">++</span><span class="d"></span></td></tr>
+<tr><td class="M">M</td><td><a href="#h3">tests/test_ai.py</a></td><td> | </td><td class="num">20</td><td><span class="i">++++++++++++++++++++</span><span class="d"></span></td></tr>
+</table></pre><pre>4 files changed, 58 insertions(+), 2 deletions(-)
+<hr/><b>diff --git a/<a id="h0" href="../file/app/routes/ai.py.html">app/routes/ai.py</a> b/<a href="../file/app/routes/ai.py.html">app/routes/ai.py</a></b>
+<a href="#h0-0" id="h0-0" class="h">@@ -3,8 +3,8 @@ import os
+</a> from flask import Blueprint, abort, jsonify, request
+ 
+ from ..auth import current_account_id, login_required, require_csrf
+<a href="#h0-0-3" id="h0-0-3" class="d">-from ..services.assistant import ALLOWED_FIELDS, build_messages, validate_result
+</a><a href="#h0-0-4" id="h0-0-4" class="d">-from ..services.providers import DeepSeekClient, ProviderError, load_secret
+</a><a href="#h0-0-5" id="h0-0-5" class="i">+from ..services.assistant import ALLOWED_FIELDS, build_jev_validation, build_messages, validate_result
+</a><a href="#h0-0-6" id="h0-0-6" class="i">+from ..services.providers import DeepSeekClient, JevClient, ProviderError, load_secret
+</a> from ..store.accounts import get_account
+ from ..store.projects import get_project
+ 
+<a href="#h0-1" id="h0-1" class="h">@@ -43,3 +43,28 @@ def review(project_id):
+</a>     except (KeyError, ValueError):
+         return jsonify({&quot;error&quot;: &quot;ai_invalid_response&quot;, &quot;message&quot;: &quot;A assistência retornou uma resposta inesperada.&quot;}), 502
+     return jsonify({&quot;ok&quot;: True, &quot;field_id&quot;: field_id, **result})
+<a href="#h0-1-3" id="h0-1-3" class="i">+
+</a><a href="#h0-1-4" id="h0-1-4" class="i">+
+</a><a href="#h0-1-5" id="h0-1-5" class="i">+@ai_bp.post(&quot;/projects/&lt;project_id&gt;/ai/validate&quot;)
+</a><a href="#h0-1-6" id="h0-1-6" class="i">+@login_required
+</a><a href="#h0-1-7" id="h0-1-7" class="i">+def validate(project_id):
+</a><a href="#h0-1-8" id="h0-1-8" class="i">+    require_csrf()
+</a><a href="#h0-1-9" id="h0-1-9" class="i">+    account = get_account(current_account_id())
+</a><a href="#h0-1-10" id="h0-1-10" class="i">+    if account is None:
+</a><a href="#h0-1-11" id="h0-1-11" class="i">+        abort(401)
+</a><a href="#h0-1-12" id="h0-1-12" class="i">+    if not account[&quot;ai_consent&quot;]:
+</a><a href="#h0-1-13" id="h0-1-13" class="i">+        return jsonify({&quot;error&quot;: &quot;ai_consent_required&quot;, &quot;message&quot;: &quot;Autorize o uso de IA no perfil antes de pedir validação.&quot;}), 403
+</a><a href="#h0-1-14" id="h0-1-14" class="i">+    project = get_project(current_account_id(), project_id)
+</a><a href="#h0-1-15" id="h0-1-15" class="i">+    if project is None:
+</a><a href="#h0-1-16" id="h0-1-16" class="i">+        abort(404)
+</a><a href="#h0-1-17" id="h0-1-17" class="i">+    body = request.get_json(silent=True) or {}
+</a><a href="#h0-1-18" id="h0-1-18" class="i">+    try:
+</a><a href="#h0-1-19" id="h0-1-19" class="i">+        state, questions = build_jev_validation(project, body.get(&quot;field_id&quot;, &quot;problem&quot;))
+</a><a href="#h0-1-20" id="h0-1-20" class="i">+        key = load_secret(&quot;TYPESAFE_API_KEY&quot;, &quot;TYPESAFE_API_KEY_FILE&quot;, &quot;/run/secrets/typesafe_api_key&quot;)
+</a><a href="#h0-1-21" id="h0-1-21" class="i">+        client = JevClient(key, api_url=os.environ.get(&quot;TYPESAFE_API_URL&quot;, &quot;https://api.typesafe.ai/v1/systemone&quot;), model=os.environ.get(&quot;TYPESAFE_MODEL&quot;, &quot;jev-latest&quot;))
+</a><a href="#h0-1-22" id="h0-1-22" class="i">+        result = client.score(state, questions)
+</a><a href="#h0-1-23" id="h0-1-23" class="i">+    except ProviderError as error:
+</a><a href="#h0-1-24" id="h0-1-24" class="i">+        return jsonify({&quot;error&quot;: error.code, &quot;message&quot;: str(error)}), error.status
+</a><a href="#h0-1-25" id="h0-1-25" class="i">+    except ValueError:
+</a><a href="#h0-1-26" id="h0-1-26" class="i">+        return jsonify({&quot;error&quot;: &quot;invalid_ai_request&quot;}), 400
+</a><a href="#h0-1-27" id="h0-1-27" class="i">+    return jsonify({&quot;ok&quot;: True, **result})
+</a><b>diff --git a/<a id="h1" href="../file/app/services/assistant.py.html">app/services/assistant.py</a> b/<a href="../file/app/services/assistant.py.html">app/services/assistant.py</a></b>
+<a href="#h1-0" id="h1-0" class="h">@@ -41,3 +41,12 @@ def validate_result(result: object) -&gt; dict:
+</a>             raise ValueError(&quot;suggestion inválida&quot;)
+         clean.append({&quot;text&quot;: item[&quot;text&quot;].strip()})
+     return {&quot;answer&quot;: answer.strip(), &quot;suggestions&quot;: clean}
+<a href="#h1-0-3" id="h1-0-3" class="i">+
+</a><a href="#h1-0-4" id="h1-0-4" class="i">+
+</a><a href="#h1-0-5" id="h1-0-5" class="i">+def build_jev_validation(project: dict, field_id: str) -&gt; tuple[dict, dict]:
+</a><a href="#h1-0-6" id="h1-0-6" class="i">+    if field_id not in ALLOWED_FIELDS:
+</a><a href="#h1-0-7" id="h1-0-7" class="i">+        raise ValueError(&quot;campo não permitido&quot;)
+</a><a href="#h1-0-8" id="h1-0-8" class="i">+    fields = project.get(&quot;fields&quot;, {})
+</a><a href="#h1-0-9" id="h1-0-9" class="i">+    state = {&quot;project_type&quot;: project.get(&quot;project_type&quot;, &quot;&quot;), &quot;field_id&quot;: field_id, &quot;text&quot;: str(fields.get(field_id) or &quot;&quot;)[:16000], &quot;problem&quot;: str(fields.get(&quot;problem&quot;) or &quot;&quot;)[:5000]}
+</a><a href="#h1-0-10" id="h1-0-10" class="i">+    questions = {&quot;coherence&quot;: {&quot;type&quot;: &quot;score&quot;, &quot;instructions&quot;: &quot;Avalie somente clareza e coerência do campo com o problema fornecido; não invente exigências.&quot;, &quot;criteria&quot;: [&quot;0 — insuficiente&quot;, &quot;1 — há lacunas&quot;, &quot;2 — adequado com ajustes&quot;, &quot;3 — adequado&quot;]}}
+</a><a href="#h1-0-11" id="h1-0-11" class="i">+    return state, questions
+</a><b>diff --git a/<a id="h2" href="../file/docs/ia/PROVEDORES-IA.md.html">docs/ia/PROVEDORES-IA.md</a> b/<a href="../file/docs/ia/PROVEDORES-IA.md.html">docs/ia/PROVEDORES-IA.md</a></b>
+<a href="#h2-0" id="h2-0" class="h">@@ -14,6 +14,8 @@ O contrato envia `model`, `messages`, `response_format` JSON, `max_tokens` e `st
+</a> 
+ O contrato envia `state`, `model` e `questions` ao endpoint configurado. A resposta precisa conter `answers` como objeto. A validação detalhada de rubric, itens permitidos, confiança e persistência de uso pertence ao serviço de aplicação que chamará o adaptador, não ao transporte.
+ 
+<a href="#h2-0-3" id="h2-0-3" class="i">+Na aplicação, a rota de validação monta perguntas fixas a partir do campo permitido e do problema do próprio projeto. O cliente não escolhe instruções JEV arbitrárias. O resultado é devolvido para revisão e não é salvo automaticamente no snapshot.
+</a><a href="#h2-0-4" id="h2-0-4" class="i">+
+</a> ## Secrets
+ 
+ A chave pode vir de variável de ambiente ou de arquivo indicado por `*_API_KEY_FILE`, compatível com secrets montados pelo Docker. O valor não é impresso, salvo no banco, enviado ao frontend ou incluído em exceções.
+<b>diff --git a/<a id="h3" href="../file/tests/test_ai.py.html">tests/test_ai.py</a> b/<a href="../file/tests/test_ai.py.html">tests/test_ai.py</a></b>
+<a href="#h3-0" id="h3-0" class="h">@@ -47,3 +47,23 @@ def test_ai_rejects_field_outside_contract(client):
+</a>     project_id = created.headers[&quot;Location&quot;].rsplit(&quot;/&quot;, 1)[-1]
+     response = client.post(f&quot;/projects/{project_id}/ai/review&quot;, headers={&quot;X-CSRF-Token&quot;: token}, json={&quot;field_id&quot;: &quot;authors&quot;, &quot;instruction&quot;: &quot;Revise&quot;})
+     assert response.status_code == 400
+<a href="#h3-0-3" id="h3-0-3" class="i">+
+</a><a href="#h3-0-4" id="h3-0-4" class="i">+
+</a><a href="#h3-0-5" id="h3-0-5" class="i">+def test_jev_validation_uses_fixed_questions_and_fake_provider(client, monkeypatch):
+</a><a href="#h3-0-6" id="h3-0-6" class="i">+    class FakeJev:
+</a><a href="#h3-0-7" id="h3-0-7" class="i">+        def __init__(self, *_args, **_kwargs):
+</a><a href="#h3-0-8" id="h3-0-8" class="i">+            pass
+</a><a href="#h3-0-9" id="h3-0-9" class="i">+
+</a><a href="#h3-0-10" id="h3-0-10" class="i">+        def score(self, state, questions):
+</a><a href="#h3-0-11" id="h3-0-11" class="i">+            assert state[&quot;field_id&quot;] == &quot;problem&quot;
+</a><a href="#h3-0-12" id="h3-0-12" class="i">+            assert &quot;coherence&quot; in questions
+</a><a href="#h3-0-13" id="h3-0-13" class="i">+            return {&quot;model&quot;: &quot;fake-jev&quot;, &quot;answers&quot;: {&quot;coherence&quot;: {&quot;score&quot;: 2}}, &quot;usage&quot;: {}}
+</a><a href="#h3-0-14" id="h3-0-14" class="i">+
+</a><a href="#h3-0-15" id="h3-0-15" class="i">+    monkeypatch.setattr(ai_route, &quot;JevClient&quot;, FakeJev)
+</a><a href="#h3-0-16" id="h3-0-16" class="i">+    monkeypatch.setattr(ai_route, &quot;load_secret&quot;, lambda *args: &quot;fake-secret&quot;)
+</a><a href="#h3-0-17" id="h3-0-17" class="i">+    token = login(client, consent=True)
+</a><a href="#h3-0-18" id="h3-0-18" class="i">+    created = client.post(&quot;/projects&quot;, data={&quot;csrf_token&quot;: token, &quot;project_type&quot;: &quot;case&quot;})
+</a><a href="#h3-0-19" id="h3-0-19" class="i">+    project_id = created.headers[&quot;Location&quot;].rsplit(&quot;/&quot;, 1)[-1]
+</a><a href="#h3-0-20" id="h3-0-20" class="i">+    response = client.post(f&quot;/projects/{project_id}/ai/validate&quot;, headers={&quot;X-CSRF-Token&quot;: token}, json={&quot;field_id&quot;: &quot;problem&quot;})
+</a><a href="#h3-0-21" id="h3-0-21" class="i">+    assert response.status_code == 200
+</a><a href="#h3-0-22" id="h3-0-22" class="i">+    assert response.get_json()[&quot;answers&quot;][&quot;coherence&quot;][&quot;score&quot;] == 2
+</a></pre>
+</div>
+</body>
+</html>

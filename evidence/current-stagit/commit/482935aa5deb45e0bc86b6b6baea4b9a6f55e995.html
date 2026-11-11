@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>chore: iniciar esqueleto da v2 - assistente-academico - Assistente Acadêmico v2
+</title>
+<link rel="icon" type="image/png" href="../favicon.png" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed" href="../atom.xml" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed (tags)" href="../tags.xml" />
+<link rel="stylesheet" type="text/css" href="../style.css" />
+</head>
+<body>
+<table><tr><td><a href="../../"><img src="../logo.png" alt="" width="32" height="32" /></a></td><td><h1>assistente-academico</h1><span class="desc">Assistente Acadêmico v2
+</span></td></tr><tr class="url"><td></td><td>git clone <a href="git://git.sivaldodavi.com.br/assistente-academico.git">git://git.sivaldodavi.com.br/assistente-academico.git</a></td></tr><tr><td></td><td>
+<a href="../log.html">Log</a> | <a href="../files.html">Files</a> | <a href="../refs.html">Refs</a> | <a href="../file/README.md.html">README</a></td></tr></table>
+<hr/>
+<div id="content">
+<pre><b>commit</b> <a href="../commit/482935aa5deb45e0bc86b6b6baea4b9a6f55e995.html">482935aa5deb45e0bc86b6b6baea4b9a6f55e995</a>
+<b>Author:</b> Sivaldo Davi &lt;<span class="offview">g<span>x</span>i<span>x</span>t<span>x</span>@<span>x</span>s<span>x</span>i<span>x</span>v<span>x</span>a<span>x</span>l<span>x</span>d<span>x</span>o<span>x</span>d<span>x</span>a<span>x</span>v<span>x</span>i<span>x</span>.<span>x</span>c<span>x</span>o<span>x</span>m</span>&gt;
+<b>Date:</b>   Mon, 26 Oct 2026 15:56:06 +0000
+
+chore: iniciar esqueleto da v2
+
+<b>Diffstat:</b>
+<table><tr><td class="A">A</td><td><a href="#h0">.env.example</a></td><td> | </td><td class="num">10</td><td><span class="i">++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="A">A</td><td><a href="#h1">.gitignore</a></td><td> | </td><td class="num">15</td><td><span class="i">+++++++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="A">A</td><td><a href="#h2">AGENTS.md</a></td><td> | </td><td class="num">36</td><td><span class="i">++++++++++++++++++++++++++++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="A">A</td><td><a href="#h3">README.md</a></td><td> | </td><td class="num">30</td><td><span class="i">++++++++++++++++++++++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="A">A</td><td><a href="#h4">app/__init__.py</a></td><td> | </td><td class="num">39</td><td><span class="i">+++++++++++++++++++++++++++++++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="A">A</td><td><a href="#h5">app/domain/__init__.py</a></td><td> | </td><td class="num">0</td><td><span class="i"></span><span class="d"></span></td></tr>
+<tr><td class="A">A</td><td><a href="#h6">app/domain/timeline.py</a></td><td> | </td><td class="num">69</td><td><span class="i">+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="A">A</td><td><a href="#h7">app/routes/__init__.py</a></td><td> | </td><td class="num">0</td><td><span class="i"></span><span class="d"></span></td></tr>
+<tr><td class="A">A</td><td><a href="#h8">app/routes/public.py</a></td><td> | </td><td class="num">8</td><td><span class="i">++++++++</span><span class="d"></span></td></tr>
+<tr><td class="A">A</td><td><a href="#h9">app/store/__init__.py</a></td><td> | </td><td class="num">0</td><td><span class="i"></span><span class="d"></span></td></tr>
+<tr><td class="A">A</td><td><a href="#h10">app/store/db.py</a></td><td> | </td><td class="num">30</td><td><span class="i">++++++++++++++++++++++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="A">A</td><td><a href="#h11">app/store/schema.sql</a></td><td> | </td><td class="num">8</td><td><span class="i">++++++++</span><span class="d"></span></td></tr>
+<tr><td class="A">A</td><td><a href="#h12">docs/ia/ARQUITETURA.md</a></td><td> | </td><td class="num">25</td><td><span class="i">+++++++++++++++++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="A">A</td><td><a href="#h13">docs/ia/DECISOES.md</a></td><td> | </td><td class="num">23</td><td><span class="i">+++++++++++++++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="A">A</td><td><a href="#h14">docs/ia/LINHA-DO-TEMPO.md</a></td><td> | </td><td class="num">37</td><td><span class="i">+++++++++++++++++++++++++++++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="A">A</td><td><a href="#h15">pyproject.toml</a></td><td> | </td><td class="num">17</td><td><span class="i">+++++++++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="A">A</td><td><a href="#h16">requirements-dev.txt</a></td><td> | </td><td class="num">2</td><td><span class="i">++</span><span class="d"></span></td></tr>
+<tr><td class="A">A</td><td><a href="#h17">requirements.txt</a></td><td> | </td><td class="num">2</td><td><span class="i">++</span><span class="d"></span></td></tr>
+<tr><td class="A">A</td><td><a href="#h18">static/css/app.css</a></td><td> | </td><td class="num">27</td><td><span class="i">+++++++++++++++++++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="A">A</td><td><a href="#h19">static/js/app.js</a></td><td> | </td><td class="num">5</td><td><span class="i">+++++</span><span class="d"></span></td></tr>
+<tr><td class="A">A</td><td><a href="#h20">templates/base.html</a></td><td> | </td><td class="num">19</td><td><span class="i">+++++++++++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="A">A</td><td><a href="#h21">templates/public/home.html</a></td><td> | </td><td class="num">17</td><td><span class="i">+++++++++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="A">A</td><td><a href="#h22">tests/conftest.py</a></td><td> | </td><td class="num">20</td><td><span class="i">++++++++++++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="A">A</td><td><a href="#h23">tests/test_smoke.py</a></td><td> | </td><td class="num">22</td><td><span class="i">++++++++++++++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="A">A</td><td><a href="#h24">tests/test_timeline.py</a></td><td> | </td><td class="num">33</td><td><span class="i">+++++++++++++++++++++++++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="A">A</td><td><a href="#h25">wsgi.py</a></td><td> | </td><td class="num">3</td><td><span class="i">+++</span><span class="d"></span></td></tr>
+</table></pre><pre>26 files changed, 497 insertions(+), 0 deletions(-)
+<hr/><b>diff --git a/<a id="h0" href="../file/.env.example.html">.env.example</a> b/<a href="../file/.env.example.html">.env.example</a></b>
+<a href="#h0-0" id="h0-0" class="h">@@ -0,0 +1,10 @@
+</a><a href="#h0-0-0" id="h0-0-0" class="i">+ASSISTENTE_V2_SECRET_KEY=change-in-local-environment
+</a><a href="#h0-0-1" id="h0-0-1" class="i">+ASSISTENTE_V2_DATA_DIR=./var
+</a><a href="#h0-0-2" id="h0-0-2" class="i">+ASSISTENTE_GOOGLE_CLIENT_ID=
+</a><a href="#h0-0-3" id="h0-0-3" class="i">+ASSISTENTE_GOOGLE_CLIENT_SECRET_FILE=
+</a><a href="#h0-0-4" id="h0-0-4" class="i">+ASSISTENTE_GOOGLE_REDIRECT_URI=
+</a><a href="#h0-0-5" id="h0-0-5" class="i">+DEEPSEEK_API_KEY_FILE=
+</a><a href="#h0-0-6" id="h0-0-6" class="i">+TYPESAFE_API_KEY_FILE=
+</a><a href="#h0-0-7" id="h0-0-7" class="i">+ZAP_URL=
+</a><a href="#h0-0-8" id="h0-0-8" class="i">+ZAP_TOKEN_FILE=
+</a><a href="#h0-0-9" id="h0-0-9" class="i">+QUARTO_BINARY=quarto
+</a><b>diff --git a/<a id="h1" href="../file/.gitignore.html">.gitignore</a> b/<a href="../file/.gitignore.html">.gitignore</a></b>
+<a href="#h1-0" id="h1-0" class="h">@@ -0,0 +1,15 @@
+</a><a href="#h1-0-0" id="h1-0-0" class="i">+.venv/
+</a><a href="#h1-0-1" id="h1-0-1" class="i">+__pycache__/
+</a><a href="#h1-0-2" id="h1-0-2" class="i">+*.py[cod]
+</a><a href="#h1-0-3" id="h1-0-3" class="i">+.pytest_cache/
+</a><a href="#h1-0-4" id="h1-0-4" class="i">+.coverage
+</a><a href="#h1-0-5" id="h1-0-5" class="i">+htmlcov/
+</a><a href="#h1-0-6" id="h1-0-6" class="i">+.env
+</a><a href="#h1-0-7" id="h1-0-7" class="i">+.env.*
+</a><a href="#h1-0-8" id="h1-0-8" class="i">+!.env.example
+</a><a href="#h1-0-9" id="h1-0-9" class="i">+instance/
+</a><a href="#h1-0-10" id="h1-0-10" class="i">+var/*.sqlite3
+</a><a href="#h1-0-11" id="h1-0-11" class="i">+var/*.sqlite3-*
+</a><a href="#h1-0-12" id="h1-0-12" class="i">+var/tmp/
+</a><a href="#h1-0-13" id="h1-0-13" class="i">+*.log
+</a><a href="#h1-0-14" id="h1-0-14" class="i">+.DS_Store
+</a><b>diff --git a/<a id="h2" href="../file/AGENTS.md.html">AGENTS.md</a> b/<a href="../file/AGENTS.md.html">AGENTS.md</a></b>
+<a href="#h2-0" id="h2-0" class="h">@@ -0,0 +1,36 @@
+</a><a href="#h2-0-0" id="h2-0-0" class="i">+# Instruções para agentes — Assistente Acadêmico v2
+</a><a href="#h2-0-1" id="h2-0-1" class="i">+
+</a><a href="#h2-0-2" id="h2-0-2" class="i">+Este é o projeto novo do Assistente Acadêmico. Ele não compartilha banco, cookies, volume, código executável ou estado de sessão com o projeto legado.
+</a><a href="#h2-0-3" id="h2-0-3" class="i">+
+</a><a href="#h2-0-4" id="h2-0-4" class="i">+## Antes de alterar
+</a><a href="#h2-0-5" id="h2-0-5" class="i">+
+</a><a href="#h2-0-6" id="h2-0-6" class="i">+Leia, nesta ordem:
+</a><a href="#h2-0-7" id="h2-0-7" class="i">+
+</a><a href="#h2-0-8" id="h2-0-8" class="i">+1. `README.md`;
+</a><a href="#h2-0-9" id="h2-0-9" class="i">+2. `docs/ia/ARQUITETURA.md`;
+</a><a href="#h2-0-10" id="h2-0-10" class="i">+3. `docs/ia/DECISOES.md`;
+</a><a href="#h2-0-11" id="h2-0-11" class="i">+4. `docs/ia/LINHA-DO-TEMPO.md`;
+</a><a href="#h2-0-12" id="h2-0-12" class="i">+5. a documentação do domínio que será alterado.
+</a><a href="#h2-0-13" id="h2-0-13" class="i">+
+</a><a href="#h2-0-14" id="h2-0-14" class="i">+## Regras permanentes
+</a><a href="#h2-0-15" id="h2-0-15" class="i">+
+</a><a href="#h2-0-16" id="h2-0-16" class="i">+- Responda e documente em português.
+</a><a href="#h2-0-17" id="h2-0-17" class="i">+- Não leia, copie ou altere banco, contas, projetos ou secrets de produção.
+</a><a href="#h2-0-18" id="h2-0-18" class="i">+- Testes usam banco temporário e provedores falsos.
+</a><a href="#h2-0-19" id="h2-0-19" class="i">+- Nunca chame DeepSeek, JEV, Google ou zap-go durante testes.
+</a><a href="#h2-0-20" id="h2-0-20" class="i">+- Secrets entram somente por variáveis de ambiente ou arquivos montados como secret.
+</a><a href="#h2-0-21" id="h2-0-21" class="i">+- Não coloque token, client secret, cookie, telefone ou conteúdo acadêmico em Git ou log.
+</a><a href="#h2-0-22" id="h2-0-22" class="i">+- Não crie compatibilidade com o banco legado sem decisão explícita.
+</a><a href="#h2-0-23" id="h2-0-23" class="i">+- Não crie contas `legacy` na v2.
+</a><a href="#h2-0-24" id="h2-0-24" class="i">+- Não implemente pagamentos automáticos.
+</a><a href="#h2-0-25" id="h2-0-25" class="i">+- Toda alteração deve atualizar a documentação permanente quando mudar uma regra do domínio.
+</a><a href="#h2-0-26" id="h2-0-26" class="i">+- A Linha do Tempo registra fatos estruturados; não transforme o recurso em um campo genérico de descrição longa.
+</a><a href="#h2-0-27" id="h2-0-27" class="i">+
+</a><a href="#h2-0-28" id="h2-0-28" class="i">+## Verificação mínima
+</a><a href="#h2-0-29" id="h2-0-29" class="i">+
+</a><a href="#h2-0-30" id="h2-0-30" class="i">+```sh
+</a><a href="#h2-0-31" id="h2-0-31" class="i">+python3 -m pytest -q
+</a><a href="#h2-0-32" id="h2-0-32" class="i">+python3 -m compileall -q app workers wsgi.py
+</a><a href="#h2-0-33" id="h2-0-33" class="i">+```
+</a><a href="#h2-0-34" id="h2-0-34" class="i">+
+</a><a href="#h2-0-35" id="h2-0-35" class="i">+O build Docker e a medição de RAM entram antes de qualquer pré-produção. O domínio atual só muda após aceite explícito e rollback testado.
+</a><b>diff --git a/<a id="h3" href="../file/README.md.html">README.md</a> b/<a href="../file/README.md.html">README.md</a></b>
+<a href="#h3-0" id="h3-0" class="h">@@ -0,0 +1,30 @@
+</a><a href="#h3-0-0" id="h3-0-0" class="i">+# Assistente Acadêmico v2
+</a><a href="#h3-0-1" id="h3-0-1" class="i">+
+</a><a href="#h3-0-2" id="h3-0-2" class="i">+Aplicação nova do Assistente Acadêmico, construída em Python, Flask, Jinja, SQLite, JavaScript modular e Quarto.
+</a><a href="#h3-0-3" id="h3-0-3" class="i">+
+</a><a href="#h3-0-4" id="h3-0-4" class="i">+A v2 reproduzirá a experiência pública e acadêmica do site atual, mas terá banco, sessões, código e repositório independentes. O projeto legado é apenas referência funcional. Nenhum dado antigo é importado.
+</a><a href="#h3-0-5" id="h3-0-5" class="i">+
+</a><a href="#h3-0-6" id="h3-0-6" class="i">+## Estado
+</a><a href="#h3-0-7" id="h3-0-7" class="i">+
+</a><a href="#h3-0-8" id="h3-0-8" class="i">+O projeto está na Fase 1: esqueleto privado e documentação de domínio. Ainda não há login, integração real, usuário real, publicação, troca de domínio ou worker conectado ao zap-go.
+</a><a href="#h3-0-9" id="h3-0-9" class="i">+
+</a><a href="#h3-0-10" id="h3-0-10" class="i">+## Desenvolvimento
+</a><a href="#h3-0-11" id="h3-0-11" class="i">+
+</a><a href="#h3-0-12" id="h3-0-12" class="i">+```sh
+</a><a href="#h3-0-13" id="h3-0-13" class="i">+python3 -m venv .venv
+</a><a href="#h3-0-14" id="h3-0-14" class="i">+. .venv/bin/activate
+</a><a href="#h3-0-15" id="h3-0-15" class="i">+pip install -r requirements-dev.txt
+</a><a href="#h3-0-16" id="h3-0-16" class="i">+flask --app wsgi:app run --debug
+</a><a href="#h3-0-17" id="h3-0-17" class="i">+```
+</a><a href="#h3-0-18" id="h3-0-18" class="i">+
+</a><a href="#h3-0-19" id="h3-0-19" class="i">+A aplicação usa `instance/data/assistente_v2.sqlite3` por padrão. Para testes, use um caminho temporário definido pela fixture.
+</a><a href="#h3-0-20" id="h3-0-20" class="i">+
+</a><a href="#h3-0-21" id="h3-0-21" class="i">+## Configuração externa
+</a><a href="#h3-0-22" id="h3-0-22" class="i">+
+</a><a href="#h3-0-23" id="h3-0-23" class="i">+Copie `.env.example` apenas para um ambiente local. Os valores reais nunca entram no Git. DeepSeek, JEV/Typesafe, Google OAuth, Quarto e zap-go serão conectados somente em fases posteriores e sempre por configuração segura.
+</a><a href="#h3-0-24" id="h3-0-24" class="i">+
+</a><a href="#h3-0-25" id="h3-0-25" class="i">+## Princípios do produto
+</a><a href="#h3-0-26" id="h3-0-26" class="i">+
+</a><a href="#h3-0-27" id="h3-0-27" class="i">+O usuário verá o mesmo tipo de editor, etapas e documentos do site atual. A implementação será diferente: templates server-side, módulos pequenos, operações explícitas e testes por contratos de fluxo.
+</a><a href="#h3-0-28" id="h3-0-28" class="i">+
+</a><a href="#h3-0-29" id="h3-0-29" class="i">+A Linha do Tempo dos Fatos não será um formulário de redação livre. Cada fato terá data/precisão, acontecimento curto, sujeitos, categoria, fonte vinculada, status de confirmação e relevância para o conflito. Observação curta será opcional e não substituirá esses campos.
+</a><b>diff --git a/<a id="h4" href="../file/app/__init__.py.html">app/__init__.py</a> b/<a href="../file/app/__init__.py.html">app/__init__.py</a></b>
+<a href="#h4-0" id="h4-0" class="h">@@ -0,0 +1,39 @@
+</a><a href="#h4-0-0" id="h4-0-0" class="i">+import os
+</a><a href="#h4-0-1" id="h4-0-1" class="i">+from pathlib import Path
+</a><a href="#h4-0-2" id="h4-0-2" class="i">+
+</a><a href="#h4-0-3" id="h4-0-3" class="i">+from flask import Flask, jsonify
+</a><a href="#h4-0-4" id="h4-0-4" class="i">+
+</a><a href="#h4-0-5" id="h4-0-5" class="i">+from .store.db import close_db, init_db
+</a><a href="#h4-0-6" id="h4-0-6" class="i">+
+</a><a href="#h4-0-7" id="h4-0-7" class="i">+
+</a><a href="#h4-0-8" id="h4-0-8" class="i">+def create_app(test_config=None):
+</a><a href="#h4-0-9" id="h4-0-9" class="i">+    app = Flask(
+</a><a href="#h4-0-10" id="h4-0-10" class="i">+        __name__,
+</a><a href="#h4-0-11" id="h4-0-11" class="i">+        instance_relative_config=True,
+</a><a href="#h4-0-12" id="h4-0-12" class="i">+        template_folder=&quot;../templates&quot;,
+</a><a href="#h4-0-13" id="h4-0-13" class="i">+        static_folder=&quot;../static&quot;,
+</a><a href="#h4-0-14" id="h4-0-14" class="i">+    )
+</a><a href="#h4-0-15" id="h4-0-15" class="i">+    default_data_dir = Path(os.environ.get(&quot;ASSISTENTE_V2_DATA_DIR&quot;, app.instance_path)) / &quot;data&quot;
+</a><a href="#h4-0-16" id="h4-0-16" class="i">+    app.config.from_mapping(
+</a><a href="#h4-0-17" id="h4-0-17" class="i">+        SECRET_KEY=os.environ.get(&quot;ASSISTENTE_V2_SECRET_KEY&quot;, &quot;dev-only-change-me&quot;),
+</a><a href="#h4-0-18" id="h4-0-18" class="i">+        DATA_DIR=str(default_data_dir),
+</a><a href="#h4-0-19" id="h4-0-19" class="i">+        DATABASE=str(default_data_dir / &quot;assistente_v2.sqlite3&quot;),
+</a><a href="#h4-0-20" id="h4-0-20" class="i">+    )
+</a><a href="#h4-0-21" id="h4-0-21" class="i">+    if test_config:
+</a><a href="#h4-0-22" id="h4-0-22" class="i">+        app.config.update(test_config)
+</a><a href="#h4-0-23" id="h4-0-23" class="i">+
+</a><a href="#h4-0-24" id="h4-0-24" class="i">+    Path(app.config[&quot;DATA_DIR&quot;]).mkdir(parents=True, exist_ok=True)
+</a><a href="#h4-0-25" id="h4-0-25" class="i">+    app.teardown_appcontext(close_db)
+</a><a href="#h4-0-26" id="h4-0-26" class="i">+
+</a><a href="#h4-0-27" id="h4-0-27" class="i">+    from .routes.public import public_bp
+</a><a href="#h4-0-28" id="h4-0-28" class="i">+
+</a><a href="#h4-0-29" id="h4-0-29" class="i">+    app.register_blueprint(public_bp)
+</a><a href="#h4-0-30" id="h4-0-30" class="i">+
+</a><a href="#h4-0-31" id="h4-0-31" class="i">+    @app.get(&quot;/healthz&quot;)
+</a><a href="#h4-0-32" id="h4-0-32" class="i">+    def healthz():
+</a><a href="#h4-0-33" id="h4-0-33" class="i">+        return jsonify({&quot;status&quot;: &quot;ok&quot;, &quot;service&quot;: &quot;assistente-academico-v2&quot;})
+</a><a href="#h4-0-34" id="h4-0-34" class="i">+
+</a><a href="#h4-0-35" id="h4-0-35" class="i">+    with app.app_context():
+</a><a href="#h4-0-36" id="h4-0-36" class="i">+        init_db()
+</a><a href="#h4-0-37" id="h4-0-37" class="i">+
+</a><a href="#h4-0-38" id="h4-0-38" class="i">+    return app
+</a><b>diff --git a/<a id="h5" href="../file/app/domain/__init__.py.html">app/domain/__init__.py</a> b/<a href="../file/app/domain/__init__.py.html">app/domain/__init__.py</a></b>
+<b>diff --git a/<a id="h6" href="../file/app/domain/timeline.py.html">app/domain/timeline.py</a> b/<a href="../file/app/domain/timeline.py.html">app/domain/timeline.py</a></b>
+<a href="#h6-0" id="h6-0" class="h">@@ -0,0 +1,69 @@
+</a><a href="#h6-0-0" id="h6-0-0" class="i">+from __future__ import annotations
+</a><a href="#h6-0-1" id="h6-0-1" class="i">+
+</a><a href="#h6-0-2" id="h6-0-2" class="i">+from dataclasses import dataclass
+</a><a href="#h6-0-3" id="h6-0-3" class="i">+from uuid import uuid4
+</a><a href="#h6-0-4" id="h6-0-4" class="i">+
+</a><a href="#h6-0-5" id="h6-0-5" class="i">+DATE_PRECISIONS = {&quot;exact&quot;, &quot;day_range&quot;, &quot;month&quot;, &quot;year&quot;, &quot;sequence&quot;, &quot;unknown&quot;}
+</a><a href="#h6-0-6" id="h6-0-6" class="i">+EVENT_TYPES = {&quot;communication&quot;, &quot;document&quot;, &quot;action&quot;, &quot;deadline&quot;, &quot;decision&quot;, &quot;other&quot;}
+</a><a href="#h6-0-7" id="h6-0-7" class="i">+CERTAINTIES = {&quot;established&quot;, &quot;alleged&quot;, &quot;unclear&quot;}
+</a><a href="#h6-0-8" id="h6-0-8" class="i">+RELEVANCES = {&quot;central&quot;, &quot;supporting&quot;, &quot;context&quot;}
+</a><a href="#h6-0-9" id="h6-0-9" class="i">+
+</a><a href="#h6-0-10" id="h6-0-10" class="i">+
+</a><a href="#h6-0-11" id="h6-0-11" class="i">+@dataclass(frozen=True)
+</a><a href="#h6-0-12" id="h6-0-12" class="i">+class FactEvent:
+</a><a href="#h6-0-13" id="h6-0-13" class="i">+    id: str
+</a><a href="#h6-0-14" id="h6-0-14" class="i">+    date_value: str = &quot;&quot;
+</a><a href="#h6-0-15" id="h6-0-15" class="i">+    date_end: str = &quot;&quot;
+</a><a href="#h6-0-16" id="h6-0-16" class="i">+    date_precision: str = &quot;unknown&quot;
+</a><a href="#h6-0-17" id="h6-0-17" class="i">+    actor: str = &quot;&quot;
+</a><a href="#h6-0-18" id="h6-0-18" class="i">+    event_type: str = &quot;other&quot;
+</a><a href="#h6-0-19" id="h6-0-19" class="i">+    fact: str = &quot;&quot;
+</a><a href="#h6-0-20" id="h6-0-20" class="i">+    source_ids: tuple[str, ...] = ()
+</a><a href="#h6-0-21" id="h6-0-21" class="i">+    certainty: str = &quot;established&quot;
+</a><a href="#h6-0-22" id="h6-0-22" class="i">+    relevance: str = &quot;central&quot;
+</a><a href="#h6-0-23" id="h6-0-23" class="i">+    context_note: str = &quot;&quot;
+</a><a href="#h6-0-24" id="h6-0-24" class="i">+
+</a><a href="#h6-0-25" id="h6-0-25" class="i">+    def as_dict(self) -&gt; dict:
+</a><a href="#h6-0-26" id="h6-0-26" class="i">+        return {
+</a><a href="#h6-0-27" id="h6-0-27" class="i">+            &quot;id&quot;: self.id,
+</a><a href="#h6-0-28" id="h6-0-28" class="i">+            &quot;date_value&quot;: self.date_value,
+</a><a href="#h6-0-29" id="h6-0-29" class="i">+            &quot;date_end&quot;: self.date_end,
+</a><a href="#h6-0-30" id="h6-0-30" class="i">+            &quot;date_precision&quot;: self.date_precision,
+</a><a href="#h6-0-31" id="h6-0-31" class="i">+            &quot;actor&quot;: self.actor,
+</a><a href="#h6-0-32" id="h6-0-32" class="i">+            &quot;event_type&quot;: self.event_type,
+</a><a href="#h6-0-33" id="h6-0-33" class="i">+            &quot;fact&quot;: self.fact,
+</a><a href="#h6-0-34" id="h6-0-34" class="i">+            &quot;source_ids&quot;: list(self.source_ids),
+</a><a href="#h6-0-35" id="h6-0-35" class="i">+            &quot;certainty&quot;: self.certainty,
+</a><a href="#h6-0-36" id="h6-0-36" class="i">+            &quot;relevance&quot;: self.relevance,
+</a><a href="#h6-0-37" id="h6-0-37" class="i">+            &quot;context_note&quot;: self.context_note,
+</a><a href="#h6-0-38" id="h6-0-38" class="i">+        }
+</a><a href="#h6-0-39" id="h6-0-39" class="i">+
+</a><a href="#h6-0-40" id="h6-0-40" class="i">+
+</a><a href="#h6-0-41" id="h6-0-41" class="i">+def new_fact() -&gt; dict:
+</a><a href="#h6-0-42" id="h6-0-42" class="i">+    return FactEvent(id=str(uuid4())).as_dict()
+</a><a href="#h6-0-43" id="h6-0-43" class="i">+
+</a><a href="#h6-0-44" id="h6-0-44" class="i">+
+</a><a href="#h6-0-45" id="h6-0-45" class="i">+def normalize_fact(raw: object) -&gt; dict:
+</a><a href="#h6-0-46" id="h6-0-46" class="i">+    source = raw if isinstance(raw, dict) else {}
+</a><a href="#h6-0-47" id="h6-0-47" class="i">+    source_ids = source.get(&quot;source_ids&quot;, [])
+</a><a href="#h6-0-48" id="h6-0-48" class="i">+    if not isinstance(source_ids, list):
+</a><a href="#h6-0-49" id="h6-0-49" class="i">+        source_ids = []
+</a><a href="#h6-0-50" id="h6-0-50" class="i">+    return FactEvent(
+</a><a href="#h6-0-51" id="h6-0-51" class="i">+        id=str(source.get(&quot;id&quot;) or uuid4()),
+</a><a href="#h6-0-52" id="h6-0-52" class="i">+        date_value=str(source.get(&quot;date_value&quot;) or &quot;&quot;)[:80],
+</a><a href="#h6-0-53" id="h6-0-53" class="i">+        date_end=str(source.get(&quot;date_end&quot;) or &quot;&quot;)[:80],
+</a><a href="#h6-0-54" id="h6-0-54" class="i">+        date_precision=source.get(&quot;date_precision&quot;) if source.get(&quot;date_precision&quot;) in DATE_PRECISIONS else &quot;unknown&quot;,
+</a><a href="#h6-0-55" id="h6-0-55" class="i">+        actor=str(source.get(&quot;actor&quot;) or &quot;&quot;)[:160],
+</a><a href="#h6-0-56" id="h6-0-56" class="i">+        event_type=source.get(&quot;event_type&quot;) if source.get(&quot;event_type&quot;) in EVENT_TYPES else &quot;other&quot;,
+</a><a href="#h6-0-57" id="h6-0-57" class="i">+        fact=str(source.get(&quot;fact&quot;) or &quot;&quot;)[:240],
+</a><a href="#h6-0-58" id="h6-0-58" class="i">+        source_ids=tuple(str(item)[:80] for item in source_ids if isinstance(item, str))[:12],
+</a><a href="#h6-0-59" id="h6-0-59" class="i">+        certainty=source.get(&quot;certainty&quot;) if source.get(&quot;certainty&quot;) in CERTAINTIES else &quot;established&quot;,
+</a><a href="#h6-0-60" id="h6-0-60" class="i">+        relevance=source.get(&quot;relevance&quot;) if source.get(&quot;relevance&quot;) in RELEVANCES else &quot;central&quot;,
+</a><a href="#h6-0-61" id="h6-0-61" class="i">+        context_note=str(source.get(&quot;context_note&quot;) or &quot;&quot;)[:280],
+</a><a href="#h6-0-62" id="h6-0-62" class="i">+    ).as_dict()
+</a><a href="#h6-0-63" id="h6-0-63" class="i">+
+</a><a href="#h6-0-64" id="h6-0-64" class="i">+
+</a><a href="#h6-0-65" id="h6-0-65" class="i">+def normalize_timeline(raw: object) -&gt; list[dict]:
+</a><a href="#h6-0-66" id="h6-0-66" class="i">+    if not isinstance(raw, list):
+</a><a href="#h6-0-67" id="h6-0-67" class="i">+        return []
+</a><a href="#h6-0-68" id="h6-0-68" class="i">+    return [normalize_fact(item) for item in raw[:80] if isinstance(item, dict)]
+</a><b>diff --git a/<a id="h7" href="../file/app/routes/__init__.py.html">app/routes/__init__.py</a> b/<a href="../file/app/routes/__init__.py.html">app/routes/__init__.py</a></b>
+<b>diff --git a/<a id="h8" href="../file/app/routes/public.py.html">app/routes/public.py</a> b/<a href="../file/app/routes/public.py.html">app/routes/public.py</a></b>
+<a href="#h8-0" id="h8-0" class="h">@@ -0,0 +1,8 @@
+</a><a href="#h8-0-0" id="h8-0-0" class="i">+from flask import Blueprint, render_template
+</a><a href="#h8-0-1" id="h8-0-1" class="i">+
+</a><a href="#h8-0-2" id="h8-0-2" class="i">+public_bp = Blueprint(&quot;public&quot;, __name__)
+</a><a href="#h8-0-3" id="h8-0-3" class="i">+
+</a><a href="#h8-0-4" id="h8-0-4" class="i">+
+</a><a href="#h8-0-5" id="h8-0-5" class="i">+@public_bp.get(&quot;/&quot;)
+</a><a href="#h8-0-6" id="h8-0-6" class="i">+def home():
+</a><a href="#h8-0-7" id="h8-0-7" class="i">+    return render_template(&quot;public/home.html&quot;)
+</a><b>diff --git a/<a id="h9" href="../file/app/store/__init__.py.html">app/store/__init__.py</a> b/<a href="../file/app/store/__init__.py.html">app/store/__init__.py</a></b>
+<b>diff --git a/<a id="h10" href="../file/app/store/db.py.html">app/store/db.py</a> b/<a href="../file/app/store/db.py.html">app/store/db.py</a></b>
+<a href="#h10-0" id="h10-0" class="h">@@ -0,0 +1,30 @@
+</a><a href="#h10-0-0" id="h10-0-0" class="i">+import sqlite3
+</a><a href="#h10-0-1" id="h10-0-1" class="i">+from pathlib import Path
+</a><a href="#h10-0-2" id="h10-0-2" class="i">+
+</a><a href="#h10-0-3" id="h10-0-3" class="i">+from flask import current_app, g
+</a><a href="#h10-0-4" id="h10-0-4" class="i">+
+</a><a href="#h10-0-5" id="h10-0-5" class="i">+
+</a><a href="#h10-0-6" id="h10-0-6" class="i">+def get_db():
+</a><a href="#h10-0-7" id="h10-0-7" class="i">+    if &quot;db&quot; not in g:
+</a><a href="#h10-0-8" id="h10-0-8" class="i">+        database = Path(current_app.config[&quot;DATABASE&quot;])
+</a><a href="#h10-0-9" id="h10-0-9" class="i">+        database.parent.mkdir(parents=True, exist_ok=True)
+</a><a href="#h10-0-10" id="h10-0-10" class="i">+        connection = sqlite3.connect(database)
+</a><a href="#h10-0-11" id="h10-0-11" class="i">+        connection.row_factory = sqlite3.Row
+</a><a href="#h10-0-12" id="h10-0-12" class="i">+        connection.execute(&quot;PRAGMA foreign_keys = ON&quot;)
+</a><a href="#h10-0-13" id="h10-0-13" class="i">+        connection.execute(&quot;PRAGMA journal_mode = WAL&quot;)
+</a><a href="#h10-0-14" id="h10-0-14" class="i">+        connection.execute(&quot;PRAGMA busy_timeout = 5000&quot;)
+</a><a href="#h10-0-15" id="h10-0-15" class="i">+        g.db = connection
+</a><a href="#h10-0-16" id="h10-0-16" class="i">+    return g.db
+</a><a href="#h10-0-17" id="h10-0-17" class="i">+
+</a><a href="#h10-0-18" id="h10-0-18" class="i">+
+</a><a href="#h10-0-19" id="h10-0-19" class="i">+def close_db(_error=None):
+</a><a href="#h10-0-20" id="h10-0-20" class="i">+    connection = g.pop(&quot;db&quot;, None)
+</a><a href="#h10-0-21" id="h10-0-21" class="i">+    if connection is not None:
+</a><a href="#h10-0-22" id="h10-0-22" class="i">+        connection.close()
+</a><a href="#h10-0-23" id="h10-0-23" class="i">+
+</a><a href="#h10-0-24" id="h10-0-24" class="i">+
+</a><a href="#h10-0-25" id="h10-0-25" class="i">+def init_db():
+</a><a href="#h10-0-26" id="h10-0-26" class="i">+    database = get_db()
+</a><a href="#h10-0-27" id="h10-0-27" class="i">+    schema = Path(current_app.root_path) / &quot;store&quot; / &quot;schema.sql&quot;
+</a><a href="#h10-0-28" id="h10-0-28" class="i">+    database.executescript(schema.read_text(encoding=&quot;utf-8&quot;))
+</a><a href="#h10-0-29" id="h10-0-29" class="i">+    database.commit()
+</a><b>diff --git a/<a id="h11" href="../file/app/store/schema.sql.html">app/store/schema.sql</a> b/<a href="../file/app/store/schema.sql.html">app/store/schema.sql</a></b>
+<a href="#h11-0" id="h11-0" class="h">@@ -0,0 +1,8 @@
+</a><a href="#h11-0-0" id="h11-0-0" class="i">+CREATE TABLE IF NOT EXISTS app_meta (
+</a><a href="#h11-0-1" id="h11-0-1" class="i">+    key TEXT PRIMARY KEY,
+</a><a href="#h11-0-2" id="h11-0-2" class="i">+    value TEXT NOT NULL
+</a><a href="#h11-0-3" id="h11-0-3" class="i">+);
+</a><a href="#h11-0-4" id="h11-0-4" class="i">+
+</a><a href="#h11-0-5" id="h11-0-5" class="i">+INSERT INTO app_meta (key, value)
+</a><a href="#h11-0-6" id="h11-0-6" class="i">+VALUES (&#39;schema_version&#39;, &#39;1&#39;)
+</a><a href="#h11-0-7" id="h11-0-7" class="i">+ON CONFLICT(key) DO NOTHING;
+</a><b>diff --git a/<a id="h12" href="../file/docs/ia/ARQUITETURA.md.html">docs/ia/ARQUITETURA.md</a> b/<a href="../file/docs/ia/ARQUITETURA.md.html">docs/ia/ARQUITETURA.md</a></b>
+<a href="#h12-0" id="h12-0" class="h">@@ -0,0 +1,25 @@
+</a><a href="#h12-0-0" id="h12-0-0" class="i">+# Arquitetura da v2
+</a><a href="#h12-0-1" id="h12-0-1" class="i">+
+</a><a href="#h12-0-2" id="h12-0-2" class="i">+A v2 é um monólito Python pequeno. A aplicação web renderiza HTML com Jinja; JavaScript existe para comportamento local, não para reconstruir toda a interface a partir de JSON. SQLite pertence somente à v2.
+</a><a href="#h12-0-3" id="h12-0-3" class="i">+
+</a><a href="#h12-0-4" id="h12-0-4" class="i">+## Fronteiras
+</a><a href="#h12-0-5" id="h12-0-5" class="i">+
+</a><a href="#h12-0-6" id="h12-0-6" class="i">+- `routes/`: HTTP, autenticação da requisição e composição da resposta.
+</a><a href="#h12-0-7" id="h12-0-7" class="i">+- `domain/`: regras puras e normalização, sem Flask, banco ou provedor externo.
+</a><a href="#h12-0-8" id="h12-0-8" class="i">+- `store/`: SQLite, transações e consultas.
+</a><a href="#h12-0-9" id="h12-0-9" class="i">+- `services/`: integrações externas e operações que cruzam domínios.
+</a><a href="#h12-0-10" id="h12-0-10" class="i">+- `workers/`: processos de longa duração ou tarefas assíncronas.
+</a><a href="#h12-0-11" id="h12-0-11" class="i">+- `templates/`: experiência visual e acessibilidade.
+</a><a href="#h12-0-12" id="h12-0-12" class="i">+- `static/`: CSS e módulos de interação local.
+</a><a href="#h12-0-13" id="h12-0-13" class="i">+
+</a><a href="#h12-0-14" id="h12-0-14" class="i">+Cada módulo deve ter uma responsabilidade que possa ser descrita em uma frase. Se uma rota começa a carregar regra de negócio ou HTML muito grande, a mudança deve ser feita na fronteira correta, não escondida em um helper genérico.
+</a><a href="#h12-0-15" id="h12-0-15" class="i">+
+</a><a href="#h12-0-16" id="h12-0-16" class="i">+## Estado e persistência
+</a><a href="#h12-0-17" id="h12-0-17" class="i">+
+</a><a href="#h12-0-18" id="h12-0-18" class="i">+Dados do usuário pertencem ao projeto ou à conta de forma explícita. Snapshots acadêmicos podem usar JSON validado, mas proprietário, revisão, permissões, reservas de uso e status de notificações são estruturados.
+</a><a href="#h12-0-19" id="h12-0-19" class="i">+
+</a><a href="#h12-0-20" id="h12-0-20" class="i">+Autosave usa revisão otimista. Nenhuma resposta velha pode sobrescrever uma revisão nova. A interface sempre informa salvando, salvo, conflito ou erro.
+</a><a href="#h12-0-21" id="h12-0-21" class="i">+
+</a><a href="#h12-0-22" id="h12-0-22" class="i">+## Integrações
+</a><a href="#h12-0-23" id="h12-0-23" class="i">+
+</a><a href="#h12-0-24" id="h12-0-24" class="i">+DeepSeek, JEV/Typesafe, Google OAuth, Quarto e zap-go ficam atrás de serviços com contratos pequenos. Testes substituem cada provedor por fake. Valores secretos nunca entram em código ou logs.
+</a><b>diff --git a/<a id="h13" href="../file/docs/ia/DECISOES.md.html">docs/ia/DECISOES.md</a> b/<a href="../file/docs/ia/DECISOES.md.html">docs/ia/DECISOES.md</a></b>
+<a href="#h13-0" id="h13-0" class="h">@@ -0,0 +1,23 @@
+</a><a href="#h13-0-0" id="h13-0-0" class="i">+# Decisões da v2
+</a><a href="#h13-0-1" id="h13-0-1" class="i">+
+</a><a href="#h13-0-2" id="h13-0-2" class="i">+## 001 — Projeto novo sem banco legado
+</a><a href="#h13-0-3" id="h13-0-3" class="i">+
+</a><a href="#h13-0-4" id="h13-0-4" class="i">+A v2 não lê nem migra o SQLite atual. O legado é uma referência funcional privada. A decisão elimina compatibilidade e permite um schema inicial coerente.
+</a><a href="#h13-0-5" id="h13-0-5" class="i">+
+</a><a href="#h13-0-6" id="h13-0-6" class="i">+## 002 — Visual preservado antes de ser redesenhado
+</a><a href="#h13-0-7" id="h13-0-7" class="i">+
+</a><a href="#h13-0-8" id="h13-0-8" class="i">+A primeira versão deve reproduzir identidade visual, textos e fluxos reconhecíveis. Limpeza de CSS só ocorre depois de validar equivalência em desktop e celular.
+</a><a href="#h13-0-9" id="h13-0-9" class="i">+
+</a><a href="#h13-0-10" id="h13-0-10" class="i">+## 003 — Linha do Tempo registra fatos estruturados
+</a><a href="#h13-0-11" id="h13-0-11" class="i">+
+</a><a href="#h13-0-12" id="h13-0-12" class="i">+A Linha do Tempo não será um bloco de descrição e relevância. Cada item representa um fato com precisão temporal, ator, tipo de acontecimento, formulação curta do fato, fontes vinculadas, certeza e relevância. Uma observação contextual curta é opcional.
+</a><a href="#h13-0-13" id="h13-0-13" class="i">+
+</a><a href="#h13-0-14" id="h13-0-14" class="i">+Isso evita usar uma narrativa longa como substituto de análise. A interpretação e a argumentação continuam nas etapas próprias do Case.
+</a><a href="#h13-0-15" id="h13-0-15" class="i">+
+</a><a href="#h13-0-16" id="h13-0-16" class="i">+## 004 — Integrações externas permanecem externas
+</a><a href="#h13-0-17" id="h13-0-17" class="i">+
+</a><a href="#h13-0-18" id="h13-0-18" class="i">+A v2 reutiliza APIs e secrets já existentes por ambiente seguro. Não há cópia de chaves para Git, frontend, imagem ou logs.
+</a><a href="#h13-0-19" id="h13-0-19" class="i">+
+</a><a href="#h13-0-20" id="h13-0-20" class="i">+## 005 — Pagamentos automáticos continuam fora
+</a><a href="#h13-0-21" id="h13-0-21" class="i">+
+</a><a href="#h13-0-22" id="h13-0-22" class="i">+Pix e atribuição de plano permanecem manuais. Nenhum gateway será implementado nesta reescrita.
+</a><b>diff --git a/<a id="h14" href="../file/docs/ia/LINHA-DO-TEMPO.md.html">docs/ia/LINHA-DO-TEMPO.md</a> b/<a href="../file/docs/ia/LINHA-DO-TEMPO.md.html">docs/ia/LINHA-DO-TEMPO.md</a></b>
+<a href="#h14-0" id="h14-0" class="h">@@ -0,0 +1,37 @@
+</a><a href="#h14-0-0" id="h14-0-0" class="i">+# Linha do Tempo dos Fatos
+</a><a href="#h14-0-1" id="h14-0-1" class="i">+
+</a><a href="#h14-0-2" id="h14-0-2" class="i">+## Objetivo
+</a><a href="#h14-0-3" id="h14-0-3" class="i">+
+</a><a href="#h14-0-4" id="h14-0-4" class="i">+A Linha do Tempo organiza fatos relevantes para entender um case. Ela não é um campo para escrever a descrição do caso inteiro e não substitui fatos, problema jurídico, teses ou fundamentação.
+</a><a href="#h14-0-5" id="h14-0-5" class="i">+
+</a><a href="#h14-0-6" id="h14-0-6" class="i">+## Modelo de um fato
+</a><a href="#h14-0-7" id="h14-0-7" class="i">+
+</a><a href="#h14-0-8" id="h14-0-8" class="i">+Cada registro possui:
+</a><a href="#h14-0-9" id="h14-0-9" class="i">+
+</a><a href="#h14-0-10" id="h14-0-10" class="i">+- `date_value`: data, mês, ano ou marcador de sequência;
+</a><a href="#h14-0-11" id="h14-0-11" class="i">+- `date_end`: fim opcional para intervalo;
+</a><a href="#h14-0-12" id="h14-0-12" class="i">+- `date_precision`: exata, intervalo, mês, ano, sequência ou desconhecida;
+</a><a href="#h14-0-13" id="h14-0-13" class="i">+- `actor`: pessoa, órgão ou parte envolvida;
+</a><a href="#h14-0-14" id="h14-0-14" class="i">+- `event_type`: comunicação, documento, ação, prazo, decisão ou outro;
+</a><a href="#h14-0-15" id="h14-0-15" class="i">+- `fact`: formulação curta do acontecimento, limitada a 240 caracteres;
+</a><a href="#h14-0-16" id="h14-0-16" class="i">+- `source_ids`: fontes do próprio projeto que sustentam o registro;
+</a><a href="#h14-0-17" id="h14-0-17" class="i">+- `certainty`: estabelecido, alegado ou incerto;
+</a><a href="#h14-0-18" id="h14-0-18" class="i">+- `relevance`: central, de apoio ou contexto;
+</a><a href="#h14-0-19" id="h14-0-19" class="i">+- `context_note`: observação curta e opcional, limitada a 280 caracteres.
+</a><a href="#h14-0-20" id="h14-0-20" class="i">+
+</a><a href="#h14-0-21" id="h14-0-21" class="i">+Não existe o campo legado `description`. O usuário não deve ser incentivado a escrever uma dissertação dentro da Linha do Tempo.
+</a><a href="#h14-0-22" id="h14-0-22" class="i">+
+</a><a href="#h14-0-23" id="h14-0-23" class="i">+## Experiência planejada
+</a><a href="#h14-0-24" id="h14-0-24" class="i">+
+</a><a href="#h14-0-25" id="h14-0-25" class="i">+O formulário começa perguntando “Qual fato precisa ser organizado?”, “Quando?”, “Quem aparece?”, “Que tipo de acontecimento é?” e “Qual fonte sustenta o registro?”. Campos de certeza e relevância ficam visíveis, mas não escondidos em uma redação longa.
+</a><a href="#h14-0-26" id="h14-0-26" class="i">+
+</a><a href="#h14-0-27" id="h14-0-27" class="i">+A lista mostra a ordem temporal, o fato curto, o ator, o tipo, a certeza e as fontes. A observação contextual aparece recolhida quando existe. O usuário pode corrigir a ordem, associar fontes e remover fatos.
+</a><a href="#h14-0-28" id="h14-0-28" class="i">+
+</a><a href="#h14-0-29" id="h14-0-29" class="i">+## Regras
+</a><a href="#h14-0-30" id="h14-0-30" class="i">+
+</a><a href="#h14-0-31" id="h14-0-31" class="i">+- Fato sem fonte pode existir como rascunho, mas é sinalizado antes da revisão final.
+</a><a href="#h14-0-32" id="h14-0-32" class="i">+- “Alegado” e “incerto” não são tratados como fatos estabelecidos.
+</a><a href="#h14-0-33" id="h14-0-33" class="i">+- A Linha do Tempo não cria citação nem inventa fonte.
+</a><a href="#h14-0-34" id="h14-0-34" class="i">+- A análise jurídica permanece em campos próprios.
+</a><a href="#h14-0-35" id="h14-0-35" class="i">+- A exportação decide explicitamente se os fatos entram no documento; nunca imprime observações privadas por acidente.
+</a><a href="#h14-0-36" id="h14-0-36" class="i">+- O modelo será testado com fatos exatos, aproximados, intervalos, versões conflitantes e ausência de fonte.
+</a><b>diff --git a/<a id="h15" href="../file/pyproject.toml.html">pyproject.toml</a> b/<a href="../file/pyproject.toml.html">pyproject.toml</a></b>
+<a href="#h15-0" id="h15-0" class="h">@@ -0,0 +1,17 @@
+</a><a href="#h15-0-0" id="h15-0-0" class="i">+[build-system]
+</a><a href="#h15-0-1" id="h15-0-1" class="i">+requires = [&quot;setuptools&gt;=68&quot;]
+</a><a href="#h15-0-2" id="h15-0-2" class="i">+build-backend = &quot;setuptools.build_meta&quot;
+</a><a href="#h15-0-3" id="h15-0-3" class="i">+
+</a><a href="#h15-0-4" id="h15-0-4" class="i">+[project]
+</a><a href="#h15-0-5" id="h15-0-5" class="i">+name = &quot;assistente-academico-v2&quot;
+</a><a href="#h15-0-6" id="h15-0-6" class="i">+version = &quot;0.1.0&quot;
+</a><a href="#h15-0-7" id="h15-0-7" class="i">+description = &quot;Nova aplicação do Assistente Acadêmico&quot;
+</a><a href="#h15-0-8" id="h15-0-8" class="i">+requires-python = &quot;&gt;=3.12&quot;
+</a><a href="#h15-0-9" id="h15-0-9" class="i">+dependencies = [
+</a><a href="#h15-0-10" id="h15-0-10" class="i">+  &quot;Flask&gt;=3.1,&lt;4&quot;,
+</a><a href="#h15-0-11" id="h15-0-11" class="i">+  &quot;gunicorn&gt;=23,&lt;24&quot;,
+</a><a href="#h15-0-12" id="h15-0-12" class="i">+]
+</a><a href="#h15-0-13" id="h15-0-13" class="i">+
+</a><a href="#h15-0-14" id="h15-0-14" class="i">+[tool.pytest.ini_options]
+</a><a href="#h15-0-15" id="h15-0-15" class="i">+testpaths = [&quot;tests&quot;]
+</a><a href="#h15-0-16" id="h15-0-16" class="i">+addopts = &quot;-q&quot;
+</a><b>diff --git a/<a id="h16" href="../file/requirements-dev.txt.html">requirements-dev.txt</a> b/<a href="../file/requirements-dev.txt.html">requirements-dev.txt</a></b>
+<a href="#h16-0" id="h16-0" class="h">@@ -0,0 +1,2 @@
+</a><a href="#h16-0-0" id="h16-0-0" class="i">+-r requirements.txt
+</a><a href="#h16-0-1" id="h16-0-1" class="i">+pytest&gt;=8,&lt;9
+</a><b>diff --git a/<a id="h17" href="../file/requirements.txt.html">requirements.txt</a> b/<a href="../file/requirements.txt.html">requirements.txt</a></b>
+<a href="#h17-0" id="h17-0" class="h">@@ -0,0 +1,2 @@
+</a><a href="#h17-0-0" id="h17-0-0" class="i">+Flask&gt;=3.1,&lt;4
+</a><a href="#h17-0-1" id="h17-0-1" class="i">+gunicorn&gt;=23,&lt;24
+</a><b>diff --git a/<a id="h18" href="../file/static/css/app.css.html">static/css/app.css</a> b/<a href="../file/static/css/app.css.html">static/css/app.css</a></b>
+<a href="#h18-0" id="h18-0" class="h">@@ -0,0 +1,27 @@
+</a><a href="#h18-0-0" id="h18-0-0" class="i">+:root {
+</a><a href="#h18-0-1" id="h18-0-1" class="i">+  color-scheme: light;
+</a><a href="#h18-0-2" id="h18-0-2" class="i">+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+</a><a href="#h18-0-3" id="h18-0-3" class="i">+  color: #263238;
+</a><a href="#h18-0-4" id="h18-0-4" class="i">+  background: #f6f5f1;
+</a><a href="#h18-0-5" id="h18-0-5" class="i">+  --ink: #263238;
+</a><a href="#h18-0-6" id="h18-0-6" class="i">+  --muted: #657277;
+</a><a href="#h18-0-7" id="h18-0-7" class="i">+  --line: #d9d8d1;
+</a><a href="#h18-0-8" id="h18-0-8" class="i">+  --paper: #fffefa;
+</a><a href="#h18-0-9" id="h18-0-9" class="i">+  --accent: #315c58;
+</a><a href="#h18-0-10" id="h18-0-10" class="i">+}
+</a><a href="#h18-0-11" id="h18-0-11" class="i">+
+</a><a href="#h18-0-12" id="h18-0-12" class="i">+* { box-sizing: border-box; }
+</a><a href="#h18-0-13" id="h18-0-13" class="i">+body { margin: 0; min-width: 320px; background: var(--paper); }
+</a><a href="#h18-0-14" id="h18-0-14" class="i">+.site-header { display: flex; align-items: center; gap: 1rem; min-height: 64px; padding: 0 5vw; border-bottom: 1px solid var(--line); background: var(--paper); }
+</a><a href="#h18-0-15" id="h18-0-15" class="i">+.brand { color: var(--ink); font-weight: 700; text-decoration: none; }
+</a><a href="#h18-0-16" id="h18-0-16" class="i">+.environment-badge { color: var(--muted); font-size: .78rem; }
+</a><a href="#h18-0-17" id="h18-0-17" class="i">+.page-shell { width: min(980px, calc(100% - 2rem)); margin: 0 auto; padding: 4rem 0; }
+</a><a href="#h18-0-18" id="h18-0-18" class="i">+.hero-card { padding: clamp(2rem, 7vw, 5rem); border: 1px solid var(--line); background: #f1f0e9; }
+</a><a href="#h18-0-19" id="h18-0-19" class="i">+.eyebrow { margin: 0 0 .8rem; color: var(--accent); font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+</a><a href="#h18-0-20" id="h18-0-20" class="i">+h1 { max-width: 740px; margin: 0; font-size: clamp(2rem, 5vw, 4.1rem); line-height: 1.04; letter-spacing: -.04em; }
+</a><a href="#h18-0-21" id="h18-0-21" class="i">+.lead { max-width: 650px; margin: 1.5rem 0 0; color: var(--muted); font-size: 1.1rem; line-height: 1.6; }
+</a><a href="#h18-0-22" id="h18-0-22" class="i">+.status-row { display: inline-flex; align-items: center; gap: .55rem; margin-top: 2rem; color: var(--accent); font-size: .92rem; font-weight: 600; }
+</a><a href="#h18-0-23" id="h18-0-23" class="i">+.status-dot { width: .65rem; height: .65rem; border-radius: 50%; background: #4d8a63; }
+</a><a href="#h18-0-24" id="h18-0-24" class="i">+.plain-section { max-width: 620px; padding: 2.5rem 0; }
+</a><a href="#h18-0-25" id="h18-0-25" class="i">+.plain-section h2 { margin-bottom: .5rem; font-size: 1.35rem; }
+</a><a href="#h18-0-26" id="h18-0-26" class="i">+.plain-section p { color: var(--muted); line-height: 1.65; }
+</a><b>diff --git a/<a id="h19" href="../file/static/js/app.js.html">static/js/app.js</a> b/<a href="../file/static/js/app.js.html">static/js/app.js</a></b>
+<a href="#h19-0" id="h19-0" class="h">@@ -0,0 +1,5 @@
+</a><a href="#h19-0-0" id="h19-0-0" class="i">+const healthBadge = document.querySelector(&quot;.environment-badge&quot;);
+</a><a href="#h19-0-1" id="h19-0-1" class="i">+
+</a><a href="#h19-0-2" id="h19-0-2" class="i">+if (healthBadge) {
+</a><a href="#h19-0-3" id="h19-0-3" class="i">+  healthBadge.title = &quot;Ambiente privado da nova aplicação&quot;;
+</a><a href="#h19-0-4" id="h19-0-4" class="i">+}
+</a><b>diff --git a/<a id="h20" href="../file/templates/base.html.html">templates/base.html</a> b/<a href="../file/templates/base.html.html">templates/base.html</a></b>
+<a href="#h20-0" id="h20-0" class="h">@@ -0,0 +1,19 @@
+</a><a href="#h20-0-0" id="h20-0-0" class="i">+&lt;!doctype html&gt;
+</a><a href="#h20-0-1" id="h20-0-1" class="i">+&lt;html lang=&quot;pt-BR&quot;&gt;
+</a><a href="#h20-0-2" id="h20-0-2" class="i">+  &lt;head&gt;
+</a><a href="#h20-0-3" id="h20-0-3" class="i">+    &lt;meta charset=&quot;utf-8&quot;&gt;
+</a><a href="#h20-0-4" id="h20-0-4" class="i">+    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+</a><a href="#h20-0-5" id="h20-0-5" class="i">+    &lt;title&gt;{% block title %}Assistente Acadêmico{% endblock %}&lt;/title&gt;
+</a><a href="#h20-0-6" id="h20-0-6" class="i">+    &lt;link rel=&quot;stylesheet&quot; href=&quot;{{ url_for(&#39;static&#39;, filename=&#39;css/app.css&#39;) }}&quot;&gt;
+</a><a href="#h20-0-7" id="h20-0-7" class="i">+  &lt;/head&gt;
+</a><a href="#h20-0-8" id="h20-0-8" class="i">+  &lt;body&gt;
+</a><a href="#h20-0-9" id="h20-0-9" class="i">+    &lt;header class=&quot;site-header&quot;&gt;
+</a><a href="#h20-0-10" id="h20-0-10" class="i">+      &lt;a class=&quot;brand&quot; href=&quot;{{ url_for(&#39;public.home&#39;) }}&quot;&gt;Assistente Acadêmico&lt;/a&gt;
+</a><a href="#h20-0-11" id="h20-0-11" class="i">+      &lt;span class=&quot;environment-badge&quot;&gt;v2 privada&lt;/span&gt;
+</a><a href="#h20-0-12" id="h20-0-12" class="i">+    &lt;/header&gt;
+</a><a href="#h20-0-13" id="h20-0-13" class="i">+    &lt;main class=&quot;page-shell&quot;&gt;
+</a><a href="#h20-0-14" id="h20-0-14" class="i">+      {% block content %}{% endblock %}
+</a><a href="#h20-0-15" id="h20-0-15" class="i">+    &lt;/main&gt;
+</a><a href="#h20-0-16" id="h20-0-16" class="i">+    &lt;script type=&quot;module&quot; src=&quot;{{ url_for(&#39;static&#39;, filename=&#39;js/app.js&#39;) }}&quot;&gt;&lt;/script&gt;
+</a><a href="#h20-0-17" id="h20-0-17" class="i">+  &lt;/body&gt;
+</a><a href="#h20-0-18" id="h20-0-18" class="i">+&lt;/html&gt;
+</a><b>diff --git a/<a id="h21" href="../file/templates/public/home.html.html">templates/public/home.html</a> b/<a href="../file/templates/public/home.html.html">templates/public/home.html</a></b>
+<a href="#h21-0" id="h21-0" class="h">@@ -0,0 +1,17 @@
+</a><a href="#h21-0-0" id="h21-0-0" class="i">+{% extends &quot;base.html&quot; %}
+</a><a href="#h21-0-1" id="h21-0-1" class="i">+{% block title %}Assistente Acadêmico — v2{% endblock %}
+</a><a href="#h21-0-2" id="h21-0-2" class="i">+{% block content %}
+</a><a href="#h21-0-3" id="h21-0-3" class="i">+&lt;section class=&quot;hero-card&quot;&gt;
+</a><a href="#h21-0-4" id="h21-0-4" class="i">+  &lt;p class=&quot;eyebrow&quot;&gt;Nova base em construção&lt;/p&gt;
+</a><a href="#h21-0-5" id="h21-0-5" class="i">+  &lt;h1&gt;O mesmo Assistente Acadêmico, com uma base mais clara.&lt;/h1&gt;
+</a><a href="#h21-0-6" id="h21-0-6" class="i">+  &lt;p class=&quot;lead&quot;&gt;Esta versão privada reproduzirá o visual e os fluxos do site atual sem reutilizar o banco ou o código legado.&lt;/p&gt;
+</a><a href="#h21-0-7" id="h21-0-7" class="i">+  &lt;div class=&quot;status-row&quot; role=&quot;status&quot;&gt;
+</a><a href="#h21-0-8" id="h21-0-8" class="i">+    &lt;span class=&quot;status-dot&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;
+</a><a href="#h21-0-9" id="h21-0-9" class="i">+    Esqueleto v2 funcionando localmente
+</a><a href="#h21-0-10" id="h21-0-10" class="i">+  &lt;/div&gt;
+</a><a href="#h21-0-11" id="h21-0-11" class="i">+&lt;/section&gt;
+</a><a href="#h21-0-12" id="h21-0-12" class="i">+&lt;section class=&quot;plain-section&quot;&gt;
+</a><a href="#h21-0-13" id="h21-0-13" class="i">+  &lt;h2&gt;Próximo percurso&lt;/h2&gt;
+</a><a href="#h21-0-14" id="h21-0-14" class="i">+  &lt;p&gt;Login de teste, criação de Case, autosave, fontes e PDF. Nenhuma integração externa é chamada nesta fase.&lt;/p&gt;
+</a><a href="#h21-0-15" id="h21-0-15" class="i">+&lt;/section&gt;
+</a><a href="#h21-0-16" id="h21-0-16" class="i">+{% endblock %}
+</a><b>diff --git a/<a id="h22" href="../file/tests/conftest.py.html">tests/conftest.py</a> b/<a href="../file/tests/conftest.py.html">tests/conftest.py</a></b>
+<a href="#h22-0" id="h22-0" class="h">@@ -0,0 +1,20 @@
+</a><a href="#h22-0-0" id="h22-0-0" class="i">+from pathlib import Path
+</a><a href="#h22-0-1" id="h22-0-1" class="i">+
+</a><a href="#h22-0-2" id="h22-0-2" class="i">+import pytest
+</a><a href="#h22-0-3" id="h22-0-3" class="i">+
+</a><a href="#h22-0-4" id="h22-0-4" class="i">+from app import create_app
+</a><a href="#h22-0-5" id="h22-0-5" class="i">+
+</a><a href="#h22-0-6" id="h22-0-6" class="i">+
+</a><a href="#h22-0-7" id="h22-0-7" class="i">+@pytest.fixture()
+</a><a href="#h22-0-8" id="h22-0-8" class="i">+def app(tmp_path: Path):
+</a><a href="#h22-0-9" id="h22-0-9" class="i">+    return create_app({
+</a><a href="#h22-0-10" id="h22-0-10" class="i">+        &quot;TESTING&quot;: True,
+</a><a href="#h22-0-11" id="h22-0-11" class="i">+        &quot;SECRET_KEY&quot;: &quot;test-only&quot;,
+</a><a href="#h22-0-12" id="h22-0-12" class="i">+        &quot;DATA_DIR&quot;: str(tmp_path),
+</a><a href="#h22-0-13" id="h22-0-13" class="i">+        &quot;DATABASE&quot;: str(tmp_path / &quot;test.sqlite3&quot;),
+</a><a href="#h22-0-14" id="h22-0-14" class="i">+    })
+</a><a href="#h22-0-15" id="h22-0-15" class="i">+
+</a><a href="#h22-0-16" id="h22-0-16" class="i">+
+</a><a href="#h22-0-17" id="h22-0-17" class="i">+@pytest.fixture()
+</a><a href="#h22-0-18" id="h22-0-18" class="i">+def client(app):
+</a><a href="#h22-0-19" id="h22-0-19" class="i">+    return app.test_client()
+</a><b>diff --git a/<a id="h23" href="../file/tests/test_smoke.py.html">tests/test_smoke.py</a> b/<a href="../file/tests/test_smoke.py.html">tests/test_smoke.py</a></b>
+<a href="#h23-0" id="h23-0" class="h">@@ -0,0 +1,22 @@
+</a><a href="#h23-0-0" id="h23-0-0" class="i">+def test_healthcheck(client):
+</a><a href="#h23-0-1" id="h23-0-1" class="i">+    response = client.get(&quot;/healthz&quot;)
+</a><a href="#h23-0-2" id="h23-0-2" class="i">+    assert response.status_code == 200
+</a><a href="#h23-0-3" id="h23-0-3" class="i">+    assert response.get_json() == {&quot;status&quot;: &quot;ok&quot;, &quot;service&quot;: &quot;assistente-academico-v2&quot;}
+</a><a href="#h23-0-4" id="h23-0-4" class="i">+
+</a><a href="#h23-0-5" id="h23-0-5" class="i">+
+</a><a href="#h23-0-6" id="h23-0-6" class="i">+def test_public_shell_is_server_rendered(client):
+</a><a href="#h23-0-7" id="h23-0-7" class="i">+    response = client.get(&quot;/&quot;)
+</a><a href="#h23-0-8" id="h23-0-8" class="i">+    assert response.status_code == 200
+</a><a href="#h23-0-9" id="h23-0-9" class="i">+    body = response.get_data(as_text=True)
+</a><a href="#h23-0-10" id="h23-0-10" class="i">+    assert &quot;O mesmo Assistente Acadêmico&quot; in body
+</a><a href="#h23-0-11" id="h23-0-11" class="i">+    assert &quot;v2 privada&quot; in body
+</a><a href="#h23-0-12" id="h23-0-12" class="i">+
+</a><a href="#h23-0-13" id="h23-0-13" class="i">+
+</a><a href="#h23-0-14" id="h23-0-14" class="i">+def test_database_starts_without_legacy_tables(app):
+</a><a href="#h23-0-15" id="h23-0-15" class="i">+    from app.store.db import get_db
+</a><a href="#h23-0-16" id="h23-0-16" class="i">+
+</a><a href="#h23-0-17" id="h23-0-17" class="i">+    with app.app_context():
+</a><a href="#h23-0-18" id="h23-0-18" class="i">+        names = {row[0] for row in get_db().execute(
+</a><a href="#h23-0-19" id="h23-0-19" class="i">+            &quot;SELECT name FROM sqlite_master WHERE type = &#39;table&#39;&quot;
+</a><a href="#h23-0-20" id="h23-0-20" class="i">+        )}
+</a><a href="#h23-0-21" id="h23-0-21" class="i">+    assert names == {&quot;app_meta&quot;}
+</a><b>diff --git a/<a id="h24" href="../file/tests/test_timeline.py.html">tests/test_timeline.py</a> b/<a href="../file/tests/test_timeline.py.html">tests/test_timeline.py</a></b>
+<a href="#h24-0" id="h24-0" class="h">@@ -0,0 +1,33 @@
+</a><a href="#h24-0-0" id="h24-0-0" class="i">+from app.domain.timeline import normalize_fact, normalize_timeline, new_fact
+</a><a href="#h24-0-1" id="h24-0-1" class="i">+
+</a><a href="#h24-0-2" id="h24-0-2" class="i">+
+</a><a href="#h24-0-3" id="h24-0-3" class="i">+def test_new_fact_is_structured_and_has_no_free_description():
+</a><a href="#h24-0-4" id="h24-0-4" class="i">+    fact = new_fact()
+</a><a href="#h24-0-5" id="h24-0-5" class="i">+    assert set(fact) == {
+</a><a href="#h24-0-6" id="h24-0-6" class="i">+        &quot;id&quot;, &quot;date_value&quot;, &quot;date_end&quot;, &quot;date_precision&quot;, &quot;actor&quot;,
+</a><a href="#h24-0-7" id="h24-0-7" class="i">+        &quot;event_type&quot;, &quot;fact&quot;, &quot;source_ids&quot;, &quot;certainty&quot;, &quot;relevance&quot;, &quot;context_note&quot;,
+</a><a href="#h24-0-8" id="h24-0-8" class="i">+    }
+</a><a href="#h24-0-9" id="h24-0-9" class="i">+    assert &quot;description&quot; not in fact
+</a><a href="#h24-0-10" id="h24-0-10" class="i">+
+</a><a href="#h24-0-11" id="h24-0-11" class="i">+
+</a><a href="#h24-0-12" id="h24-0-12" class="i">+def test_normalize_fact_rejects_legacy_description_and_bounds_text():
+</a><a href="#h24-0-13" id="h24-0-13" class="i">+    fact = normalize_fact({
+</a><a href="#h24-0-14" id="h24-0-14" class="i">+        &quot;id&quot;: &quot;f1&quot;,
+</a><a href="#h24-0-15" id="h24-0-15" class="i">+        &quot;description&quot;: &quot;texto antigo que não deve virar campo do novo domínio&quot;,
+</a><a href="#h24-0-16" id="h24-0-16" class="i">+        &quot;fact&quot;: &quot;A&quot; * 500,
+</a><a href="#h24-0-17" id="h24-0-17" class="i">+        &quot;date_precision&quot;: &quot;invalid&quot;,
+</a><a href="#h24-0-18" id="h24-0-18" class="i">+        &quot;certainty&quot;: &quot;invalid&quot;,
+</a><a href="#h24-0-19" id="h24-0-19" class="i">+        &quot;source_ids&quot;: [&quot;source-1&quot;, 3],
+</a><a href="#h24-0-20" id="h24-0-20" class="i">+    })
+</a><a href="#h24-0-21" id="h24-0-21" class="i">+    assert fact[&quot;id&quot;] == &quot;f1&quot;
+</a><a href="#h24-0-22" id="h24-0-22" class="i">+    assert fact[&quot;fact&quot;] == &quot;A&quot; * 240
+</a><a href="#h24-0-23" id="h24-0-23" class="i">+    assert fact[&quot;date_precision&quot;] == &quot;unknown&quot;
+</a><a href="#h24-0-24" id="h24-0-24" class="i">+    assert fact[&quot;certainty&quot;] == &quot;established&quot;
+</a><a href="#h24-0-25" id="h24-0-25" class="i">+    assert fact[&quot;source_ids&quot;] == [&quot;source-1&quot;]
+</a><a href="#h24-0-26" id="h24-0-26" class="i">+    assert &quot;description&quot; not in fact
+</a><a href="#h24-0-27" id="h24-0-27" class="i">+
+</a><a href="#h24-0-28" id="h24-0-28" class="i">+
+</a><a href="#h24-0-29" id="h24-0-29" class="i">+def test_normalize_timeline_limits_items_and_keeps_confidence():
+</a><a href="#h24-0-30" id="h24-0-30" class="i">+    events = normalize_timeline([{&quot;fact&quot;: &quot;Fato&quot;, &quot;certainty&quot;: &quot;alleged&quot;}] * 100)
+</a><a href="#h24-0-31" id="h24-0-31" class="i">+    assert len(events) == 80
+</a><a href="#h24-0-32" id="h24-0-32" class="i">+    assert events[0][&quot;certainty&quot;] == &quot;alleged&quot;
+</a><b>diff --git a/<a id="h25" href="../file/wsgi.py.html">wsgi.py</a> b/<a href="../file/wsgi.py.html">wsgi.py</a></b>
+<a href="#h25-0" id="h25-0" class="h">@@ -0,0 +1,3 @@
+</a><a href="#h25-0-0" id="h25-0-0" class="i">+from app import create_app
+</a><a href="#h25-0-1" id="h25-0-1" class="i">+
+</a><a href="#h25-0-2" id="h25-0-2" class="i">+app = create_app()
+</a></pre>
+</div>
+</body>
+</html>

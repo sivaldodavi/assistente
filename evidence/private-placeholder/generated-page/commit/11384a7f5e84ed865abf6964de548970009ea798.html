@@ -1,0 +1,1817 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>feat(deepseek): integra explicações opcionais do Jev - assistente-academico - Repositório assistente-academico
+</title>
+<link rel="icon" type="image/png" href="../favicon.png" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed" href="../atom.xml" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed (tags)" href="../tags.xml" />
+<link rel="stylesheet" type="text/css" href="../style.css" />
+</head>
+<body>
+<table><tr><td><a href="../../"><img src="../logo.png" alt="" width="32" height="32" /></a></td><td><h1>assistente-academico</h1><span class="desc">Repositório assistente-academico
+</span></td></tr><tr class="url"><td></td><td>git clone <a href="git://git.sivaldodavi.com/assistente-academico.git">git://git.sivaldodavi.com/assistente-academico.git</a></td></tr><tr><td></td><td>
+<a href="../log.html">Log</a> | <a href="../files.html">Files</a> | <a href="../refs.html">Refs</a> | <a href="../file/README.md.html">README</a></td></tr></table>
+<hr/>
+<div id="content">
+<pre><b>commit</b> <a href="../commit/11384a7f5e84ed865abf6964de548970009ea798.html">11384a7f5e84ed865abf6964de548970009ea798</a>
+<b>parent</b> <a href="../commit/6a29bccfd79314ad57450fb201d4fd0b9f4a82b4.html">6a29bccfd79314ad57450fb201d4fd0b9f4a82b4</a>
+<b>Author:</b> Sivaldo Davi  &lt;<a href="mailto:sivaldo@sivaldodavi">sivaldo@sivaldodavi</a>&gt;
+<b>Date:</b>   Sun, 18 Oct 2026 12:13:58 -0300
+
+feat(deepseek): integra explicações opcionais do Jev
+
+Adiciona explicações curtas por critério, cota independente, registro de tokens e custos estimados; mantém desativação para contas comuns até aprovação da cota.
+
+Co-authored-by: Copilot &lt;223556219+Copilot@users.noreply.github.com&gt;
+
+<b>Diffstat:</b>
+<table><tr><td class="M">M</td><td><a href="#h0">README.md</a></td><td> | </td><td class="num">77</td><td><span class="i">+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</span><span class="d">--------------</span></td></tr>
+<tr><td class="M">M</td><td><a href="#h1">assets/js/main.js</a></td><td> | </td><td class="num">153</td><td><span class="i">++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</span><span class="d">-------</span></td></tr>
+<tr><td class="M">M</td><td><a href="#h2">server.py</a></td><td> | </td><td class="num">686</td><td><span class="i">++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</span><span class="d">---------</span></td></tr>
+<tr><td class="M">M</td><td><a href="#h3">static/css/main.css</a></td><td> | </td><td class="num">26</td><td><span class="i">++++++++++++++++++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="M">M</td><td><a href="#h4">tests/test_api.py</a></td><td> | </td><td class="num">221</td><td><span class="i">++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</span><span class="d">-----</span></td></tr>
+<tr><td class="M">M</td><td><a href="#h5">tests/test_server.py</a></td><td> | </td><td class="num">84</td><td><span class="i">+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</span><span class="d"></span></td></tr>
+</table></pre><pre>6 files changed, 1136 insertions(+), 111 deletions(-)
+<hr/><b>diff --git a/<a id="h0" href="../file/README.md.html">README.md</a> b/<a href="../file/README.md.html">README.md</a></b>
+<a href="#h0-0" id="h0-0" class="h">@@ -35,6 +35,14 @@ iniciar o servidor. Em produção, a chave deve ser disponibilizada ao container
+</a> por um secret Docker em `/run/secrets/typesafe_api_key`; nunca a inclua no
+ repositório, em uma imagem ou em mensagens.
+ 
+<a href="#h0-0-3" id="h0-0-3" class="i">+As explicações opcionais do DeepSeek usam `DEEPSEEK_API_KEY` localmente ou um
+</a><a href="#h0-0-4" id="h0-0-4" class="i">+secret Docker em `/run/secrets/deepseek_api_key` em produção. Não configure a
+</a><a href="#h0-0-5" id="h0-0-5" class="i">+chave antes de aprovar o comportamento e testar o custo real. A integração
+</a><a href="#h0-0-6" id="h0-0-6" class="i">+explica somente um resultado Jev escolhido nos três critérios do relatório;
+</a><a href="#h0-0-7" id="h0-0-7" class="i">+não corrige, completa nem reescreve o trabalho. Novas licenças começam com
+</a><a href="#h0-0-8" id="h0-0-8" class="i">+cota DeepSeek zero até que o administrador faça testes de custo e habilite uma
+</a><a href="#h0-0-9" id="h0-0-9" class="i">+cota explicitamente.
+</a><a href="#h0-0-10" id="h0-0-10" class="i">+
+</a> ## Escopo desta branch
+ 
+ - Acesso por código aleatório, sem cadastro de nome, e-mail ou senha.
+<a href="#h0-1" id="h0-1" class="h">@@ -42,19 +50,40 @@ repositório, em uma imagem ou em mensagens.
+</a> - Salvamentos usam controle de revisão para impedir que uma edição desatualizada sobrescreva silenciosamente uma versão mais recente; em caso de conflito, o rascunho pode ser exportado e a versão do servidor reaberta.
+ - Licença ativada no primeiro acesso, com validade padrão de sete dias e um projeto por conta; administrador pode alterar validade, renovar, ajustar o limite e revogar.
+ - Análise orientativa Jev em cada checklist de conteúdo do relatório de case e uma estimativa global na revisão. A análise global usa os três critérios de conteúdo da rubrica FACSUR, estima pontos até 3,5/4,0 e apresenta probabilidades de faixa. A estrutura/ABNT (0,5 ponto), a checklist de referências, itens de autorrelato e extensão aproximada das teses não são avaliados automaticamente. A comparação de redação com o enunciado original só ocorre na etapa de descrição e quando o usuário o fornece; sem ele, o item fica não avaliado. A ferramenta nunca marca checklists, não verifica correção/existência de fontes e não gera nem reescreve texto. As faixas globais dividem igualmente os pontos avaliáveis, pois o manual não fixa limites numéricos para o nível parcial; probabilidades são estimativas do modelo, não chances estatísticas calibradas nem nota oficial. Cada chamada envia somente o conteúdo necessário daquela análise à TypeSafe, sem nome do aluno ou lista cadastrada de referências; há cinco chamadas por licença, incluindo falhas do serviço, e a cota reinicia na renovação.
+<a href="#h0-1-3" id="h0-1-3" class="i">+- Explicação DeepSeek opcional após a análise global Jev: o titular escolhe um critério; o servidor envia o resultado Jev e apenas trechos curtos das seções pertinentes, nunca o relatório completo, o nome, a conta ou a lista de referências. A resposta explica o resultado e sugere próximos passos sem redigir texto. Usa cota independente, limitada por padrão a zero até a medição real de custo. Falhas também consomem uma unidade. A resposta não é armazenada; apenas critério, identificador do projeto, modelo, tokens, cache hit, custo estimado e data são registrados, sem texto do trabalho ou da resposta.
+</a><a href="#h0-1-4" id="h0-1-4" class="i">+
+</a><a href="#h0-1-5" id="h0-1-5" class="i">+Na estimativa global, o Jev segue os três critérios de conteúdo efetivamente
+</a><a href="#h0-1-6" id="h0-1-6" class="i">+pontuados na rubrica do manual FACSUR. No critério de redação e fundamentação, o
+</a><a href="#h0-1-7" id="h0-1-7" class="i">+nível adequado prevê três ou mais obras pertinentes, normas aplicáveis
+</a><a href="#h0-1-8" id="h0-1-8" class="i">+identificadas e decisões coerentes com o caso. A ferramenta não avalia os 0,5
+</a><a href="#h0-1-9" id="h0-1-9" class="i">+pontos de estrutura/ABNT, não verifica a correção jurídica das fontes e não
+</a><a href="#h0-1-10" id="h0-1-10" class="i">+declara uma nota oficial.
+</a><a href="#h0-1-11" id="h0-1-11" class="i">+
+</a><a href="#h0-1-12" id="h0-1-12" class="i">+O `case.md` do usuário é material suplementar, não uma rubrica do professor.
+</a><a href="#h0-1-13" id="h0-1-13" class="i">+Recomendações como quatro obras (duas por tese), extensão aproximada, pergunta
+</a><a href="#h0-1-14" id="h0-1-14" class="i">+interrogativa ao final, ordem específica das seções, redação exclusivamente em
+</a><a href="#h0-1-15" id="h0-1-15" class="i">+terceira pessoa, articulação de cada fonte em todos os parágrafos e glossário
+</a><a href="#h0-1-16" id="h0-1-16" class="i">+completo são tratadas como opcionais, a menos que o professor as exija
+</a><a href="#h0-1-17" id="h0-1-17" class="i">+expressamente na atividade. A análise de checklist é formativa e pode observar
+</a><a href="#h0-1-18" id="h0-1-18" class="i">+essas recomendações, mas não equivale à nota oficial nem transforma, por si só,
+</a><a href="#h0-1-19" id="h0-1-19" class="i">+uma sugestão em requisito. O Jev pode contar obras distintas visíveis no texto,
+</a><a href="#h0-1-20" id="h0-1-20" class="i">+mas não recebe a lista de referências nem confere o catálogo da biblioteca;
+</a><a href="#h0-1-21" id="h0-1-21" class="i">+tampouco recebe paginação ou formatação. Se o relatório identifica um case
+</a><a href="#h0-1-22" id="h0-1-22" class="i">+aberto, não deve exigir que se declare uma tese vencedora; a escolha final
+</a><a href="#h0-1-23" id="h0-1-23" class="i">+pertence à etapa posterior da dissertação.
+</a><a href="#h0-1-24" id="h0-1-24" class="i">+
+</a><a href="#h0-1-25" id="h0-1-25" class="i">+O Jev atualmente avalia e não escreve nem altera o trabalho. Como regra para
+</a><a href="#h0-1-26" id="h0-1-26" class="i">+eventuais recursos futuros de revisão assistida, sugestões devem ser pontuais,
+</a><a href="#h0-1-27" id="h0-1-27" class="i">+explicadas e apresentadas para decisão do estudante; não se deve gerar
+</a><a href="#h0-1-28" id="h0-1-28" class="i">+automaticamente o trabalho integral, e o estudante deve revisar cada sugestão
+</a><a href="#h0-1-29" id="h0-1-29" class="i">+antes de adotá-la.
+</a><a href="#h0-1-30" id="h0-1-30" class="i">+
+</a><a href="#h0-1-31" id="h0-1-31" class="i">+O Manual de Cases e Papers proíbe IA generativa e redação automática na
+</a><a href="#h0-1-32" id="h0-1-32" class="i">+dissertação individual. A aplicação não oferece análise nem revisão por IA para
+</a><a href="#h0-1-33" id="h0-1-33" class="i">+o Paper Final; qualquer recurso desse tipo permanece desativado até que sua
+</a><a href="#h0-1-34" id="h0-1-34" class="i">+compatibilidade com as instruções do professor seja confirmada. A pontuação
+</a><a href="#h0-1-35" id="h0-1-35" class="i">+orientativa do Jev continua limitada ao relatório de case, em fluxo separado.
+</a> 
+<a href="#h0-1-37" id="h0-1-37" class="d">-A rubrica também considera o guia de cases em `~/Downloads/case.md`: pergunta
+</a><a href="#h0-1-38" id="h0-1-38" class="d">-jurídica interrogativa e narrativa factual; base conceitual e alternativas
+</a><a href="#h0-1-39" id="h0-1-39" class="d">-neutras; lei, doutrina e jurisprudência articuladas às teses; identificação e
+</a><a href="#h0-1-40" id="h0-1-40" class="d">-aplicação dos julgados; comentário autoral sobre as citações; redação acadêmica
+</a><a href="#h0-1-41" id="h0-1-41" class="d">-em terceira pessoa; e glossário dos conceitos técnicos relevantes. O guia
+</a><a href="#h0-1-42" id="h0-1-42" class="d">-recomenda quatro obras doutrinárias da Biblioteca Virtual FACSUR, duas por tese,
+</a><a href="#h0-1-43" id="h0-1-43" class="d">-e cerca de duas laudas por tese. O Jev pode observar obras distintas
+</a><a href="#h0-1-44" id="h0-1-44" class="d">-explicitamente discutidas no texto, mas não recebe a lista de referências nem
+</a><a href="#h0-1-45" id="h0-1-45" class="d">-confere o catálogo da biblioteca; tampouco recebe paginação ou formatação, então
+</a><a href="#h0-1-46" id="h0-1-46" class="d">-não afirma que essas condições externas foram cumpridas. Se o relatório
+</a><a href="#h0-1-47" id="h0-1-47" class="d">-identifica um case aberto, não deve exigir que se declare uma tese vencedora; a
+</a><a href="#h0-1-48" id="h0-1-48" class="d">-escolha final pertence à etapa posterior da dissertação.
+</a> - Após o vencimento, os projetos permanecem armazenados e disponíveis para leitura/exportação; edição e novos projetos exigem renovação. Não há expurgo automático.
+ - Não há botão para apagar projetos. Uma exclusão administrativa só deve ocorrer após pedido explícito do titular e exige confirmação no comando.
+ - Cada projeto pode ser exportado como JSON estruturado, além da exportação PDF existente.
+<a href="#h0-2" id="h0-2" class="h">@@ -77,10 +106,10 @@ credenciais: a emissão mostra cada código uma única vez. Guarde a lista em lo
+</a> privado e mantenha a relação entre colega e código fora do servidor e do Git.
+ 
+ ```sh
+<a href="#h0-2-3" id="h0-2-3" class="d">-python3 /app/server.py issue-batch --count 100 --days 7 --projects 1 --analyses 5
+</a><a href="#h0-2-4" id="h0-2-4" class="i">+python3 /app/server.py issue-batch --count 100 --days 7 --projects 1 --analyses 5 --deepseek-explanations 0
+</a> python3 /app/server.py create-owner
+ python3 /app/server.py list
+<a href="#h0-2-7" id="h0-2-7" class="d">-python3 /app/server.py set --days 14 --projects 3 --analyses 10
+</a><a href="#h0-2-8" id="h0-2-8" class="i">+python3 /app/server.py set --days 14 --projects 3 --analyses 10 --deepseek-explanations 0
+</a> python3 /app/server.py extend 7
+ python3 /app/server.py revoke
+ python3 /app/server.py restore
+<a href="#h0-3" id="h0-3" class="h">@@ -96,6 +125,17 @@ dias ao prazo restante ou ao prazo padrão. `rotate` emite um código substituto
+</a> invalida o anterior e encerra as sessões existentes. Cada conta começa com cinco
+ análises Jev por licença; use `set --analyses N` para ajustar a cota. A cota
+ reinicia na renovação; zero desativa a análise para aquela conta.
+<a href="#h0-3-3" id="h0-3-3" class="i">+As explicações DeepSeek têm uma cota separada, configurada com
+</a><a href="#h0-3-4" id="h0-3-4" class="i">+`--deepseek-explanations N` nos comandos `issue-batch` ou `set`; novas contas
+</a><a href="#h0-3-5" id="h0-3-5" class="i">+começam com cota zero até que o custo seja medido e a liberação seja aprovada.
+</a><a href="#h0-3-6" id="h0-3-6" class="i">+`list` mostra a cota, o número de chamadas registradas e o custo estimado
+</a><a href="#h0-3-7" id="h0-3-7" class="i">+acumulado por conta. O painel mostra os tokens e estimativa de custo por
+</a><a href="#h0-3-8" id="h0-3-8" class="i">+explicação. A estimativa usa a tarifa oficial de pico do DeepSeek Flash
+</a><a href="#h0-3-9" id="h0-3-9" class="i">+(US$ 0,30 por milhão de tokens de entrada e US$ 1,20 por milhão de saída),
+</a><a href="#h0-3-10" id="h0-3-10" class="i">+considera a entrada como não armazenada em cache e pode diferir da cobrança
+</a><a href="#h0-3-11" id="h0-3-11" class="i">+real; tarifas podem mudar. Consulte
+</a><a href="#h0-3-12" id="h0-3-12" class="i">+[preços oficiais do DeepSeek](https://api-docs.deepseek.com/quick_start/pricing/)
+</a><a href="#h0-3-13" id="h0-3-13" class="i">+antes de habilitar cotas.
+</a> `create-owner` pede e confirma um código personalizado em entrada oculta e cria
+ uma conta permanente, sem limites de projetos ou de análises dentro do app.
+ Esse código concede acesso total aos dados dessa conta; escolha e compartilhe-o
+<a href="#h0-4" id="h0-4" class="h">@@ -128,6 +168,15 @@ orientativos: não representam nota, validação da correção jurídica nem
+</a> verificação de autenticidade das fontes. O titular deve conferir os dados e as
+ orientações da disciplina.
+ 
+<a href="#h0-4-3" id="h0-4-3" class="i">+Na explicação DeepSeek, o texto também é enviado somente após confirmação do
+</a><a href="#h0-4-4" id="h0-4-4" class="i">+usuário e apenas para as seções curtas relacionadas ao critério selecionado.
+</a><a href="#h0-4-5" id="h0-4-5" class="i">+O registro de uso não guarda trechos, prompt ou resposta. Cada tentativa
+</a><a href="#h0-4-6" id="h0-4-6" class="i">+consome uma unidade da cota independente, inclusive quando o provedor retorna
+</a><a href="#h0-4-7" id="h0-4-7" class="i">+erro. O uso e o custo estimado ficam no banco como metadados; essa estimativa
+</a><a href="#h0-4-8" id="h0-4-8" class="i">+aplica a tarifa de pico oficial e contabiliza todos os tokens de entrada como
+</a><a href="#h0-4-9" id="h0-4-9" class="i">+não armazenados em cache, portanto não equivale à fatura do provedor. O recurso
+</a><a href="#h0-4-10" id="h0-4-10" class="i">+permanece indisponível para Paper Final.
+</a><a href="#h0-4-11" id="h0-4-11" class="i">+
+</a> O montador usa modelos resumidos do manual de normatização da FACSUR e não
+ substitui a conferência das normas ABNT vigentes ou das exigências do professor.
+ A conferência de autor-data roda no navegador, não altera o texto e pode gerar
+<b>diff --git a/<a id="h1" href="../file/assets/js/main.js.html">assets/js/main.js</a> b/<a href="../file/assets/js/main.js.html">assets/js/main.js</a></b>
+<a href="#h1-0" id="h1-0" class="h">@@ -753,6 +753,8 @@ let projectSaveQueue = Promise.resolve();
+</a> let licenseTimer = null;
+ let aiAnalysisInProgress = false;
+ const caseChecklistAnalyses = new Map();
+<a href="#h1-0-3" id="h1-0-3" class="i">+const caseReportAnalyses = new Map();
+</a><a href="#h1-0-4" id="h1-0-4" class="i">+const caseDeepseekExplanations = new Map();
+</a> const caseAnalysisRevision = new Map();
+ let activeRoute = null;
+ 
+<a href="#h1-1" id="h1-1" class="h">@@ -952,6 +954,18 @@ function analysisQuotaConfirmation() {
+</a>     : `Este envio consome 1 das ${accountInfo.ai_analysis_limit} análises da licença, mesmo se o serviço falhar.`;
+ }
+ 
+<a href="#h1-1-3" id="h1-1-3" class="i">+function deepseekQuotaLabel() {
+</a><a href="#h1-1-4" id="h1-1-4" class="i">+  return accountInfo?.unlimited
+</a><a href="#h1-1-5" id="h1-1-5" class="i">+    ? &quot;ilimitadas&quot;
+</a><a href="#h1-1-6" id="h1-1-6" class="i">+    : `${accountInfo?.deepseek_explanation_remaining ?? 0} restantes`;
+</a><a href="#h1-1-7" id="h1-1-7" class="i">+}
+</a><a href="#h1-1-8" id="h1-1-8" class="i">+
+</a><a href="#h1-1-9" id="h1-1-9" class="i">+function deepseekQuotaConfirmation() {
+</a><a href="#h1-1-10" id="h1-1-10" class="i">+  return accountInfo?.unlimited
+</a><a href="#h1-1-11" id="h1-1-11" class="i">+    ? &quot;Seu código de proprietário não tem limite de explicações no aplicativo; cada chamada pode gerar custo na conta DeepSeek.&quot;
+</a><a href="#h1-1-12" id="h1-1-12" class="i">+    : `Este envio consome 1 das ${accountInfo.deepseek_explanation_limit} explicações independentes da licença, mesmo se o serviço falhar.`;
+</a><a href="#h1-1-13" id="h1-1-13" class="i">+}
+</a><a href="#h1-1-14" id="h1-1-14" class="i">+
+</a> function scheduleLicenseExpiry() {
+   clearTimeout(licenseTimer);
+   if (!accountInfo?.active || accountInfo.unlimited || !accountInfo.expires_at) return;
+<a href="#h1-2" id="h1-2" class="h">@@ -1033,6 +1047,7 @@ async function openRemoteProject(id, historyMode = &quot;push&quot;, step = null) {
+</a>     const result = await apiRequest(`/projects/${encodeURIComponent(id)}`);
+     project = normalizeProject(result.project);
+     project.id = result.id;
+<a href="#h1-2-3" id="h1-2-3" class="i">+    clearCaseAiResults(result.id);
+</a>     if (Number.isInteger(step)) project.currentStep = Math.min(step, getStages().length - 1);
+     projectRevisions.set(result.id, result.revision);
+     projectConflict = false;
+<a href="#h1-3" id="h1-3" class="h">@@ -1750,7 +1765,7 @@ function renderChecks(stage) {
+</a>   &lt;/fieldset&gt;
+   ${stage.analysisSection ? `
+     &lt;section class=&quot;ai-analysis-controls&quot; aria-label=&quot;Análise Jev da checklist&quot;&gt;
+<a href="#h1-3-3" id="h1-3-3" class="d">-      &lt;p class=&quot;field-hint&quot;&gt;O Jev estima se cada item parece atendido com base apenas no texto disponível. A resposta é separada da checklist e não marca nenhuma caixa. Cada chamada consome uma análise da cota, inclusive se o serviço falhar.&lt;/p&gt;
+</a><a href="#h1-3-4" id="h1-3-4" class="i">+      &lt;p class=&quot;field-hint&quot;&gt;O Jev faz uma leitura formativa dos itens selecionados, com base apenas no texto disponível; isso não é a nota oficial do professor. Algumas sugestões de escrita e organização são opcionais, salvo exigência expressa da atividade. A resposta é separada da checklist e não marca nenhuma caixa. Cada chamada consome uma análise da cota, inclusive se o serviço falhar.&lt;/p&gt;
+</a>       &lt;button class=&quot;button&quot; type=&quot;button&quot; data-analyze-case-section=&quot;${escapeHtml(stage.analysisSection)}&quot; ${aiAnalysisInProgress || !canEditProject() || accountInfo?.ai_analysis_remaining === 0 ? &quot;disabled&quot; : &quot;&quot;}&gt;Analisar esta checklist com Jev · ${analysisQuotaLabel()}&lt;/button&gt;
+       &lt;div class=&quot;ai-analysis-result&quot; data-ai-analysis-result=&quot;section&quot; aria-live=&quot;polite&quot;&gt;${analysis ? renderChecklistAnalysis(analysis) : &quot;&quot;}&lt;/div&gt;
+     &lt;/section&gt;` : &quot;&quot;}
+<a href="#h1-4" id="h1-4" class="h">@@ -2048,14 +2063,17 @@ function renderReview() {
+</a>         &lt;/li&gt;`).join(&quot;&quot;)}
+     &lt;/ul&gt;
+     &lt;p class=&quot;notice&quot;&gt;O progresso confirma apenas os itens registrados e as autoavaliações marcadas. Ele não avalia qualidade argumentativa, autenticidade, atualização ou correção jurídica das fontes.&lt;/p&gt;
+<a href="#h1-4-3" id="h1-4-3" class="i">+    ${project.projectType === &quot;paper&quot; &amp;&amp; project.fields.paperKind === &quot;final&quot; ? `
+</a><a href="#h1-4-4" id="h1-4-4" class="i">+      &lt;p class=&quot;notice&quot;&gt;O manual proíbe IA generativa e redação automática na dissertação individual. Por isso, este roteiro não oferece revisão nem avaliação por IA para o Paper Final enquanto não houver confirmação de que isso é permitido pelo professor. A análise Jev continua restrita ao relatório de case.&lt;/p&gt;` : &quot;&quot;}
+</a>     ${project.projectType === &quot;case&quot; ? `
+       &lt;section class=&quot;ai-analysis-controls&quot; aria-labelledby=&quot;case-analysis-title&quot;&gt;
+         &lt;h3 id=&quot;case-analysis-title&quot;&gt;Estimativa orientativa do relatório com Jev&lt;/h3&gt;
+<a href="#h1-4-8" id="h1-4-8" class="d">-        &lt;p class=&quot;field-hint&quot;&gt;Compara o conteúdo preenchido à rubrica do manual FACSUR. Estima até 3,5 pontos nos três critérios de conteúdo; o critério formal/ABNT (0,5 ponto), a existência e correção das fontes, o debate e a dissertação não são avaliados. Não gera nem reescreve o trabalho.&lt;/p&gt;
+</a><a href="#h1-4-9" id="h1-4-9" class="i">+        &lt;p class=&quot;field-hint&quot;&gt;Compara o conteúdo preenchido somente aos critérios pontuados da rubrica do manual FACSUR. Sugestões adicionais do guia pessoal não reduzem a estimativa, salvo se o professor as exigir na atividade. Estima até 3,5 pontos; o critério formal/ABNT (0,5 ponto), a existência e correção das fontes, o debate e a dissertação não são avaliados. Não gera nem reescreve o trabalho.&lt;/p&gt;
+</a>         &lt;p class=&quot;field-hint&quot;&gt;A análise envia fatos, pergunta, base conceitual, decisões, teses e conceitos/valores cadastrados à TypeSafe AI. Não envia nome do aluno, dados da conta nem a lista de referências. Evite incluir dados identificadores de terceiros nos textos. Cada envio consome uma análise, mesmo se o serviço falhar.&lt;/p&gt;
+         &lt;p class=&quot;field-hint&quot;&gt;O manual traz regra específica contra IA generativa/redação automática na etapa da dissertação. Esta ferramenta só analisa o relatório e não redige; confira as orientações do professor sobre análise automatizada.&lt;/p&gt;
+         &lt;button class=&quot;button&quot; type=&quot;button&quot; data-analyze-case-report ${aiAnalysisInProgress || !canEditProject() || accountInfo?.ai_analysis_remaining === 0 ? &quot;disabled&quot; : &quot;&quot;}&gt;Analisar relatório com Jev · ${analysisQuotaLabel()}&lt;/button&gt;
+<a href="#h1-4-13" id="h1-4-13" class="d">-        &lt;div class=&quot;ai-analysis-result&quot; id=&quot;ai-analysis-case-report&quot; aria-live=&quot;polite&quot;&gt;&lt;/div&gt;
+</a><a href="#h1-4-14" id="h1-4-14" class="i">+        &lt;p class=&quot;field-hint&quot;&gt;Depois de uma estimativa Jev, você pode pedir ao DeepSeek a explicação de um critério por vez. Ele recebe o resultado desse critério e apenas trechos curtos pertinentes — nunca o relatório completo, nome ou referências cadastradas. A explicação não gera nem revisa texto. Cota e custo são separados; o custo exibido é estimado por tokens com tarifa de pico.&lt;/p&gt;
+</a><a href="#h1-4-15" id="h1-4-15" class="i">+        &lt;div class=&quot;ai-analysis-result&quot; id=&quot;ai-analysis-case-report&quot; aria-live=&quot;polite&quot;&gt;${project?.id &amp;&amp; caseReportAnalyses.has(project.id) ? renderCaseAnalysis(caseReportAnalyses.get(project.id), project.id) : &quot;&quot;}&lt;/div&gt;
+</a>       &lt;/section&gt;` : &quot;&quot;}
+     ${project.finalized ? `
+       &lt;div class=&quot;notice completion-notice&quot;&gt;${project.projectType === &quot;paper&quot; ? &quot;Paper&quot; : &quot;Relatório&quot;} marcado como finalizado. Você ainda pode voltar às etapas, editar o conteúdo e atualizar o arquivo.&lt;/div&gt;
+<a href="#h1-5" id="h1-5" class="h">@@ -2070,7 +2088,7 @@ function renderReview() {
+</a>   &lt;/div&gt;`;
+ }
+ 
+<a href="#h1-5-3" id="h1-5-3" class="d">-function renderCaseAnalysis(analysis) {
+</a><a href="#h1-5-4" id="h1-5-4" class="i">+function renderCaseAnalysis(analysis, projectId = project?.id) {
+</a>   const confidence = (value) =&gt; `${Math.round(value * 100)}%`;
+   const resultSummary = (probabilities, labels, threshold) =&gt; {
+     const likelyIndex = probabilities.reduce(
+<a href="#h1-6" id="h1-6" class="h">@@ -2095,12 +2113,18 @@ function renderCaseAnalysis(analysis) {
+</a>       item.probabilities[3],
+     ];
+     const expectedPoints = item.max_points * (probabilities[1] / 2 + probabilities[2]);
+<a href="#h1-6-3" id="h1-6-3" class="i">+    const explanationKey = `${projectId}:${item.id}`;
+</a><a href="#h1-6-4" id="h1-6-4" class="i">+    const explanation = caseDeepseekExplanations.get(explanationKey);
+</a><a href="#h1-6-5" id="h1-6-5" class="i">+    const explanationHtml = explanation
+</a><a href="#h1-6-6" id="h1-6-6" class="i">+      ? renderDeepseekExplanation(explanation)
+</a><a href="#h1-6-7" id="h1-6-7" class="i">+      : `&lt;button class=&quot;button&quot; type=&quot;button&quot; data-explain-case-criterion=&quot;${escapeHtml(item.id)}&quot; ${aiAnalysisInProgress || !canEditProject() || accountInfo?.deepseek_explanation_remaining === 0 ? &quot;disabled&quot; : &quot;&quot;}&gt;Explicar este resultado com DeepSeek · ${deepseekQuotaLabel()}&lt;/button&gt;`;
+</a>     return `&lt;article class=&quot;ai-analysis-item&quot;&gt;
+       &lt;div class=&quot;field-label-row&quot;&gt;
+         &lt;strong&gt;${escapeHtml(item.title)}&lt;/strong&gt;
+         &lt;span&gt;${expectedPoints.toFixed(2)} / ${item.max_points.toFixed(2)} pontos estimados · confiança ${confidence(item.confidence)}&lt;/span&gt;
+       &lt;/div&gt;
+       ${resultSummary(probabilities, caseAnalysisCategories, analysis.probability_threshold)}
+<a href="#h1-6-14" id="h1-6-14" class="i">+      &lt;div class=&quot;deepseek-explanation&quot; data-deepseek-explanation=&quot;${escapeHtml(item.id)}&quot;&gt;${explanationHtml}&lt;/div&gt;
+</a>     &lt;/article&gt;`;
+   }).join(&quot;&quot;);
+   return `&lt;section class=&quot;ai-analysis-report&quot;&gt;
+<a href="#h1-7" id="h1-7" class="h">@@ -2110,11 +2134,29 @@ function renderCaseAnalysis(analysis) {
+</a>     ${resultSummary(analysis.grade_range.probabilities, caseGradeRanges, analysis.probability_threshold)}
+     &lt;p class=&quot;field-hint&quot;&gt;Confiança do Jev nesta estimativa: ${confidence(analysis.grade_range.confidence)}.&lt;/p&gt;
+     &lt;div class=&quot;ai-analysis-list&quot;&gt;${criteria}&lt;/div&gt;
+<a href="#h1-7-3" id="h1-7-3" class="d">-    &lt;p class=&quot;notice&quot;&gt;As faixas dividem igualmente os 3,5 pontos avaliáveis porque o manual não fixa limites numéricos para “parcial”. Probabilidades são estimativas do modelo, não chances estatísticas calibradas nem nota oficial. O Jev não verifica leis, decisões, doutrina ou referências e não produziu nem alterou o texto.&lt;/p&gt;
+</a><a href="#h1-7-4" id="h1-7-4" class="i">+    &lt;p class=&quot;notice&quot;&gt;As faixas dividem igualmente os 3,5 pontos avaliáveis porque o manual não fixa limites numéricos para “parcial”. Probabilidades são estimativas do modelo, não chances estatísticas calibradas nem nota oficial. Sugestões opcionais do guia pessoal não integram a pontuação. O Jev não verifica leis, decisões, doutrina ou referências e não produziu nem alterou o texto.&lt;/p&gt;
+</a>     &lt;p class=&quot;field-hint&quot;&gt;Modelo ${escapeHtml(analysis.model)} · ${analysis.input_tokens} tokens de entrada. Confira o resultado com o manual e as orientações do professor.&lt;/p&gt;
+   &lt;/section&gt;`;
+ }
+ 
+<a href="#h1-7-9" id="h1-7-9" class="i">+function renderDeepseekExplanation(explanation) {
+</a><a href="#h1-7-10" id="h1-7-10" class="i">+  const evidence = explanation.evidence.map((item) =&gt; `
+</a><a href="#h1-7-11" id="h1-7-11" class="i">+    &lt;li&gt;&lt;strong&gt;${escapeHtml(item.field)}:&lt;/strong&gt; ${escapeHtml(item.observation)}&lt;/li&gt;`).join(&quot;&quot;);
+</a><a href="#h1-7-12" id="h1-7-12" class="i">+  const nextSteps = explanation.next_steps.map((step) =&gt; `&lt;li&gt;${escapeHtml(step)}&lt;/li&gt;`).join(&quot;&quot;);
+</a><a href="#h1-7-13" id="h1-7-13" class="i">+  const estimatedCost = new Intl.NumberFormat(&quot;pt-BR&quot;, {
+</a><a href="#h1-7-14" id="h1-7-14" class="i">+    minimumFractionDigits: 6,
+</a><a href="#h1-7-15" id="h1-7-15" class="i">+    maximumFractionDigits: 6,
+</a><a href="#h1-7-16" id="h1-7-16" class="i">+  }).format(explanation.estimated_cost_usd);
+</a><a href="#h1-7-17" id="h1-7-17" class="i">+  return `&lt;section class=&quot;deepseek-explanation-result&quot;&gt;
+</a><a href="#h1-7-18" id="h1-7-18" class="i">+    &lt;h4&gt;Explicação opcional do DeepSeek&lt;/h4&gt;
+</a><a href="#h1-7-19" id="h1-7-19" class="i">+    &lt;p&gt;${escapeHtml(explanation.interpretation)}&lt;/p&gt;
+</a><a href="#h1-7-20" id="h1-7-20" class="i">+    ${evidence ? `&lt;ul&gt;${evidence}&lt;/ul&gt;` : &quot;&quot;}
+</a><a href="#h1-7-21" id="h1-7-21" class="i">+    ${nextSteps ? `&lt;h5&gt;Possíveis próximos passos&lt;/h5&gt;&lt;ul&gt;${nextSteps}&lt;/ul&gt;` : &quot;&quot;}
+</a><a href="#h1-7-22" id="h1-7-22" class="i">+    &lt;p class=&quot;field-hint&quot;&gt;Modelo ${escapeHtml(explanation.model)} · ${explanation.input_tokens} tokens de entrada · ${explanation.output_tokens} de saída · custo estimado: US$ ${estimatedCost} (tarifa de pico, entrada calculada como não armazenada em cache).&lt;/p&gt;
+</a><a href="#h1-7-23" id="h1-7-23" class="i">+    &lt;p class=&quot;field-hint&quot;&gt;Explicação orientativa, baseada nos trechos selecionados. Confira o critério e as orientações do professor; nada foi redigido nem alterado no trabalho.&lt;/p&gt;
+</a><a href="#h1-7-24" id="h1-7-24" class="i">+  &lt;/section&gt;`;
+</a><a href="#h1-7-25" id="h1-7-25" class="i">+}
+</a><a href="#h1-7-26" id="h1-7-26" class="i">+
+</a> function renderChecklistAnalysis(analysis) {
+   const labels = [&quot;Sem evidência&quot;, &quot;Pouca evidência&quot;, &quot;Parcialmente atendido&quot;, &quot;Evidência clara&quot;];
+   const confidence = (value) =&gt; `${Math.round(value * 100)}%`;
+<a href="#h1-8" id="h1-8" class="h">@@ -2149,7 +2191,7 @@ function renderChecklistAnalysis(analysis) {
+</a>     &lt;li&gt;${escapeHtml(unassessedLabels[checkId] ?? &quot;Este item não pôde ser avaliado pelo texto enviado.&quot;)}&lt;/li&gt;`).join(&quot;&quot;);
+   return `&lt;section class=&quot;ai-analysis-report&quot;&gt;
+     &lt;h3&gt;Leitura provável dos itens&lt;/h3&gt;
+<a href="#h1-8-3" id="h1-8-3" class="d">-    &lt;p&gt;Avaliação indicativa baseada somente no texto enviado. Não altera as caixas de autoavaliação nem confirma a correção jurídica ou das fontes.&lt;/p&gt;
+</a><a href="#h1-8-4" id="h1-8-4" class="i">+    &lt;p&gt;Leitura formativa baseada somente no texto enviado, não nota oficial. Não altera as caixas de autoavaliação nem confirma a correção jurídica ou das fontes; sugestões de escrita não são exigências do professor por si só.&lt;/p&gt;
+</a>     &lt;div class=&quot;ai-analysis-list&quot;&gt;${results}&lt;/div&gt;
+     ${unassessed ? `&lt;div&gt;&lt;h4&gt;Não avaliados&lt;/h4&gt;&lt;ul class=&quot;ai-analysis-unassessed&quot;&gt;${unassessed}&lt;/ul&gt;&lt;/div&gt;` : &quot;&quot;}
+     &lt;p class=&quot;field-hint&quot;&gt;Modelo ${escapeHtml(analysis.model)} · ${analysis.input_tokens} tokens de entrada.&lt;/p&gt;
+<a href="#h1-9" id="h1-9" class="h">@@ -2267,6 +2309,10 @@ function showWorkflow(message = &quot;&quot;, historyMode = &quot;replace&quot;) {
+</a>   document.querySelector(&quot;#step-form&quot;).addEventListener(&quot;input&quot;, onFormInput);
+   document.querySelector(&quot;#step-form&quot;).addEventListener(&quot;change&quot;, onFormInput);
+   document.querySelector(&quot;[data-analyze-case-report]&quot;)?.addEventListener(&quot;click&quot;, analyzeCaseReport);
+<a href="#h1-9-3" id="h1-9-3" class="i">+  document.querySelector(&quot;#ai-analysis-case-report&quot;)?.addEventListener(&quot;click&quot;, (event) =&gt; {
+</a><a href="#h1-9-4" id="h1-9-4" class="i">+    const button = event.target.closest(&quot;[data-explain-case-criterion]&quot;);
+</a><a href="#h1-9-5" id="h1-9-5" class="i">+    if (button) explainCaseCriterion(button.dataset.explainCaseCriterion);
+</a><a href="#h1-9-6" id="h1-9-6" class="i">+  });
+</a>   document.querySelector(&quot;[data-analyze-case-section]&quot;)?.addEventListener(&quot;click&quot;, (event) =&gt; {
+     analyzeCaseSection(event.currentTarget.dataset.analyzeCaseSection);
+   });
+<a href="#h1-10" id="h1-10" class="h">@@ -2338,14 +2384,21 @@ async function analyzeCaseReport() {
+</a>   resultElement.textContent = &quot;Salvando o relatório e solicitando a estimativa…&quot;;
+   try {
+     if (!await flushProjectSave()) throw new Error(&quot;Não foi possível confirmar o salvamento mais recente.&quot;);
+<a href="#h1-10-3" id="h1-10-3" class="i">+    const projectId = project.id;
+</a><a href="#h1-10-4" id="h1-10-4" class="i">+    const analysisRevision = analysisVersionForProject(projectId);
+</a>     const response = await apiRequest(
+<a href="#h1-10-6" id="h1-10-6" class="d">-      `/projects/${encodeURIComponent(project.id)}/analyze-case-report`,
+</a><a href="#h1-10-7" id="h1-10-7" class="i">+      `/projects/${encodeURIComponent(projectId)}/analyze-case-report`,
+</a>       { method: &quot;POST&quot;, body: &quot;{}&quot; },
+     );
+     accountInfo.ai_analysis_used = response.usage.used;
+     accountInfo.ai_analysis_remaining = response.usage.remaining;
+     updateAnalysisButtons();
+<a href="#h1-10-13" id="h1-10-13" class="d">-    resultElement.innerHTML = renderCaseAnalysis(response.analysis);
+</a><a href="#h1-10-14" id="h1-10-14" class="i">+    if (project?.id !== projectId || analysisVersionForProject(projectId) !== analysisRevision) {
+</a><a href="#h1-10-15" id="h1-10-15" class="i">+      resultElement.textContent = &quot;O relatório mudou durante a análise; o resultado desatualizado não foi exibido. Solicite uma nova análise.&quot;;
+</a><a href="#h1-10-16" id="h1-10-16" class="i">+      return;
+</a><a href="#h1-10-17" id="h1-10-17" class="i">+    }
+</a><a href="#h1-10-18" id="h1-10-18" class="i">+    caseReportAnalyses.set(projectId, response.analysis);
+</a><a href="#h1-10-19" id="h1-10-19" class="i">+    resultElement.innerHTML = renderCaseAnalysis(response.analysis, projectId);
+</a>   } catch (error) {
+     try {
+       const session = await apiRequest(&quot;/session&quot;);
+<a href="#h1-11" id="h1-11" class="h">@@ -2361,21 +2414,92 @@ async function analyzeCaseReport() {
+</a>   }
+ }
+ 
+<a href="#h1-11-3" id="h1-11-3" class="i">+async function explainCaseCriterion(criterionId) {
+</a><a href="#h1-11-4" id="h1-11-4" class="i">+  if (
+</a><a href="#h1-11-5" id="h1-11-5" class="i">+    aiAnalysisInProgress
+</a><a href="#h1-11-6" id="h1-11-6" class="i">+    || project?.projectType !== &quot;case&quot;
+</a><a href="#h1-11-7" id="h1-11-7" class="i">+    || !project?.id
+</a><a href="#h1-11-8" id="h1-11-8" class="i">+    || !canEditProject()
+</a><a href="#h1-11-9" id="h1-11-9" class="i">+  ) return;
+</a><a href="#h1-11-10" id="h1-11-10" class="i">+  const projectId = project.id;
+</a><a href="#h1-11-11" id="h1-11-11" class="i">+  const analysis = caseReportAnalyses.get(projectId);
+</a><a href="#h1-11-12" id="h1-11-12" class="i">+  const criterion = analysis?.criteria.find((item) =&gt; item.id === criterionId);
+</a><a href="#h1-11-13" id="h1-11-13" class="i">+  const resultElement = document.querySelector(
+</a><a href="#h1-11-14" id="h1-11-14" class="i">+    `[data-deepseek-explanation=&quot;${CSS.escape(criterionId)}&quot;]`,
+</a><a href="#h1-11-15" id="h1-11-15" class="i">+  );
+</a><a href="#h1-11-16" id="h1-11-16" class="i">+  if (!criterion || !resultElement || caseDeepseekExplanations.has(`${projectId}:${criterionId}`)) return;
+</a><a href="#h1-11-17" id="h1-11-17" class="i">+  if (!window.confirm(
+</a><a href="#h1-11-18" id="h1-11-18" class="i">+    `O DeepSeek receberá somente o critério “${criterion.title}”, o resultado Jev selecionado e trechos curtos das seções relacionadas (limitados no servidor). Não será enviado o relatório completo, nome, conta ou lista de referências. A resposta apenas explica o resultado e sugere próximos passos; não escreve, completa, reescreve nem corrige o trabalho. A cota DeepSeek é independente da cota Jev. ${deepseekQuotaConfirmation()} Continuar?`,
+</a><a href="#h1-11-19" id="h1-11-19" class="i">+  )) return;
+</a><a href="#h1-11-20" id="h1-11-20" class="i">+  const analysisRevision = analysisVersionForProject(projectId);
+</a><a href="#h1-11-21" id="h1-11-21" class="i">+  aiAnalysisInProgress = true;
+</a><a href="#h1-11-22" id="h1-11-22" class="i">+  updateAnalysisButtons();
+</a><a href="#h1-11-23" id="h1-11-23" class="i">+  resultElement.textContent = &quot;Solicitando explicação selecionada ao DeepSeek…&quot;;
+</a><a href="#h1-11-24" id="h1-11-24" class="i">+  try {
+</a><a href="#h1-11-25" id="h1-11-25" class="i">+    const response = await apiRequest(
+</a><a href="#h1-11-26" id="h1-11-26" class="i">+      `/projects/${encodeURIComponent(projectId)}/explain-case-criterion`,
+</a><a href="#h1-11-27" id="h1-11-27" class="i">+      {
+</a><a href="#h1-11-28" id="h1-11-28" class="i">+        method: &quot;POST&quot;,
+</a><a href="#h1-11-29" id="h1-11-29" class="i">+        body: JSON.stringify({
+</a><a href="#h1-11-30" id="h1-11-30" class="i">+          criterion: criterionId,
+</a><a href="#h1-11-31" id="h1-11-31" class="i">+          jev_result: {
+</a><a href="#h1-11-32" id="h1-11-32" class="i">+            score: criterion.score,
+</a><a href="#h1-11-33" id="h1-11-33" class="i">+            confidence: criterion.confidence,
+</a><a href="#h1-11-34" id="h1-11-34" class="i">+            probabilities: criterion.probabilities,
+</a><a href="#h1-11-35" id="h1-11-35" class="i">+          },
+</a><a href="#h1-11-36" id="h1-11-36" class="i">+        }),
+</a><a href="#h1-11-37" id="h1-11-37" class="i">+      },
+</a><a href="#h1-11-38" id="h1-11-38" class="i">+    );
+</a><a href="#h1-11-39" id="h1-11-39" class="i">+    accountInfo.deepseek_explanation_used = response.usage.used;
+</a><a href="#h1-11-40" id="h1-11-40" class="i">+    accountInfo.deepseek_explanation_remaining = response.usage.remaining;
+</a><a href="#h1-11-41" id="h1-11-41" class="i">+    updateAnalysisButtons();
+</a><a href="#h1-11-42" id="h1-11-42" class="i">+    if (project?.id !== projectId || analysisVersionForProject(projectId) !== analysisRevision) {
+</a><a href="#h1-11-43" id="h1-11-43" class="i">+      resultElement.textContent = &quot;O relatório mudou durante a explicação; o resultado desatualizado não foi exibido.&quot;;
+</a><a href="#h1-11-44" id="h1-11-44" class="i">+      return;
+</a><a href="#h1-11-45" id="h1-11-45" class="i">+    }
+</a><a href="#h1-11-46" id="h1-11-46" class="i">+    caseDeepseekExplanations.set(`${projectId}:${criterionId}`, response.explanation);
+</a><a href="#h1-11-47" id="h1-11-47" class="i">+    resultElement.innerHTML = renderDeepseekExplanation(response.explanation);
+</a><a href="#h1-11-48" id="h1-11-48" class="i">+  } catch (error) {
+</a><a href="#h1-11-49" id="h1-11-49" class="i">+    try {
+</a><a href="#h1-11-50" id="h1-11-50" class="i">+      const session = await apiRequest(&quot;/session&quot;);
+</a><a href="#h1-11-51" id="h1-11-51" class="i">+      accountInfo = session.account;
+</a><a href="#h1-11-52" id="h1-11-52" class="i">+    } catch {
+</a><a href="#h1-11-53" id="h1-11-53" class="i">+      accountInfo = null;
+</a><a href="#h1-11-54" id="h1-11-54" class="i">+    }
+</a><a href="#h1-11-55" id="h1-11-55" class="i">+    updateAnalysisButtons();
+</a><a href="#h1-11-56" id="h1-11-56" class="i">+    if (project?.id === projectId &amp;&amp; analysisVersionForProject(projectId) === analysisRevision) {
+</a><a href="#h1-11-57" id="h1-11-57" class="i">+      resultElement.textContent = error.message;
+</a><a href="#h1-11-58" id="h1-11-58" class="i">+    }
+</a><a href="#h1-11-59" id="h1-11-59" class="i">+  } finally {
+</a><a href="#h1-11-60" id="h1-11-60" class="i">+    aiAnalysisInProgress = false;
+</a><a href="#h1-11-61" id="h1-11-61" class="i">+    updateAnalysisButtons();
+</a><a href="#h1-11-62" id="h1-11-62" class="i">+  }
+</a><a href="#h1-11-63" id="h1-11-63" class="i">+}
+</a><a href="#h1-11-64" id="h1-11-64" class="i">+
+</a> function analysisVersionForProject(projectId) {
+   return caseAnalysisRevision.get(projectId) ?? 0;
+ }
+ 
+ function invalidateCaseChecklistAnalyses() {
+   if (!project?.id) return;
+<a href="#h1-11-71" id="h1-11-71" class="d">-  caseAnalysisRevision.set(project.id, analysisVersionForProject(project.id) + 1);
+</a><a href="#h1-11-72" id="h1-11-72" class="d">-  for (const key of caseChecklistAnalyses.keys()) {
+</a><a href="#h1-11-73" id="h1-11-73" class="d">-    if (key.startsWith(`${project.id}:`)) caseChecklistAnalyses.delete(key);
+</a><a href="#h1-11-74" id="h1-11-74" class="d">-  }
+</a><a href="#h1-11-75" id="h1-11-75" class="i">+  const projectId = project.id;
+</a><a href="#h1-11-76" id="h1-11-76" class="i">+  clearCaseAiResults(projectId);
+</a>   document.querySelectorAll(&#39;[data-ai-analysis-result=&quot;section&quot;]&#39;).forEach((element) =&gt; {
+     element.textContent = &quot;O conteúdo analisado mudou. Solicite uma nova análise para conferir a checklist atual.&quot;;
+   });
+ }
+ 
+<a href="#h1-11-82" id="h1-11-82" class="i">+function clearCaseAiResults(projectId) {
+</a><a href="#h1-11-83" id="h1-11-83" class="i">+  caseAnalysisRevision.set(projectId, analysisVersionForProject(projectId) + 1);
+</a><a href="#h1-11-84" id="h1-11-84" class="i">+  caseReportAnalyses.delete(projectId);
+</a><a href="#h1-11-85" id="h1-11-85" class="i">+  for (const key of caseChecklistAnalyses.keys()) {
+</a><a href="#h1-11-86" id="h1-11-86" class="i">+    if (key.startsWith(`${projectId}:`)) caseChecklistAnalyses.delete(key);
+</a><a href="#h1-11-87" id="h1-11-87" class="i">+  }
+</a><a href="#h1-11-88" id="h1-11-88" class="i">+  for (const key of caseDeepseekExplanations.keys()) {
+</a><a href="#h1-11-89" id="h1-11-89" class="i">+    if (key.startsWith(`${projectId}:`)) caseDeepseekExplanations.delete(key);
+</a><a href="#h1-11-90" id="h1-11-90" class="i">+  }
+</a><a href="#h1-11-91" id="h1-11-91" class="i">+}
+</a><a href="#h1-11-92" id="h1-11-92" class="i">+
+</a> async function analyzeCaseSection(section) {
+   if (aiAnalysisInProgress || project?.projectType !== &quot;case&quot; || !project?.id || !canEditProject()) return;
+   const stage = getStages().find((item) =&gt; item.analysisSection === section);
+<a href="#h1-12" id="h1-12" class="h">@@ -2441,6 +2565,11 @@ function updateAnalysisButtons() {
+</a>     button.textContent = `Analisar esta checklist com Jev · ${analysisQuotaLabel()}`;
+     button.disabled = aiAnalysisInProgress || !canEditProject() || remaining === 0;
+   });
+<a href="#h1-12-3" id="h1-12-3" class="i">+  document.querySelectorAll(&quot;[data-explain-case-criterion]&quot;).forEach((button) =&gt; {
+</a><a href="#h1-12-4" id="h1-12-4" class="i">+    const remaining = accountInfo?.deepseek_explanation_remaining;
+</a><a href="#h1-12-5" id="h1-12-5" class="i">+    button.textContent = `Explicar este resultado com DeepSeek · ${deepseekQuotaLabel()}`;
+</a><a href="#h1-12-6" id="h1-12-6" class="i">+    button.disabled = aiAnalysisInProgress || !canEditProject() || remaining === 0;
+</a><a href="#h1-12-7" id="h1-12-7" class="i">+  });
+</a> }
+ 
+ function refreshProgress() {
+<b>diff --git a/<a id="h2" href="../file/server.py.html">server.py</a> b/<a href="../file/server.py.html">server.py</a></b>
+<a href="#h2-0" id="h2-0" class="h">@@ -33,12 +33,25 @@ TYPESAFE_API_KEY_FILE = Path(
+</a> )
+ TYPESAFE_API_URL = &quot;https://api.typesafe.ai/v1/systemone&quot;
+ TYPESAFE_MODEL = os.environ.get(&quot;TYPESAFE_MODEL&quot;, &quot;jev-latest&quot;)
+<a href="#h2-0-3" id="h2-0-3" class="i">+DEEPSEEK_API_URL = &quot;https://api.deepseek.com/chat/completions&quot;
+</a><a href="#h2-0-4" id="h2-0-4" class="i">+DEEPSEEK_MODEL = os.environ.get(&quot;DEEPSEEK_MODEL&quot;, &quot;deepseek-flash&quot;)
+</a><a href="#h2-0-5" id="h2-0-5" class="i">+DEEPSEEK_API_KEY_FILE = Path(
+</a><a href="#h2-0-6" id="h2-0-6" class="i">+    os.environ.get(&quot;DEEPSEEK_API_KEY_FILE&quot;, &quot;/run/secrets/deepseek_api_key&quot;)
+</a><a href="#h2-0-7" id="h2-0-7" class="i">+)
+</a> SESSION_SECONDS = 30 * 24 * 60 * 60
+ MAX_REQUEST_BYTES = 5 * 1024 * 1024
+ MAX_AI_STATE_BYTES = 40 * 1024
+ DEFAULT_AI_ANALYSIS_LIMIT = 5
+ MAX_AI_ANALYSIS_LIMIT = 1000
+<a href="#h2-0-13" id="h2-0-13" class="i">+DEFAULT_DEEPSEEK_EXPLANATION_LIMIT = 0
+</a><a href="#h2-0-14" id="h2-0-14" class="i">+MAX_DEEPSEEK_EXPLANATION_LIMIT = 1000
+</a> AI_ANALYSIS_TIMEOUT_SECONDS = 30
+<a href="#h2-0-16" id="h2-0-16" class="i">+DEEPSEEK_TIMEOUT_SECONDS = 30
+</a><a href="#h2-0-17" id="h2-0-17" class="i">+DEEPSEEK_MAX_OUTPUT_TOKENS = 500
+</a><a href="#h2-0-18" id="h2-0-18" class="i">+DEEPSEEK_MAX_RESPONSE_BYTES = 64 * 1024
+</a><a href="#h2-0-19" id="h2-0-19" class="i">+DEEPSEEK_MAX_EXPLANATION_INPUT_BYTES = 6000
+</a><a href="#h2-0-20" id="h2-0-20" class="i">+DEEPSEEK_PEAK_INPUT_PRICE_PER_MILLION = 0.30
+</a><a href="#h2-0-21" id="h2-0-21" class="i">+DEEPSEEK_PEAK_OUTPUT_PRICE_PER_MILLION = 1.20
+</a> CODE_PATTERN = re.compile(r&quot;^[0-9A-F]{32}$&quot;)
+ CUSTOM_CODE_PATTERN = re.compile(r&quot;^[A-Z0-9]{7,32}$&quot;)
+ RATE_WINDOW_SECONDS = 10 * 60
+<a href="#h2-1" id="h2-1" class="h">@@ -50,58 +63,80 @@ AI_CASE_RUBRIC = {
+</a>         &quot;title&quot;: &quot;Descrição do caso e decisões possíveis&quot;,
+         &quot;max_points&quot;: 0.5,
+         &quot;instructions&quot;: (
+<a href="#h2-1-3" id="h2-1-3" class="d">-            &quot;Apply the supplied FACSUR case-report guide to the report stage only. Assess whether &quot;
+</a><a href="#h2-1-4" id="h2-1-4" class="d">-            &quot;the topic is legally delimited; the facts form a focused, neutral narrative that &quot;
+</a><a href="#h2-1-5" id="h2-1-5" class="d">-            &quot;makes relevant parties, events, context, and conflict clear; and the section ends &quot;
+</a><a href="#h2-1-6" id="h2-1-6" class="d">-            &quot;with a clear, interrogative legal question rather than a statement of facts or an &quot;
+</a><a href="#h2-1-7" id="h2-1-7" class="d">-            &quot;early naming of the theses. Assess whether a brief conceptual basis explains the &quot;
+</a><a href="#h2-1-8" id="h2-1-8" class="d">-            &quot;legal dispute and the possible decisions are clearly separated, plausible, and &quot;
+</a><a href="#h2-1-9" id="h2-1-9" class="d">-            &quot;presented neutrally. Do not insist on a fixed Thesis A-versus-B dichotomy when the &quot;
+</a><a href="#h2-1-10" id="h2-1-10" class="d">-            &quot;report itself describes an open case whose law is unsettled; in that situation, &quot;
+</a><a href="#h2-1-11" id="h2-1-11" class="d">-            &quot;assess whether it explores the competing positions without prematurely declaring a &quot;
+</a><a href="#h2-1-12" id="h2-1-12" class="d">-            &quot;winner. Do not decide which position is legally correct.&quot;
+</a><a href="#h2-1-13" id="h2-1-13" class="i">+            &quot;Score this 0.5-point criterion using the official FACSUR case-report rubric only: &quot;
+</a><a href="#h2-1-14" id="h2-1-14" class="i">+            &quot;whether the topic is legally delimited and specific, the case narrative makes the &quot;
+</a><a href="#h2-1-15" id="h2-1-15" class="i">+            &quot;relevant characters, context and legal conflict clear, the legal problem is &quot;
+</a><a href="#h2-1-16" id="h2-1-16" class="i">+            &quot;objective, and possible decisions can be identified. Do not reduce the score for &quot;
+</a><a href="#h2-1-17" id="h2-1-17" class="i">+            &quot;optional advice in the student&#39;s supplementary guide, such as requiring the final &quot;
+</a><a href="#h2-1-18" id="h2-1-18" class="i">+            &quot;sentence to be an interrogative, using a particular section order, or adding a &quot;
+</a><a href="#h2-1-19" id="h2-1-19" class="i">+            &quot;separate conceptual subsection, unless the professor&#39;s instructions for this &quot;
+</a><a href="#h2-1-20" id="h2-1-20" class="i">+            &quot;assignment explicitly require it. Do not insist on a fixed Thesis A-versus-B &quot;
+</a><a href="#h2-1-21" id="h2-1-21" class="i">+            &quot;dichotomy when the report describes an open case; assess whether it identifies &quot;
+</a><a href="#h2-1-22" id="h2-1-22" class="i">+            &quot;the legal issue and relevant possible positions. Do not decide which position is &quot;
+</a><a href="#h2-1-23" id="h2-1-23" class="i">+            &quot;legally correct.&quot;
+</a>         ),
+     },
+     &quot;legal_writing_foundation&quot;: {
+         &quot;title&quot;: &quot;Redação jurídica e fundamentação&quot;,
+         &quot;max_points&quot;: 2.5,
+         &quot;instructions&quot;: (
+<a href="#h2-1-30" id="h2-1-30" class="d">-            &quot;Apply the supplied FACSUR case-report guide to the report&#39;s argument sections. &quot;
+</a><a href="#h2-1-31" id="h2-1-31" class="d">-            &quot;Assess both lines for clarity, coherence, connection to the legal question, &quot;
+</a><a href="#h2-1-32" id="h2-1-32" class="d">-            &quot;balanced development, and academic third-person wording. Look for legislation, &quot;
+</a><a href="#h2-1-33" id="h2-1-33" class="d">-            &quot;doctrine, and jurisprudence integrated around arguments rather than isolated in &quot;
+</a><a href="#h2-1-34" id="h2-1-34" class="d">-            &quot;separate source-type blocks. For each thesis, assess whether legal provisions are &quot;
+</a><a href="#h2-1-35" id="h2-1-35" class="d">-            &quot;identified and applied to the facts; doctrinal concepts are explained and applied &quot;
+</a><a href="#h2-1-36" id="h2-1-36" class="d">-            &quot;to the case; and cited judicial decisions visibly identify the court and case or &quot;
+</a><a href="#h2-1-37" id="h2-1-37" class="d">-            &quot;proceeding, summarize the holding, and explain its relevance. Check whether the &quot;
+</a><a href="#h2-1-38" id="h2-1-38" class="d">-            &quot;student adds their own explanation of why each cited point matters, including &quot;
+</a><a href="#h2-1-39" id="h2-1-39" class="d">-            &quot;after direct quotations, and whether the reasoning addresses counterarguments &quot;
+</a><a href="#h2-1-40" id="h2-1-40" class="d">-            &quot;rather than merely assembling quotations. The guide expects at least four doctrinal &quot;
+</a><a href="#h2-1-41" id="h2-1-41" class="d">-            &quot;works overall, with two used for each thesis; use only distinct works visibly &quot;
+</a><a href="#h2-1-42" id="h2-1-42" class="d">-            &quot;discussed in each supplied argument as evidence toward this expectation. The &quot;
+</a><a href="#h2-1-43" id="h2-1-43" class="i">+            &quot;Score this 2.5-point criterion against the official FACSUR case-report rubric. &quot;
+</a><a href="#h2-1-44" id="h2-1-44" class="i">+            &quot;Insufficient performance includes missing legal foundation, doctrine, or possible &quot;
+</a><a href="#h2-1-45" id="h2-1-45" class="i">+            &quot;decisions. Partial performance includes superficial sources, citations without a &quot;
+</a><a href="#h2-1-46" id="h2-1-46" class="i">+            &quot;clear relation to the case, or jurisprudence mentioned without explaining its &quot;
+</a><a href="#h2-1-47" id="h2-1-47" class="i">+            &quot;connection. Adequate performance requires a clear case narrative and legal &quot;
+</a><a href="#h2-1-48" id="h2-1-48" class="i">+            &quot;problem, at least three relevant works visibly used, direct identification of &quot;
+</a><a href="#h2-1-49" id="h2-1-49" class="i">+            &quot;applicable legal provisions, and decisions/arguments coherent with the case. &quot;
+</a><a href="#h2-1-50" id="h2-1-50" class="i">+            &quot;Count only distinct works identifiable in the supplied argument text; the &quot;
+</a>             &quot;reference list and library catalog are not supplied, so do not claim that a work &quot;
+             &quot;belongs to the FACSUR Virtual Library or verify that any source exists, is current, &quot;
+<a href="#h2-1-53" id="h2-1-53" class="d">-            &quot;or is legally accurate. The guide expects about two pages per thesis, but plain &quot;
+</a><a href="#h2-1-54" id="h2-1-54" class="d">-            &quot;text does not reveal pagination or formatting: do not estimate page counts or treat &quot;
+</a><a href="#h2-1-55" id="h2-1-55" class="d">-            &quot;length alone as proof of quality; assess only the visible depth and development. &quot;
+</a><a href="#h2-1-56" id="h2-1-56" class="d">-            &quot;Do not assess the later individual dissertation&#39;s final choice or conclusion as &quot;
+</a><a href="#h2-1-57" id="h2-1-57" class="d">-            &quot;part of this report-stage criterion.&quot;
+</a><a href="#h2-1-58" id="h2-1-58" class="i">+            &quot;or legally accurate. Do not assess the later debate or individual dissertation&#39;s &quot;
+</a><a href="#h2-1-59" id="h2-1-59" class="i">+            &quot;final choice as part of the report-stage criterion. The student&#39;s supplementary &quot;
+</a><a href="#h2-1-60" id="h2-1-60" class="i">+            &quot;guide includes optional ways to improve the work; do not lower this score for not &quot;
+</a><a href="#h2-1-61" id="h2-1-61" class="i">+            &quot;following them, including using four works with two per thesis, reaching a suggested &quot;
+</a><a href="#h2-1-62" id="h2-1-62" class="i">+            &quot;page count, writing exclusively in third person, following a particular thesis &quot;
+</a><a href="#h2-1-63" id="h2-1-63" class="i">+            &quot;opening/development/closing pattern, integrating every source in each paragraph, &quot;
+</a><a href="#h2-1-64" id="h2-1-64" class="i">+            &quot;or commenting after every quotation, unless the professor&#39;s assignment expressly &quot;
+</a><a href="#h2-1-65" id="h2-1-65" class="i">+            &quot;requires a specific item. If useful, identify such points as optional suggestions &quot;
+</a><a href="#h2-1-66" id="h2-1-66" class="i">+            &quot;separate from the rubric score. Do not infer page count or formatting from plain text.&quot;
+</a>         ),
+     },
+     &quot;criteria_and_values&quot;: {
+         &quot;title&quot;: &quot;Critérios e valores&quot;,
+         &quot;max_points&quot;: 0.5,
+         &quot;instructions&quot;: (
+<a href="#h2-1-73" id="h2-1-73" class="d">-            &quot;Apply the FACSUR case-report rubric: assess whether the proposed legal solution &quot;
+</a><a href="#h2-1-74" id="h2-1-74" class="d">-            &quot;is supported by stated normative criteria or legal values, and whether the listed &quot;
+</a><a href="#h2-1-75" id="h2-1-75" class="d">-            &quot;case-specific technical concepts and principles used in the supplied arguments &quot;
+</a><a href="#h2-1-76" id="h2-1-76" class="d">-            &quot;are defined, supported by a stated normative or ethical basis, and connected to &quot;
+</a><a href="#h2-1-77" id="h2-1-77" class="d">-            &quot;the case rather than left as unexplained labels. Do not require definitions for &quot;
+</a><a href="#h2-1-78" id="h2-1-78" class="d">-            &quot;every ordinary legal term. Do not verify the legal correctness of those concepts &quot;
+</a><a href="#h2-1-79" id="h2-1-79" class="d">-            &quot;or sources.&quot;
+</a><a href="#h2-1-80" id="h2-1-80" class="i">+            &quot;Score this 0.5-point criterion using the official FACSUR case-report rubric only: &quot;
+</a><a href="#h2-1-81" id="h2-1-81" class="i">+            &quot;whether the possible legal solution is coherent and justified by normative &quot;
+</a><a href="#h2-1-82" id="h2-1-82" class="i">+            &quot;criteria or legal values. A separate, comprehensive glossary defining every &quot;
+</a><a href="#h2-1-83" id="h2-1-83" class="i">+            &quot;technical term is an optional improvement in the student&#39;s supplementary guide, &quot;
+</a><a href="#h2-1-84" id="h2-1-84" class="i">+            &quot;not a score requirement unless the professor&#39;s instructions for this assignment &quot;
+</a><a href="#h2-1-85" id="h2-1-85" class="i">+            &quot;explicitly require it. Do not require definitions for ordinary legal vocabulary. &quot;
+</a><a href="#h2-1-86" id="h2-1-86" class="i">+            &quot;Do not verify the legal correctness of concepts or sources.&quot;
+</a>         ),
+     },
+ }
+<a href="#h2-1-90" id="h2-1-90" class="i">+DEEPSEEK_EVIDENCE_LABELS = {
+</a><a href="#h2-1-91" id="h2-1-91" class="i">+    &quot;case_description&quot;: {
+</a><a href="#h2-1-92" id="h2-1-92" class="i">+        &quot;case_facts&quot;: &quot;Fatos do caso&quot;,
+</a><a href="#h2-1-93" id="h2-1-93" class="i">+        &quot;legal_question&quot;: &quot;Pergunta jurídica&quot;,
+</a><a href="#h2-1-94" id="h2-1-94" class="i">+        &quot;possible_decision_a&quot;: &quot;Decisão possível A&quot;,
+</a><a href="#h2-1-95" id="h2-1-95" class="i">+        &quot;possible_decision_b&quot;: &quot;Decisão possível B&quot;,
+</a><a href="#h2-1-96" id="h2-1-96" class="i">+    },
+</a><a href="#h2-1-97" id="h2-1-97" class="i">+    &quot;legal_writing_foundation&quot;: {
+</a><a href="#h2-1-98" id="h2-1-98" class="i">+        &quot;case_facts&quot;: &quot;Fatos do caso&quot;,
+</a><a href="#h2-1-99" id="h2-1-99" class="i">+        &quot;legal_question&quot;: &quot;Pergunta jurídica&quot;,
+</a><a href="#h2-1-100" id="h2-1-100" class="i">+        &quot;conceptual_basis&quot;: &quot;Base conceitual&quot;,
+</a><a href="#h2-1-101" id="h2-1-101" class="i">+        &quot;thesis_a_title&quot;: &quot;Título da tese A&quot;,
+</a><a href="#h2-1-102" id="h2-1-102" class="i">+        &quot;thesis_a_argument&quot;: &quot;Tese A&quot;,
+</a><a href="#h2-1-103" id="h2-1-103" class="i">+        &quot;thesis_b_title&quot;: &quot;Título da tese B&quot;,
+</a><a href="#h2-1-104" id="h2-1-104" class="i">+        &quot;thesis_b_argument&quot;: &quot;Tese B&quot;,
+</a><a href="#h2-1-105" id="h2-1-105" class="i">+    },
+</a><a href="#h2-1-106" id="h2-1-106" class="i">+    &quot;criteria_and_values&quot;: {
+</a><a href="#h2-1-107" id="h2-1-107" class="i">+        &quot;thesis_a_argument&quot;: &quot;Argumentação da tese A&quot;,
+</a><a href="#h2-1-108" id="h2-1-108" class="i">+        &quot;thesis_b_argument&quot;: &quot;Argumentação da tese B&quot;,
+</a><a href="#h2-1-109" id="h2-1-109" class="i">+        &quot;criteria_and_values&quot;: &quot;Critérios e valores&quot;,
+</a><a href="#h2-1-110" id="h2-1-110" class="i">+    },
+</a><a href="#h2-1-111" id="h2-1-111" class="i">+}
+</a> AI_CASE_GRADE_RANGES = [
+     &quot;0 — 0.00 to 0.87 of the 3.50 assessable content points.&quot;,
+     &quot;1 — 0.88 to 1.75 of the 3.50 assessable content points.&quot;,
+<a href="#h2-2" id="h2-2" class="h">@@ -115,20 +150,25 @@ AI_CASE_GRADE_QUESTION = {
+</a>         &quot;three assessable content criteria: case description/possible decisions (0.5), legal &quot;
+         &quot;writing/foundation (2.5), and criteria/values (0.5), total 3.5 points. Select 0 for &quot;
+         &quot;0.00-0.87, 1 for 0.88-1.75, 2 for 1.76-2.62, or 3 for 2.63-3.50. These are equal &quot;
+<a href="#h2-2-3" id="h2-2-3" class="d">-        &quot;technical bands for an indicative estimate, not cutoffs defined by the manual. &quot;
+</a><a href="#h2-2-4" id="h2-2-4" class="i">+        &quot;technical bands for an indicative estimate, not cutoffs defined by the manual; &quot;
+</a><a href="#h2-2-5" id="h2-2-5" class="i">+        &quot;the per-criterion 0-3 probability scale is also an internal estimate, not an official &quot;
+</a><a href="#h2-2-6" id="h2-2-6" class="i">+        &quot;grading scale. Follow only the official rubric when estimating points. Do not include &quot;
+</a><a href="#h2-2-7" id="h2-2-7" class="i">+        &quot;optional improvements from supplementary guides in the score. &quot;
+</a>         &quot;Do not include the separate 0.5 formal/ABNT criterion, debate, or final dissertation. &quot;
+<a href="#h2-2-9" id="h2-2-9" class="d">-        &quot;Do not generate or rewrite text, verify legal authorities, or claim this is an official &quot;
+</a><a href="#h2-2-10" id="h2-2-10" class="d">-        &quot;grade. Base the estimate on the supplied report content only.&quot;
+</a><a href="#h2-2-11" id="h2-2-11" class="i">+        &quot;This scoring call must not draft or rewrite any part of the work. Never invent legal &quot;
+</a><a href="#h2-2-12" id="h2-2-12" class="i">+        &quot;authorities or claim this is an official grade. Base the estimate on the supplied report &quot;
+</a><a href="#h2-2-13" id="h2-2-13" class="i">+        &quot;content only.&quot;
+</a>     ),
+ }
+ AI_CASE_SCORE_LEVELS = [
+     &quot;0 — Insuficiente: the criterion is absent or the text shows a substantial deficiency.&quot;,
+<a href="#h2-2-18" id="h2-2-18" class="d">-    &quot;1 — Parcial, closer to insufficient: some evidence exists, but major gaps remain.&quot;,
+</a><a href="#h2-2-19" id="h2-2-19" class="d">-    &quot;2 — Parcial, closer to adequate: substantial evidence exists, with relevant gaps remaining.&quot;,
+</a><a href="#h2-2-20" id="h2-2-20" class="i">+    &quot;1 — Partial, closer to insufficient: some evidence exists, but major gaps remain. This is an internal estimate, not a separate level in the official rubric.&quot;,
+</a><a href="#h2-2-21" id="h2-2-21" class="i">+    &quot;2 — Partial, closer to adequate: substantial evidence exists, with relevant gaps remaining. This is an internal estimate, not a separate level in the official rubric.&quot;,
+</a>     &quot;3 — Adequado: the supplied text substantially meets the criterion described in the manual.&quot;,
+ ]
+ AI_CASE_PROBABILITY_THRESHOLD = 0.6
+ AI_CASE_CHECKLIST_LEVELS = [
+<a href="#h2-2-26" id="h2-2-26" class="i">+    &quot;This is a formative self-review of the selected checklist item, not the professor&#39;s official grade. Assess only the exact item being checked; do not turn optional style or structure suggestions into requirements.&quot;,
+</a>     &quot;0 — The supplied text contains no evidence that this checklist item is met.&quot;,
+     &quot;1 — Weak evidence: the item appears mostly unmet or materially incomplete.&quot;,
+     &quot;2 — Partial evidence: some requirements are met, but relevant gaps remain.&quot;,
+<a href="#h2-3" id="h2-3" class="h">@@ -141,15 +181,15 @@ AI_CASE_CHECKLISTS = {
+</a>         &quot;checks&quot;: {
+             &quot;facts-neutral&quot;: {
+                 &quot;label&quot;: &quot;Mantive a descrição sem antecipar solução ou julgamento.&quot;,
+<a href="#h2-3-3" id="h2-3-3" class="d">-                &quot;instructions&quot;: &quot;Assess only whether the facts narrative itself presents events neutrally without arguing for a legal outcome. Do not treat ordinary factual selection as bias.&quot;,
+</a><a href="#h2-3-4" id="h2-3-4" class="i">+                &quot;instructions&quot;: &quot;Assess only whether the facts narrative itself presents events neutrally without arguing for a legal outcome. Do not treat ordinary factual selection as bias. This is a formative writing suggestion, not an official grading requirement unless the professor expressly requires it.&quot;,
+</a>             },
+             &quot;facts-relevant&quot;: {
+                 &quot;label&quot;: &quot;Apresentei quem, o que, contexto e conflito e cortei o que não altera o caso.&quot;,
+<a href="#h2-3-8" id="h2-3-8" class="d">-                &quot;instructions&quot;: &quot;Assess whether the supplied narrative identifies relevant actors, events, context and the dispute, and appears focused on facts connected to the legal question. Do not require facts absent from the source prompt.&quot;,
+</a><a href="#h2-3-9" id="h2-3-9" class="i">+                &quot;instructions&quot;: &quot;Assess whether the supplied narrative identifies relevant actors, events, context and the dispute, and appears focused on facts connected to the legal question. Do not require facts absent from the source prompt. Treat cutting every nonessential detail as a writing suggestion, not a separate official score requirement.&quot;,
+</a>             },
+             &quot;problem-question&quot;: {
+                 &quot;label&quot;: &quot;A seção termina com uma pergunta jurídica clara, não respondível apenas com sim ou não.&quot;,
+<a href="#h2-3-13" id="h2-3-13" class="d">-                &quot;instructions&quot;: &quot;Assess whether the legal problem is clearly phrased as an open question, is connected to the supplied facts, and is not answerable only with yes or no.&quot;,
+</a><a href="#h2-3-14" id="h2-3-14" class="i">+                &quot;instructions&quot;: &quot;Assess whether the legal problem is clearly phrased and connected to the supplied facts. A literal question mark, open-question phrasing, or this exact placement at the end is a suggested presentation technique, not a score requirement unless the professor expressly requires it.&quot;,
+</a>             },
+             &quot;facts-original&quot;: {
+                 &quot;label&quot;: &quot;Reescrevi os fatos com minhas próprias palavras, sem copiar o enunciado.&quot;,
+<a href="#h2-4" id="h2-4" class="h">@@ -179,7 +219,7 @@ AI_CASE_CHECKLISTS = {
+</a>         &quot;checks&quot;: {
+             &quot;decisions-clear&quot;: {
+                 &quot;label&quot;: &quot;As duas decisões possíveis estão formuladas com clareza.&quot;,
+<a href="#h2-4-3" id="h2-4-3" class="d">-                &quot;instructions&quot;: &quot;Assess whether the concise conceptual basis explains why the legal issue admits alternatives and whether each alternative is clearly separated and stated as a possible legal outcome rather than a repetition of facts. Do not demand a fixed two-thesis format if the supplied report identifies the case as open.&quot;,
+</a><a href="#h2-4-4" id="h2-4-4" class="i">+                &quot;instructions&quot;: &quot;Assess whether possible decisions are clearly identifiable and stated as legal outcomes rather than repetitions of facts. A separate conceptual subsection or a fixed a/b layout is optional unless the professor expressly requires it. Do not demand a fixed two-thesis format if the supplied report identifies the case as open.&quot;,
+</a>             },
+             &quot;decisions-balanced&quot;: {
+                 &quot;label&quot;: &quot;As alternativas têm peso jurídico comparável.&quot;,
+<a href="#h2-5" id="h2-5" class="h">@@ -187,7 +227,7 @@ AI_CASE_CHECKLISTS = {
+</a>             },
+             &quot;decisions-neutral&quot;: {
+                 &quot;label&quot;: &quot;A base conceitual e a apresentação não indicam uma preferência.&quot;,
+<a href="#h2-5-3" id="h2-5-3" class="d">-                &quot;instructions&quot;: &quot;Assess whether the conceptual introduction and presentation of alternatives are reasonably neutral and do not prejudge the outcome.&quot;,
+</a><a href="#h2-5-4" id="h2-5-4" class="i">+                &quot;instructions&quot;: &quot;As a formative suggestion, assess whether the presentation of alternatives is reasonably balanced and avoids prejudging the outcome. This is not a separate official grading requirement unless the professor expressly requires it.&quot;,
+</a>             },
+         },
+     },
+<a href="#h2-6" id="h2-6" class="h">@@ -203,15 +243,15 @@ AI_CASE_CHECKLISTS = {
+</a>         &quot;checks&quot;: {
+             &quot;thesis-a-integrated&quot;: {
+                 &quot;label&quot;: &quot;Entrelacei legislação, doutrina e jurisprudência na argumentação.&quot;,
+<a href="#h2-6-3" id="h2-6-3" class="d">-                &quot;instructions&quot;: &quot;Assess whether legislation, doctrine, and jurisprudence are integrated around the argument instead of separated into source-type blocks. Look for provisions applied to the facts, doctrinal works visibly used to explain the issue, and judicial decisions that identify the court and case/proceeding and summarize the holding. The guide expects two doctrinal works used in each thesis; count only distinct works visibly discussed in this text, without claiming they are in the FACSUR Virtual Library. Do not verify that any source exists, is current, or is legally accurate.&quot;,
+</a><a href="#h2-6-4" id="h2-6-4" class="i">+                &quot;instructions&quot;: &quot;As a formative suggestion, assess whether legislation, doctrine, and jurisprudence support the argument and relate to the case. The official rubric&#39;s three-or-more-work threshold applies to the whole report and cannot be checked from this single-thesis excerpt; do not require a fixed number of works in this section or two per thesis. Interweaving every source type in each paragraph is optional. Do not claim works belong to the FACSUR Virtual Library or verify existence, currency, or legal accuracy.&quot;,
+</a>             },
+             &quot;thesis-a-comment&quot;: {
+                 &quot;label&quot;: &quot;Expliquei com palavras próprias a relevância das citações para o caso.&quot;,
+<a href="#h2-6-8" id="h2-6-8" class="d">-                &quot;instructions&quot;: &quot;The guide expects the student&#39;s own explanation of why citations matter, including commentary after direct quotations. Assess whether the surrounding text explains and applies cited law, doctrine, and judicial holdings to this case instead of leaving them unexplained or merely assembling quotations.&quot;,
+</a><a href="#h2-6-9" id="h2-6-9" class="i">+                &quot;instructions&quot;: &quot;As a formative suggestion, assess whether the student explains how cited law, doctrine, and judicial holdings relate to the case. Commentary after every direct quotation is not a separate official grading requirement unless the professor expressly requires it.&quot;,
+</a>             },
+             &quot;thesis-a-neutral&quot;: {
+                 &quot;label&quot;: &quot;Mantive a análise equilibrada e redigida em terceira pessoa.&quot;,
+<a href="#h2-6-13" id="h2-6-13" class="d">-                &quot;instructions&quot;: &quot;Assess whether the argument is written in academic third person, avoids first-person opinions such as &#39;eu acho&#39; or &#39;nós entendemos&#39;, and gives the stated position a developed, fair treatment. Do not penalize ordinary attribution of arguments to parties. The report should develop competing positions; choosing the final winner belongs to the later dissertation.&quot;,
+</a><a href="#h2-6-14" id="h2-6-14" class="i">+                &quot;instructions&quot;: &quot;As a formative suggestion, note first-person phrasing or opportunities to present the argument fairly. Exclusive third-person writing is not a separate official grading requirement unless the professor expressly requires it. Do not penalize ordinary attribution of arguments to parties. The report should not be required to choose the final winning position if that belongs to a later dissertation.&quot;,
+</a>             },
+         },
+     },
+<a href="#h2-7" id="h2-7" class="h">@@ -227,15 +267,15 @@ AI_CASE_CHECKLISTS = {
+</a>         &quot;checks&quot;: {
+             &quot;thesis-b-integrated&quot;: {
+                 &quot;label&quot;: &quot;Entrelacei legislação, doutrina e jurisprudência na argumentação.&quot;,
+<a href="#h2-7-3" id="h2-7-3" class="d">-                &quot;instructions&quot;: &quot;Assess whether legislation, doctrine, and jurisprudence are integrated around the argument instead of separated into source-type blocks. Look for provisions applied to the facts, doctrinal works visibly used to explain the issue, and judicial decisions that identify the court and case/proceeding and summarize the holding. The guide expects two doctrinal works used in each thesis; count only distinct works visibly discussed in this text, without claiming they are in the FACSUR Virtual Library. Do not verify that any source exists, is current, or is legally accurate.&quot;,
+</a><a href="#h2-7-4" id="h2-7-4" class="i">+                &quot;instructions&quot;: &quot;As a formative suggestion, assess whether legislation, doctrine, and jurisprudence support the argument and relate to the case. The official rubric&#39;s three-or-more-work threshold applies to the whole report and cannot be checked from this single-thesis excerpt; do not require a fixed number of works in this section or two per thesis. Interweaving every source type in each paragraph is optional. Do not claim works belong to the FACSUR Virtual Library or verify existence, currency, or legal accuracy.&quot;,
+</a>             },
+             &quot;thesis-b-comment&quot;: {
+                 &quot;label&quot;: &quot;Expliquei com palavras próprias a relevância das citações para o caso.&quot;,
+<a href="#h2-7-8" id="h2-7-8" class="d">-                &quot;instructions&quot;: &quot;The guide expects the student&#39;s own explanation of why citations matter, including commentary after direct quotations. Assess whether the surrounding text explains and applies cited law, doctrine, and judicial holdings to this case instead of leaving them unexplained or merely assembling quotations.&quot;,
+</a><a href="#h2-7-9" id="h2-7-9" class="i">+                &quot;instructions&quot;: &quot;As a formative suggestion, assess whether the student explains how cited law, doctrine, and judicial holdings relate to the case. Commentary after every direct quotation is not a separate official grading requirement unless the professor expressly requires it.&quot;,
+</a>             },
+             &quot;thesis-b-neutral&quot;: {
+                 &quot;label&quot;: &quot;Mantive a análise equilibrada e redigida em terceira pessoa.&quot;,
+<a href="#h2-7-13" id="h2-7-13" class="d">-                &quot;instructions&quot;: &quot;Assess whether the argument is written in academic third person, avoids first-person opinions such as &#39;eu acho&#39; or &#39;nós entendemos&#39;, and gives the stated position a developed, fair treatment. Do not penalize ordinary attribution of arguments to parties. The report should develop competing positions; choosing the final winner belongs to the later dissertation.&quot;,
+</a><a href="#h2-7-14" id="h2-7-14" class="i">+                &quot;instructions&quot;: &quot;As a formative suggestion, note first-person phrasing or opportunities to present the argument fairly. Exclusive third-person writing is not a separate official grading requirement unless the professor expressly requires it. Do not penalize ordinary attribution of arguments to parties. The report should not be required to choose the final winning position if that belongs to a later dissertation.&quot;,
+</a>             },
+         },
+     },
+<a href="#h2-8" id="h2-8" class="h">@@ -245,11 +285,11 @@ AI_CASE_CHECKLISTS = {
+</a>         &quot;checks&quot;: {
+             &quot;criteria-defined&quot;: {
+                 &quot;label&quot;: &quot;Defini os conceitos técnicos relevantes e indiquei o fundamento de cada definição.&quot;,
+<a href="#h2-8-3" id="h2-8-3" class="d">-                &quot;instructions&quot;: &quot;The guide calls for a glossary defining the case-specific technical concepts and principles used in the arguments and stating their normative or ethical basis. Assess whether the registered items include both a meaningful definition and an identified basis, not just a label or an unexplained citation.&quot;,
+</a><a href="#h2-8-4" id="h2-8-4" class="i">+                &quot;instructions&quot;: &quot;As a formative suggestion, assess whether listed concepts have clear definitions and a stated normative or ethical basis. A separate glossary defining every term is optional unless the professor expressly requires it.&quot;,
+</a>             },
+             &quot;criteria-covered&quot;: {
+                 &quot;label&quot;: &quot;Conferi se os termos técnicos usados nas teses estão explicados nesta seção.&quot;,
+<a href="#h2-8-8" id="h2-8-8" class="d">-                &quot;instructions&quot;: &quot;Compare the case-specific technical concepts and principles visibly used in both arguments with the registered glossary. Assess whether the important concepts are defined there, have a normative or ethical basis, and are connected to the case. Ignore ordinary legal vocabulary that is not a case-specific technical criterion.&quot;,
+</a><a href="#h2-8-9" id="h2-8-9" class="i">+                &quot;instructions&quot;: &quot;As a formative suggestion, compare important case-specific concepts in the arguments with those explained in this section. A comprehensive glossary is optional unless the professor expressly requires one. Ignore ordinary legal vocabulary.&quot;
+</a>             },
+         },
+     },
+<a href="#h2-9" id="h2-9" class="h">@@ -294,6 +334,90 @@ def new_code():
+</a>     return &quot;ROTE-&quot; + &quot;-&quot;.join(raw[index:index + 8] for index in range(0, 32, 8))
+ 
+ 
+<a href="#h2-9-3" id="h2-9-3" class="i">+def validated_jev_summary(value):
+</a><a href="#h2-9-4" id="h2-9-4" class="i">+    if not isinstance(value, dict):
+</a><a href="#h2-9-5" id="h2-9-5" class="i">+        raise ApiError(400, &quot;invalid_jev_result&quot;, &quot;Resultado Jev inválido.&quot;)
+</a><a href="#h2-9-6" id="h2-9-6" class="i">+    score = value.get(&quot;score&quot;)
+</a><a href="#h2-9-7" id="h2-9-7" class="i">+    confidence = value.get(&quot;confidence&quot;)
+</a><a href="#h2-9-8" id="h2-9-8" class="i">+    probabilities = value.get(&quot;probabilities&quot;)
+</a><a href="#h2-9-9" id="h2-9-9" class="i">+    if (
+</a><a href="#h2-9-10" id="h2-9-10" class="i">+        isinstance(score, bool)
+</a><a href="#h2-9-11" id="h2-9-11" class="i">+        or not isinstance(score, (int, float))
+</a><a href="#h2-9-12" id="h2-9-12" class="i">+        or not math.isfinite(score)
+</a><a href="#h2-9-13" id="h2-9-13" class="i">+        or not 0 &lt;= score &lt;= 3
+</a><a href="#h2-9-14" id="h2-9-14" class="i">+        or isinstance(confidence, bool)
+</a><a href="#h2-9-15" id="h2-9-15" class="i">+        or not isinstance(confidence, (int, float))
+</a><a href="#h2-9-16" id="h2-9-16" class="i">+        or not math.isfinite(confidence)
+</a><a href="#h2-9-17" id="h2-9-17" class="i">+        or not 0 &lt;= confidence &lt;= 1
+</a><a href="#h2-9-18" id="h2-9-18" class="i">+        or not isinstance(probabilities, list)
+</a><a href="#h2-9-19" id="h2-9-19" class="i">+        or len(probabilities) != 4
+</a><a href="#h2-9-20" id="h2-9-20" class="i">+    ):
+</a><a href="#h2-9-21" id="h2-9-21" class="i">+        raise ApiError(400, &quot;invalid_jev_result&quot;, &quot;Resultado Jev inválido.&quot;)
+</a><a href="#h2-9-22" id="h2-9-22" class="i">+    if any(
+</a><a href="#h2-9-23" id="h2-9-23" class="i">+        isinstance(probability, bool)
+</a><a href="#h2-9-24" id="h2-9-24" class="i">+        or not isinstance(probability, (int, float))
+</a><a href="#h2-9-25" id="h2-9-25" class="i">+        or not math.isfinite(probability)
+</a><a href="#h2-9-26" id="h2-9-26" class="i">+        or not 0 &lt;= probability &lt;= 1
+</a><a href="#h2-9-27" id="h2-9-27" class="i">+        for probability in probabilities
+</a><a href="#h2-9-28" id="h2-9-28" class="i">+    ) or not 0.97 &lt;= sum(probabilities) &lt;= 1.03:
+</a><a href="#h2-9-29" id="h2-9-29" class="i">+        raise ApiError(400, &quot;invalid_jev_result&quot;, &quot;Resultado Jev inválido.&quot;)
+</a><a href="#h2-9-30" id="h2-9-30" class="i">+    return {
+</a><a href="#h2-9-31" id="h2-9-31" class="i">+        &quot;score&quot;: score,
+</a><a href="#h2-9-32" id="h2-9-32" class="i">+        &quot;confidence&quot;: confidence,
+</a><a href="#h2-9-33" id="h2-9-33" class="i">+        &quot;probabilities&quot;: probabilities,
+</a><a href="#h2-9-34" id="h2-9-34" class="i">+    }
+</a><a href="#h2-9-35" id="h2-9-35" class="i">+
+</a><a href="#h2-9-36" id="h2-9-36" class="i">+
+</a><a href="#h2-9-37" id="h2-9-37" class="i">+def _short_text(value, limit):
+</a><a href="#h2-9-38" id="h2-9-38" class="i">+    text = value.strip() if isinstance(value, str) else &quot;&quot;
+</a><a href="#h2-9-39" id="h2-9-39" class="i">+    return text[:limit]
+</a><a href="#h2-9-40" id="h2-9-40" class="i">+
+</a><a href="#h2-9-41" id="h2-9-41" class="i">+
+</a><a href="#h2-9-42" id="h2-9-42" class="i">+def deepseek_evidence(fields, criteria, criterion_id):
+</a><a href="#h2-9-43" id="h2-9-43" class="i">+    common = {
+</a><a href="#h2-9-44" id="h2-9-44" class="i">+        &quot;case_facts&quot;: _short_text(fields.get(&quot;facts&quot;), 500),
+</a><a href="#h2-9-45" id="h2-9-45" class="i">+        &quot;legal_question&quot;: _short_text(fields.get(&quot;problem&quot;), 350),
+</a><a href="#h2-9-46" id="h2-9-46" class="i">+        &quot;conceptual_basis&quot;: _short_text(fields.get(&quot;decisionBasis&quot;), 350),
+</a><a href="#h2-9-47" id="h2-9-47" class="i">+        &quot;possible_decision_a&quot;: _short_text(fields.get(&quot;decisionA&quot;), 300),
+</a><a href="#h2-9-48" id="h2-9-48" class="i">+        &quot;possible_decision_b&quot;: _short_text(fields.get(&quot;decisionB&quot;), 300),
+</a><a href="#h2-9-49" id="h2-9-49" class="i">+    }
+</a><a href="#h2-9-50" id="h2-9-50" class="i">+    if criterion_id == &quot;case_description&quot;:
+</a><a href="#h2-9-51" id="h2-9-51" class="i">+        evidence = {
+</a><a href="#h2-9-52" id="h2-9-52" class="i">+            key: common[key]
+</a><a href="#h2-9-53" id="h2-9-53" class="i">+            for key in (
+</a><a href="#h2-9-54" id="h2-9-54" class="i">+                &quot;case_facts&quot;,
+</a><a href="#h2-9-55" id="h2-9-55" class="i">+                &quot;legal_question&quot;,
+</a><a href="#h2-9-56" id="h2-9-56" class="i">+                &quot;possible_decision_a&quot;,
+</a><a href="#h2-9-57" id="h2-9-57" class="i">+                &quot;possible_decision_b&quot;,
+</a><a href="#h2-9-58" id="h2-9-58" class="i">+            )
+</a><a href="#h2-9-59" id="h2-9-59" class="i">+        }
+</a><a href="#h2-9-60" id="h2-9-60" class="i">+    elif criterion_id == &quot;legal_writing_foundation&quot;:
+</a><a href="#h2-9-61" id="h2-9-61" class="i">+        evidence = {
+</a><a href="#h2-9-62" id="h2-9-62" class="i">+            &quot;case_facts&quot;: common[&quot;case_facts&quot;][:300],
+</a><a href="#h2-9-63" id="h2-9-63" class="i">+            &quot;legal_question&quot;: common[&quot;legal_question&quot;],
+</a><a href="#h2-9-64" id="h2-9-64" class="i">+            &quot;conceptual_basis&quot;: common[&quot;conceptual_basis&quot;],
+</a><a href="#h2-9-65" id="h2-9-65" class="i">+            &quot;thesis_a_title&quot;: _short_text(fields.get(&quot;thesisATitle&quot;), 100),
+</a><a href="#h2-9-66" id="h2-9-66" class="i">+            &quot;thesis_a_argument&quot;: _short_text(fields.get(&quot;thesisA&quot;), 600),
+</a><a href="#h2-9-67" id="h2-9-67" class="i">+            &quot;thesis_b_title&quot;: _short_text(fields.get(&quot;thesisBTitle&quot;), 100),
+</a><a href="#h2-9-68" id="h2-9-68" class="i">+            &quot;thesis_b_argument&quot;: _short_text(fields.get(&quot;thesisB&quot;), 600),
+</a><a href="#h2-9-69" id="h2-9-69" class="i">+        }
+</a><a href="#h2-9-70" id="h2-9-70" class="i">+    else:
+</a><a href="#h2-9-71" id="h2-9-71" class="i">+        evidence = {
+</a><a href="#h2-9-72" id="h2-9-72" class="i">+            &quot;thesis_a_argument&quot;: _short_text(fields.get(&quot;thesisA&quot;), 400),
+</a><a href="#h2-9-73" id="h2-9-73" class="i">+            &quot;thesis_b_argument&quot;: _short_text(fields.get(&quot;thesisB&quot;), 400),
+</a><a href="#h2-9-74" id="h2-9-74" class="i">+            &quot;criteria_and_values&quot;: [
+</a><a href="#h2-9-75" id="h2-9-75" class="i">+                {
+</a><a href="#h2-9-76" id="h2-9-76" class="i">+                    &quot;term&quot;: _short_text(item.get(&quot;term&quot;), 100),
+</a><a href="#h2-9-77" id="h2-9-77" class="i">+                    &quot;definition&quot;: _short_text(item.get(&quot;definition&quot;), 250),
+</a><a href="#h2-9-78" id="h2-9-78" class="i">+                    &quot;basis&quot;: _short_text(item.get(&quot;basis&quot;), 150),
+</a><a href="#h2-9-79" id="h2-9-79" class="i">+                }
+</a><a href="#h2-9-80" id="h2-9-80" class="i">+                for item in criteria[:5]
+</a><a href="#h2-9-81" id="h2-9-81" class="i">+                if isinstance(item, dict)
+</a><a href="#h2-9-82" id="h2-9-82" class="i">+            ],
+</a><a href="#h2-9-83" id="h2-9-83" class="i">+        }
+</a><a href="#h2-9-84" id="h2-9-84" class="i">+    return evidence
+</a><a href="#h2-9-85" id="h2-9-85" class="i">+
+</a><a href="#h2-9-86" id="h2-9-86" class="i">+
+</a> class Store:
+     def __init__(self, database=DATABASE):
+         self.database = Path(database)
+<a href="#h2-10" id="h2-10" class="h">@@ -328,6 +452,8 @@ class Store:
+</a>                     project_limit INTEGER NOT NULL CHECK(project_limit BETWEEN 1 AND 1000),
+                     ai_analysis_limit INTEGER NOT NULL DEFAULT 5 CHECK(ai_analysis_limit BETWEEN 0 AND 1000),
+                     ai_analysis_used INTEGER NOT NULL DEFAULT 0 CHECK(ai_analysis_used &gt;= 0),
+<a href="#h2-10-3" id="h2-10-3" class="i">+                    deepseek_explanation_limit INTEGER NOT NULL DEFAULT 0 CHECK(deepseek_explanation_limit BETWEEN 0 AND 1000),
+</a><a href="#h2-10-4" id="h2-10-4" class="i">+                    deepseek_explanation_used INTEGER NOT NULL DEFAULT 0 CHECK(deepseek_explanation_used &gt;= 0),
+</a>                     owner INTEGER NOT NULL DEFAULT 0 CHECK(owner IN (0, 1)),
+                     activated_at INTEGER,
+                     expires_at INTEGER,
+<a href="#h2-11" id="h2-11" class="h">@@ -350,6 +476,18 @@ class Store:
+</a>                 );
+                 CREATE INDEX IF NOT EXISTS projects_by_account
+                     ON projects(account_id, updated_at DESC);
+<a href="#h2-11-3" id="h2-11-3" class="i">+                CREATE TABLE IF NOT EXISTS deepseek_usage (
+</a><a href="#h2-11-4" id="h2-11-4" class="i">+                    id INTEGER PRIMARY KEY,
+</a><a href="#h2-11-5" id="h2-11-5" class="i">+                    account_id TEXT NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
+</a><a href="#h2-11-6" id="h2-11-6" class="i">+                    project_id TEXT NOT NULL,
+</a><a href="#h2-11-7" id="h2-11-7" class="i">+                    criterion_id TEXT NOT NULL,
+</a><a href="#h2-11-8" id="h2-11-8" class="i">+                    model TEXT NOT NULL,
+</a><a href="#h2-11-9" id="h2-11-9" class="i">+                    input_tokens INTEGER NOT NULL CHECK(input_tokens &gt;= 0),
+</a><a href="#h2-11-10" id="h2-11-10" class="i">+                    output_tokens INTEGER NOT NULL CHECK(output_tokens &gt;= 0),
+</a><a href="#h2-11-11" id="h2-11-11" class="i">+                    cache_hit_input_tokens INTEGER NOT NULL DEFAULT 0 CHECK(cache_hit_input_tokens &gt;= 0),
+</a><a href="#h2-11-12" id="h2-11-12" class="i">+                    estimated_cost_usd REAL NOT NULL CHECK(estimated_cost_usd &gt;= 0),
+</a><a href="#h2-11-13" id="h2-11-13" class="i">+                    created_at INTEGER NOT NULL
+</a><a href="#h2-11-14" id="h2-11-14" class="i">+                );
+</a>                 &quot;&quot;&quot;
+             )
+             project_columns = {
+<a href="#h2-12" id="h2-12" class="h">@@ -370,6 +508,14 @@ class Store:
+</a>                 connection.execute(
+                     &quot;ALTER TABLE accounts ADD COLUMN ai_analysis_used INTEGER NOT NULL DEFAULT 0&quot;
+                 )
+<a href="#h2-12-3" id="h2-12-3" class="i">+            if &quot;deepseek_explanation_limit&quot; not in account_columns:
+</a><a href="#h2-12-4" id="h2-12-4" class="i">+                connection.execute(
+</a><a href="#h2-12-5" id="h2-12-5" class="i">+                    &quot;ALTER TABLE accounts ADD COLUMN deepseek_explanation_limit INTEGER NOT NULL DEFAULT 0&quot;
+</a><a href="#h2-12-6" id="h2-12-6" class="i">+                )
+</a><a href="#h2-12-7" id="h2-12-7" class="i">+            if &quot;deepseek_explanation_used&quot; not in account_columns:
+</a><a href="#h2-12-8" id="h2-12-8" class="i">+                connection.execute(
+</a><a href="#h2-12-9" id="h2-12-9" class="i">+                    &quot;ALTER TABLE accounts ADD COLUMN deepseek_explanation_used INTEGER NOT NULL DEFAULT 0&quot;
+</a><a href="#h2-12-10" id="h2-12-10" class="i">+                )
+</a>             if &quot;owner&quot; not in account_columns:
+                 connection.execute(
+                     &quot;ALTER TABLE accounts ADD COLUMN owner INTEGER NOT NULL DEFAULT 0&quot;
+<a href="#h2-13" id="h2-13" class="h">@@ -381,7 +527,14 @@ class Store:
+</a>     def _new_account_id():
+         return str(uuid.uuid4())
+ 
+<a href="#h2-13-3" id="h2-13-3" class="d">-    def issue_batch(self, count=100, days=7, project_limit=1, ai_analysis_limit=DEFAULT_AI_ANALYSIS_LIMIT):
+</a><a href="#h2-13-4" id="h2-13-4" class="i">+    def issue_batch(
+</a><a href="#h2-13-5" id="h2-13-5" class="i">+        self,
+</a><a href="#h2-13-6" id="h2-13-6" class="i">+        count=100,
+</a><a href="#h2-13-7" id="h2-13-7" class="i">+        days=7,
+</a><a href="#h2-13-8" id="h2-13-8" class="i">+        project_limit=1,
+</a><a href="#h2-13-9" id="h2-13-9" class="i">+        ai_analysis_limit=DEFAULT_AI_ANALYSIS_LIMIT,
+</a><a href="#h2-13-10" id="h2-13-10" class="i">+        deepseek_explanation_limit=DEFAULT_DEEPSEEK_EXPLANATION_LIMIT,
+</a><a href="#h2-13-11" id="h2-13-11" class="i">+    ):
+</a>         if not 1 &lt;= count &lt;= 1000:
+             raise ValueError(&quot;A quantidade deve estar entre 1 e 1000.&quot;)
+         if not 1 &lt;= days &lt;= 3650:
+<a href="#h2-14" id="h2-14" class="h">@@ -390,6 +543,11 @@ class Store:
+</a>             raise ValueError(&quot;O limite de projetos deve estar entre 1 e 1000.&quot;)
+         if not 0 &lt;= ai_analysis_limit &lt;= MAX_AI_ANALYSIS_LIMIT:
+             raise ValueError(f&quot;O limite de análises deve estar entre 0 e {MAX_AI_ANALYSIS_LIMIT}.&quot;)
+<a href="#h2-14-3" id="h2-14-3" class="i">+        if not 0 &lt;= deepseek_explanation_limit &lt;= MAX_DEEPSEEK_EXPLANATION_LIMIT:
+</a><a href="#h2-14-4" id="h2-14-4" class="i">+            raise ValueError(
+</a><a href="#h2-14-5" id="h2-14-5" class="i">+                f&quot;O limite de explicações DeepSeek deve estar entre 0 e &quot;
+</a><a href="#h2-14-6" id="h2-14-6" class="i">+                f&quot;{MAX_DEEPSEEK_EXPLANATION_LIMIT}.&quot;
+</a><a href="#h2-14-7" id="h2-14-7" class="i">+            )
+</a> 
+         issued = []
+         with self.connect() as connection:
+<a href="#h2-15" id="h2-15" class="h">@@ -400,14 +558,16 @@ class Store:
+</a>                     try:
+                         connection.execute(
+                             &quot;&quot;&quot;INSERT INTO accounts
+<a href="#h2-15-3" id="h2-15-3" class="d">-                               (id, code_hash, default_days, project_limit, ai_analysis_limit)
+</a><a href="#h2-15-4" id="h2-15-4" class="d">-                               VALUES (?, ?, ?, ?, ?)&quot;&quot;&quot;,
+</a><a href="#h2-15-5" id="h2-15-5" class="i">+                               (id, code_hash, default_days, project_limit, ai_analysis_limit,
+</a><a href="#h2-15-6" id="h2-15-6" class="i">+                                deepseek_explanation_limit)
+</a><a href="#h2-15-7" id="h2-15-7" class="i">+                               VALUES (?, ?, ?, ?, ?, ?)&quot;&quot;&quot;,
+</a>                             (
+                                 account_id,
+                                 hash_secret(normalize_code(code)),
+                                 days,
+                                 project_limit,
+                                 ai_analysis_limit,
+<a href="#h2-15-14" id="h2-15-14" class="i">+                                deepseek_explanation_limit,
+</a>                             ),
+                         )
+                         issued.append(code)
+<a href="#h2-16" id="h2-16" class="h">@@ -427,8 +587,9 @@ class Store:
+</a>                 connection.execute(
+                     &quot;&quot;&quot;INSERT INTO accounts
+                        (id, code_hash, default_days, project_limit, ai_analysis_limit,
+<a href="#h2-16-3" id="h2-16-3" class="i">+                        deepseek_explanation_limit,
+</a>                         activated_at, expires_at, owner)
+<a href="#h2-16-5" id="h2-16-5" class="d">-                       VALUES (?, ?, 3650, 1000, 1000, ?, NULL, 1)&quot;&quot;&quot;,
+</a><a href="#h2-16-6" id="h2-16-6" class="i">+                       VALUES (?, ?, 3650, 1000, 1000, 1000, ?, NULL, 1)&quot;&quot;&quot;,
+</a>                     (account_id, hash_secret(normalized), current_time),
+                 )
+         except sqlite3.IntegrityError as error:
+<a href="#h2-17" id="h2-17" class="h">@@ -530,9 +691,131 @@ class Store:
+</a>                 if is_owner
+                 else max(0, account[&quot;ai_analysis_limit&quot;] - account[&quot;ai_analysis_used&quot;])
+             ),
+<a href="#h2-17-3" id="h2-17-3" class="i">+            &quot;deepseek_explanation_limit&quot;: (
+</a><a href="#h2-17-4" id="h2-17-4" class="i">+                None if is_owner else account[&quot;deepseek_explanation_limit&quot;]
+</a><a href="#h2-17-5" id="h2-17-5" class="i">+            ),
+</a><a href="#h2-17-6" id="h2-17-6" class="i">+            &quot;deepseek_explanation_used&quot;: account[&quot;deepseek_explanation_used&quot;],
+</a><a href="#h2-17-7" id="h2-17-7" class="i">+            &quot;deepseek_explanation_remaining&quot;: (
+</a><a href="#h2-17-8" id="h2-17-8" class="i">+                None
+</a><a href="#h2-17-9" id="h2-17-9" class="i">+                if is_owner
+</a><a href="#h2-17-10" id="h2-17-10" class="i">+                else max(
+</a><a href="#h2-17-11" id="h2-17-11" class="i">+                    0,
+</a><a href="#h2-17-12" id="h2-17-12" class="i">+                    account[&quot;deepseek_explanation_limit&quot;]
+</a><a href="#h2-17-13" id="h2-17-13" class="i">+                    - account[&quot;deepseek_explanation_used&quot;],
+</a><a href="#h2-17-14" id="h2-17-14" class="i">+                )
+</a><a href="#h2-17-15" id="h2-17-15" class="i">+            ),
+</a>             &quot;unlimited&quot;: is_owner,
+         }
+ 
+<a href="#h2-17-19" id="h2-17-19" class="i">+    def reserve_deepseek_explanation(
+</a><a href="#h2-17-20" id="h2-17-20" class="i">+        self, account_id, project_id, criterion_id, jev_result, current_time=None
+</a><a href="#h2-17-21" id="h2-17-21" class="i">+    ):
+</a><a href="#h2-17-22" id="h2-17-22" class="i">+        if criterion_id not in AI_CASE_RUBRIC:
+</a><a href="#h2-17-23" id="h2-17-23" class="i">+            raise ApiError(400, &quot;invalid_criterion&quot;, &quot;Critério de case inválido.&quot;)
+</a><a href="#h2-17-24" id="h2-17-24" class="i">+        jev_summary = validated_jev_summary(jev_result)
+</a><a href="#h2-17-25" id="h2-17-25" class="i">+        current_time = now_seconds() if current_time is None else int(current_time)
+</a><a href="#h2-17-26" id="h2-17-26" class="i">+        with self.connect() as connection:
+</a><a href="#h2-17-27" id="h2-17-27" class="i">+            connection.execute(&quot;BEGIN IMMEDIATE&quot;)
+</a><a href="#h2-17-28" id="h2-17-28" class="i">+            account = connection.execute(
+</a><a href="#h2-17-29" id="h2-17-29" class="i">+                &quot;SELECT * FROM accounts WHERE id = ? AND revoked = 0&quot;,
+</a><a href="#h2-17-30" id="h2-17-30" class="i">+                (account_id,),
+</a><a href="#h2-17-31" id="h2-17-31" class="i">+            ).fetchone()
+</a><a href="#h2-17-32" id="h2-17-32" class="i">+            if account is None:
+</a><a href="#h2-17-33" id="h2-17-33" class="i">+                connection.rollback()
+</a><a href="#h2-17-34" id="h2-17-34" class="i">+                raise ApiError(401, &quot;account_unavailable&quot;, &quot;Conta indisponível.&quot;)
+</a><a href="#h2-17-35" id="h2-17-35" class="i">+            if not self.license_active(account, current_time):
+</a><a href="#h2-17-36" id="h2-17-36" class="i">+                connection.rollback()
+</a><a href="#h2-17-37" id="h2-17-37" class="i">+                raise ApiError(403, &quot;license_expired&quot;, &quot;A licença venceu.&quot;)
+</a><a href="#h2-17-38" id="h2-17-38" class="i">+            row = connection.execute(
+</a><a href="#h2-17-39" id="h2-17-39" class="i">+                &quot;&quot;&quot;SELECT payload, project_type FROM projects
+</a><a href="#h2-17-40" id="h2-17-40" class="i">+                   WHERE id = ? AND account_id = ?&quot;&quot;&quot;,
+</a><a href="#h2-17-41" id="h2-17-41" class="i">+                (project_id, account_id),
+</a><a href="#h2-17-42" id="h2-17-42" class="i">+            ).fetchone()
+</a><a href="#h2-17-43" id="h2-17-43" class="i">+            if row is None:
+</a><a href="#h2-17-44" id="h2-17-44" class="i">+                connection.rollback()
+</a><a href="#h2-17-45" id="h2-17-45" class="i">+                raise ApiError(404, &quot;project_not_found&quot;, &quot;Projeto não encontrado.&quot;)
+</a><a href="#h2-17-46" id="h2-17-46" class="i">+            if row[&quot;project_type&quot;] != &quot;case&quot;:
+</a><a href="#h2-17-47" id="h2-17-47" class="i">+                connection.rollback()
+</a><a href="#h2-17-48" id="h2-17-48" class="i">+                raise ApiError(400, &quot;case_analysis_only&quot;, &quot;A explicação DeepSeek está disponível apenas para relatórios de case.&quot;)
+</a><a href="#h2-17-49" id="h2-17-49" class="i">+            if (
+</a><a href="#h2-17-50" id="h2-17-50" class="i">+                not account[&quot;owner&quot;]
+</a><a href="#h2-17-51" id="h2-17-51" class="i">+                and account[&quot;deepseek_explanation_used&quot;]
+</a><a href="#h2-17-52" id="h2-17-52" class="i">+                &gt;= account[&quot;deepseek_explanation_limit&quot;]
+</a><a href="#h2-17-53" id="h2-17-53" class="i">+            ):
+</a><a href="#h2-17-54" id="h2-17-54" class="i">+                connection.rollback()
+</a><a href="#h2-17-55" id="h2-17-55" class="i">+                raise ApiError(
+</a><a href="#h2-17-56" id="h2-17-56" class="i">+                    429,
+</a><a href="#h2-17-57" id="h2-17-57" class="i">+                    &quot;deepseek_quota_exhausted&quot;,
+</a><a href="#h2-17-58" id="h2-17-58" class="i">+                    &quot;O limite de explicações DeepSeek desta licença foi atingido.&quot;,
+</a><a href="#h2-17-59" id="h2-17-59" class="i">+                )
+</a><a href="#h2-17-60" id="h2-17-60" class="i">+            payload = json.loads(row[&quot;payload&quot;])
+</a><a href="#h2-17-61" id="h2-17-61" class="i">+            fields = payload.get(&quot;fields&quot;, {})
+</a><a href="#h2-17-62" id="h2-17-62" class="i">+            raw_criteria = payload.get(&quot;criteria&quot;)
+</a><a href="#h2-17-63" id="h2-17-63" class="i">+            criteria = raw_criteria if isinstance(raw_criteria, list) else []
+</a><a href="#h2-17-64" id="h2-17-64" class="i">+            evidence = deepseek_evidence(fields, criteria, criterion_id)
+</a><a href="#h2-17-65" id="h2-17-65" class="i">+            if len(json.dumps(evidence, ensure_ascii=False).encode(&quot;utf-8&quot;)) &gt; DEEPSEEK_MAX_EXPLANATION_INPUT_BYTES:
+</a><a href="#h2-17-66" id="h2-17-66" class="i">+                connection.rollback()
+</a><a href="#h2-17-67" id="h2-17-67" class="i">+                raise ApiError(413, &quot;deepseek_input_too_large&quot;, &quot;Os trechos selecionados excedem o limite de tamanho.&quot;)
+</a><a href="#h2-17-68" id="h2-17-68" class="i">+            connection.execute(
+</a><a href="#h2-17-69" id="h2-17-69" class="i">+                &quot;&quot;&quot;UPDATE accounts
+</a><a href="#h2-17-70" id="h2-17-70" class="i">+                   SET deepseek_explanation_used = deepseek_explanation_used + 1
+</a><a href="#h2-17-71" id="h2-17-71" class="i">+                   WHERE id = ?&quot;&quot;&quot;,
+</a><a href="#h2-17-72" id="h2-17-72" class="i">+                (account_id,),
+</a><a href="#h2-17-73" id="h2-17-73" class="i">+            )
+</a><a href="#h2-17-74" id="h2-17-74" class="i">+            used = account[&quot;deepseek_explanation_used&quot;] + 1
+</a><a href="#h2-17-75" id="h2-17-75" class="i">+            connection.commit()
+</a><a href="#h2-17-76" id="h2-17-76" class="i">+        definition = AI_CASE_RUBRIC[criterion_id]
+</a><a href="#h2-17-77" id="h2-17-77" class="i">+        return {
+</a><a href="#h2-17-78" id="h2-17-78" class="i">+            &quot;criterion&quot;: {
+</a><a href="#h2-17-79" id="h2-17-79" class="i">+                &quot;id&quot;: criterion_id,
+</a><a href="#h2-17-80" id="h2-17-80" class="i">+                &quot;title&quot;: definition[&quot;title&quot;],
+</a><a href="#h2-17-81" id="h2-17-81" class="i">+                &quot;max_points&quot;: definition[&quot;max_points&quot;],
+</a><a href="#h2-17-82" id="h2-17-82" class="i">+                &quot;instructions&quot;: definition[&quot;instructions&quot;],
+</a><a href="#h2-17-83" id="h2-17-83" class="i">+            },
+</a><a href="#h2-17-84" id="h2-17-84" class="i">+            &quot;jev_result&quot;: jev_summary,
+</a><a href="#h2-17-85" id="h2-17-85" class="i">+            &quot;evidence&quot;: evidence,
+</a><a href="#h2-17-86" id="h2-17-86" class="i">+            &quot;evidence_fields&quot;: [
+</a><a href="#h2-17-87" id="h2-17-87" class="i">+                label
+</a><a href="#h2-17-88" id="h2-17-88" class="i">+                for key, label in DEEPSEEK_EVIDENCE_LABELS[criterion_id].items()
+</a><a href="#h2-17-89" id="h2-17-89" class="i">+                if evidence.get(key)
+</a><a href="#h2-17-90" id="h2-17-90" class="i">+            ],
+</a><a href="#h2-17-91" id="h2-17-91" class="i">+        }, {
+</a><a href="#h2-17-92" id="h2-17-92" class="i">+            &quot;limit&quot;: (
+</a><a href="#h2-17-93" id="h2-17-93" class="i">+                None
+</a><a href="#h2-17-94" id="h2-17-94" class="i">+                if account[&quot;owner&quot;]
+</a><a href="#h2-17-95" id="h2-17-95" class="i">+                else account[&quot;deepseek_explanation_limit&quot;]
+</a><a href="#h2-17-96" id="h2-17-96" class="i">+            ),
+</a><a href="#h2-17-97" id="h2-17-97" class="i">+            &quot;used&quot;: used,
+</a><a href="#h2-17-98" id="h2-17-98" class="i">+            &quot;remaining&quot;: (
+</a><a href="#h2-17-99" id="h2-17-99" class="i">+                None
+</a><a href="#h2-17-100" id="h2-17-100" class="i">+                if account[&quot;owner&quot;]
+</a><a href="#h2-17-101" id="h2-17-101" class="i">+                else max(0, account[&quot;deepseek_explanation_limit&quot;] - used)
+</a><a href="#h2-17-102" id="h2-17-102" class="i">+            ),
+</a><a href="#h2-17-103" id="h2-17-103" class="i">+        }
+</a><a href="#h2-17-104" id="h2-17-104" class="i">+
+</a><a href="#h2-17-105" id="h2-17-105" class="i">+    def record_deepseek_usage(
+</a><a href="#h2-17-106" id="h2-17-106" class="i">+        self, account_id, project_id, criterion_id, model, input_tokens,
+</a><a href="#h2-17-107" id="h2-17-107" class="i">+        output_tokens, cache_hit_input_tokens, estimated_cost_usd, current_time=None,
+</a><a href="#h2-17-108" id="h2-17-108" class="i">+    ):
+</a><a href="#h2-17-109" id="h2-17-109" class="i">+        with self.connect() as connection:
+</a><a href="#h2-17-110" id="h2-17-110" class="i">+            connection.execute(
+</a><a href="#h2-17-111" id="h2-17-111" class="i">+                &quot;&quot;&quot;INSERT INTO deepseek_usage
+</a><a href="#h2-17-112" id="h2-17-112" class="i">+                   (account_id, project_id, criterion_id, model, input_tokens,
+</a><a href="#h2-17-113" id="h2-17-113" class="i">+                    output_tokens, cache_hit_input_tokens, estimated_cost_usd, created_at)
+</a><a href="#h2-17-114" id="h2-17-114" class="i">+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)&quot;&quot;&quot;,
+</a><a href="#h2-17-115" id="h2-17-115" class="i">+                (
+</a><a href="#h2-17-116" id="h2-17-116" class="i">+                    account_id,
+</a><a href="#h2-17-117" id="h2-17-117" class="i">+                    project_id,
+</a><a href="#h2-17-118" id="h2-17-118" class="i">+                    criterion_id,
+</a><a href="#h2-17-119" id="h2-17-119" class="i">+                    model,
+</a><a href="#h2-17-120" id="h2-17-120" class="i">+                    input_tokens,
+</a><a href="#h2-17-121" id="h2-17-121" class="i">+                    output_tokens,
+</a><a href="#h2-17-122" id="h2-17-122" class="i">+                    cache_hit_input_tokens,
+</a><a href="#h2-17-123" id="h2-17-123" class="i">+                    estimated_cost_usd,
+</a><a href="#h2-17-124" id="h2-17-124" class="i">+                    now_seconds() if current_time is None else int(current_time),
+</a><a href="#h2-17-125" id="h2-17-125" class="i">+                ),
+</a><a href="#h2-17-126" id="h2-17-126" class="i">+            )
+</a><a href="#h2-17-127" id="h2-17-127" class="i">+
+</a>     def reserve_case_analysis(
+         self, account_id, project_id, current_time=None, section=None
+     ):
+<a href="#h2-18" id="h2-18" class="h">@@ -742,7 +1025,13 @@ class Store:
+</a>             return expected_revision + 1
+ 
+     def update_account(
+<a href="#h2-18-3" id="h2-18-3" class="d">-        self, code, days=None, project_limit=None, ai_analysis_limit=None, now=None
+</a><a href="#h2-18-4" id="h2-18-4" class="i">+        self,
+</a><a href="#h2-18-5" id="h2-18-5" class="i">+        code,
+</a><a href="#h2-18-6" id="h2-18-6" class="i">+        days=None,
+</a><a href="#h2-18-7" id="h2-18-7" class="i">+        project_limit=None,
+</a><a href="#h2-18-8" id="h2-18-8" class="i">+        ai_analysis_limit=None,
+</a><a href="#h2-18-9" id="h2-18-9" class="i">+        now=None,
+</a><a href="#h2-18-10" id="h2-18-10" class="i">+        deepseek_explanation_limit=None,
+</a>     ):
+         account = self.account_by_code(code)
+         if account is None:
+<a href="#h2-19" id="h2-19" class="h">@@ -753,6 +1042,14 @@ class Store:
+</a>             raise ValueError(&quot;O limite deve estar entre 1 e 1000 projetos.&quot;)
+         if ai_analysis_limit is not None and not 0 &lt;= ai_analysis_limit &lt;= MAX_AI_ANALYSIS_LIMIT:
+             raise ValueError(f&quot;O limite de análises deve estar entre 0 e {MAX_AI_ANALYSIS_LIMIT}.&quot;)
+<a href="#h2-19-3" id="h2-19-3" class="i">+        if (
+</a><a href="#h2-19-4" id="h2-19-4" class="i">+            deepseek_explanation_limit is not None
+</a><a href="#h2-19-5" id="h2-19-5" class="i">+            and not 0 &lt;= deepseek_explanation_limit &lt;= MAX_DEEPSEEK_EXPLANATION_LIMIT
+</a><a href="#h2-19-6" id="h2-19-6" class="i">+        ):
+</a><a href="#h2-19-7" id="h2-19-7" class="i">+            raise ValueError(
+</a><a href="#h2-19-8" id="h2-19-8" class="i">+                f&quot;O limite de explicações DeepSeek deve estar entre 0 e &quot;
+</a><a href="#h2-19-9" id="h2-19-9" class="i">+                f&quot;{MAX_DEEPSEEK_EXPLANATION_LIMIT}.&quot;
+</a><a href="#h2-19-10" id="h2-19-10" class="i">+            )
+</a>         now = now_seconds() if now is None else int(now)
+         with self.connect() as connection:
+             if days is not None and account[&quot;activated_at&quot;] is None:
+<a href="#h2-20" id="h2-20" class="h">@@ -762,7 +1059,9 @@ class Store:
+</a>                 )
+             elif days is not None:
+                 connection.execute(
+<a href="#h2-20-3" id="h2-20-3" class="d">-                    &quot;UPDATE accounts SET expires_at = ?, ai_analysis_used = 0 WHERE id = ?&quot;,
+</a><a href="#h2-20-4" id="h2-20-4" class="i">+                    &quot;&quot;&quot;UPDATE accounts
+</a><a href="#h2-20-5" id="h2-20-5" class="i">+                       SET expires_at = ?, ai_analysis_used = 0,
+</a><a href="#h2-20-6" id="h2-20-6" class="i">+                           deepseek_explanation_used = 0 WHERE id = ?&quot;&quot;&quot;,
+</a>                     (now + days * 24 * 60 * 60, account[&quot;id&quot;]),
+                 )
+             if project_limit is not None:
+<a href="#h2-21" id="h2-21" class="h">@@ -775,6 +1074,11 @@ class Store:
+</a>                     &quot;UPDATE accounts SET ai_analysis_limit = ? WHERE id = ?&quot;,
+                     (ai_analysis_limit, account[&quot;id&quot;]),
+                 )
+<a href="#h2-21-3" id="h2-21-3" class="i">+            if deepseek_explanation_limit is not None:
+</a><a href="#h2-21-4" id="h2-21-4" class="i">+                connection.execute(
+</a><a href="#h2-21-5" id="h2-21-5" class="i">+                    &quot;UPDATE accounts SET deepseek_explanation_limit = ? WHERE id = ?&quot;,
+</a><a href="#h2-21-6" id="h2-21-6" class="i">+                    (deepseek_explanation_limit, account[&quot;id&quot;]),
+</a><a href="#h2-21-7" id="h2-21-7" class="i">+                )
+</a> 
+     def extend_account(self, code, days, now=None):
+         if not 1 &lt;= days &lt;= 3650:
+<a href="#h2-22" id="h2-22" class="h">@@ -792,7 +1096,8 @@ class Store:
+</a>             else:
+                 connection.execute(
+                     &quot;&quot;&quot;UPDATE accounts
+<a href="#h2-22-3" id="h2-22-3" class="d">-                       SET expires_at = MAX(expires_at, ?) + ?, ai_analysis_used = 0
+</a><a href="#h2-22-4" id="h2-22-4" class="i">+                       SET expires_at = MAX(expires_at, ?) + ?, ai_analysis_used = 0,
+</a><a href="#h2-22-5" id="h2-22-5" class="i">+                           deepseek_explanation_used = 0
+</a>                        WHERE id = ?&quot;&quot;&quot;,
+                     (now, days * 24 * 60 * 60, account[&quot;id&quot;]),
+                 )
+<a href="#h2-23" id="h2-23" class="h">@@ -833,11 +1138,20 @@ class Store:
+</a>             rows = connection.execute(
+                 &quot;&quot;&quot;SELECT accounts.id, accounts.default_days, accounts.project_limit,
+                           accounts.ai_analysis_limit, accounts.ai_analysis_used,
+<a href="#h2-23-3" id="h2-23-3" class="i">+                          accounts.deepseek_explanation_limit,
+</a><a href="#h2-23-4" id="h2-23-4" class="i">+                          accounts.deepseek_explanation_used,
+</a>                           accounts.activated_at, accounts.expires_at, accounts.revoked,
+                           accounts.owner,
+<a href="#h2-23-7" id="h2-23-7" class="d">-                          COUNT(projects.id) AS project_count
+</a><a href="#h2-23-8" id="h2-23-8" class="d">-                   FROM accounts LEFT JOIN projects ON projects.account_id = accounts.id
+</a><a href="#h2-23-9" id="h2-23-9" class="d">-                   GROUP BY accounts.id ORDER BY accounts.rowid&quot;&quot;&quot;
+</a><a href="#h2-23-10" id="h2-23-10" class="i">+                          (SELECT COUNT(*) FROM projects
+</a><a href="#h2-23-11" id="h2-23-11" class="i">+                           WHERE projects.account_id = accounts.id) AS project_count,
+</a><a href="#h2-23-12" id="h2-23-12" class="i">+                          (SELECT COUNT(*) FROM deepseek_usage
+</a><a href="#h2-23-13" id="h2-23-13" class="i">+                           WHERE deepseek_usage.account_id = accounts.id)
+</a><a href="#h2-23-14" id="h2-23-14" class="i">+                              AS deepseek_call_count,
+</a><a href="#h2-23-15" id="h2-23-15" class="i">+                          (SELECT COALESCE(SUM(estimated_cost_usd), 0)
+</a><a href="#h2-23-16" id="h2-23-16" class="i">+                           FROM deepseek_usage
+</a><a href="#h2-23-17" id="h2-23-17" class="i">+                           WHERE deepseek_usage.account_id = accounts.id)
+</a><a href="#h2-23-18" id="h2-23-18" class="i">+                              AS deepseek_estimated_cost_usd
+</a><a href="#h2-23-19" id="h2-23-19" class="i">+                   FROM accounts ORDER BY accounts.rowid&quot;&quot;&quot;
+</a>             ).fetchall()
+         return [dict(row) for row in rows]
+ 
+<a href="#h2-24" id="h2-24" class="h">@@ -875,6 +1189,167 @@ def typesafe_api_key():
+</a>     return key
+ 
+ 
+<a href="#h2-24-3" id="h2-24-3" class="i">+def deepseek_api_key():
+</a><a href="#h2-24-4" id="h2-24-4" class="i">+    key = os.environ.get(&quot;DEEPSEEK_API_KEY&quot;, &quot;&quot;).strip()
+</a><a href="#h2-24-5" id="h2-24-5" class="i">+    try:
+</a><a href="#h2-24-6" id="h2-24-6" class="i">+        if not key and DEEPSEEK_API_KEY_FILE.is_file():
+</a><a href="#h2-24-7" id="h2-24-7" class="i">+            key = DEEPSEEK_API_KEY_FILE.read_text(encoding=&quot;utf-8&quot;).strip()
+</a><a href="#h2-24-8" id="h2-24-8" class="i">+    except (OSError, UnicodeError) as error:
+</a><a href="#h2-24-9" id="h2-24-9" class="i">+        raise ApiError(
+</a><a href="#h2-24-10" id="h2-24-10" class="i">+            503,
+</a><a href="#h2-24-11" id="h2-24-11" class="i">+            &quot;deepseek_unavailable&quot;,
+</a><a href="#h2-24-12" id="h2-24-12" class="i">+            &quot;Não foi possível carregar a configuração DeepSeek do serviço.&quot;,
+</a><a href="#h2-24-13" id="h2-24-13" class="i">+        ) from error
+</a><a href="#h2-24-14" id="h2-24-14" class="i">+    if not key:
+</a><a href="#h2-24-15" id="h2-24-15" class="i">+        raise ApiError(503, &quot;deepseek_unavailable&quot;, &quot;A explicação DeepSeek não está configurada no serviço.&quot;)
+</a><a href="#h2-24-16" id="h2-24-16" class="i">+    if len(key) &gt; 4096 or &quot;\n&quot; in key or &quot;\r&quot; in key:
+</a><a href="#h2-24-17" id="h2-24-17" class="i">+        raise ApiError(503, &quot;deepseek_unavailable&quot;, &quot;A configuração DeepSeek é inválida.&quot;)
+</a><a href="#h2-24-18" id="h2-24-18" class="i">+    return key
+</a><a href="#h2-24-19" id="h2-24-19" class="i">+
+</a><a href="#h2-24-20" id="h2-24-20" class="i">+
+</a><a href="#h2-24-21" id="h2-24-21" class="i">+def call_deepseek_explanation(context, api_key):
+</a><a href="#h2-24-22" id="h2-24-22" class="i">+    system_prompt = (
+</a><a href="#h2-24-23" id="h2-24-23" class="i">+        &quot;Você explica, em português do Brasil, um resultado orientativo que o Jev &quot;
+</a><a href="#h2-24-24" id="h2-24-24" class="i">+        &quot;já produziu sobre um relatório jurídico acadêmico. A pontuação e os &quot;
+</a><a href="#h2-24-25" id="h2-24-25" class="i">+        &quot;trechos fornecidos são evidência limitada, não uma nota oficial nem &quot;
+</a><a href="#h2-24-26" id="h2-24-26" class="i">+        &quot;validação jurídica. Não redija, complete, reescreva ou corrija o trabalho; &quot;
+</a><a href="#h2-24-27" id="h2-24-27" class="i">+        &quot;não invente fontes nem faça revisão gramatical. Explique brevemente o &quot;
+</a><a href="#h2-24-28" id="h2-24-28" class="i">+        &quot;significado do resultado, relacione no máximo dois indícios enviados e &quot;
+</a><a href="#h2-24-29" id="h2-24-29" class="i">+        &quot;sugira no máximo dois próximos passos como orientação, sem fornecer texto &quot;
+</a><a href="#h2-24-30" id="h2-24-30" class="i">+        &quot;para inserir no trabalho. A resposta deve ser somente um objeto JSON com &quot;
+</a><a href="#h2-24-31" id="h2-24-31" class="i">+        &quot;exatamente estas chaves: interpretation (string curta), evidence (array &quot;
+</a><a href="#h2-24-32" id="h2-24-32" class="i">+        &quot;de até 2 objetos com field e observation), next_steps (array de até 2 &quot;
+</a><a href="#h2-24-33" id="h2-24-33" class="i">+        &quot;strings). Use em evidence.field somente um rótulo da lista &quot;
+</a><a href="#h2-24-34" id="h2-24-34" class="i">+        &quot;evidence_fields fornecida. Não inclua citações literais dos trechos.&quot;
+</a><a href="#h2-24-35" id="h2-24-35" class="i">+    )
+</a><a href="#h2-24-36" id="h2-24-36" class="i">+    request_body = json.dumps(
+</a><a href="#h2-24-37" id="h2-24-37" class="i">+        {
+</a><a href="#h2-24-38" id="h2-24-38" class="i">+            &quot;model&quot;: DEEPSEEK_MODEL,
+</a><a href="#h2-24-39" id="h2-24-39" class="i">+            &quot;messages&quot;: [
+</a><a href="#h2-24-40" id="h2-24-40" class="i">+                {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: system_prompt},
+</a><a href="#h2-24-41" id="h2-24-41" class="i">+                {
+</a><a href="#h2-24-42" id="h2-24-42" class="i">+                    &quot;role&quot;: &quot;user&quot;,
+</a><a href="#h2-24-43" id="h2-24-43" class="i">+                    &quot;content&quot;: json.dumps(context, ensure_ascii=False, separators=(&quot;,&quot;, &quot;:&quot;)),
+</a><a href="#h2-24-44" id="h2-24-44" class="i">+                },
+</a><a href="#h2-24-45" id="h2-24-45" class="i">+            ],
+</a><a href="#h2-24-46" id="h2-24-46" class="i">+            &quot;response_format&quot;: {&quot;type&quot;: &quot;json_object&quot;},
+</a><a href="#h2-24-47" id="h2-24-47" class="i">+            &quot;thinking&quot;: {&quot;type&quot;: &quot;disabled&quot;},
+</a><a href="#h2-24-48" id="h2-24-48" class="i">+            &quot;max_tokens&quot;: DEEPSEEK_MAX_OUTPUT_TOKENS,
+</a><a href="#h2-24-49" id="h2-24-49" class="i">+            &quot;stream&quot;: False,
+</a><a href="#h2-24-50" id="h2-24-50" class="i">+        },
+</a><a href="#h2-24-51" id="h2-24-51" class="i">+        ensure_ascii=False,
+</a><a href="#h2-24-52" id="h2-24-52" class="i">+        separators=(&quot;,&quot;, &quot;:&quot;),
+</a><a href="#h2-24-53" id="h2-24-53" class="i">+    ).encode(&quot;utf-8&quot;)
+</a><a href="#h2-24-54" id="h2-24-54" class="i">+    request = Request(
+</a><a href="#h2-24-55" id="h2-24-55" class="i">+        DEEPSEEK_API_URL,
+</a><a href="#h2-24-56" id="h2-24-56" class="i">+        data=request_body,
+</a><a href="#h2-24-57" id="h2-24-57" class="i">+        headers={
+</a><a href="#h2-24-58" id="h2-24-58" class="i">+            &quot;Authorization&quot;: f&quot;Bearer {api_key}&quot;,
+</a><a href="#h2-24-59" id="h2-24-59" class="i">+            &quot;Content-Type&quot;: &quot;application/json&quot;,
+</a><a href="#h2-24-60" id="h2-24-60" class="i">+        },
+</a><a href="#h2-24-61" id="h2-24-61" class="i">+        method=&quot;POST&quot;,
+</a><a href="#h2-24-62" id="h2-24-62" class="i">+    )
+</a><a href="#h2-24-63" id="h2-24-63" class="i">+    try:
+</a><a href="#h2-24-64" id="h2-24-64" class="i">+        with urlopen(request, timeout=DEEPSEEK_TIMEOUT_SECONDS) as response:
+</a><a href="#h2-24-65" id="h2-24-65" class="i">+            raw_response = response.read(DEEPSEEK_MAX_RESPONSE_BYTES + 1)
+</a><a href="#h2-24-66" id="h2-24-66" class="i">+    except HTTPError as error:
+</a><a href="#h2-24-67" id="h2-24-67" class="i">+        if error.code == 401:
+</a><a href="#h2-24-68" id="h2-24-68" class="i">+            raise ApiError(502, &quot;deepseek_provider_auth&quot;, &quot;A chave DeepSeek configurada no serviço foi recusada.&quot;) from error
+</a><a href="#h2-24-69" id="h2-24-69" class="i">+        if error.code in (429, 529):
+</a><a href="#h2-24-70" id="h2-24-70" class="i">+            raise ApiError(503, &quot;deepseek_provider_busy&quot;, &quot;O serviço DeepSeek está temporariamente ocupado. Tente novamente mais tarde.&quot;) from error
+</a><a href="#h2-24-71" id="h2-24-71" class="i">+        raise ApiError(502, &quot;deepseek_provider_error&quot;, &quot;Não foi possível obter a explicação DeepSeek.&quot;) from error
+</a><a href="#h2-24-72" id="h2-24-72" class="i">+    except (TimeoutError, URLError, OSError) as error:
+</a><a href="#h2-24-73" id="h2-24-73" class="i">+        raise ApiError(503, &quot;deepseek_provider_unreachable&quot;, &quot;Não foi possível conectar ao serviço DeepSeek. Tente novamente mais tarde.&quot;) from error
+</a><a href="#h2-24-74" id="h2-24-74" class="i">+
+</a><a href="#h2-24-75" id="h2-24-75" class="i">+    if len(raw_response) &gt; DEEPSEEK_MAX_RESPONSE_BYTES:
+</a><a href="#h2-24-76" id="h2-24-76" class="i">+        raise ApiError(502, &quot;deepseek_invalid_response&quot;, &quot;O serviço DeepSeek retornou uma resposta grande demais.&quot;)
+</a><a href="#h2-24-77" id="h2-24-77" class="i">+    try:
+</a><a href="#h2-24-78" id="h2-24-78" class="i">+        response_data = json.loads(raw_response)
+</a><a href="#h2-24-79" id="h2-24-79" class="i">+        if not isinstance(response_data, dict):
+</a><a href="#h2-24-80" id="h2-24-80" class="i">+            raise ValueError(&quot;Invalid response object&quot;)
+</a><a href="#h2-24-81" id="h2-24-81" class="i">+        choices = response_data.get(&quot;choices&quot;)
+</a><a href="#h2-24-82" id="h2-24-82" class="i">+        if (
+</a><a href="#h2-24-83" id="h2-24-83" class="i">+            not isinstance(choices, list)
+</a><a href="#h2-24-84" id="h2-24-84" class="i">+            or len(choices) != 1
+</a><a href="#h2-24-85" id="h2-24-85" class="i">+            or not isinstance(choices[0], dict)
+</a><a href="#h2-24-86" id="h2-24-86" class="i">+        ):
+</a><a href="#h2-24-87" id="h2-24-87" class="i">+            raise ValueError(&quot;Invalid choices&quot;)
+</a><a href="#h2-24-88" id="h2-24-88" class="i">+        message = choices[0].get(&quot;message&quot;)
+</a><a href="#h2-24-89" id="h2-24-89" class="i">+        if not isinstance(message, dict) or not isinstance(message.get(&quot;content&quot;), str):
+</a><a href="#h2-24-90" id="h2-24-90" class="i">+            raise ValueError(&quot;Invalid message&quot;)
+</a><a href="#h2-24-91" id="h2-24-91" class="i">+        explanation = json.loads(message[&quot;content&quot;])
+</a><a href="#h2-24-92" id="h2-24-92" class="i">+        if not isinstance(explanation, dict) or set(explanation) != {
+</a><a href="#h2-24-93" id="h2-24-93" class="i">+            &quot;interpretation&quot;,
+</a><a href="#h2-24-94" id="h2-24-94" class="i">+            &quot;evidence&quot;,
+</a><a href="#h2-24-95" id="h2-24-95" class="i">+            &quot;next_steps&quot;,
+</a><a href="#h2-24-96" id="h2-24-96" class="i">+        }:
+</a><a href="#h2-24-97" id="h2-24-97" class="i">+            raise ValueError(&quot;Invalid explanation schema&quot;)
+</a><a href="#h2-24-98" id="h2-24-98" class="i">+        interpretation = explanation[&quot;interpretation&quot;]
+</a><a href="#h2-24-99" id="h2-24-99" class="i">+        evidence = explanation[&quot;evidence&quot;]
+</a><a href="#h2-24-100" id="h2-24-100" class="i">+        next_steps = explanation[&quot;next_steps&quot;]
+</a><a href="#h2-24-101" id="h2-24-101" class="i">+        if (
+</a><a href="#h2-24-102" id="h2-24-102" class="i">+            not isinstance(interpretation, str)
+</a><a href="#h2-24-103" id="h2-24-103" class="i">+            or not interpretation.strip()
+</a><a href="#h2-24-104" id="h2-24-104" class="i">+            or len(interpretation) &gt; 900
+</a><a href="#h2-24-105" id="h2-24-105" class="i">+            or not isinstance(evidence, list)
+</a><a href="#h2-24-106" id="h2-24-106" class="i">+            or len(evidence) &gt; 2
+</a><a href="#h2-24-107" id="h2-24-107" class="i">+            or not isinstance(next_steps, list)
+</a><a href="#h2-24-108" id="h2-24-108" class="i">+            or len(next_steps) &gt; 2
+</a><a href="#h2-24-109" id="h2-24-109" class="i">+        ):
+</a><a href="#h2-24-110" id="h2-24-110" class="i">+            raise ValueError(&quot;Invalid explanation fields&quot;)
+</a><a href="#h2-24-111" id="h2-24-111" class="i">+        for item in evidence:
+</a><a href="#h2-24-112" id="h2-24-112" class="i">+            if (
+</a><a href="#h2-24-113" id="h2-24-113" class="i">+                not isinstance(item, dict)
+</a><a href="#h2-24-114" id="h2-24-114" class="i">+                or set(item) != {&quot;field&quot;, &quot;observation&quot;}
+</a><a href="#h2-24-115" id="h2-24-115" class="i">+                or not isinstance(item[&quot;field&quot;], str)
+</a><a href="#h2-24-116" id="h2-24-116" class="i">+                or not item[&quot;field&quot;].strip()
+</a><a href="#h2-24-117" id="h2-24-117" class="i">+                or len(item[&quot;field&quot;]) &gt; 100
+</a><a href="#h2-24-118" id="h2-24-118" class="i">+                or item[&quot;field&quot;] not in context.get(&quot;evidence_fields&quot;, [])
+</a><a href="#h2-24-119" id="h2-24-119" class="i">+                or not isinstance(item[&quot;observation&quot;], str)
+</a><a href="#h2-24-120" id="h2-24-120" class="i">+                or not item[&quot;observation&quot;].strip()
+</a><a href="#h2-24-121" id="h2-24-121" class="i">+                or len(item[&quot;observation&quot;]) &gt; 350
+</a><a href="#h2-24-122" id="h2-24-122" class="i">+            ):
+</a><a href="#h2-24-123" id="h2-24-123" class="i">+                raise ValueError(&quot;Invalid evidence item&quot;)
+</a><a href="#h2-24-124" id="h2-24-124" class="i">+        if any(
+</a><a href="#h2-24-125" id="h2-24-125" class="i">+            not isinstance(step, str) or not step.strip() or len(step) &gt; 250
+</a><a href="#h2-24-126" id="h2-24-126" class="i">+            for step in next_steps
+</a><a href="#h2-24-127" id="h2-24-127" class="i">+        ):
+</a><a href="#h2-24-128" id="h2-24-128" class="i">+            raise ValueError(&quot;Invalid next step&quot;)
+</a><a href="#h2-24-129" id="h2-24-129" class="i">+        usage = response_data.get(&quot;usage&quot;)
+</a><a href="#h2-24-130" id="h2-24-130" class="i">+        if not isinstance(usage, dict):
+</a><a href="#h2-24-131" id="h2-24-131" class="i">+            raise ValueError(&quot;Invalid usage&quot;)
+</a><a href="#h2-24-132" id="h2-24-132" class="i">+        input_tokens = usage[&quot;prompt_tokens&quot;]
+</a><a href="#h2-24-133" id="h2-24-133" class="i">+        output_tokens = usage[&quot;completion_tokens&quot;]
+</a><a href="#h2-24-134" id="h2-24-134" class="i">+        cache_hit_input_tokens = usage.get(&quot;prompt_cache_hit_tokens&quot;, 0)
+</a><a href="#h2-24-135" id="h2-24-135" class="i">+        if any(
+</a><a href="#h2-24-136" id="h2-24-136" class="i">+            isinstance(token_count, bool)
+</a><a href="#h2-24-137" id="h2-24-137" class="i">+            or not isinstance(token_count, int)
+</a><a href="#h2-24-138" id="h2-24-138" class="i">+            or token_count &lt; 0
+</a><a href="#h2-24-139" id="h2-24-139" class="i">+            for token_count in (input_tokens, output_tokens, cache_hit_input_tokens)
+</a><a href="#h2-24-140" id="h2-24-140" class="i">+        ) or cache_hit_input_tokens &gt; input_tokens:
+</a><a href="#h2-24-141" id="h2-24-141" class="i">+            raise ValueError(&quot;Invalid token counts&quot;)
+</a><a href="#h2-24-142" id="h2-24-142" class="i">+        model = response_data.get(&quot;model&quot;)
+</a><a href="#h2-24-143" id="h2-24-143" class="i">+        if not isinstance(model, str) or not model:
+</a><a href="#h2-24-144" id="h2-24-144" class="i">+            raise ValueError(&quot;Invalid model&quot;)
+</a><a href="#h2-24-145" id="h2-24-145" class="i">+    except (KeyError, TypeError, ValueError, OverflowError, json.JSONDecodeError) as error:
+</a><a href="#h2-24-146" id="h2-24-146" class="i">+        raise ApiError(502, &quot;deepseek_invalid_response&quot;, &quot;O serviço DeepSeek retornou uma resposta inesperada.&quot;) from error
+</a><a href="#h2-24-147" id="h2-24-147" class="i">+
+</a><a href="#h2-24-148" id="h2-24-148" class="i">+    estimated_cost = (
+</a><a href="#h2-24-149" id="h2-24-149" class="i">+        input_tokens * DEEPSEEK_PEAK_INPUT_PRICE_PER_MILLION
+</a><a href="#h2-24-150" id="h2-24-150" class="i">+        + output_tokens * DEEPSEEK_PEAK_OUTPUT_PRICE_PER_MILLION
+</a><a href="#h2-24-151" id="h2-24-151" class="i">+    ) / 1_000_000
+</a><a href="#h2-24-152" id="h2-24-152" class="i">+    return {
+</a><a href="#h2-24-153" id="h2-24-153" class="i">+        &quot;model&quot;: model,
+</a><a href="#h2-24-154" id="h2-24-154" class="i">+        &quot;interpretation&quot;: interpretation.strip(),
+</a><a href="#h2-24-155" id="h2-24-155" class="i">+        &quot;evidence&quot;: evidence,
+</a><a href="#h2-24-156" id="h2-24-156" class="i">+        &quot;next_steps&quot;: next_steps,
+</a><a href="#h2-24-157" id="h2-24-157" class="i">+        &quot;input_tokens&quot;: input_tokens,
+</a><a href="#h2-24-158" id="h2-24-158" class="i">+        &quot;output_tokens&quot;: output_tokens,
+</a><a href="#h2-24-159" id="h2-24-159" class="i">+        &quot;cache_hit_input_tokens&quot;: cache_hit_input_tokens,
+</a><a href="#h2-24-160" id="h2-24-160" class="i">+        &quot;estimated_cost_usd&quot;: round(estimated_cost, 8),
+</a><a href="#h2-24-161" id="h2-24-161" class="i">+    }
+</a><a href="#h2-24-162" id="h2-24-162" class="i">+
+</a><a href="#h2-24-163" id="h2-24-163" class="i">+
+</a> def call_jev(state, api_key, section=None):
+     if section is not None:
+         section_definition = AI_CASE_CHECKLISTS.get(section)
+<a href="#h2-25" id="h2-25" class="h">@@ -1202,6 +1677,40 @@ class Handler(BaseHTTPRequestHandler):
+</a>                 api_key = typesafe_api_key()
+                 analysis = call_jev(state, api_key, section)
+                 self._send_json(200, {&quot;analysis&quot;: analysis, &quot;usage&quot;: usage})
+<a href="#h2-25-3" id="h2-25-3" class="i">+            elif path.startswith(&quot;/api/projects/&quot;) and path.endswith(&quot;/explain-case-criterion&quot;):
+</a><a href="#h2-25-4" id="h2-25-4" class="i">+                account = self._account()
+</a><a href="#h2-25-5" id="h2-25-5" class="i">+                parts = path.split(&quot;/&quot;)
+</a><a href="#h2-25-6" id="h2-25-6" class="i">+                if len(parts) != 5 or parts[1:3] != [&quot;api&quot;, &quot;projects&quot;]:
+</a><a href="#h2-25-7" id="h2-25-7" class="i">+                    raise ApiError(404, &quot;not_found&quot;, &quot;Rota não encontrada.&quot;)
+</a><a href="#h2-25-8" id="h2-25-8" class="i">+                criterion_id = body.get(&quot;criterion&quot;)
+</a><a href="#h2-25-9" id="h2-25-9" class="i">+                if not isinstance(criterion_id, str):
+</a><a href="#h2-25-10" id="h2-25-10" class="i">+                    raise ApiError(400, &quot;invalid_criterion&quot;, &quot;Critério de case inválido.&quot;)
+</a><a href="#h2-25-11" id="h2-25-11" class="i">+                project_id = unquote(parts[3])
+</a><a href="#h2-25-12" id="h2-25-12" class="i">+                context, usage = STORE.reserve_deepseek_explanation(
+</a><a href="#h2-25-13" id="h2-25-13" class="i">+                    account[&quot;id&quot;],
+</a><a href="#h2-25-14" id="h2-25-14" class="i">+                    project_id,
+</a><a href="#h2-25-15" id="h2-25-15" class="i">+                    criterion_id,
+</a><a href="#h2-25-16" id="h2-25-16" class="i">+                    body.get(&quot;jev_result&quot;),
+</a><a href="#h2-25-17" id="h2-25-17" class="i">+                )
+</a><a href="#h2-25-18" id="h2-25-18" class="i">+                explanation = call_deepseek_explanation(context, deepseek_api_key())
+</a><a href="#h2-25-19" id="h2-25-19" class="i">+                try:
+</a><a href="#h2-25-20" id="h2-25-20" class="i">+                    STORE.record_deepseek_usage(
+</a><a href="#h2-25-21" id="h2-25-21" class="i">+                        account[&quot;id&quot;],
+</a><a href="#h2-25-22" id="h2-25-22" class="i">+                        project_id,
+</a><a href="#h2-25-23" id="h2-25-23" class="i">+                        criterion_id,
+</a><a href="#h2-25-24" id="h2-25-24" class="i">+                        explanation[&quot;model&quot;],
+</a><a href="#h2-25-25" id="h2-25-25" class="i">+                        explanation[&quot;input_tokens&quot;],
+</a><a href="#h2-25-26" id="h2-25-26" class="i">+                        explanation[&quot;output_tokens&quot;],
+</a><a href="#h2-25-27" id="h2-25-27" class="i">+                        explanation[&quot;cache_hit_input_tokens&quot;],
+</a><a href="#h2-25-28" id="h2-25-28" class="i">+                        explanation[&quot;estimated_cost_usd&quot;],
+</a><a href="#h2-25-29" id="h2-25-29" class="i">+                    )
+</a><a href="#h2-25-30" id="h2-25-30" class="i">+                except sqlite3.Error as error:
+</a><a href="#h2-25-31" id="h2-25-31" class="i">+                    raise ApiError(
+</a><a href="#h2-25-32" id="h2-25-32" class="i">+                        503,
+</a><a href="#h2-25-33" id="h2-25-33" class="i">+                        &quot;deepseek_usage_unavailable&quot;,
+</a><a href="#h2-25-34" id="h2-25-34" class="i">+                        &quot;A explicação foi processada, mas não foi possível registrar o uso agora.&quot;,
+</a><a href="#h2-25-35" id="h2-25-35" class="i">+                    ) from error
+</a><a href="#h2-25-36" id="h2-25-36" class="i">+                self._send_json(200, {&quot;explanation&quot;: explanation, &quot;usage&quot;: usage})
+</a>             else:
+                 self._send_json(404, {&quot;error&quot;: &quot;not_found&quot;, &quot;message&quot;: &quot;Rota não encontrada.&quot;})
+         except ApiError as error:
+<a href="#h2-26" id="h2-26" class="h">@@ -1287,14 +1796,23 @@ def admin_main(argv):
+</a>     issue_parser.add_argument(&quot;--days&quot;, type=int, default=7)
+     issue_parser.add_argument(&quot;--projects&quot;, type=int, default=1)
+     issue_parser.add_argument(&quot;--analyses&quot;, type=int, default=DEFAULT_AI_ANALYSIS_LIMIT)
+<a href="#h2-26-3" id="h2-26-3" class="i">+    issue_parser.add_argument(
+</a><a href="#h2-26-4" id="h2-26-4" class="i">+        &quot;--deepseek-explanations&quot;,
+</a><a href="#h2-26-5" id="h2-26-5" class="i">+        type=int,
+</a><a href="#h2-26-6" id="h2-26-6" class="i">+        default=DEFAULT_DEEPSEEK_EXPLANATION_LIMIT,
+</a><a href="#h2-26-7" id="h2-26-7" class="i">+    )
+</a> 
+     subparsers.add_parser(&quot;create-owner&quot;, help=&quot;Cria uma conta permanente sem limites no aplicativo.&quot;)
+ 
+<a href="#h2-26-11" id="h2-26-11" class="d">-    set_parser = subparsers.add_parser(&quot;set&quot;, help=&quot;Ajusta validade e/ou limite de projetos de um código.&quot;)
+</a><a href="#h2-26-12" id="h2-26-12" class="i">+    set_parser = subparsers.add_parser(
+</a><a href="#h2-26-13" id="h2-26-13" class="i">+        &quot;set&quot;,
+</a><a href="#h2-26-14" id="h2-26-14" class="i">+        help=&quot;Ajusta validade, limites de projetos e cotas de IA de um código.&quot;,
+</a><a href="#h2-26-15" id="h2-26-15" class="i">+    )
+</a>     set_parser.add_argument(&quot;code&quot;, nargs=&quot;?&quot;)
+     set_parser.add_argument(&quot;--days&quot;, type=int)
+     set_parser.add_argument(&quot;--projects&quot;, type=int)
+     set_parser.add_argument(&quot;--analyses&quot;, type=int)
+<a href="#h2-26-20" id="h2-26-20" class="i">+    set_parser.add_argument(&quot;--deepseek-explanations&quot;, type=int)
+</a> 
+     extend_parser = subparsers.add_parser(&quot;extend&quot;, help=&quot;Acrescenta dias à licença de um código.&quot;)
+     extend_parser.add_argument(&quot;days&quot;, type=int)
+<a href="#h2-27" id="h2-27" class="h">@@ -1322,7 +1840,13 @@ def admin_main(argv):
+</a> 
+     try:
+         if args.command == &quot;issue-batch&quot;:
+<a href="#h2-27-3" id="h2-27-3" class="d">-            for code in store.issue_batch(args.count, args.days, args.projects, args.analyses):
+</a><a href="#h2-27-4" id="h2-27-4" class="i">+            for code in store.issue_batch(
+</a><a href="#h2-27-5" id="h2-27-5" class="i">+                args.count,
+</a><a href="#h2-27-6" id="h2-27-6" class="i">+                args.days,
+</a><a href="#h2-27-7" id="h2-27-7" class="i">+                args.projects,
+</a><a href="#h2-27-8" id="h2-27-8" class="i">+                args.analyses,
+</a><a href="#h2-27-9" id="h2-27-9" class="i">+                args.deepseek_explanations,
+</a><a href="#h2-27-10" id="h2-27-10" class="i">+            ):
+</a>                 print(code)
+         elif args.command == &quot;create-owner&quot;:
+             code = getpass.getpass(&quot;Código do proprietário: &quot;)
+<a href="#h2-28" id="h2-28" class="h">@@ -1332,13 +1856,22 @@ def admin_main(argv):
+</a>             store.create_owner_account(code)
+             print(&quot;Conta do proprietário criada.&quot;)
+         elif args.command == &quot;set&quot;:
+<a href="#h2-28-3" id="h2-28-3" class="d">-            if args.days is None and args.projects is None and args.analyses is None:
+</a><a href="#h2-28-4" id="h2-28-4" class="d">-                parser.error(&quot;Informe --days, --projects e/ou --analyses.&quot;)
+</a><a href="#h2-28-5" id="h2-28-5" class="i">+            if (
+</a><a href="#h2-28-6" id="h2-28-6" class="i">+                args.days is None
+</a><a href="#h2-28-7" id="h2-28-7" class="i">+                and args.projects is None
+</a><a href="#h2-28-8" id="h2-28-8" class="i">+                and args.analyses is None
+</a><a href="#h2-28-9" id="h2-28-9" class="i">+                and args.deepseek_explanations is None
+</a><a href="#h2-28-10" id="h2-28-10" class="i">+            ):
+</a><a href="#h2-28-11" id="h2-28-11" class="i">+                parser.error(
+</a><a href="#h2-28-12" id="h2-28-12" class="i">+                    &quot;Informe --days, --projects, --analyses e/ou &quot;
+</a><a href="#h2-28-13" id="h2-28-13" class="i">+                    &quot;--deepseek-explanations.&quot;
+</a><a href="#h2-28-14" id="h2-28-14" class="i">+                )
+</a>             store.update_account(
+                 args.code or getpass.getpass(&quot;Código da conta: &quot;),
+<a href="#h2-28-17" id="h2-28-17" class="d">-                args.days,
+</a><a href="#h2-28-18" id="h2-28-18" class="d">-                args.projects,
+</a><a href="#h2-28-19" id="h2-28-19" class="d">-                args.analyses,
+</a><a href="#h2-28-20" id="h2-28-20" class="i">+                days=args.days,
+</a><a href="#h2-28-21" id="h2-28-21" class="i">+                project_limit=args.projects,
+</a><a href="#h2-28-22" id="h2-28-22" class="i">+                ai_analysis_limit=args.analyses,
+</a><a href="#h2-28-23" id="h2-28-23" class="i">+                deepseek_explanation_limit=args.deepseek_explanations,
+</a>             )
+         elif args.command == &quot;extend&quot;:
+             store.extend_account(args.code or getpass.getpass(&quot;Código da conta: &quot;), args.days)
+<a href="#h2-29" id="h2-29" class="h">@@ -1369,9 +1902,20 @@ def admin_main(argv):
+</a>                     if is_owner
+                     else f&#39;{account[&quot;ai_analysis_used&quot;]}/{account[&quot;ai_analysis_limit&quot;]}&#39;
+                 )
+<a href="#h2-29-3" id="h2-29-3" class="i">+                deepseek_quota = (
+</a><a href="#h2-29-4" id="h2-29-4" class="i">+                    f&#39;{account[&quot;deepseek_explanation_used&quot;]}/ilimitadas&#39;
+</a><a href="#h2-29-5" id="h2-29-5" class="i">+                    if is_owner
+</a><a href="#h2-29-6" id="h2-29-6" class="i">+                    else (
+</a><a href="#h2-29-7" id="h2-29-7" class="i">+                        f&#39;{account[&quot;deepseek_explanation_used&quot;]}/&#39;
+</a><a href="#h2-29-8" id="h2-29-8" class="i">+                        f&#39;{account[&quot;deepseek_explanation_limit&quot;]}&#39;
+</a><a href="#h2-29-9" id="h2-29-9" class="i">+                    )
+</a><a href="#h2-29-10" id="h2-29-10" class="i">+                )
+</a>                 print(
+                     f&#39;{account[&quot;id&quot;]}\t{status}\tvence={expires}\t&#39;
+<a href="#h2-29-13" id="h2-29-13" class="d">-                    f&#39;projetos={project_quota}\tjev={analysis_quota}&#39;
+</a><a href="#h2-29-14" id="h2-29-14" class="i">+                    f&#39;projetos={project_quota}\tjev={analysis_quota}\t&#39;
+</a><a href="#h2-29-15" id="h2-29-15" class="i">+                    f&#39;deepseek={deepseek_quota}\t&#39;
+</a><a href="#h2-29-16" id="h2-29-16" class="i">+                    f&#39;deepseek_chamadas={account[&quot;deepseek_call_count&quot;]}\t&#39;
+</a><a href="#h2-29-17" id="h2-29-17" class="i">+                    f&#39;deepseek_usd_estimado={account[&quot;deepseek_estimated_cost_usd&quot;]:.6f}&#39;
+</a>                 )
+     except (ValueError, sqlite3.Error) as error:
+         print(f&quot;Erro: {error}&quot;, file=sys.stderr)
+<b>diff --git a/<a id="h3" href="../file/static/css/main.css.html">static/css/main.css</a> b/<a href="../file/static/css/main.css.html">static/css/main.css</a></b>
+<a href="#h3-0" id="h3-0" class="h">@@ -1453,6 +1453,32 @@ select:disabled {
+</a>   margin: 0;
+ }
+ 
+<a href="#h3-0-3" id="h3-0-3" class="i">+.deepseek-explanation {
+</a><a href="#h3-0-4" id="h3-0-4" class="i">+  display: grid;
+</a><a href="#h3-0-5" id="h3-0-5" class="i">+  justify-items: start;
+</a><a href="#h3-0-6" id="h3-0-6" class="i">+  gap: 8px;
+</a><a href="#h3-0-7" id="h3-0-7" class="i">+}
+</a><a href="#h3-0-8" id="h3-0-8" class="i">+
+</a><a href="#h3-0-9" id="h3-0-9" class="i">+.deepseek-explanation-result {
+</a><a href="#h3-0-10" id="h3-0-10" class="i">+  display: grid;
+</a><a href="#h3-0-11" id="h3-0-11" class="i">+  gap: 7px;
+</a><a href="#h3-0-12" id="h3-0-12" class="i">+  width: 100%;
+</a><a href="#h3-0-13" id="h3-0-13" class="i">+  padding: 10px;
+</a><a href="#h3-0-14" id="h3-0-14" class="i">+  border-left: 2px solid var(--accent);
+</a><a href="#h3-0-15" id="h3-0-15" class="i">+  background: var(--paper);
+</a><a href="#h3-0-16" id="h3-0-16" class="i">+}
+</a><a href="#h3-0-17" id="h3-0-17" class="i">+
+</a><a href="#h3-0-18" id="h3-0-18" class="i">+.deepseek-explanation-result h4,
+</a><a href="#h3-0-19" id="h3-0-19" class="i">+.deepseek-explanation-result h5,
+</a><a href="#h3-0-20" id="h3-0-20" class="i">+.deepseek-explanation-result p,
+</a><a href="#h3-0-21" id="h3-0-21" class="i">+.deepseek-explanation-result ul {
+</a><a href="#h3-0-22" id="h3-0-22" class="i">+  margin: 0;
+</a><a href="#h3-0-23" id="h3-0-23" class="i">+}
+</a><a href="#h3-0-24" id="h3-0-24" class="i">+
+</a><a href="#h3-0-25" id="h3-0-25" class="i">+.deepseek-explanation-result ul {
+</a><a href="#h3-0-26" id="h3-0-26" class="i">+  padding-left: 18px;
+</a><a href="#h3-0-27" id="h3-0-27" class="i">+}
+</a><a href="#h3-0-28" id="h3-0-28" class="i">+
+</a> .ai-analysis-unassessed {
+   margin: 0;
+   padding-left: 18px;
+<b>diff --git a/<a id="h4" href="../file/tests/test_api.py.html">tests/test_api.py</a> b/<a href="../file/tests/test_api.py.html">tests/test_api.py</a></b>
+<a href="#h4-0" id="h4-0" class="h">@@ -137,6 +137,37 @@ class ApiTests(unittest.TestCase):
+</a>         }
+ 
+     @staticmethod
+<a href="#h4-0-3" id="h4-0-3" class="i">+    def deepseek_response():
+</a><a href="#h4-0-4" id="h4-0-4" class="i">+        return {
+</a><a href="#h4-0-5" id="h4-0-5" class="i">+            &quot;model&quot;: &quot;deepseek-flash-test&quot;,
+</a><a href="#h4-0-6" id="h4-0-6" class="i">+            &quot;choices&quot;: [
+</a><a href="#h4-0-7" id="h4-0-7" class="i">+                {
+</a><a href="#h4-0-8" id="h4-0-8" class="i">+                    &quot;message&quot;: {
+</a><a href="#h4-0-9" id="h4-0-9" class="i">+                        &quot;content&quot;: json.dumps(
+</a><a href="#h4-0-10" id="h4-0-10" class="i">+                            {
+</a><a href="#h4-0-11" id="h4-0-11" class="i">+                                &quot;interpretation&quot;: &quot;O resultado indica atendimento parcial, com lacunas relevantes.&quot;,
+</a><a href="#h4-0-12" id="h4-0-12" class="i">+                                &quot;evidence&quot;: [
+</a><a href="#h4-0-13" id="h4-0-13" class="i">+                                    {
+</a><a href="#h4-0-14" id="h4-0-14" class="i">+                                        &quot;field&quot;: &quot;Tese A&quot;,
+</a><a href="#h4-0-15" id="h4-0-15" class="i">+                                        &quot;observation&quot;: &quot;O argumento apresenta fundamentos, mas sua conexão com o caso pode ficar mais clara.&quot;,
+</a><a href="#h4-0-16" id="h4-0-16" class="i">+                                    }
+</a><a href="#h4-0-17" id="h4-0-17" class="i">+                                ],
+</a><a href="#h4-0-18" id="h4-0-18" class="i">+                                &quot;next_steps&quot;: [
+</a><a href="#h4-0-19" id="h4-0-19" class="i">+                                    &quot;Confira como cada fundamento se relaciona ao problema jurídico delimitado.&quot;
+</a><a href="#h4-0-20" id="h4-0-20" class="i">+                                ],
+</a><a href="#h4-0-21" id="h4-0-21" class="i">+                            }
+</a><a href="#h4-0-22" id="h4-0-22" class="i">+                        )
+</a><a href="#h4-0-23" id="h4-0-23" class="i">+                    }
+</a><a href="#h4-0-24" id="h4-0-24" class="i">+                }
+</a><a href="#h4-0-25" id="h4-0-25" class="i">+            ],
+</a><a href="#h4-0-26" id="h4-0-26" class="i">+            &quot;usage&quot;: {
+</a><a href="#h4-0-27" id="h4-0-27" class="i">+                &quot;prompt_tokens&quot;: 1200,
+</a><a href="#h4-0-28" id="h4-0-28" class="i">+                &quot;completion_tokens&quot;: 80,
+</a><a href="#h4-0-29" id="h4-0-29" class="i">+                &quot;prompt_cache_hit_tokens&quot;: 900,
+</a><a href="#h4-0-30" id="h4-0-30" class="i">+            },
+</a><a href="#h4-0-31" id="h4-0-31" class="i">+        }
+</a><a href="#h4-0-32" id="h4-0-32" class="i">+
+</a><a href="#h4-0-33" id="h4-0-33" class="i">+    @staticmethod
+</a>     def jev_section_response(section):
+         check_ids = server.AI_CASE_CHECKLISTS[section][&quot;checks&quot;]
+         if section == &quot;case_description&quot;:
+<a href="#h4-1" id="h4-1" class="h">@@ -261,23 +292,159 @@ class ApiTests(unittest.TestCase):
+</a>         self.assertNotIn(&quot;Enunciado original opcional&quot;, json.dumps(state))
+         self.assertEqual(server.STORE.account_by_code(self.code_a)[&quot;ai_analysis_used&quot;], 1)
+ 
+<a href="#h4-1-3" id="h4-1-3" class="d">-    def test_case_analysis_rejects_paper_project_without_consuming_quota(self):
+</a><a href="#h4-1-4" id="h4-1-4" class="i">+    def test_case_analysis_rejects_paper_final_on_both_jev_routes_without_quota_use(self):
+</a>         cookie, _ = self.login(self.code_a)
+         paper = project(&quot;Paper&quot;)
+         paper[&quot;projectType&quot;] = &quot;paper&quot;
+<a href="#h4-1-8" id="h4-1-8" class="i">+        paper[&quot;fields&quot;][&quot;paperKind&quot;] = &quot;final&quot;
+</a>         status, created, _ = self.request(
+             &quot;POST&quot;, &quot;/api/projects&quot;, {&quot;project&quot;: paper}, cookie
+         )
+         self.assertEqual(status, 201)
+<a href="#h4-1-13" id="h4-1-13" class="d">-        status, result, _ = self.request(
+</a><a href="#h4-1-14" id="h4-1-14" class="d">-            &quot;POST&quot;,
+</a><a href="#h4-1-15" id="h4-1-15" class="d">-            f&quot;/api/projects/{created[&#39;id&#39;]}/analyze-case-report&quot;,
+</a><a href="#h4-1-16" id="h4-1-16" class="d">-            {},
+</a><a href="#h4-1-17" id="h4-1-17" class="d">-            cookie,
+</a><a href="#h4-1-18" id="h4-1-18" class="i">+        with patch(&quot;server.call_jev&quot;) as call:
+</a><a href="#h4-1-19" id="h4-1-19" class="i">+            for endpoint, body in [
+</a><a href="#h4-1-20" id="h4-1-20" class="i">+                (&quot;analyze-case-report&quot;, {}),
+</a><a href="#h4-1-21" id="h4-1-21" class="i">+                (&quot;analyze-case-section&quot;, {&quot;section&quot;: &quot;case_description&quot;}),
+</a><a href="#h4-1-22" id="h4-1-22" class="i">+            ]:
+</a><a href="#h4-1-23" id="h4-1-23" class="i">+                with self.subTest(endpoint=endpoint):
+</a><a href="#h4-1-24" id="h4-1-24" class="i">+                    status, result, _ = self.request(
+</a><a href="#h4-1-25" id="h4-1-25" class="i">+                        &quot;POST&quot;,
+</a><a href="#h4-1-26" id="h4-1-26" class="i">+                        f&quot;/api/projects/{created[&#39;id&#39;]}/{endpoint}&quot;,
+</a><a href="#h4-1-27" id="h4-1-27" class="i">+                        body,
+</a><a href="#h4-1-28" id="h4-1-28" class="i">+                        cookie,
+</a><a href="#h4-1-29" id="h4-1-29" class="i">+                    )
+</a><a href="#h4-1-30" id="h4-1-30" class="i">+                    self.assertEqual(status, 400)
+</a><a href="#h4-1-31" id="h4-1-31" class="i">+                    self.assertEqual(result[&quot;error&quot;], &quot;case_analysis_only&quot;)
+</a><a href="#h4-1-32" id="h4-1-32" class="i">+        call.assert_not_called()
+</a><a href="#h4-1-33" id="h4-1-33" class="i">+        self.assertEqual(server.STORE.account_by_code(self.code_a)[&quot;ai_analysis_used&quot;], 0)
+</a><a href="#h4-1-34" id="h4-1-34" class="i">+
+</a><a href="#h4-1-35" id="h4-1-35" class="i">+    def test_deepseek_route_sends_only_selected_criterion_and_records_token_metadata(self):
+</a><a href="#h4-1-36" id="h4-1-36" class="i">+        server.STORE.update_account(self.code_a, deepseek_explanation_limit=1)
+</a><a href="#h4-1-37" id="h4-1-37" class="i">+        cookie, _ = self.login(self.code_a)
+</a><a href="#h4-1-38" id="h4-1-38" class="i">+        report = project(&quot;Case&quot;)
+</a><a href="#h4-1-39" id="h4-1-39" class="i">+        report[&quot;sources&quot;] = [{&quot;reference&quot;: &quot;Referência privada que não deve ser enviada&quot;}]
+</a><a href="#h4-1-40" id="h4-1-40" class="i">+        status, created, _ = self.request(
+</a><a href="#h4-1-41" id="h4-1-41" class="i">+            &quot;POST&quot;, &quot;/api/projects&quot;, {&quot;project&quot;: report}, cookie
+</a>         )
+<a href="#h4-1-43" id="h4-1-43" class="i">+        self.assertEqual(status, 201)
+</a><a href="#h4-1-44" id="h4-1-44" class="i">+        provider_response = json.dumps(self.deepseek_response()).encode()
+</a><a href="#h4-1-45" id="h4-1-45" class="i">+        with patch(&quot;server.deepseek_api_key&quot;, return_value=&quot;deepseek-test-key&quot;), patch(
+</a><a href="#h4-1-46" id="h4-1-46" class="i">+            &quot;server.urlopen&quot;, return_value=io.BytesIO(provider_response)
+</a><a href="#h4-1-47" id="h4-1-47" class="i">+        ) as request_mock:
+</a><a href="#h4-1-48" id="h4-1-48" class="i">+            status, result, _ = self.request(
+</a><a href="#h4-1-49" id="h4-1-49" class="i">+                &quot;POST&quot;,
+</a><a href="#h4-1-50" id="h4-1-50" class="i">+                f&quot;/api/projects/{created[&#39;id&#39;]}/explain-case-criterion&quot;,
+</a><a href="#h4-1-51" id="h4-1-51" class="i">+                {
+</a><a href="#h4-1-52" id="h4-1-52" class="i">+                    &quot;criterion&quot;: &quot;legal_writing_foundation&quot;,
+</a><a href="#h4-1-53" id="h4-1-53" class="i">+                    &quot;jev_result&quot;: {
+</a><a href="#h4-1-54" id="h4-1-54" class="i">+                        &quot;score&quot;: 2.25,
+</a><a href="#h4-1-55" id="h4-1-55" class="i">+                        &quot;confidence&quot;: 0.8,
+</a><a href="#h4-1-56" id="h4-1-56" class="i">+                        &quot;probabilities&quot;: [0.05, 0.15, 0.4, 0.4],
+</a><a href="#h4-1-57" id="h4-1-57" class="i">+                    },
+</a><a href="#h4-1-58" id="h4-1-58" class="i">+                    &quot;whole_report&quot;: &quot;This untrusted field must be ignored.&quot;,
+</a><a href="#h4-1-59" id="h4-1-59" class="i">+                },
+</a><a href="#h4-1-60" id="h4-1-60" class="i">+                cookie,
+</a><a href="#h4-1-61" id="h4-1-61" class="i">+            )
+</a><a href="#h4-1-62" id="h4-1-62" class="i">+        self.assertEqual(status, 200)
+</a><a href="#h4-1-63" id="h4-1-63" class="i">+        self.assertEqual(
+</a><a href="#h4-1-64" id="h4-1-64" class="i">+            result[&quot;usage&quot;], {&quot;limit&quot;: 1, &quot;used&quot;: 1, &quot;remaining&quot;: 0}
+</a><a href="#h4-1-65" id="h4-1-65" class="i">+        )
+</a><a href="#h4-1-66" id="h4-1-66" class="i">+        explanation = result[&quot;explanation&quot;]
+</a><a href="#h4-1-67" id="h4-1-67" class="i">+        self.assertEqual(explanation[&quot;input_tokens&quot;], 1200)
+</a><a href="#h4-1-68" id="h4-1-68" class="i">+        self.assertEqual(explanation[&quot;output_tokens&quot;], 80)
+</a><a href="#h4-1-69" id="h4-1-69" class="i">+        self.assertEqual(explanation[&quot;cache_hit_input_tokens&quot;], 900)
+</a><a href="#h4-1-70" id="h4-1-70" class="i">+        self.assertEqual(explanation[&quot;estimated_cost_usd&quot;], 0.000456)
+</a><a href="#h4-1-71" id="h4-1-71" class="i">+        self.assertNotIn(&quot;whole_report&quot;, explanation)
+</a><a href="#h4-1-72" id="h4-1-72" class="i">+        request = request_mock.call_args.args[0]
+</a><a href="#h4-1-73" id="h4-1-73" class="i">+        request_body = json.loads(request.data)
+</a><a href="#h4-1-74" id="h4-1-74" class="i">+        self.assertEqual(request.full_url, server.DEEPSEEK_API_URL)
+</a><a href="#h4-1-75" id="h4-1-75" class="i">+        self.assertEqual(request.get_header(&quot;Authorization&quot;), &quot;Bearer deepseek-test-key&quot;)
+</a><a href="#h4-1-76" id="h4-1-76" class="i">+        self.assertEqual(request_body[&quot;model&quot;], server.DEEPSEEK_MODEL)
+</a><a href="#h4-1-77" id="h4-1-77" class="i">+        self.assertEqual(request_body[&quot;response_format&quot;], {&quot;type&quot;: &quot;json_object&quot;})
+</a><a href="#h4-1-78" id="h4-1-78" class="i">+        self.assertEqual(request_body[&quot;max_tokens&quot;], server.DEEPSEEK_MAX_OUTPUT_TOKENS)
+</a><a href="#h4-1-79" id="h4-1-79" class="i">+        self.assertEqual(request_body[&quot;thinking&quot;], {&quot;type&quot;: &quot;disabled&quot;})
+</a><a href="#h4-1-80" id="h4-1-80" class="i">+        self.assertIn(&quot;Tese A&quot;, request_body[&quot;messages&quot;][1][&quot;content&quot;])
+</a><a href="#h4-1-81" id="h4-1-81" class="i">+        self.assertNotIn(&quot;Nome que não deve ser enviado&quot;, request.data.decode())
+</a><a href="#h4-1-82" id="h4-1-82" class="i">+        self.assertNotIn(&quot;Referência privada&quot;, request.data.decode())
+</a><a href="#h4-1-83" id="h4-1-83" class="i">+        self.assertNotIn(&quot;Enunciado original opcional&quot;, request.data.decode())
+</a><a href="#h4-1-84" id="h4-1-84" class="i">+        self.assertNotIn(&quot;whole_report&quot;, request.data.decode())
+</a><a href="#h4-1-85" id="h4-1-85" class="i">+        account = server.STORE.account_by_code(self.code_a)
+</a><a href="#h4-1-86" id="h4-1-86" class="i">+        self.assertEqual(account[&quot;deepseek_explanation_used&quot;], 1)
+</a><a href="#h4-1-87" id="h4-1-87" class="i">+        self.assertEqual(account[&quot;ai_analysis_used&quot;], 0)
+</a><a href="#h4-1-88" id="h4-1-88" class="i">+        with server.STORE.connect() as connection:
+</a><a href="#h4-1-89" id="h4-1-89" class="i">+            usage_row = connection.execute(
+</a><a href="#h4-1-90" id="h4-1-90" class="i">+                &quot;SELECT criterion_id, input_tokens, output_tokens, &quot;
+</a><a href="#h4-1-91" id="h4-1-91" class="i">+                &quot;cache_hit_input_tokens, estimated_cost_usd FROM deepseek_usage&quot;
+</a><a href="#h4-1-92" id="h4-1-92" class="i">+            ).fetchone()
+</a><a href="#h4-1-93" id="h4-1-93" class="i">+            columns = {
+</a><a href="#h4-1-94" id="h4-1-94" class="i">+                row[&quot;name&quot;] for row in connection.execute(&quot;PRAGMA table_info(deepseek_usage)&quot;)
+</a><a href="#h4-1-95" id="h4-1-95" class="i">+            }
+</a><a href="#h4-1-96" id="h4-1-96" class="i">+        self.assertEqual(
+</a><a href="#h4-1-97" id="h4-1-97" class="i">+            tuple(usage_row),
+</a><a href="#h4-1-98" id="h4-1-98" class="i">+            (&quot;legal_writing_foundation&quot;, 1200, 80, 900, 0.000456),
+</a><a href="#h4-1-99" id="h4-1-99" class="i">+        )
+</a><a href="#h4-1-100" id="h4-1-100" class="i">+        self.assertNotIn(&quot;prompt&quot;, columns)
+</a><a href="#h4-1-101" id="h4-1-101" class="i">+        self.assertNotIn(&quot;response&quot;, columns)
+</a><a href="#h4-1-102" id="h4-1-102" class="i">+
+</a><a href="#h4-1-103" id="h4-1-103" class="i">+    def test_deepseek_route_rejects_paper_final_and_exhausted_quota_without_provider_call(self):
+</a><a href="#h4-1-104" id="h4-1-104" class="i">+        server.STORE.update_account(self.code_a, deepseek_explanation_limit=0)
+</a><a href="#h4-1-105" id="h4-1-105" class="i">+        cookie, _ = self.login(self.code_a)
+</a><a href="#h4-1-106" id="h4-1-106" class="i">+        paper = project(&quot;Paper&quot;)
+</a><a href="#h4-1-107" id="h4-1-107" class="i">+        paper[&quot;projectType&quot;] = &quot;paper&quot;
+</a><a href="#h4-1-108" id="h4-1-108" class="i">+        paper[&quot;fields&quot;][&quot;paperKind&quot;] = &quot;final&quot;
+</a><a href="#h4-1-109" id="h4-1-109" class="i">+        status, created, _ = self.request(
+</a><a href="#h4-1-110" id="h4-1-110" class="i">+            &quot;POST&quot;, &quot;/api/projects&quot;, {&quot;project&quot;: paper}, cookie
+</a><a href="#h4-1-111" id="h4-1-111" class="i">+        )
+</a><a href="#h4-1-112" id="h4-1-112" class="i">+        self.assertEqual(status, 201)
+</a><a href="#h4-1-113" id="h4-1-113" class="i">+        with patch(&quot;server.call_deepseek_explanation&quot;) as call:
+</a><a href="#h4-1-114" id="h4-1-114" class="i">+            status, result, _ = self.request(
+</a><a href="#h4-1-115" id="h4-1-115" class="i">+                &quot;POST&quot;,
+</a><a href="#h4-1-116" id="h4-1-116" class="i">+                f&quot;/api/projects/{created[&#39;id&#39;]}/explain-case-criterion&quot;,
+</a><a href="#h4-1-117" id="h4-1-117" class="i">+                {
+</a><a href="#h4-1-118" id="h4-1-118" class="i">+                    &quot;criterion&quot;: &quot;case_description&quot;,
+</a><a href="#h4-1-119" id="h4-1-119" class="i">+                    &quot;jev_result&quot;: {
+</a><a href="#h4-1-120" id="h4-1-120" class="i">+                        &quot;score&quot;: 2,
+</a><a href="#h4-1-121" id="h4-1-121" class="i">+                        &quot;confidence&quot;: 0.8,
+</a><a href="#h4-1-122" id="h4-1-122" class="i">+                        &quot;probabilities&quot;: [0.05, 0.15, 0.4, 0.4],
+</a><a href="#h4-1-123" id="h4-1-123" class="i">+                    },
+</a><a href="#h4-1-124" id="h4-1-124" class="i">+                },
+</a><a href="#h4-1-125" id="h4-1-125" class="i">+                cookie,
+</a><a href="#h4-1-126" id="h4-1-126" class="i">+            )
+</a>         self.assertEqual(status, 400)
+         self.assertEqual(result[&quot;error&quot;], &quot;case_analysis_only&quot;)
+<a href="#h4-1-129" id="h4-1-129" class="d">-        self.assertEqual(server.STORE.account_by_code(self.code_a)[&quot;ai_analysis_used&quot;], 0)
+</a><a href="#h4-1-130" id="h4-1-130" class="i">+        call.assert_not_called()
+</a><a href="#h4-1-131" id="h4-1-131" class="i">+        self.assertEqual(server.STORE.account_by_code(self.code_a)[&quot;deepseek_explanation_used&quot;], 0)
+</a><a href="#h4-1-132" id="h4-1-132" class="i">+
+</a><a href="#h4-1-133" id="h4-1-133" class="i">+    def test_deepseek_client_uses_json_mode_and_rejects_unbounded_output(self):
+</a><a href="#h4-1-134" id="h4-1-134" class="i">+        provider_response = json.dumps(self.deepseek_response()).encode()
+</a><a href="#h4-1-135" id="h4-1-135" class="i">+        context = {
+</a><a href="#h4-1-136" id="h4-1-136" class="i">+            &quot;criterion&quot;: {
+</a><a href="#h4-1-137" id="h4-1-137" class="i">+                &quot;id&quot;: &quot;legal_writing_foundation&quot;,
+</a><a href="#h4-1-138" id="h4-1-138" class="i">+                &quot;title&quot;: &quot;Redação jurídica e fundamentação&quot;,
+</a><a href="#h4-1-139" id="h4-1-139" class="i">+                &quot;max_points&quot;: 2.5,
+</a><a href="#h4-1-140" id="h4-1-140" class="i">+            },
+</a><a href="#h4-1-141" id="h4-1-141" class="i">+            &quot;jev_result&quot;: {&quot;score&quot;: 2, &quot;confidence&quot;: 0.8, &quot;probabilities&quot;: [0.05, 0.15, 0.4, 0.4]},
+</a><a href="#h4-1-142" id="h4-1-142" class="i">+            &quot;evidence&quot;: {&quot;thesis_a_argument&quot;: &quot;Trecho curto&quot;},
+</a><a href="#h4-1-143" id="h4-1-143" class="i">+            &quot;evidence_fields&quot;: [&quot;Tese A&quot;],
+</a><a href="#h4-1-144" id="h4-1-144" class="i">+        }
+</a><a href="#h4-1-145" id="h4-1-145" class="i">+        with patch(&quot;server.urlopen&quot;, return_value=io.BytesIO(provider_response)) as request_mock:
+</a><a href="#h4-1-146" id="h4-1-146" class="i">+            result = server.call_deepseek_explanation(context, &quot;private-test-key&quot;)
+</a><a href="#h4-1-147" id="h4-1-147" class="i">+        self.assertEqual(result[&quot;model&quot;], &quot;deepseek-flash-test&quot;)
+</a><a href="#h4-1-148" id="h4-1-148" class="i">+        self.assertAlmostEqual(result[&quot;estimated_cost_usd&quot;], 0.000456)
+</a><a href="#h4-1-149" id="h4-1-149" class="i">+        self.assertEqual(request_mock.call_args.args[0].get_header(&quot;Authorization&quot;), &quot;Bearer private-test-key&quot;)
+</a><a href="#h4-1-150" id="h4-1-150" class="i">+
+</a><a href="#h4-1-151" id="h4-1-151" class="i">+        malformed = self.deepseek_response()
+</a><a href="#h4-1-152" id="h4-1-152" class="i">+        malformed[&quot;choices&quot;][0][&quot;message&quot;][&quot;content&quot;] = json.dumps(
+</a><a href="#h4-1-153" id="h4-1-153" class="i">+            {
+</a><a href="#h4-1-154" id="h4-1-154" class="i">+                &quot;interpretation&quot;: &quot;x&quot; * 901,
+</a><a href="#h4-1-155" id="h4-1-155" class="i">+                &quot;evidence&quot;: [],
+</a><a href="#h4-1-156" id="h4-1-156" class="i">+                &quot;next_steps&quot;: [],
+</a><a href="#h4-1-157" id="h4-1-157" class="i">+            }
+</a><a href="#h4-1-158" id="h4-1-158" class="i">+        )
+</a><a href="#h4-1-159" id="h4-1-159" class="i">+        with patch(&quot;server.urlopen&quot;, return_value=io.BytesIO(json.dumps(malformed).encode())):
+</a><a href="#h4-1-160" id="h4-1-160" class="i">+            with self.assertRaises(server.ApiError) as error:
+</a><a href="#h4-1-161" id="h4-1-161" class="i">+                server.call_deepseek_explanation(context, &quot;private-test-key&quot;)
+</a><a href="#h4-1-162" id="h4-1-162" class="i">+        self.assertEqual(error.exception.code, &quot;deepseek_invalid_response&quot;)
+</a> 
+     def test_section_checklist_analysis_uses_only_its_saved_content_and_consumes_one_unit(self):
+         cookie, _ = self.login(self.code_a)
+<a href="#h4-2" id="h4-2" class="h">@@ -408,16 +575,42 @@ class ApiTests(unittest.TestCase):
+</a>         self.assertAlmostEqual(result[&quot;expected_points&quot;], 2.36)
+         request_state = request_body[&quot;state&quot;]
+         self.assertNotIn(&quot;sources&quot;, request_state)
+<a href="#h4-2-3" id="h4-2-3" class="d">-        writing_instructions = request_body[&quot;questions&quot;][&quot;legal_writing_foundation&quot;][&quot;instructions&quot;]
+</a><a href="#h4-2-4" id="h4-2-4" class="d">-        self.assertIn(&quot;four doctrinal works overall&quot;, writing_instructions)
+</a><a href="#h4-2-5" id="h4-2-5" class="d">-        self.assertIn(&quot;two used for each thesis&quot;, writing_instructions)
+</a><a href="#h4-2-6" id="h4-2-6" class="d">-        self.assertIn(&quot;do not estimate page counts&quot;, writing_instructions)
+</a><a href="#h4-2-7" id="h4-2-7" class="d">-        self.assertIn(&quot;does not reveal pagination or formatting&quot;, writing_instructions)
+</a><a href="#h4-2-8" id="h4-2-8" class="d">-        self.assertIn(&quot;Do not assess the later individual dissertation&quot;, writing_instructions)
+</a><a href="#h4-2-9" id="h4-2-9" class="i">+        writing_instructions = request_body[&quot;questions&quot;][&quot;legal_writing_foundation&quot;][
+</a><a href="#h4-2-10" id="h4-2-10" class="i">+            &quot;instructions&quot;
+</a><a href="#h4-2-11" id="h4-2-11" class="i">+        ]
+</a><a href="#h4-2-12" id="h4-2-12" class="i">+        self.assertIn(&quot;at least three relevant works visibly used&quot;, writing_instructions)
+</a><a href="#h4-2-13" id="h4-2-13" class="i">+        self.assertIn(&quot;four works with two per thesis&quot;, writing_instructions)
+</a><a href="#h4-2-14" id="h4-2-14" class="i">+        self.assertIn(&quot;do not lower this score&quot;, writing_instructions)
+</a><a href="#h4-2-15" id="h4-2-15" class="i">+        self.assertIn(&quot;Do not infer page count or formatting&quot;, writing_instructions)
+</a><a href="#h4-2-16" id="h4-2-16" class="i">+        self.assertIn(&quot;Do not assess the later debate&quot;, writing_instructions)
+</a>         description_instructions = request_body[&quot;questions&quot;][&quot;case_description&quot;][&quot;instructions&quot;]
+         self.assertIn(&quot;open case&quot;, description_instructions)
+<a href="#h4-2-19" id="h4-2-19" class="i">+        self.assertIn(&quot;optional advice&quot;, description_instructions)
+</a>         criteria_instructions = request_body[&quot;questions&quot;][&quot;criteria_and_values&quot;][&quot;instructions&quot;]
+<a href="#h4-2-21" id="h4-2-21" class="d">-        self.assertIn(&quot;case-specific technical concepts&quot;, criteria_instructions)
+</a><a href="#h4-2-22" id="h4-2-22" class="i">+        self.assertIn(&quot;optional improvement&quot;, criteria_instructions)
+</a><a href="#h4-2-23" id="h4-2-23" class="i">+        grade_instructions = request_body[&quot;questions&quot;][&quot;grade_range&quot;][&quot;instructions&quot;]
+</a><a href="#h4-2-24" id="h4-2-24" class="i">+        self.assertIn(&quot;Follow only the official rubric&quot;, grade_instructions)
+</a><a href="#h4-2-25" id="h4-2-25" class="i">+        self.assertIn(&quot;must not draft or rewrite any part&quot;, grade_instructions)
+</a><a href="#h4-2-26" id="h4-2-26" class="i">+
+</a><a href="#h4-2-27" id="h4-2-27" class="i">+    def test_checklist_prompts_are_formative_and_separate_optional_guidance(self):
+</a><a href="#h4-2-28" id="h4-2-28" class="i">+        self.assertIn(&quot;formative self-review&quot;, server.AI_CASE_CHECKLIST_LEVELS[0])
+</a><a href="#h4-2-29" id="h4-2-29" class="i">+        integrated_sources = server.AI_CASE_CHECKLISTS[&quot;thesis_a&quot;][&quot;checks&quot;][
+</a><a href="#h4-2-30" id="h4-2-30" class="i">+            &quot;thesis-a-integrated&quot;
+</a><a href="#h4-2-31" id="h4-2-31" class="i">+        ][&quot;instructions&quot;]
+</a><a href="#h4-2-32" id="h4-2-32" class="i">+        self.assertIn(
+</a><a href="#h4-2-33" id="h4-2-33" class="i">+            &quot;cannot be checked from this single-thesis excerpt&quot;, integrated_sources
+</a><a href="#h4-2-34" id="h4-2-34" class="i">+        )
+</a><a href="#h4-2-35" id="h4-2-35" class="i">+        self.assertIn(
+</a><a href="#h4-2-36" id="h4-2-36" class="i">+            &quot;do not require a fixed number of works in this section&quot;, integrated_sources
+</a><a href="#h4-2-37" id="h4-2-37" class="i">+        )
+</a><a href="#h4-2-38" id="h4-2-38" class="i">+        self.assertIn(
+</a><a href="#h4-2-39" id="h4-2-39" class="i">+            &quot;Interweaving every source type in each paragraph is optional&quot;,
+</a><a href="#h4-2-40" id="h4-2-40" class="i">+            integrated_sources,
+</a><a href="#h4-2-41" id="h4-2-41" class="i">+        )
+</a><a href="#h4-2-42" id="h4-2-42" class="i">+        glossary = server.AI_CASE_CHECKLISTS[&quot;criteria_and_values&quot;][&quot;checks&quot;][
+</a><a href="#h4-2-43" id="h4-2-43" class="i">+            &quot;criteria-defined&quot;
+</a><a href="#h4-2-44" id="h4-2-44" class="i">+        ][&quot;instructions&quot;]
+</a><a href="#h4-2-45" id="h4-2-45" class="i">+        self.assertIn(&quot;optional unless the professor expressly requires it&quot;, glossary)
+</a> 
+     def test_jev_client_rejects_malformed_score_responses(self):
+         response = self.jev_response()
+<b>diff --git a/<a id="h5" href="../file/tests/test_server.py.html">tests/test_server.py</a> b/<a href="../file/tests/test_server.py.html">tests/test_server.py</a></b>
+<a href="#h5-0" id="h5-0" class="h">@@ -1,5 +1,6 @@
+</a> import contextlib
+ import io
+<a href="#h5-0-2" id="h5-0-2" class="i">+import json
+</a> import tempfile
+ import unittest
+ import stat
+<a href="#h5-1" id="h5-1" class="h">@@ -66,6 +67,8 @@ class StoreTests(unittest.TestCase):
+</a>         self.assertIsNone(summary[&quot;project_limit&quot;])
+         self.assertIsNone(summary[&quot;ai_analysis_limit&quot;])
+         self.assertIsNone(summary[&quot;ai_analysis_remaining&quot;])
+<a href="#h5-1-3" id="h5-1-3" class="i">+        self.assertIsNone(summary[&quot;deepseek_explanation_limit&quot;])
+</a><a href="#h5-1-4" id="h5-1-4" class="i">+        self.assertIsNone(summary[&quot;deepseek_explanation_remaining&quot;])
+</a> 
+         with self.store.connect() as connection:
+             connection.execute(
+<a href="#h5-2" id="h5-2" class="h">@@ -130,6 +133,7 @@ class StoreTests(unittest.TestCase):
+</a>         )
+         self.assertIn(&quot;projetos=ilimitados&quot;, owner_line)
+         self.assertIn(&quot;jev=0/ilimitadas&quot;, owner_line)
+<a href="#h5-2-3" id="h5-2-3" class="i">+        self.assertIn(&quot;deepseek=0/ilimitadas&quot;, owner_line)
+</a> 
+     def test_initial_batch_can_issue_one_hundred_seven_day_single_project_codes(self):
+         codes = self.store.issue_batch(100, days=7, project_limit=1)
+<a href="#h5-3" id="h5-3" class="h">@@ -139,6 +143,12 @@ class StoreTests(unittest.TestCase):
+</a>         self.assertTrue(all(self.store.account_by_code(code)[&quot;default_days&quot;] == 7 for code in codes))
+         self.assertTrue(all(self.store.account_by_code(code)[&quot;project_limit&quot;] == 1 for code in codes))
+         self.assertTrue(all(self.store.account_by_code(code)[&quot;ai_analysis_limit&quot;] == 5 for code in codes))
+<a href="#h5-3-3" id="h5-3-3" class="i">+        self.assertTrue(
+</a><a href="#h5-3-4" id="h5-3-4" class="i">+            all(
+</a><a href="#h5-3-5" id="h5-3-5" class="i">+                self.store.account_by_code(code)[&quot;deepseek_explanation_limit&quot;] == 0
+</a><a href="#h5-3-6" id="h5-3-6" class="i">+                for code in codes
+</a><a href="#h5-3-7" id="h5-3-7" class="i">+            )
+</a><a href="#h5-3-8" id="h5-3-8" class="i">+        )
+</a> 
+     def test_analysis_quota_is_atomic_and_resets_when_license_is_renewed(self):
+         start = 1_800_000_000
+<a href="#h5-4" id="h5-4" class="h">@@ -157,6 +167,80 @@ class StoreTests(unittest.TestCase):
+</a>         renewed = self.store.account_by_code(self.first_code)
+         self.assertEqual(renewed[&quot;ai_analysis_used&quot;], 0)
+ 
+<a href="#h5-4-3" id="h5-4-3" class="i">+    def test_deepseek_explanation_quota_is_independent_and_resets_on_renewal(self):
+</a><a href="#h5-4-4" id="h5-4-4" class="i">+        start = 1_800_000_000
+</a><a href="#h5-4-5" id="h5-4-5" class="i">+        self.store.update_account(self.first_code, deepseek_explanation_limit=1)
+</a><a href="#h5-4-6" id="h5-4-6" class="i">+        account = self.store.activate_code(self.first_code, start)
+</a><a href="#h5-4-7" id="h5-4-7" class="i">+        case = project()
+</a><a href="#h5-4-8" id="h5-4-8" class="i">+        case[&quot;sources&quot;] = [{&quot;reference&quot;: &quot;PRIVATE SOURCE LIST&quot;}]
+</a><a href="#h5-4-9" id="h5-4-9" class="i">+        case[&quot;criteria&quot;] = [
+</a><a href="#h5-4-10" id="h5-4-10" class="i">+            {
+</a><a href="#h5-4-11" id="h5-4-11" class="i">+                &quot;term&quot;: &quot;Proporcionalidade&quot;,
+</a><a href="#h5-4-12" id="h5-4-12" class="i">+                &quot;definition&quot;: &quot;Adequação, necessidade e proporcionalidade estrita.&quot;,
+</a><a href="#h5-4-13" id="h5-4-13" class="i">+                &quot;basis&quot;: &quot;Base conceitual.&quot;,
+</a><a href="#h5-4-14" id="h5-4-14" class="i">+            }
+</a><a href="#h5-4-15" id="h5-4-15" class="i">+        ]
+</a><a href="#h5-4-16" id="h5-4-16" class="i">+        project_id = self.store.create_project(account, case, start + 1)
+</a><a href="#h5-4-17" id="h5-4-17" class="i">+        context, usage = self.store.reserve_deepseek_explanation(
+</a><a href="#h5-4-18" id="h5-4-18" class="i">+            account[&quot;id&quot;],
+</a><a href="#h5-4-19" id="h5-4-19" class="i">+            project_id,
+</a><a href="#h5-4-20" id="h5-4-20" class="i">+            &quot;legal_writing_foundation&quot;,
+</a><a href="#h5-4-21" id="h5-4-21" class="i">+            {&quot;score&quot;: 2.25, &quot;confidence&quot;: 0.8, &quot;probabilities&quot;: [0.05, 0.15, 0.4, 0.4]},
+</a><a href="#h5-4-22" id="h5-4-22" class="i">+            start + 2,
+</a><a href="#h5-4-23" id="h5-4-23" class="i">+        )
+</a><a href="#h5-4-24" id="h5-4-24" class="i">+        serialized = json.dumps(context, ensure_ascii=False)
+</a><a href="#h5-4-25" id="h5-4-25" class="i">+        self.assertEqual(usage, {&quot;limit&quot;: 1, &quot;used&quot;: 1, &quot;remaining&quot;: 0})
+</a><a href="#h5-4-26" id="h5-4-26" class="i">+        self.assertIn(&quot;Argumentação da tese A&quot;, serialized)
+</a><a href="#h5-4-27" id="h5-4-27" class="i">+        self.assertNotIn(&quot;Nome que não deve ser enviado&quot;, serialized)
+</a><a href="#h5-4-28" id="h5-4-28" class="i">+        self.assertNotIn(&quot;PRIVATE SOURCE LIST&quot;, serialized)
+</a><a href="#h5-4-29" id="h5-4-29" class="i">+        self.assertNotIn(&quot;Proporcionalidade&quot;, serialized)
+</a><a href="#h5-4-30" id="h5-4-30" class="i">+        with self.assertRaises(ApiError) as quota_error:
+</a><a href="#h5-4-31" id="h5-4-31" class="i">+            self.store.reserve_deepseek_explanation(
+</a><a href="#h5-4-32" id="h5-4-32" class="i">+                account[&quot;id&quot;],
+</a><a href="#h5-4-33" id="h5-4-33" class="i">+                project_id,
+</a><a href="#h5-4-34" id="h5-4-34" class="i">+                &quot;legal_writing_foundation&quot;,
+</a><a href="#h5-4-35" id="h5-4-35" class="i">+                {&quot;score&quot;: 2, &quot;confidence&quot;: 0.8, &quot;probabilities&quot;: [0.05, 0.15, 0.4, 0.4]},
+</a><a href="#h5-4-36" id="h5-4-36" class="i">+                start + 3,
+</a><a href="#h5-4-37" id="h5-4-37" class="i">+            )
+</a><a href="#h5-4-38" id="h5-4-38" class="i">+        self.assertEqual(quota_error.exception.code, &quot;deepseek_quota_exhausted&quot;)
+</a><a href="#h5-4-39" id="h5-4-39" class="i">+        current = self.store.account_by_code(self.first_code)
+</a><a href="#h5-4-40" id="h5-4-40" class="i">+        self.assertEqual(current[&quot;ai_analysis_used&quot;], 0)
+</a><a href="#h5-4-41" id="h5-4-41" class="i">+        self.assertEqual(current[&quot;deepseek_explanation_used&quot;], 1)
+</a><a href="#h5-4-42" id="h5-4-42" class="i">+
+</a><a href="#h5-4-43" id="h5-4-43" class="i">+        self.store.extend_account(self.first_code, 7, start + 4)
+</a><a href="#h5-4-44" id="h5-4-44" class="i">+        renewed = self.store.account_by_code(self.first_code)
+</a><a href="#h5-4-45" id="h5-4-45" class="i">+        self.assertEqual(renewed[&quot;deepseek_explanation_used&quot;], 0)
+</a><a href="#h5-4-46" id="h5-4-46" class="i">+
+</a><a href="#h5-4-47" id="h5-4-47" class="i">+    def test_deepseek_explanation_rejects_papers_and_invalid_jev_results_without_quota(self):
+</a><a href="#h5-4-48" id="h5-4-48" class="i">+        self.store.update_account(self.first_code, project_limit=2)
+</a><a href="#h5-4-49" id="h5-4-49" class="i">+        account = self.store.activate_code(self.first_code, 1_800_000_000)
+</a><a href="#h5-4-50" id="h5-4-50" class="i">+        paper_id = self.store.create_project(
+</a><a href="#h5-4-51" id="h5-4-51" class="i">+            account, project(&quot;Paper&quot;, &quot;paper&quot;), 1_800_000_001
+</a><a href="#h5-4-52" id="h5-4-52" class="i">+        )
+</a><a href="#h5-4-53" id="h5-4-53" class="i">+        with self.assertRaises(ApiError) as paper_error:
+</a><a href="#h5-4-54" id="h5-4-54" class="i">+            self.store.reserve_deepseek_explanation(
+</a><a href="#h5-4-55" id="h5-4-55" class="i">+                account[&quot;id&quot;],
+</a><a href="#h5-4-56" id="h5-4-56" class="i">+                paper_id,
+</a><a href="#h5-4-57" id="h5-4-57" class="i">+                &quot;case_description&quot;,
+</a><a href="#h5-4-58" id="h5-4-58" class="i">+                {&quot;score&quot;: 2, &quot;confidence&quot;: 0.8, &quot;probabilities&quot;: [0.05, 0.15, 0.4, 0.4]},
+</a><a href="#h5-4-59" id="h5-4-59" class="i">+                1_800_000_002,
+</a><a href="#h5-4-60" id="h5-4-60" class="i">+            )
+</a><a href="#h5-4-61" id="h5-4-61" class="i">+        self.assertEqual(paper_error.exception.code, &quot;case_analysis_only&quot;)
+</a><a href="#h5-4-62" id="h5-4-62" class="i">+        case_id = self.store.create_project(
+</a><a href="#h5-4-63" id="h5-4-63" class="i">+            account, project(&quot;Case&quot;), 1_800_000_003
+</a><a href="#h5-4-64" id="h5-4-64" class="i">+        )
+</a><a href="#h5-4-65" id="h5-4-65" class="i">+        with self.assertRaises(ApiError) as result_error:
+</a><a href="#h5-4-66" id="h5-4-66" class="i">+            self.store.reserve_deepseek_explanation(
+</a><a href="#h5-4-67" id="h5-4-67" class="i">+                account[&quot;id&quot;],
+</a><a href="#h5-4-68" id="h5-4-68" class="i">+                case_id,
+</a><a href="#h5-4-69" id="h5-4-69" class="i">+                &quot;case_description&quot;,
+</a><a href="#h5-4-70" id="h5-4-70" class="i">+                {&quot;score&quot;: float(&quot;nan&quot;), &quot;confidence&quot;: 0.8, &quot;probabilities&quot;: [0.05, 0.15, 0.4, 0.4]},
+</a><a href="#h5-4-71" id="h5-4-71" class="i">+                1_800_000_004,
+</a><a href="#h5-4-72" id="h5-4-72" class="i">+            )
+</a><a href="#h5-4-73" id="h5-4-73" class="i">+        self.assertEqual(result_error.exception.code, &quot;invalid_jev_result&quot;)
+</a><a href="#h5-4-74" id="h5-4-74" class="i">+        stored = self.store.account_by_code(self.first_code)
+</a><a href="#h5-4-75" id="h5-4-75" class="i">+        self.assertEqual(stored[&quot;deepseek_explanation_used&quot;], 0)
+</a><a href="#h5-4-76" id="h5-4-76" class="i">+
+</a>     def test_case_analysis_sends_only_report_content_not_identity_or_reference_list(self):
+         account = self.store.activate_code(self.first_code, 1_800_000_000)
+         case = project()
+</pre>
+</div>
+</body>
+</html>

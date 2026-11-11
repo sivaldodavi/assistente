@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+<title>assistente-academico, branch HEAD</title>
+<subtitle>Repositório assistente-academico
+</subtitle>
+<entry>
+<id>613ca971e7a7983efd9f32eb3f9e3907b6120847</id>
+<published>2026-10-20T12:23:19Z</published>
+<updated>2026-10-20T12:23:19Z</updated>
+<title type="text">feat(assistente): amplia assistência contextual e exportação</title>
+<link rel="alternate" type="text/html" href="commit/613ca971e7a7983efd9f32eb3f9e3907b6120847.html" />
+<author>
+<name>Sivaldo Davi </name>
+<email>sivaldo@sivaldodavi</email>
+</author>
+<content type="text">commit 613ca971e7a7983efd9f32eb3f9e3907b6120847
+parent 12beb21ccd2e4623d7db2c198be493c31e8f9e44
+Author: Sivaldo Davi  &lt;sivaldo@sivaldodavi&gt;
+Date:   Tue, 20 Oct 2026 09:23:19 -0300
+
+feat(assistente): amplia assistência contextual e exportação
+
+Co-authored-by: Copilot &lt;223556219+Copilot@users.noreply.github.com&gt;
+
+</content>
+</entry>
+<entry>
+<id>12beb21ccd2e4623d7db2c198be493c31e8f9e44</id>
+<published>2026-10-18T15:28:30Z</published>
+<updated>2026-10-18T15:28:30Z</updated>
+<title type="text">feat(ajuda): simplifica explicações e centraliza informações</title>
+<link rel="alternate" type="text/html" href="commit/12beb21ccd2e4623d7db2c198be493c31e8f9e44.html" />
+<author>
+<name>Sivaldo Davi </name>
+<email>sivaldo@sivaldodavi</email>
+</author>
+<content type="text">commit 12beb21ccd2e4623d7db2c198be493c31e8f9e44
+parent 0eb23aa4a30f508e96002eb09da92c4906eff006
+Author: Sivaldo Davi  &lt;sivaldo@sivaldodavi&gt;
+Date:   Sun, 18 Oct 2026 12:28:30 -0300
+
+feat(ajuda): simplifica explicações e centraliza informações
+
+Co-authored-by: Copilot &lt;223556219+Copilot@users.noreply.github.com&gt;
+
+</content>
+</entry>
+<entry>
+<id>0eb23aa4a30f508e96002eb09da92c4906eff006</id>
+<published>2026-10-18T15:20:24Z</published>
+<updated>2026-10-18T15:20:24Z</updated>
+<title type="text">feat(deepseek): habilita cinco explicações por licença</title>
+<link rel="alternate" type="text/html" href="commit/0eb23aa4a30f508e96002eb09da92c4906eff006.html" />
+<author>
+<name>Sivaldo Davi </name>
+<email>sivaldo@sivaldodavi</email>
+</author>
+<content type="text">commit 0eb23aa4a30f508e96002eb09da92c4906eff006
+parent 6dd6a73471802035a6a387f5f02de2a12c9fab7c
+Author: Sivaldo Davi  &lt;sivaldo@sivaldodavi&gt;
+Date:   Sun, 18 Oct 2026 12:20:24 -0300
+
+feat(deepseek): habilita cinco explicações por licença
+
+Alinha a cota DeepSeek regular à cota Jev e orienta o uso sequencial na etapa de revisão.
+
+Co-authored-by: Copilot &lt;223556219+Copilot@users.noreply.github.com&gt;
+
+</content>
+</entry>
+<entry>
+<id>6dd6a73471802035a6a387f5f02de2a12c9fab7c</id>
+<published>2026-10-18T15:15:51Z</published>
+<updated>2026-10-18T15:15:51Z</updated>
+<title type="text">fix(deepseek): informa bloqueio por falta de saldo</title>
+<link rel="alternate" type="text/html" href="commit/6dd6a73471802035a6a387f5f02de2a12c9fab7c.html" />
+<author>
+<name>Sivaldo Davi </name>
+<email>sivaldo@sivaldodavi</email>
+</author>
+<content type="text">commit 6dd6a73471802035a6a387f5f02de2a12c9fab7c
+parent 11384a7f5e84ed865abf6964de548970009ea798
+Author: Sivaldo Davi  &lt;sivaldo@sivaldodavi&gt;
+Date:   Sun, 18 Oct 2026 12:15:51 -0300
+
+fix(deepseek): informa bloqueio por falta de saldo
+
+Traduz a resposta HTTP 402 do provedor em uma mensagem acionável para o usuário.
+
+Co-authored-by: Copilot &lt;223556219+Copilot@users.noreply.github.com&gt;
+
+</content>
+</entry>
+<entry>
+<id>11384a7f5e84ed865abf6964de548970009ea798</id>
+<published>2026-10-18T15:13:58Z</published>
+<updated>2026-10-18T15:13:58Z</updated>
+<title type="text">feat(deepseek): integra explicações opcionais do Jev</title>
+<link rel="alternate" type="text/html" href="commit/11384a7f5e84ed865abf6964de548970009ea798.html" />
+<author>
+<name>Sivaldo Davi </name>
+<email>sivaldo@sivaldodavi</email>
+</author>
+<content type="text">commit 11384a7f5e84ed865abf6964de548970009ea798
+parent 6a29bccfd79314ad57450fb201d4fd0b9f4a82b4
+Author: Sivaldo Davi  &lt;sivaldo@sivaldodavi&gt;
+Date:   Sun, 18 Oct 2026 12:13:58 -0300
+
+feat(deepseek): integra explicações opcionais do Jev
+
+Adiciona explicações curtas por critério, cota independente, registro de tokens e custos estimados; mantém desativação para contas comuns até aprovação da cota.
+
+Co-authored-by: Copilot &lt;223556219+Copilot@users.noreply.github.com&gt;
+
+</content>
+</entry>
+<entry>
+<id>6a29bccfd79314ad57450fb201d4fd0b9f4a82b4</id>
+<published>2026-10-18T02:09:07Z</published>
+<updated>2026-10-18T02:09:07Z</updated>
+<title type="text">fix(navegacao): restaura telas com historico do navegador</title>
+<link rel="alternate" type="text/html" href="commit/6a29bccfd79314ad57450fb201d4fd0b9f4a82b4.html" />
+<author>
+<name>Sivaldo Davi </name>
+<email>sivaldo@sivaldodavi</email>
+</author>
+<content type="text">commit 6a29bccfd79314ad57450fb201d4fd0b9f4a82b4
+parent 5235c33ffde9d02a07b712f977403f34696ed2e2
+Author: Sivaldo Davi  &lt;sivaldo@sivaldodavi&gt;
+Date:   Sat, 17 Oct 2026 23:09:07 -0300
+
+fix(navegacao): restaura telas com historico do navegador
+
+Co-authored-by: Copilot &lt;223556219+Copilot@users.noreply.github.com&gt;
+
+</content>
+</entry>
+<entry>
+<id>5235c33ffde9d02a07b712f977403f34696ed2e2</id>
+<published>2026-10-18T02:01:01Z</published>
+<updated>2026-10-18T02:01:01Z</updated>
+<title type="text">fix(modelo): corrige disciplina de direito da personalidade</title>
+<link rel="alternate" type="text/html" href="commit/5235c33ffde9d02a07b712f977403f34696ed2e2.html" />
+<author>
+<name>Sivaldo Davi </name>
+<email>sivaldo@sivaldodavi</email>
+</author>
+<content type="text">commit 5235c33ffde9d02a07b712f977403f34696ed2e2
+parent d489e7384199106349f76468952454bef52c688a
+Author: Sivaldo Davi  &lt;sivaldo@sivaldodavi&gt;
+Date:   Sat, 17 Oct 2026 23:01:01 -0300
+
+fix(modelo): corrige disciplina de direito da personalidade
+
+Atualiza a disciplina para Direito Civil I na capa e nos dados do projeto de exemplo.
+
+Co-authored-by: Copilot &lt;223556219+Copilot@users.noreply.github.com&gt;
+
+</content>
+</entry>
+<entry>
+<id>d489e7384199106349f76468952454bef52c688a</id>
+<published>2026-10-18T01:57:22Z</published>
+<updated>2026-10-18T01:57:22Z</updated>
+<title type="text">feat(jev): alinha análises ao guia de cases</title>
+<link rel="alternate" type="text/html" href="commit/d489e7384199106349f76468952454bef52c688a.html" />
+<author>
+<name>Sivaldo Davi </name>
+<email>sivaldo@sivaldodavi</email>
+</author>
+<content type="text">commit d489e7384199106349f76468952454bef52c688a
+parent 2e4b565a0108b0d1f6157192612f9d3ab60634fd
+Author: Sivaldo Davi  &lt;sivaldo@sivaldodavi&gt;
+Date:   Sat, 17 Oct 2026 22:57:22 -0300
+
+feat(jev): alinha análises ao guia de cases
+
+Aprimora a rubrica geral e as avaliações por etapa com os critérios de redação, fundamentação, neutralidade e glossário do guia. Explicita limites sobre fontes, biblioteca e paginação.
+
+Co-authored-by: Copilot &lt;223556219+Copilot@users.noreply.github.com&gt;
+
+</content>
+</entry>
+<entry>
+<id>2e4b565a0108b0d1f6157192612f9d3ab60634fd</id>
+<published>2026-10-18T01:37:50Z</published>
+<updated>2026-10-18T01:37:50Z</updated>
+<title type="text">feat(contas): adiciona acesso permanente do proprietário</title>
+<link rel="alternate" type="text/html" href="commit/2e4b565a0108b0d1f6157192612f9d3ab60634fd.html" />
+<author>
+<name>Sivaldo Davi </name>
+<email>sivaldo@sivaldodavi</email>
+</author>
+<content type="text">commit 2e4b565a0108b0d1f6157192612f9d3ab60634fd
+parent e1a27c25a3f4e33213950d93c98deff4fbd69a02
+Author: Sivaldo Davi  &lt;sivaldo@sivaldodavi&gt;
+Date:   Sat, 17 Oct 2026 22:37:50 -0300
+
+feat(contas): adiciona acesso permanente do proprietário
+
+Permite códigos personalizados para uma conta sem expiração ou limites internos. Inclui criação administrativa com confirmação oculta, indicação das cotas ilimitadas e testes do fluxo.
+
+Co-authored-by: Copilot &lt;223556219+Copilot@users.noreply.github.com&gt;
+
+</content>
+</entry>
+<entry>
+<id>e1a27c25a3f4e33213950d93c98deff4fbd69a02</id>
+<published>2026-10-18T01:02:15Z</published>
+<updated>2026-10-18T01:02:15Z</updated>
+<title type="text">feat(jev): avalia checklists por etapa</title>
+<link rel="alternate" type="text/html" href="commit/e1a27c25a3f4e33213950d93c98deff4fbd69a02.html" />
+<author>
+<name>Sivaldo Davi </name>
+<email>sivaldo@sivaldodavi</email>
+</author>
+<content type="text">commit e1a27c25a3f4e33213950d93c98deff4fbd69a02
+parent 533a24f684cd0c034d13275769f6badfa370b62b
+Author: Sivaldo Davi  &lt;sivaldo@sivaldodavi&gt;
+Date:   Sat, 17 Oct 2026 22:02:15 -0300
+
+feat(jev): avalia checklists por etapa
+
+Adiciona análises orientativas por checklist, preservando a autoavaliação manual e a cota compartilhada de cinco chamadas. Compara a narrativa ao enunciado somente quando fornecido e limita cada envio ao conteúdo da etapa.
+
+Co-authored-by: Copilot &lt;223556219+Copilot@users.noreply.github.com&gt;
+
+</content>
+</entry>
+<entry>
+<id>533a24f684cd0c034d13275769f6badfa370b62b</id>
+<published>2026-10-17T22:40:23Z</published>
+<updated>2026-10-17T22:40:23Z</updated>
+<title type="text">feat(contas): adiciona acesso por código e salvamento remoto</title>
+<link rel="alternate" type="text/html" href="commit/533a24f684cd0c034d13275769f6badfa370b62b.html" />
+<author>
+<name>Sivaldo Davi </name>
+<email>sivaldo@sivaldodavi</email>
+</author>
+<content type="text">commit 533a24f684cd0c034d13275769f6badfa370b62b
+parent f4c6136cf8e2b42eb97a6d51de1c587d369b0b22
+Author: Sivaldo Davi  &lt;sivaldo@sivaldodavi&gt;
+Date:   Sat, 17 Oct 2026 19:40:23 -0300
+
+feat(contas): adiciona acesso por código e salvamento remoto
+
+Co-authored-by: Copilot &lt;223556219+Copilot@users.noreply.github.com&gt;
+
+</content>
+</entry>
+<entry>
+<id>f4c6136cf8e2b42eb97a6d51de1c587d369b0b22</id>
+<published>2026-10-17T19:56:46Z</published>
+<updated>2026-10-17T19:56:46Z</updated>
+<title type="text">feat(app): refatora modelo de projeto e adiciona fluxos de paper</title>
+<link rel="alternate" type="text/html" href="commit/f4c6136cf8e2b42eb97a6d51de1c587d369b0b22.html" />
+<author>
+<name>Sivaldo Davi </name>
+<email>sivaldo@sivaldodavi</email>
+</author>
+<content type="text">commit f4c6136cf8e2b42eb97a6d51de1c587d369b0b22
+parent b2f4c4e57ae4cb9a7e194effd03734054ee9e0ff
+Author: Sivaldo Davi  &lt;sivaldo@sivaldodavi&gt;
+Date:   Sat, 17 Oct 2026 16:56:46 -0300
+
+feat(app): refatora modelo de projeto e adiciona fluxos de paper
+
+Co-authored-by: Copilot &lt;223556219+Copilot@users.noreply.github.com&gt;
+
+</content>
+</entry>
+<entry>
+<id>b2f4c4e57ae4cb9a7e194effd03734054ee9e0ff</id>
+<published>2026-10-17T19:56:46Z</published>
+<updated>2026-10-17T19:56:46Z</updated>
+<title type="text">docs: atualiza descrição do escopo e do site</title>
+<link rel="alternate" type="text/html" href="commit/b2f4c4e57ae4cb9a7e194effd03734054ee9e0ff.html" />
+<author>
+<name>Sivaldo Davi </name>
+<email>sivaldo@sivaldodavi</email>
+</author>
+<content type="text">commit b2f4c4e57ae4cb9a7e194effd03734054ee9e0ff
+parent bf2f61c15f804f75adcd82752cffe4883da67698
+Author: Sivaldo Davi  &lt;sivaldo@sivaldodavi&gt;
+Date:   Sat, 17 Oct 2026 16:56:46 -0300
+
+docs: atualiza descrição do escopo e do site
+
+Co-authored-by: Copilot &lt;223556219+Copilot@users.noreply.github.com&gt;
+
+</content>
+</entry>
+<entry>
+<id>bf2f61c15f804f75adcd82752cffe4883da67698</id>
+<published>2026-10-17T13:26:59Z</published>
+<updated>2026-10-17T13:26:59Z</updated>
+<title type="text">feat(case): dedica main ao fluxo de cases</title>
+<link rel="alternate" type="text/html" href="commit/bf2f61c15f804f75adcd82752cffe4883da67698.html" />
+<author>
+<name>Sivaldo Davi </name>
+<email>sivaldo@sivaldodavi</email>
+</author>
+<content type="text">commit bf2f61c15f804f75adcd82752cffe4883da67698
+parent 0238d271e8988a5988d6c8b341e67d208c3e5c10
+Author: Sivaldo Davi  &lt;sivaldo@sivaldodavi&gt;
+Date:   Sat, 17 Oct 2026 10:26:59 -0300
+
+feat(case): dedica main ao fluxo de cases
+
+Co-authored-by: Copilot &lt;223556219+Copilot@users.noreply.github.com&gt;
+
+</content>
+</entry>
+<entry>
+<id>0238d271e8988a5988d6c8b341e67d208c3e5c10</id>
+<published>2026-10-17T13:24:48Z</published>
+<updated>2026-10-17T13:24:48Z</updated>
+<title type="text">chore: registra estado atual do assistente</title>
+<link rel="alternate" type="text/html" href="commit/0238d271e8988a5988d6c8b341e67d208c3e5c10.html" />
+<author>
+<name>Sivaldo Davi </name>
+<email>sivaldo@sivaldodavi</email>
+</author>
+<content type="text">commit 0238d271e8988a5988d6c8b341e67d208c3e5c10
+Author: Sivaldo Davi  &lt;sivaldo@sivaldodavi&gt;
+Date:   Sat, 17 Oct 2026 10:24:48 -0300
+
+chore: registra estado atual do assistente
+
+Co-authored-by: Copilot &lt;223556219+Copilot@users.noreply.github.com&gt;
+
+</content>
+</entry>
+</feed>

@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ai.py - assistente-academico - Assistente Acadêmico v2
+</title>
+<link rel="icon" type="image/png" href="../../../favicon.png" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed" href="../../../atom.xml" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed (tags)" href="../../../tags.xml" />
+<link rel="stylesheet" type="text/css" href="../../../style.css" />
+</head>
+<body>
+<table><tr><td><a href="../../../../"><img src="../../../logo.png" alt="" width="32" height="32" /></a></td><td><h1>assistente-academico</h1><span class="desc">Assistente Acadêmico v2
+</span></td></tr><tr class="url"><td></td><td>git clone <a href="git://git.sivaldodavi.com.br/assistente-academico.git">git://git.sivaldodavi.com.br/assistente-academico.git</a></td></tr><tr><td></td><td>
+<a href="../../../log.html">Log</a> | <a href="../../../files.html">Files</a> | <a href="../../../refs.html">Refs</a> | <a href="../../../file/README.md.html">README</a></td></tr></table>
+<hr/>
+<div id="content">
+<p> ai.py (23581B)</p><hr/><pre id="blob">
+<a href="#l1" class="line" id="l1">      1</a> import os
+<a href="#l2" class="line" id="l2">      2</a> from uuid import uuid4
+<a href="#l3" class="line" id="l3">      3</a> 
+<a href="#l4" class="line" id="l4">      4</a> from flask import Blueprint, abort, jsonify, request
+<a href="#l5" class="line" id="l5">      5</a> 
+<a href="#l6" class="line" id="l6">      6</a> from ..auth import current_account_id, login_required, require_csrf
+<a href="#l7" class="line" id="l7">      7</a> from ..domain.case_rubric import AI_CASE_CHECKLISTS
+<a href="#l8" class="line" id="l8">      8</a> from ..domain.legal_recommendations import normalize_request
+<a href="#l9" class="line" id="l9">      9</a> from ..services.assistant import ALLOWED_FIELDS, build_jev_validation, build_messages, validate_result
+<a href="#l10" class="line" id="l10">     10</a> from ..services.legal_recommendations import recommend
+<a href="#l11" class="line" id="l11">     11</a> from ..services.providers import DeepSeekClient, GeminiClient, JevClient, ProviderError, load_secret
+<a href="#l12" class="line" id="l12">     12</a> from ..services.ai_support import JEV_SUGGESTION_CRITERIA, PROJECT_AI_ACTIONS, SUGGESTION_ACTIONS, normalize_request_id
+<a href="#l13" class="line" id="l13">     13</a> from ..services.ai_workflows import (
+<a href="#l14" class="line" id="l14">     14</a>     action_context,
+<a href="#l15" class="line" id="l15">     15</a>     action_messages,
+<a href="#l16" class="line" id="l16">     16</a>     jev_questions,
+<a href="#l17" class="line" id="l17">     17</a>     jev_state,
+<a href="#l18" class="line" id="l18">     18</a>     legacy_state,
+<a href="#l19" class="line" id="l19">     19</a>     normalize_jev_result,
+<a href="#l20" class="line" id="l20">     20</a>     normalized_jev_suggestion,
+<a href="#l21" class="line" id="l21">     21</a>     validate_action_result,
+<a href="#l22" class="line" id="l22">     22</a> )
+<a href="#l23" class="line" id="l23">     23</a> from ..store.accounts import get_account
+<a href="#l24" class="line" id="l24">     24</a> from ..store.ai_usage import UsageError, finish_usage, record_provider_usage, refund_usage, reserve_usage
+<a href="#l25" class="line" id="l25">     25</a> from ..store.projects import get_project
+<a href="#l26" class="line" id="l26">     26</a> from ..store.sources import create_source, list_sources
+<a href="#l27" class="line" id="l27">     27</a> from ..services.research import ResearchUnavailable, entries_by_ids, search_catalog
+<a href="#l28" class="line" id="l28">     28</a> 
+<a href="#l29" class="line" id="l29">     29</a> 
+<a href="#l30" class="line" id="l30">     30</a> ai_bp = Blueprint(&quot;ai&quot;, __name__)
+<a href="#l31" class="line" id="l31">     31</a> 
+<a href="#l32" class="line" id="l32">     32</a> 
+<a href="#l33" class="line" id="l33">     33</a> def _ai_account():
+<a href="#l34" class="line" id="l34">     34</a>     account = get_account(current_account_id())
+<a href="#l35" class="line" id="l35">     35</a>     if account is None:
+<a href="#l36" class="line" id="l36">     36</a>         abort(401)
+<a href="#l37" class="line" id="l37">     37</a>     if not account[&quot;terms_accepted&quot;]:
+<a href="#l38" class="line" id="l38">     38</a>         return None, (jsonify({&quot;error&quot;: &quot;terms_required&quot;, &quot;message&quot;: &quot;Aceite os termos antes de usar a assistência.&quot;}), 403)
+<a href="#l39" class="line" id="l39">     39</a>     if not account[&quot;ai_consent&quot;]:
+<a href="#l40" class="line" id="l40">     40</a>         return None, (jsonify({&quot;error&quot;: &quot;ai_consent_required&quot;, &quot;message&quot;: &quot;Autorize o uso de IA no perfil antes de pedir assistência.&quot;}), 403)
+<a href="#l41" class="line" id="l41">     41</a>     return account, None
+<a href="#l42" class="line" id="l42">     42</a> 
+<a href="#l43" class="line" id="l43">     43</a> 
+<a href="#l44" class="line" id="l44">     44</a> def _request_id(body: dict) -&gt; str:
+<a href="#l45" class="line" id="l45">     45</a>     # SEMPRE gerar server-side; ignorar cliente para evitar colisão/DoS
+<a href="#l46" class="line" id="l46">     46</a>     normalized = normalize_request_id(str(uuid4()))
+<a href="#l47" class="line" id="l47">     47</a>     if normalized is None:
+<a href="#l48" class="line" id="l48">     48</a>         raise ValueError(&quot;request_id inválido&quot;)
+<a href="#l49" class="line" id="l49">     49</a>     return normalized
+<a href="#l50" class="line" id="l50">     50</a> 
+<a href="#l51" class="line" id="l51">     51</a> 
+<a href="#l52" class="line" id="l52">     52</a> def _deepseek_for_action():
+<a href="#l53" class="line" id="l53">     53</a>     return DeepSeekClient(
+<a href="#l54" class="line" id="l54">     54</a>         load_secret(&quot;DEEPSEEK_API_KEY&quot;, &quot;DEEPSEEK_API_KEY_FILE&quot;, &quot;/run/secrets/deepseek_api_key&quot;),
+<a href="#l55" class="line" id="l55">     55</a>         api_url=os.environ.get(&quot;DEEPSEEK_API_URL&quot;, &quot;https://api.deepseek.com/chat/completions&quot;),
+<a href="#l56" class="line" id="l56">     56</a>         model=os.environ.get(&quot;DEEPSEEK_MODEL&quot;, &quot;deepseek-chat&quot;),
+<a href="#l57" class="line" id="l57">     57</a>         timeout=int(os.environ.get(&quot;DEEPSEEK_TIMEOUT&quot;, &quot;30&quot;)),
+<a href="#l58" class="line" id="l58">     58</a>     )
+<a href="#l59" class="line" id="l59">     59</a> 
+<a href="#l60" class="line" id="l60">     60</a> 
+<a href="#l61" class="line" id="l61">     61</a> def _gemini_for_action():
+<a href="#l62" class="line" id="l62">     62</a>     return GeminiClient(
+<a href="#l63" class="line" id="l63">     63</a>         load_secret(&quot;GEMINI_API_KEY&quot;, &quot;GEMINI_API_KEY_FILE&quot;, &quot;/run/secrets/gemini_api_key&quot;),
+<a href="#l64" class="line" id="l64">     64</a>         api_url=os.environ.get(&quot;GEMINI_API_URL&quot;, &quot;https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent&quot;),
+<a href="#l65" class="line" id="l65">     65</a>         model=os.environ.get(&quot;GEMINI_MODEL&quot;, &quot;gemini-2.5-flash&quot;),
+<a href="#l66" class="line" id="l66">     66</a>         timeout=int(os.environ.get(&quot;GEMINI_TIMEOUT&quot;, &quot;30&quot;)),
+<a href="#l67" class="line" id="l67">     67</a>     )
+<a href="#l68" class="line" id="l68">     68</a> 
+<a href="#l69" class="line" id="l69">     69</a> 
+<a href="#l70" class="line" id="l70">     70</a> _FALLBACK_ERROR_CODES = {
+<a href="#l71" class="line" id="l71">     71</a>     &quot;provider_busy&quot;,
+<a href="#l72" class="line" id="l72">     72</a>     &quot;provider_unreachable&quot;,
+<a href="#l73" class="line" id="l73">     73</a>     &quot;provider_auth&quot;,
+<a href="#l74" class="line" id="l74">     74</a>     &quot;provider_quota&quot;,
+<a href="#l75" class="line" id="l75">     75</a>     &quot;secret_unavailable&quot;,
+<a href="#l76" class="line" id="l76">     76</a>     &quot;secret_invalid&quot;,
+<a href="#l77" class="line" id="l77">     77</a>     &quot;invalid_response&quot;,
+<a href="#l78" class="line" id="l78">     78</a>     &quot;response_too_large&quot;,
+<a href="#l79" class="line" id="l79">     79</a> }
+<a href="#l80" class="line" id="l80">     80</a> 
+<a href="#l81" class="line" id="l81">     81</a> 
+<a href="#l82" class="line" id="l82">     82</a> def _fallback_allowed(error):
+<a href="#l83" class="line" id="l83">     83</a>     return isinstance(error, ProviderError) and error.code in _FALLBACK_ERROR_CODES
+<a href="#l84" class="line" id="l84">     84</a> 
+<a href="#l85" class="line" id="l85">     85</a> 
+<a href="#l86" class="line" id="l86">     86</a> def _complete_with_fallback(messages, validator, max_tokens):
+<a href="#l87" class="line" id="l87">     87</a>     first_error = None
+<a href="#l88" class="line" id="l88">     88</a>     try:
+<a href="#l89" class="line" id="l89">     89</a>         client = _deepseek_for_action()
+<a href="#l90" class="line" id="l90">     90</a>         response = client.complete_json(messages, max_tokens=max_tokens)
+<a href="#l91" class="line" id="l91">     91</a>         validator(response.get(&quot;result&quot;))
+<a href="#l92" class="line" id="l92">     92</a>         response[&quot;provider&quot;] = &quot;deepseek&quot;
+<a href="#l93" class="line" id="l93">     93</a>         return response
+<a href="#l94" class="line" id="l94">     94</a>     except (ProviderError, OSError) as deepseek_error:
+<a href="#l95" class="line" id="l95">     95</a>         if isinstance(deepseek_error, ProviderError) and not _fallback_allowed(deepseek_error):
+<a href="#l96" class="line" id="l96">     96</a>             raise
+<a href="#l97" class="line" id="l97">     97</a>         first_error = deepseek_error if isinstance(deepseek_error, ProviderError) else ProviderError(&quot;provider_unreachable&quot;, &quot;Não foi possível conectar ao DeepSeek.&quot;, 503, retryable=True)
+<a href="#l98" class="line" id="l98">     98</a>     except (ValueError, TypeError) as deepseek_error:
+<a href="#l99" class="line" id="l99">     99</a>         first_error = ProviderError(&quot;invalid_response&quot;, &quot;A resposta DeepSeek não respeitou o contrato estruturado.&quot;, 502, retryable=True)
+<a href="#l100" class="line" id="l100">    100</a>     try:
+<a href="#l101" class="line" id="l101">    101</a>         client = _gemini_for_action()
+<a href="#l102" class="line" id="l102">    102</a>         response = client.complete_json(messages, max_tokens=max_tokens)
+<a href="#l103" class="line" id="l103">    103</a>         validator(response.get(&quot;result&quot;))
+<a href="#l104" class="line" id="l104">    104</a>         response[&quot;provider&quot;] = &quot;gemini&quot;
+<a href="#l105" class="line" id="l105">    105</a>         response[&quot;fallback_reason&quot;] = first_error.code if first_error else &quot;invalid_response&quot;
+<a href="#l106" class="line" id="l106">    106</a>         return response
+<a href="#l107" class="line" id="l107">    107</a>     except (ValueError, TypeError) as error:
+<a href="#l108" class="line" id="l108">    108</a>         raise ProviderError(&quot;invalid_response&quot;, &quot;DeepSeek e Gemini não respeitaram o contrato estruturado.&quot;, 502, retryable=True) from error
+<a href="#l109" class="line" id="l109">    109</a>     except ProviderError as error:
+<a href="#l110" class="line" id="l110">    110</a>         raise error from first_error
+<a href="#l111" class="line" id="l111">    111</a> 
+<a href="#l112" class="line" id="l112">    112</a> 
+<a href="#l113" class="line" id="l113">    113</a> def _complete_action(context):
+<a href="#l114" class="line" id="l114">    114</a>     return _complete_with_fallback(
+<a href="#l115" class="line" id="l115">    115</a>         action_messages(context),
+<a href="#l116" class="line" id="l116">    116</a>         lambda result: validate_action_result(result, context),
+<a href="#l117" class="line" id="l117">    117</a>         int(os.environ.get(&quot;PROJECT_AI_MAX_OUTPUT_TOKENS&quot;, &quot;2200&quot;)),
+<a href="#l118" class="line" id="l118">    118</a>     )
+<a href="#l119" class="line" id="l119">    119</a> 
+<a href="#l120" class="line" id="l120">    120</a> 
+<a href="#l121" class="line" id="l121">    121</a> def _jev_analysis(project, section=None):
+<a href="#l122" class="line" id="l122">    122</a>     key = load_secret(&quot;TYPESAFE_API_KEY&quot;, &quot;TYPESAFE_API_KEY_FILE&quot;, &quot;/run/secrets/typesafe_api_key&quot;)
+<a href="#l123" class="line" id="l123">    123</a>     client = JevClient(
+<a href="#l124" class="line" id="l124">    124</a>         key,
+<a href="#l125" class="line" id="l125">    125</a>         api_url=os.environ.get(&quot;TYPESAFE_API_URL&quot;, &quot;https://api.typesafe.ai/v1/systemone&quot;),
+<a href="#l126" class="line" id="l126">    126</a>         model=os.environ.get(&quot;TYPESAFE_MODEL&quot;, &quot;jev-latest&quot;),
+<a href="#l127" class="line" id="l127">    127</a>         timeout=int(os.environ.get(&quot;JEV_TIMEOUT&quot;, &quot;60&quot;)),
+<a href="#l128" class="line" id="l128">    128</a>     )
+<a href="#l129" class="line" id="l129">    129</a>     raw = client.score(jev_state(project), jev_questions(section))
+<a href="#l130" class="line" id="l130">    130</a>     return normalize_jev_result(raw, section), raw
+<a href="#l131" class="line" id="l131">    131</a> 
+<a href="#l132" class="line" id="l132">    132</a> 
+<a href="#l133" class="line" id="l133">    133</a> @ai_bp.post(&quot;/projects/&lt;project_id&gt;/ai/action&quot;)
+<a href="#l134" class="line" id="l134">    134</a> @login_required
+<a href="#l135" class="line" id="l135">    135</a> @require_csrf
+<a href="#l136" class="line" id="l136">    136</a> def action(project_id):
+<a href="#l137" class="line" id="l137">    137</a>     account, error_response = _ai_account()
+<a href="#l138" class="line" id="l138">    138</a>     if error_response:
+<a href="#l139" class="line" id="l139">    139</a>         return error_response
+<a href="#l140" class="line" id="l140">    140</a>     project = get_project(current_account_id(), project_id)
+<a href="#l141" class="line" id="l141">    141</a>     if project is None:
+<a href="#l142" class="line" id="l142">    142</a>         abort(404)
+<a href="#l143" class="line" id="l143">    143</a>     body = request.get_json(silent=True) or {}
+<a href="#l144" class="line" id="l144">    144</a>     action_name = body.get(&quot;action&quot;)
+<a href="#l145" class="line" id="l145">    145</a>     if action_name not in PROJECT_AI_ACTIONS or action_name == &quot;research&quot;:
+<a href="#l146" class="line" id="l146">    146</a>         return jsonify({&quot;error&quot;: &quot;invalid_ai_action&quot;, &quot;message&quot;: &quot;Ação de assistência inválida.&quot;}), 400
+<a href="#l147" class="line" id="l147">    147</a>     if action_name == &quot;debate_coach&quot; and project.get(&quot;project_type&quot;) != &quot;case&quot;:
+<a href="#l148" class="line" id="l148">    148</a>         return jsonify({&quot;error&quot;: &quot;invalid_ai_action&quot;, &quot;message&quot;: &quot;O apoio ao debate só existe no Case.&quot;}), 400
+<a href="#l149" class="line" id="l149">    149</a>     if action_name == &quot;review&quot; and body.get(&quot;field_id&quot;) not in ALLOWED_FIELDS:
+<a href="#l150" class="line" id="l150">    150</a>         return jsonify({&quot;error&quot;: &quot;invalid_ai_request&quot;, &quot;message&quot;: &quot;Campo não permitido.&quot;}), 400
+<a href="#l151" class="line" id="l151">    151</a>     try:
+<a href="#l152" class="line" id="l152">    152</a>         request_id = _request_id(body)
+<a href="#l153" class="line" id="l153">    153</a>         if body.get(&quot;project_revision&quot;) is not None and int(body[&quot;project_revision&quot;]) != int(project[&quot;revision&quot;]):
+<a href="#l154" class="line" id="l154">    154</a>             return jsonify({&quot;error&quot;: &quot;stale_project_revision&quot;, &quot;revision&quot;: project[&quot;revision&quot;]}), 409
+<a href="#l155" class="line" id="l155">    155</a>         context = action_context(project, action_name, body, sources=list_sources(current_account_id()))
+<a href="#l156" class="line" id="l156">    156</a>         reserve_usage(current_account_id(), project_id, request_id, action_name)
+<a href="#l157" class="line" id="l157">    157</a>         provider_response = _complete_action(context)
+<a href="#l158" class="line" id="l158">    158</a>         result = validate_action_result(provider_response.get(&quot;result&quot;), context)
+<a href="#l159" class="line" id="l159">    159</a>         result.update({&quot;action&quot;: action_name, &quot;model&quot;: provider_response.get(&quot;model&quot;, &quot;&quot;), &quot;provider&quot;: provider_response.get(&quot;provider&quot;, &quot;deepseek&quot;)})
+<a href="#l160" class="line" id="l160">    160</a>         if provider_response.get(&quot;fallback_reason&quot;):
+<a href="#l161" class="line" id="l161">    161</a>             result[&quot;fallback_reason&quot;] = provider_response[&quot;fallback_reason&quot;]
+<a href="#l162" class="line" id="l162">    162</a>         record_provider_usage(request_id, result[&quot;provider&quot;], f&quot;assistant:{action_name}&quot;, result[&quot;model&quot;] or &quot;unknown&quot;, &quot;complete&quot;, provider_response.get(&quot;usage&quot;))
+<a href="#l163" class="line" id="l163">    163</a>         if action_name in SUGGESTION_ACTIONS and result[&quot;suggestions&quot;]:
+<a href="#l164" class="line" id="l164">    164</a>             try:
+<a href="#l165" class="line" id="l165">    165</a>                 jev_key = load_secret(&quot;TYPESAFE_API_KEY&quot;, &quot;TYPESAFE_API_KEY_FILE&quot;, &quot;/run/secrets/typesafe_api_key&quot;)
+<a href="#l166" class="line" id="l166">    166</a>                 jev_client = JevClient(jev_key, api_url=os.environ.get(&quot;TYPESAFE_API_URL&quot;, &quot;https://api.typesafe.ai/v1/systemone&quot;), model=os.environ.get(&quot;TYPESAFE_MODEL&quot;, &quot;jev-latest&quot;), timeout=int(os.environ.get(&quot;JEV_TIMEOUT&quot;, &quot;60&quot;)))
+<a href="#l167" class="line" id="l167">    167</a>                 suggestion_state = legacy_state(project, sources=list_sources(current_account_id()))
+<a href="#l168" class="line" id="l168">    168</a>                 suggestion_state[&quot;action&quot;] = action_name
+<a href="#l169" class="line" id="l169">    169</a>                 suggestion_state[&quot;suggestion&quot;] = result[&quot;answer&quot;]
+<a href="#l170" class="line" id="l170">    170</a>                 jev_raw = jev_client.score(suggestion_state, {
+<a href="#l171" class="line" id="l171">    171</a>                     criterion_id: {&quot;type&quot;: &quot;score&quot;, &quot;instructions&quot;: title, &quot;criteria&quot;: [&quot;0&quot;, &quot;1&quot;, &quot;2&quot;, &quot;3&quot;]}
+<a href="#l172" class="line" id="l172">    172</a>                     for criterion_id, title in JEV_SUGGESTION_CRITERIA[action_name]
+<a href="#l173" class="line" id="l173">    173</a>                 })
+<a href="#l174" class="line" id="l174">    174</a>                 result[&quot;validation&quot;] = normalized_jev_suggestion(action_name, context, jev_raw)
+<a href="#l175" class="line" id="l175">    175</a>                 record_provider_usage(request_id, &quot;jev&quot;, f&quot;suggestion:{action_name}&quot;, jev_raw.get(&quot;model&quot;, &quot;jev-latest&quot;), &quot;complete&quot;, jev_raw.get(&quot;usage&quot;))
+<a href="#l176" class="line" id="l176">    176</a>             except ProviderError:
+<a href="#l177" class="line" id="l177">    177</a>                 result[&quot;validation&quot;] = {&quot;status&quot;: &quot;nao_avaliado&quot;, &quot;observations&quot;: [&quot;O JEV não está disponível agora; confira a sugestão manualmente.&quot;], &quot;proposal_present&quot;: bool(context.get(&quot;assignment_prompt&quot;))}
+<a href="#l178" class="line" id="l178">    178</a>         finish_usage(request_id)
+<a href="#l179" class="line" id="l179">    179</a>         return jsonify({&quot;ok&quot;: True, &quot;request_id&quot;: request_id, &quot;response&quot;: result})
+<a href="#l180" class="line" id="l180">    180</a>     except UsageError as error:
+<a href="#l181" class="line" id="l181">    181</a>         return jsonify({&quot;error&quot;: error.code, &quot;message&quot;: str(error)}), error.status
+<a href="#l182" class="line" id="l182">    182</a>     except (ValueError, TypeError) as error:
+<a href="#l183" class="line" id="l183">    183</a>         try:
+<a href="#l184" class="line" id="l184">    184</a>             refund_usage(request_id)
+<a href="#l185" class="line" id="l185">    185</a>         except Exception:
+<a href="#l186" class="line" id="l186">    186</a>             pass
+<a href="#l187" class="line" id="l187">    187</a>         return jsonify({&quot;error&quot;: &quot;invalid_ai_request&quot;, &quot;message&quot;: str(error)}), 400
+<a href="#l188" class="line" id="l188">    188</a>     except ProviderError as error:
+<a href="#l189" class="line" id="l189">    189</a>         try:
+<a href="#l190" class="line" id="l190">    190</a>             refund_usage(request_id)
+<a href="#l191" class="line" id="l191">    191</a>         except Exception:
+<a href="#l192" class="line" id="l192">    192</a>             pass
+<a href="#l193" class="line" id="l193">    193</a>         return jsonify({&quot;error&quot;: error.code, &quot;message&quot;: str(error)}), error.status
+<a href="#l194" class="line" id="l194">    194</a> 
+<a href="#l195" class="line" id="l195">    195</a> 
+<a href="#l196" class="line" id="l196">    196</a> @ai_bp.post(&quot;/projects/&lt;project_id&gt;/ai/jev-section&quot;)
+<a href="#l197" class="line" id="l197">    197</a> @login_required
+<a href="#l198" class="line" id="l198">    198</a> @require_csrf
+<a href="#l199" class="line" id="l199">    199</a> def jev_section(project_id):
+<a href="#l200" class="line" id="l200">    200</a>     account, error_response = _ai_account()
+<a href="#l201" class="line" id="l201">    201</a>     if error_response:
+<a href="#l202" class="line" id="l202">    202</a>         return error_response
+<a href="#l203" class="line" id="l203">    203</a>     project = get_project(current_account_id(), project_id)
+<a href="#l204" class="line" id="l204">    204</a>     if project is None:
+<a href="#l205" class="line" id="l205">    205</a>         abort(404)
+<a href="#l206" class="line" id="l206">    206</a>     body = request.get_json(silent=True) or {}
+<a href="#l207" class="line" id="l207">    207</a>     section = body.get(&quot;section&quot;)
+<a href="#l208" class="line" id="l208">    208</a>     try:
+<a href="#l209" class="line" id="l209">    209</a>         request_id = _request_id(body)
+<a href="#l210" class="line" id="l210">    210</a>         if section not in {&quot;case_description&quot;, &quot;case_decisions&quot;, &quot;thesis_a&quot;, &quot;thesis_b&quot;, &quot;criteria_and_values&quot;}:
+<a href="#l211" class="line" id="l211">    211</a>             raise ValueError(&quot;etapa JEV inválida&quot;)
+<a href="#l212" class="line" id="l212">    212</a>         reserve_usage(current_account_id(), project_id, request_id, f&quot;jev:{section}&quot;)
+<a href="#l213" class="line" id="l213">    213</a>         analysis, raw = _jev_analysis(project, section)
+<a href="#l214" class="line" id="l214">    214</a>         record_provider_usage(request_id, &quot;jev&quot;, f&quot;case-section:{section}&quot;, analysis[&quot;model&quot;], &quot;complete&quot;, raw.get(&quot;usage&quot;))
+<a href="#l215" class="line" id="l215">    215</a>         finish_usage(request_id)
+<a href="#l216" class="line" id="l216">    216</a>         return jsonify({&quot;ok&quot;: True, &quot;request_id&quot;: request_id, &quot;analysis&quot;: analysis})
+<a href="#l217" class="line" id="l217">    217</a>     except UsageError as error:
+<a href="#l218" class="line" id="l218">    218</a>         return jsonify({&quot;error&quot;: error.code, &quot;message&quot;: str(error)}), error.status
+<a href="#l219" class="line" id="l219">    219</a>     except (ValueError, TypeError) as error:
+<a href="#l220" class="line" id="l220">    220</a>         try:
+<a href="#l221" class="line" id="l221">    221</a>             refund_usage(request_id)
+<a href="#l222" class="line" id="l222">    222</a>         except Exception:
+<a href="#l223" class="line" id="l223">    223</a>             pass
+<a href="#l224" class="line" id="l224">    224</a>         return jsonify({&quot;error&quot;: &quot;invalid_ai_request&quot;, &quot;message&quot;: str(error)}), 400
+<a href="#l225" class="line" id="l225">    225</a>     except ProviderError as error:
+<a href="#l226" class="line" id="l226">    226</a>         try:
+<a href="#l227" class="line" id="l227">    227</a>             refund_usage(request_id)
+<a href="#l228" class="line" id="l228">    228</a>         except Exception:
+<a href="#l229" class="line" id="l229">    229</a>             pass
+<a href="#l230" class="line" id="l230">    230</a>         return jsonify({&quot;error&quot;: error.code, &quot;message&quot;: str(error)}), error.status
+<a href="#l231" class="line" id="l231">    231</a> 
+<a href="#l232" class="line" id="l232">    232</a> 
+<a href="#l233" class="line" id="l233">    233</a> @ai_bp.post(&quot;/projects/&lt;project_id&gt;/ai/jev-report&quot;)
+<a href="#l234" class="line" id="l234">    234</a> @login_required
+<a href="#l235" class="line" id="l235">    235</a> @require_csrf
+<a href="#l236" class="line" id="l236">    236</a> def jev_report(project_id):
+<a href="#l237" class="line" id="l237">    237</a>     account, error_response = _ai_account()
+<a href="#l238" class="line" id="l238">    238</a>     if error_response:
+<a href="#l239" class="line" id="l239">    239</a>         return error_response
+<a href="#l240" class="line" id="l240">    240</a>     project = get_project(current_account_id(), project_id)
+<a href="#l241" class="line" id="l241">    241</a>     if project is None:
+<a href="#l242" class="line" id="l242">    242</a>         abort(404)
+<a href="#l243" class="line" id="l243">    243</a>     body = request.get_json(silent=True) or {}
+<a href="#l244" class="line" id="l244">    244</a>     try:
+<a href="#l245" class="line" id="l245">    245</a>         request_id = _request_id(body)
+<a href="#l246" class="line" id="l246">    246</a>         reserve_usage(current_account_id(), project_id, request_id, &quot;jev:case_report&quot;)
+<a href="#l247" class="line" id="l247">    247</a>         analysis, raw = _jev_analysis(project)
+<a href="#l248" class="line" id="l248">    248</a>         record_provider_usage(request_id, &quot;jev&quot;, &quot;case-report&quot;, analysis[&quot;model&quot;], &quot;complete&quot;, raw.get(&quot;usage&quot;))
+<a href="#l249" class="line" id="l249">    249</a>         finish_usage(request_id)
+<a href="#l250" class="line" id="l250">    250</a>         return jsonify({&quot;ok&quot;: True, &quot;request_id&quot;: request_id, &quot;analysis&quot;: analysis})
+<a href="#l251" class="line" id="l251">    251</a>     except UsageError as error:
+<a href="#l252" class="line" id="l252">    252</a>         return jsonify({&quot;error&quot;: error.code, &quot;message&quot;: str(error)}), error.status
+<a href="#l253" class="line" id="l253">    253</a>     except (ValueError, TypeError) as error:
+<a href="#l254" class="line" id="l254">    254</a>         try:
+<a href="#l255" class="line" id="l255">    255</a>             refund_usage(request_id)
+<a href="#l256" class="line" id="l256">    256</a>         except Exception:
+<a href="#l257" class="line" id="l257">    257</a>             pass
+<a href="#l258" class="line" id="l258">    258</a>         return jsonify({&quot;error&quot;: &quot;invalid_ai_request&quot;, &quot;message&quot;: str(error)}), 400
+<a href="#l259" class="line" id="l259">    259</a>     except ProviderError as error:
+<a href="#l260" class="line" id="l260">    260</a>         try:
+<a href="#l261" class="line" id="l261">    261</a>             refund_usage(request_id)
+<a href="#l262" class="line" id="l262">    262</a>         except Exception:
+<a href="#l263" class="line" id="l263">    263</a>             pass
+<a href="#l264" class="line" id="l264">    264</a>         return jsonify({&quot;error&quot;: error.code, &quot;message&quot;: str(error)}), error.status
+<a href="#l265" class="line" id="l265">    265</a> 
+<a href="#l266" class="line" id="l266">    266</a> 
+<a href="#l267" class="line" id="l267">    267</a> @ai_bp.post(&quot;/projects/&lt;project_id&gt;/ai/jev-explanation&quot;)
+<a href="#l268" class="line" id="l268">    268</a> @login_required
+<a href="#l269" class="line" id="l269">    269</a> @require_csrf
+<a href="#l270" class="line" id="l270">    270</a> def jev_explanation(project_id):
+<a href="#l271" class="line" id="l271">    271</a>     account, error_response = _ai_account()
+<a href="#l272" class="line" id="l272">    272</a>     if error_response:
+<a href="#l273" class="line" id="l273">    273</a>         return error_response
+<a href="#l274" class="line" id="l274">    274</a>     project = get_project(current_account_id(), project_id)
+<a href="#l275" class="line" id="l275">    275</a>     if project is None:
+<a href="#l276" class="line" id="l276">    276</a>         abort(404)
+<a href="#l277" class="line" id="l277">    277</a>     body = request.get_json(silent=True) or {}
+<a href="#l278" class="line" id="l278">    278</a>     criterion = body.get(&quot;criterion&quot;)
+<a href="#l279" class="line" id="l279">    279</a>     field_map = {
+<a href="#l280" class="line" id="l280">    280</a>         &quot;case_description&quot;: [&quot;assignment_prompt&quot;, &quot;facts&quot;, &quot;problem&quot;],
+<a href="#l281" class="line" id="l281">    281</a>         &quot;legal_writing_foundation&quot;: [&quot;assignment_prompt&quot;, &quot;facts&quot;, &quot;problem&quot;, &quot;thesis_a&quot;, &quot;thesis_b&quot;],
+<a href="#l282" class="line" id="l282">    282</a>         &quot;criteria_and_values&quot;: [&quot;assignment_prompt&quot;, &quot;thesis_a&quot;, &quot;thesis_b&quot;, &quot;criteria&quot;],
+<a href="#l283" class="line" id="l283">    283</a>         &quot;grade_range&quot;: [&quot;assignment_prompt&quot;, &quot;facts&quot;, &quot;problem&quot;, &quot;thesis_a&quot;, &quot;thesis_b&quot;],
+<a href="#l284" class="line" id="l284">    284</a>     }
+<a href="#l285" class="line" id="l285">    285</a>     checklist_ids = {check_id for definition in AI_CASE_CHECKLISTS.values() for check_id in definition[&quot;checks&quot;]}
+<a href="#l286" class="line" id="l286">    286</a>     if not isinstance(criterion, str) or (criterion not in field_map and criterion not in checklist_ids):
+<a href="#l287" class="line" id="l287">    287</a>         return jsonify({&quot;error&quot;: &quot;invalid_criterion&quot;, &quot;message&quot;: &quot;Critério JEV inválido.&quot;}), 400
+<a href="#l288" class="line" id="l288">    288</a>     try:
+<a href="#l289" class="line" id="l289">    289</a>         request_id = _request_id(body)
+<a href="#l290" class="line" id="l290">    290</a>         context = action_context(
+<a href="#l291" class="line" id="l291">    291</a>             project,
+<a href="#l292" class="line" id="l292">    292</a>             &quot;review&quot;,
+<a href="#l293" class="line" id="l293">    293</a>             {
+<a href="#l294" class="line" id="l294">    294</a>                 &quot;field_id&quot;: criterion,
+<a href="#l295" class="line" id="l295">    295</a>                 &quot;context_fields&quot;: field_map.get(criterion, [&quot;assignment_prompt&quot;, &quot;facts&quot;, &quot;problem&quot;, &quot;thesis_a&quot;, &quot;thesis_b&quot;, &quot;criteria&quot;]),
+<a href="#l296" class="line" id="l296">    296</a>                 &quot;instruction&quot;: &quot;Explique esta observação JEV com base na evidência enviada, indique o que o estudante deve conferir e não transforme a estimativa em nota oficial.&quot;,
+<a href="#l297" class="line" id="l297">    297</a>             },
+<a href="#l298" class="line" id="l298">    298</a>             sources=list_sources(current_account_id()),
+<a href="#l299" class="line" id="l299">    299</a>         )
+<a href="#l300" class="line" id="l300">    300</a>         context[&quot;jev_result&quot;] = body.get(&quot;jev_result&quot;) if isinstance(body.get(&quot;jev_result&quot;), dict) else {}
+<a href="#l301" class="line" id="l301">    301</a>         reserve_usage(current_account_id(), project_id, request_id, f&quot;jev-explanation:{criterion}&quot;)
+<a href="#l302" class="line" id="l302">    302</a>         provider_response = _complete_action(context)
+<a href="#l303" class="line" id="l303">    303</a>         result = validate_action_result(provider_response.get(&quot;result&quot;), context)
+<a href="#l304" class="line" id="l304">    304</a>         explanation = {
+<a href="#l305" class="line" id="l305">    305</a>             &quot;interpretation&quot;: result[&quot;answer&quot;],
+<a href="#l306" class="line" id="l306">    306</a>             &quot;evidence&quot;: [],
+<a href="#l307" class="line" id="l307">    307</a>             &quot;next_steps&quot;: [item[&quot;text&quot;] for item in result.get(&quot;suggestions&quot;, [])][:2],
+<a href="#l308" class="line" id="l308">    308</a>             &quot;model&quot;: provider_response.get(&quot;model&quot;, &quot;&quot;),
+<a href="#l309" class="line" id="l309">    309</a>             &quot;provider&quot;: provider_response.get(&quot;provider&quot;, &quot;deepseek&quot;),
+<a href="#l310" class="line" id="l310">    310</a>         }
+<a href="#l311" class="line" id="l311">    311</a>         record_provider_usage(request_id, explanation[&quot;provider&quot;], f&quot;jev-explanation:{criterion}&quot;, explanation[&quot;model&quot;] or &quot;unknown&quot;, &quot;complete&quot;, provider_response.get(&quot;usage&quot;))
+<a href="#l312" class="line" id="l312">    312</a>         finish_usage(request_id)
+<a href="#l313" class="line" id="l313">    313</a>         return jsonify({&quot;ok&quot;: True, &quot;request_id&quot;: request_id, &quot;explanation&quot;: explanation})
+<a href="#l314" class="line" id="l314">    314</a>     except UsageError as error:
+<a href="#l315" class="line" id="l315">    315</a>         return jsonify({&quot;error&quot;: error.code, &quot;message&quot;: str(error)}), error.status
+<a href="#l316" class="line" id="l316">    316</a>     except (ValueError, TypeError) as error:
+<a href="#l317" class="line" id="l317">    317</a>         try:
+<a href="#l318" class="line" id="l318">    318</a>             refund_usage(request_id)
+<a href="#l319" class="line" id="l319">    319</a>         except Exception:
+<a href="#l320" class="line" id="l320">    320</a>             pass
+<a href="#l321" class="line" id="l321">    321</a>         return jsonify({&quot;error&quot;: &quot;invalid_ai_request&quot;, &quot;message&quot;: str(error)}), 400
+<a href="#l322" class="line" id="l322">    322</a>     except ProviderError as error:
+<a href="#l323" class="line" id="l323">    323</a>         try:
+<a href="#l324" class="line" id="l324">    324</a>             refund_usage(request_id)
+<a href="#l325" class="line" id="l325">    325</a>         except Exception:
+<a href="#l326" class="line" id="l326">    326</a>             pass
+<a href="#l327" class="line" id="l327">    327</a>         return jsonify({&quot;error&quot;: error.code, &quot;message&quot;: str(error)}), error.status
+<a href="#l328" class="line" id="l328">    328</a> 
+<a href="#l329" class="line" id="l329">    329</a> 
+<a href="#l330" class="line" id="l330">    330</a> @ai_bp.post(&quot;/projects/&lt;project_id&gt;/ai/review&quot;)
+<a href="#l331" class="line" id="l331">    331</a> @login_required
+<a href="#l332" class="line" id="l332">    332</a> @require_csrf
+<a href="#l333" class="line" id="l333">    333</a> def review(project_id):
+<a href="#l334" class="line" id="l334">    334</a>     account = get_account(current_account_id())
+<a href="#l335" class="line" id="l335">    335</a>     if account is None:
+<a href="#l336" class="line" id="l336">    336</a>         abort(401)
+<a href="#l337" class="line" id="l337">    337</a>     if not account[&quot;ai_consent&quot;]:
+<a href="#l338" class="line" id="l338">    338</a>         return jsonify({&quot;error&quot;: &quot;ai_consent_required&quot;, &quot;message&quot;: &quot;Autorize o uso de IA no perfil antes de pedir assistência.&quot;}), 403
+<a href="#l339" class="line" id="l339">    339</a>     project = get_project(current_account_id(), project_id)
+<a href="#l340" class="line" id="l340">    340</a>     if project is None:
+<a href="#l341" class="line" id="l341">    341</a>         abort(404)
+<a href="#l342" class="line" id="l342">    342</a>     body = request.get_json(silent=True) or {}
+<a href="#l343" class="line" id="l343">    343</a>     field_id = body.get(&quot;field_id&quot;)
+<a href="#l344" class="line" id="l344">    344</a>     instruction = body.get(&quot;instruction&quot;, &quot;&quot;)
+<a href="#l345" class="line" id="l345">    345</a>     if field_id not in ALLOWED_FIELDS or not isinstance(instruction, str) or not instruction.strip():
+<a href="#l346" class="line" id="l346">    346</a>         return jsonify({&quot;error&quot;: &quot;invalid_ai_request&quot;}), 400
+<a href="#l347" class="line" id="l347">    347</a>     try:
+<a href="#l348" class="line" id="l348">    348</a>         response = _complete_with_fallback(
+<a href="#l349" class="line" id="l349">    349</a>             build_messages(project, field_id, instruction),
+<a href="#l350" class="line" id="l350">    350</a>             lambda result: validate_result(result),
+<a href="#l351" class="line" id="l351">    351</a>             int(os.environ.get(&quot;PROJECT_AI_MAX_OUTPUT_TOKENS&quot;, &quot;1400&quot;)),
+<a href="#l352" class="line" id="l352">    352</a>         )
+<a href="#l353" class="line" id="l353">    353</a>         result = validate_result(response[&quot;result&quot;])
+<a href="#l354" class="line" id="l354">    354</a>     except ProviderError as error:
+<a href="#l355" class="line" id="l355">    355</a>         return jsonify({&quot;error&quot;: error.code, &quot;message&quot;: str(error)}), error.status
+<a href="#l356" class="line" id="l356">    356</a>     except (KeyError, ValueError):
+<a href="#l357" class="line" id="l357">    357</a>         return jsonify({&quot;error&quot;: &quot;ai_invalid_response&quot;, &quot;message&quot;: &quot;A assistência retornou uma resposta inesperada.&quot;}), 502
+<a href="#l358" class="line" id="l358">    358</a>     return jsonify({&quot;ok&quot;: True, &quot;field_id&quot;: field_id, **result})
+<a href="#l359" class="line" id="l359">    359</a> 
+<a href="#l360" class="line" id="l360">    360</a> 
+<a href="#l361" class="line" id="l361">    361</a> @ai_bp.post(&quot;/projects/&lt;project_id&gt;/ai/validate&quot;)
+<a href="#l362" class="line" id="l362">    362</a> @login_required
+<a href="#l363" class="line" id="l363">    363</a> @require_csrf
+<a href="#l364" class="line" id="l364">    364</a> def validate(project_id):
+<a href="#l365" class="line" id="l365">    365</a>     account = get_account(current_account_id())
+<a href="#l366" class="line" id="l366">    366</a>     if account is None:
+<a href="#l367" class="line" id="l367">    367</a>         abort(401)
+<a href="#l368" class="line" id="l368">    368</a>     if not account[&quot;ai_consent&quot;]:
+<a href="#l369" class="line" id="l369">    369</a>         return jsonify({&quot;error&quot;: &quot;ai_consent_required&quot;, &quot;message&quot;: &quot;Autorize o uso de IA no perfil antes de pedir validação.&quot;}), 403
+<a href="#l370" class="line" id="l370">    370</a>     project = get_project(current_account_id(), project_id)
+<a href="#l371" class="line" id="l371">    371</a>     if project is None:
+<a href="#l372" class="line" id="l372">    372</a>         abort(404)
+<a href="#l373" class="line" id="l373">    373</a>     body = request.get_json(silent=True) or {}
+<a href="#l374" class="line" id="l374">    374</a>     try:
+<a href="#l375" class="line" id="l375">    375</a>         state, questions = build_jev_validation(project, body.get(&quot;field_id&quot;, &quot;problem&quot;))
+<a href="#l376" class="line" id="l376">    376</a>         key = load_secret(&quot;TYPESAFE_API_KEY&quot;, &quot;TYPESAFE_API_KEY_FILE&quot;, &quot;/run/secrets/typesafe_api_key&quot;)
+<a href="#l377" class="line" id="l377">    377</a>         client = JevClient(key, api_url=os.environ.get(&quot;TYPESAFE_API_URL&quot;, &quot;https://api.typesafe.ai/v1/systemone&quot;), model=os.environ.get(&quot;TYPESAFE_MODEL&quot;, &quot;jev-latest&quot;), timeout=int(os.environ.get(&quot;JEV_TIMEOUT&quot;, &quot;60&quot;)))
+<a href="#l378" class="line" id="l378">    378</a>         result = client.score(state, questions)
+<a href="#l379" class="line" id="l379">    379</a>     except ProviderError as error:
+<a href="#l380" class="line" id="l380">    380</a>         return jsonify({&quot;error&quot;: error.code, &quot;message&quot;: str(error)}), error.status
+<a href="#l381" class="line" id="l381">    381</a>     except ValueError:
+<a href="#l382" class="line" id="l382">    382</a>         return jsonify({&quot;error&quot;: &quot;invalid_ai_request&quot;}), 400
+<a href="#l383" class="line" id="l383">    383</a>     return jsonify({&quot;ok&quot;: True, **result})
+<a href="#l384" class="line" id="l384">    384</a> 
+<a href="#l385" class="line" id="l385">    385</a> 
+<a href="#l386" class="line" id="l386">    386</a> @ai_bp.post(&quot;/projects/&lt;project_id&gt;/ai/legal-recommendations&quot;)
+<a href="#l387" class="line" id="l387">    387</a> @login_required
+<a href="#l388" class="line" id="l388">    388</a> @require_csrf
+<a href="#l389" class="line" id="l389">    389</a> def legal_recommendations(project_id):
+<a href="#l390" class="line" id="l390">    390</a>     account = get_account(current_account_id())
+<a href="#l391" class="line" id="l391">    391</a>     if account is None:
+<a href="#l392" class="line" id="l392">    392</a>         abort(401)
+<a href="#l393" class="line" id="l393">    393</a>     if not account[&quot;terms_accepted&quot;]:
+<a href="#l394" class="line" id="l394">    394</a>         return jsonify({&quot;error&quot;: &quot;terms_required&quot;, &quot;message&quot;: &quot;Aceite os termos antes de pedir recomendações.&quot;}), 403
+<a href="#l395" class="line" id="l395">    395</a>     if not account[&quot;ai_consent&quot;]:
+<a href="#l396" class="line" id="l396">    396</a>         return jsonify({&quot;error&quot;: &quot;ai_consent_required&quot;, &quot;message&quot;: &quot;Autorize o uso de IA no perfil antes de pedir recomendações.&quot;}), 403
+<a href="#l397" class="line" id="l397">    397</a>     project = get_project(current_account_id(), project_id)
+<a href="#l398" class="line" id="l398">    398</a>     if project is None:
+<a href="#l399" class="line" id="l399">    399</a>         abort(404)
+<a href="#l400" class="line" id="l400">    400</a>     try:
+<a href="#l401" class="line" id="l401">    401</a>         payload = normalize_request(request.get_json(silent=True) or {})
+<a href="#l402" class="line" id="l402">    402</a>     except ValueError as error:
+<a href="#l403" class="line" id="l403">    403</a>         return jsonify({&quot;error&quot;: &quot;invalid_ai_request&quot;, &quot;message&quot;: str(error)}), 400
+<a href="#l404" class="line" id="l404">    404</a>     if payload[&quot;project_revision&quot;] != project[&quot;revision&quot;]:
+<a href="#l405" class="line" id="l405">    405</a>         return jsonify({&quot;error&quot;: &quot;stale_project_revision&quot;, &quot;revision&quot;: project[&quot;revision&quot;]}), 409
+<a href="#l406" class="line" id="l406">    406</a>     try:
+<a href="#l407" class="line" id="l407">    407</a>         if payload[&quot;catalog_source_ids&quot;]:
+<a href="#l408" class="line" id="l408">    408</a>             candidates = entries_by_ids(payload[&quot;catalog_source_ids&quot;])
+<a href="#l409" class="line" id="l409">    409</a>             if len(candidates) != len(payload[&quot;catalog_source_ids&quot;]):
+<a href="#l410" class="line" id="l410">    410</a>                 return jsonify({&quot;error&quot;: &quot;invalid_catalog_source&quot;, &quot;message&quot;: &quot;Uma fonte não pertence ao catálogo disponível.&quot;}), 400
+<a href="#l411" class="line" id="l411">    411</a>         else:
+<a href="#l412" class="line" id="l412">    412</a>             query = &quot; &quot;.join([payload[&quot;problem_question&quot;], *payload[&quot;keywords&quot;]]).strip()
+<a href="#l413" class="line" id="l413">    413</a>             candidates = []
+<a href="#l414" class="line" id="l414">    414</a>             for kind in (&quot;legislation&quot;, &quot;case-law&quot;, &quot;book&quot;):
+<a href="#l415" class="line" id="l415">    415</a>                 candidates.extend(search_catalog(query, kind=kind, limit=8)[&quot;entries&quot;])
+<a href="#l416" class="line" id="l416">    416</a>     except ResearchUnavailable:
+<a href="#l417" class="line" id="l417">    417</a>         return jsonify({&quot;error&quot;: &quot;catalog_unavailable&quot;, &quot;message&quot;: &quot;O catálogo jurídico não está disponível no momento.&quot;}), 503
+<a href="#l418" class="line" id="l418">    418</a>     if not candidates:
+<a href="#l419" class="line" id="l419">    419</a>         return jsonify({
+<a href="#l420" class="line" id="l420">    420</a>             &quot;ok&quot;: True,
+<a href="#l421" class="line" id="l421">    421</a>             &quot;request_id&quot;: payload[&quot;request_id&quot;],
+<a href="#l422" class="line" id="l422">    422</a>             &quot;provider&quot;: {&quot;name&quot;: &quot;none&quot;, &quot;model&quot;: &quot;&quot;, &quot;fallback_used&quot;: False, &quot;fallback_reason&quot;: None},
+<a href="#l423" class="line" id="l423">    423</a>             &quot;recommendations&quot;: {&quot;law&quot;: [], &quot;jurisprudence&quot;: [], &quot;doctrine&quot;: []},
+<a href="#l424" class="line" id="l424">    424</a>             &quot;coverage&quot;: {&quot;candidate_count&quot;: 0, &quot;by_kind&quot;: {&quot;legislation&quot;: 0, &quot;case-law&quot;: 0, &quot;book&quot;: 0}, &quot;scope&quot;: &quot;catálogo jurídico local; pista inicial&quot;},
+<a href="#l425" class="line" id="l425">    425</a>             &quot;warnings&quot;: [&quot;Nenhum candidato foi encontrado neste recorte do catálogo.&quot;],
+<a href="#l426" class="line" id="l426">    426</a>         })
+<a href="#l427" class="line" id="l427">    427</a>     try:
+<a href="#l428" class="line" id="l428">    428</a>         reserve_usage(current_account_id(), project_id, payload[&quot;request_id&quot;], &quot;legal_recommendations&quot;)
+<a href="#l429" class="line" id="l429">    429</a>     except UsageError as error:
+<a href="#l430" class="line" id="l430">    430</a>         return jsonify({&quot;error&quot;: error.code, &quot;message&quot;: str(error)}), error.status
+<a href="#l431" class="line" id="l431">    431</a> 
+<a href="#l432" class="line" id="l432">    432</a>     def record(provider, model, status, usage):
+<a href="#l433" class="line" id="l433">    433</a>         record_provider_usage(payload[&quot;request_id&quot;], provider, &quot;legal_recommendations&quot;, model or &quot;unknown&quot;, status, usage)
+<a href="#l434" class="line" id="l434">    434</a> 
+<a href="#l435" class="line" id="l435">    435</a>     try:
+<a href="#l436" class="line" id="l436">    436</a>         result = recommend(
+<a href="#l437" class="line" id="l437">    437</a>             payload,
+<a href="#l438" class="line" id="l438">    438</a>             project,
+<a href="#l439" class="line" id="l439">    439</a>             candidates,
+<a href="#l440" class="line" id="l440">    440</a>             deepseek_factory=lambda: DeepSeekClient(
+<a href="#l441" class="line" id="l441">    441</a>                 load_secret(&quot;DEEPSEEK_API_KEY&quot;, &quot;DEEPSEEK_API_KEY_FILE&quot;, &quot;/run/secrets/deepseek_api_key&quot;),
+<a href="#l442" class="line" id="l442">    442</a>                 api_url=os.environ.get(&quot;DEEPSEEK_API_URL&quot;, &quot;https://api.deepseek.com/chat/completions&quot;),
+<a href="#l443" class="line" id="l443">    443</a>                 model=os.environ.get(&quot;DEEPSEEK_MODEL&quot;, &quot;deepseek-chat&quot;),
+<a href="#l444" class="line" id="l444">    444</a>                 timeout=int(os.environ.get(&quot;DEEPSEEK_TIMEOUT&quot;, &quot;30&quot;)),
+<a href="#l445" class="line" id="l445">    445</a>             ),
+<a href="#l446" class="line" id="l446">    446</a>             gemini_factory=lambda: GeminiClient(
+<a href="#l447" class="line" id="l447">    447</a>                 load_secret(&quot;GEMINI_API_KEY&quot;, &quot;GEMINI_API_KEY_FILE&quot;, &quot;/run/secrets/gemini_api_key&quot;),
+<a href="#l448" class="line" id="l448">    448</a>                 api_url=os.environ.get(&quot;GEMINI_API_URL&quot;, &quot;https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent&quot;),
+<a href="#l449" class="line" id="l449">    449</a>                 model=os.environ.get(&quot;GEMINI_MODEL&quot;, &quot;gemini-2.5-flash&quot;),
+<a href="#l450" class="line" id="l450">    450</a>                 timeout=int(os.environ.get(&quot;GEMINI_TIMEOUT&quot;, &quot;30&quot;)),
+<a href="#l451" class="line" id="l451">    451</a>             ),
+<a href="#l452" class="line" id="l452">    452</a>             record_attempt=record,
+<a href="#l453" class="line" id="l453">    453</a>         )
+<a href="#l454" class="line" id="l454">    454</a>         finish_usage(payload[&quot;request_id&quot;])
+<a href="#l455" class="line" id="l455">    455</a>         return jsonify({&quot;ok&quot;: True, &quot;request_id&quot;: payload[&quot;request_id&quot;], **result})
+<a href="#l456" class="line" id="l456">    456</a>     except ProviderError as error:
+<a href="#l457" class="line" id="l457">    457</a>         refund_usage(payload[&quot;request_id&quot;])
+<a href="#l458" class="line" id="l458">    458</a>         return jsonify({&quot;error&quot;: error.code, &quot;message&quot;: str(error)}), error.status
+<a href="#l459" class="line" id="l459">    459</a> 
+<a href="#l460" class="line" id="l460">    460</a> 
+<a href="#l461" class="line" id="l461">    461</a> @ai_bp.post(&quot;/projects/&lt;project_id&gt;/ai/legal-recommendations/attach&quot;)
+<a href="#l462" class="line" id="l462">    462</a> @login_required
+<a href="#l463" class="line" id="l463">    463</a> @require_csrf
+<a href="#l464" class="line" id="l464">    464</a> def attach_catalog_source(project_id):
+<a href="#l465" class="line" id="l465">    465</a>     if get_project(current_account_id(), project_id) is None:
+<a href="#l466" class="line" id="l466">    466</a>         abort(404)
+<a href="#l467" class="line" id="l467">    467</a>     body = request.get_json(silent=True) or {}
+<a href="#l468" class="line" id="l468">    468</a>     source_id = body.get(&quot;source_id&quot;)
+<a href="#l469" class="line" id="l469">    469</a>     if not isinstance(source_id, str) or not source_id.strip():
+<a href="#l470" class="line" id="l470">    470</a>         return jsonify({&quot;error&quot;: &quot;invalid_catalog_source&quot;}), 400
+<a href="#l471" class="line" id="l471">    471</a>     try:
+<a href="#l472" class="line" id="l472">    472</a>         entries = entries_by_ids([source_id])
+<a href="#l473" class="line" id="l473">    473</a>     except ResearchUnavailable:
+<a href="#l474" class="line" id="l474">    474</a>         return jsonify({&quot;error&quot;: &quot;catalog_unavailable&quot;, &quot;message&quot;: &quot;O catálogo jurídico não está disponível no momento.&quot;}), 503
+<a href="#l475" class="line" id="l475">    475</a>     if not entries:
+<a href="#l476" class="line" id="l476">    476</a>         return jsonify({&quot;error&quot;: &quot;invalid_catalog_source&quot;}), 404
+<a href="#l477" class="line" id="l477">    477</a>     entry = entries[0]
+<a href="#l478" class="line" id="l478">    478</a>     kind = {&quot;case-law&quot;: &quot;case_law&quot;, &quot;legislation&quot;: &quot;legislation&quot;, &quot;book&quot;: &quot;book&quot;}.get(entry.get(&quot;kind&quot;), &quot;other&quot;)
+<a href="#l479" class="line" id="l479">    479</a>     reference = entry.get(&quot;reference&quot;) or entry.get(&quot;source&quot;) or &quot;&quot;
+<a href="#l480" class="line" id="l480">    480</a>     notes = &quot;Fonte adicionada a partir do catálogo jurídico. Confira os dados antes de citar.&quot;
+<a href="#l481" class="line" id="l481">    481</a>     if entry.get(&quot;link&quot;):
+<a href="#l482" class="line" id="l482">    482</a>         notes += &quot; Origem: &quot; + entry[&quot;link&quot;]
+<a href="#l483" class="line" id="l483">    483</a>     personal_id = create_source(current_account_id(), entry.get(&quot;title&quot;, &quot;Fonte jurídica&quot;), entry.get(&quot;author&quot;, &quot;&quot;), kind, reference, notes)
+<a href="#l484" class="line" id="l484">    484</a>     return jsonify({&quot;ok&quot;: True, &quot;source_id&quot;: personal_id, &quot;title&quot;: entry.get(&quot;title&quot;, &quot;Fonte jurídica&quot;), &quot;author&quot;: entry.get(&quot;author&quot;, &quot;&quot;), &quot;reference&quot;: reference})
+</pre>
+</div>
+</body>
+</html>

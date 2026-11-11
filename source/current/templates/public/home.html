@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+{% block title %}Assistente Acadêmico — Case e Paper{% endblock %}
+{% block content %}
+{% set signed_in = session.get('account_id') %}
+<header class="topbar saas-topbar"><a class="brand saas-brand" href="/" aria-label="Assistente Acadêmico — apresentação">Assistente <span>acadêmico</span></a><nav class="saas-nav" aria-label="Navegação do produto"><a href="#como-funciona" data-site-section="como-funciona">Como funciona</a><a href="#recursos" data-site-section="recursos">Recursos</a><a href="#demonstracao" data-site-section="demonstracao">Demonstração</a><a href="#precos" data-site-section="precos">Preços</a><a href="#suporte" data-site-section="suporte">Suporte</a></nav><div class="topbar-actions"><a class="button button-primary" href="{{ url_for('projects.account') if signed_in else url_for('oauth.google_start') }}">{{ 'Minha conta' if signed_in else 'Entrar' }}</a><details class="saas-mobile-menu"><summary>Menu</summary><nav aria-label="Navegação móvel do produto"><a href="#como-funciona" data-site-section="como-funciona">Como funciona</a><a href="#recursos" data-site-section="recursos">Recursos</a><a href="#demonstracao" data-site-section="demonstracao">Demonstração</a><a href="#precos" data-site-section="precos">Preços</a><a href="#suporte" data-site-section="suporte">Suporte</a></nav></details></div></header>
+{% if google_login == 'failed' %}<div class="sales-shell"><p class="notice" role="alert">Não foi possível concluir o login Google. Tente novamente. Se o problema continuar, avise o atendimento; o sistema registrou somente um código técnico, sem suas credenciais.</p></div>{% elif google_login == 'unconfigured' %}<div class="sales-shell"><p class="notice" role="alert">O login Google está temporariamente indisponível porque falta configuração no servidor.</p></div>{% endif %}
+    <div class="shell sales-shell" id="main"><div class="sales-page{% if pricing_only %} pricing-only{% endif %}">
+    <section class="sales-hero" aria-labelledby="sales-title">
+      <div class="sales-hero-copy">
+        <p class="sales-kicker">Para trabalhos acadêmicos</p>
+        <h1 id="sales-title">Case e Paper, em um só lugar.</h1>
+        <p class="sales-lede">No Case, organize o relatório, o debate e a dissertação. No Paper, faça o Projeto e depois avance para o Paper Final. Textos e fontes ficam no mesmo projeto; você revisa e exporta o PDF.</p>
+
+        <div class="sales-hero-actions"><a class="button button-primary" href="{{ url_for('projects.account') if signed_in else url_for('oauth.google_start') }}">{{ 'Meus trabalhos' if signed_in else 'Começar com Google' }}</a><a class="button" href="#demonstracao" data-site-section="demonstracao">Abrir exemplos</a></div>
+        <p class="sales-hero-microcopy">Seus projetos são privados por padrão.</p>
+      </div>
+      <div class="sales-hero-visual"><div class="sales-product-window sales-product-window-hero" aria-label="Exemplo preenchido em modo somente leitura">
+    <div class="sales-window-chrome"><span class="sales-window-dot" aria-hidden="true"></span><span class="sales-window-dot" aria-hidden="true"></span><span class="sales-window-dot" aria-hidden="true"></span><span class="sales-window-route">Assistente Acadêmico</span></div>
+    <div class="sales-window-body">
+      <div class="sales-window-topline"><span>Exemplo</span><span class="sales-readonly">Somente leitura</span></div>
+      <p class="sales-kicker">Projeto de Paper</p>
+      <h3>O CONTRADITÓRIO NO INQUÉRITO POLICIAL APÓS A LEI Nº 13.245/2016: reflexos no valor probatório</h3>
+      <p class="sales-preview-question">A participação da defesa técnica na fase investigatória altera o valor probatório dos atos do inquérito policial?</p>
+      <div class="sales-window-actions">
+        <button class="button button-primary" type="button" data-model-workflow="projeto-paper-modelo">Abrir exemplos</button>
+        <button class="button" type="button" data-model-document="projeto-paper-modelo">Ler completo</button>
+      </div>
+    </div>
+  </div></div>
+    </section>
+
+    <section class="sales-highlight-rail" aria-label="Resumo dos recursos">
+      <div><strong>Case</strong><span>relatório, debate e dissertação</span></div>
+      <div><strong>Paper</strong><span>Projeto e Paper Final, no mesmo crédito</span></div>
+      <div><strong>Créditos</strong><span>não expiram</span></div>
+      <div><strong>Pagamento</strong><span>Pix único, sem renovação</span></div>
+    </section>
+
+    <section id="como-funciona" class="sales-section sales-flows-section" aria-labelledby="sales-flows-title">
+      <div class="sales-section-heading"><p class="sales-kicker">Dois roteiros</p><h2 id="sales-flows-title">Cada trabalho tem suas etapas.</h2></div>
+      <div class="sales-resource-rail sales-flows-rail">
+        <article><span class="sales-resource-number">Case</span><h3>Relatório, debate e dissertação</h3><p>Registre fatos, questão jurídica, teses e fontes no relatório. Depois da entrega, use esse material para preparar o debate e a dissertação.</p></article>
+        <article><span class="sales-resource-number">Paper</span><h3>Projeto e Paper Final</h3><p>Organize problema, hipótese, objetivos, método e fontes no Projeto. Continue no Paper Final dentro do mesmo projeto e crédito.</p></article>
+      </div>
+    </section>
+
+    <section id="recursos" class="sales-section sales-resources-section" aria-labelledby="sales-resources-title">
+      <div class="sales-section-heading"><p class="sales-kicker">Recursos</p><h2 id="sales-resources-title">Ferramentas para organizar e revisar.</h2></div>
+      <div class="sales-resource-rail">
+        <article><span class="sales-resource-number">01</span><h3>Fontes no trabalho</h3><p>Consulte sugestões de pesquisa, registre referências e confira os dados antes de usar uma fonte.</p></article>
+        <article><span class="sales-resource-number">02</span><h3>Prazos e tarefas</h3><p>Defina datas para as etapas do Case ou do Paper e acompanhe o que falta na agenda.</p></article>
+        <article><span class="sales-resource-number">03</span><h3>Revisão e PDF</h3><p>Confira o conteúdo, faça seus ajustes e exporte o trabalho em PDF.</p></article>
+      </div>
+    </section>
+
+    <section id="demonstracao" class="sales-section sales-demo-section" aria-labelledby="sales-demo-title">
+      <div class="sales-section-heading"><p class="sales-kicker">Exemplos</p><h2 id="sales-demo-title">Exemplos práticos</h2></div>
+      <div class="sales-product-window sales-product-window-demo" aria-label="Exemplo preenchido em modo somente leitura">
+    <div class="sales-window-chrome"><span class="sales-window-dot" aria-hidden="true"></span><span class="sales-window-dot" aria-hidden="true"></span><span class="sales-window-dot" aria-hidden="true"></span><span class="sales-window-route">Assistente Acadêmico</span></div>
+    <div class="sales-window-body">
+      <div class="sales-window-topline"><span>Exemplo</span><span class="sales-readonly">Somente leitura</span></div>
+      <p class="sales-kicker">Relatório de case · Modelo preenchido</p>
+      <h3>Direito da Personalidade</h3>
+      <p class="sales-preview-question">Diante do ocorrido, quais são os limites da liberdade de expressão quando esta colide com direitos de terceiros, especialmente no que se refere à proteção da honra, da imagem e da reputação?</p>
+      <div class="sales-window-actions">
+        <button class="button button-primary" type="button" data-model-workflow="civil-personality">Abrir exemplo</button>
+        <button class="button" type="button" data-model-document="civil-personality">Ler completo</button>
+      </div>
+    </div>
+  </div>
+      <div class="sales-demo-more"><button class="button" type="button" data-model-workflow="projeto-paper-modelo">Projeto de Paper</button><button class="button" type="button" data-model-workflow="paper-final-modelo">Paper Final</button></div>
+    </section>
+
+    <section id="precos" class="access-options sales-pricing" aria-labelledby="sales-pricing-title">
+    <div class="sales-section-heading">
+      {% if pricing_only %}<p><a class="sales-inline-link" href="{{ url_for('public.home') }}">← Voltar à apresentação</a></p>{% endif %}
+      <p class="sales-kicker">Planos e valores</p>
+      <h2 id="sales-pricing-title">Um crédito ou um pacote de 7 projetos.</h2>
+      <p>Pagamento único por Pix, sem renovação. Depois de confirmar o pagamento, o administrador atribui o plano e os créditos à conta.</p>
+    </div>
+    <div class="sales-plans-list"><article class="sales-plan-card" data-plan-code="avulso_ai" aria-labelledby="sales-plan-avulso_ai">
+    <div class="sales-plan-heading">
+      <div>
+        <p class="sales-plan-index">1 projeto</p>
+        <h3 id="sales-plan-avulso_ai">Avulso</h3>
+      </div>
+    </div>
+    <p class="sales-plan-description">1 projeto com sugestões de IA nas etapas disponíveis.</p>
+    <div class="sales-price-stack">
+      <strong class="sales-current-price">R$ 12,00</strong>
+    </div>
+    <ul class="sales-plan-benefits">
+    <li><strong>1 crédito de projeto</strong></li>
+    <li><strong>Assistência por IA</strong><span>Sugestões nas etapas disponíveis</span></li>
+    <li><strong>Exportação em PDF</strong></li>
+  </ul>
+    <details class="pix-payment">
+      <summary>Ver pagamento por Pix</summary>
+      <div class="pix-payment-body">
+        <img class="pix-qr" src="/pix/avulso-ai.svg" width="168" height="168" alt="QR Code Pix do plano Avulso">
+        <button class="button button-primary" type="button" data-pix-copy="avulso_ai">Copiar código Pix</button>
+        <span data-pix-status="avulso_ai" role="status" aria-live="polite"></span>
+        <details class="pix-code">
+          <summary>Ver código Pix completo</summary>
+          <code class="pix-payload">00020126580014BR.GOV.BCB.PIX0136143e87f8-1f46-46b9-8c61-ad6d24f66c11520400005303986540512.005802BR5920Sivaldo Davi Pereira6009SAO PAULO62140510bsYkFbWYvt630426FE</code>
+        </details>
+      </div>
+    </details>
+  </article><article class="sales-plan-card" data-plan-code="sem_ia" aria-labelledby="sales-plan-sem_ia">
+    <div class="sales-plan-heading">
+      <div>
+        <p class="sales-plan-index">Pacote de até 7 projetos</p>
+        <h3 id="sales-plan-sem_ia">Essencial</h3>
+      </div>
+    </div>
+    <p class="sales-plan-description">Até 7 projetos com roteiros e exportação em PDF.</p>
+    <div class="sales-price-stack">
+      <strong class="sales-current-price">R$ 35,00</strong>
+    </div>
+    <ul class="sales-plan-benefits">
+    <li><strong>7 créditos de projeto</strong></li>
+    <li><strong>Roteiros para Case e Paper</strong><span>Estrutura de trabalho e exportação</span></li>
+    <li><strong>Exportação em PDF</strong></li>
+  </ul>
+    <details class="pix-payment">
+      <summary>Ver pagamento por Pix</summary>
+      <div class="pix-payment-body">
+        <img class="pix-qr" src="/pix/sem-ia.svg" width="168" height="168" alt="QR Code Pix do plano Essencial">
+        <button class="button button-primary" type="button" data-pix-copy="sem_ia">Copiar código Pix</button>
+        <span data-pix-status="sem_ia" role="status" aria-live="polite"></span>
+        <details class="pix-code">
+          <summary>Ver código Pix completo</summary>
+          <code class="pix-payload">00020126580014BR.GOV.BCB.PIX0136143e87f8-1f46-46b9-8c61-ad6d24f66c11520400005303986540535.005802BR5920Sivaldo Davi Pereira6009SAO PAULO62140510Q5Ry2eeEG3630466A0</code>
+        </details>
+      </div>
+    </details>
+  </article><article class="sales-plan-card" data-plan-code="com_ia" aria-labelledby="sales-plan-com_ia">
+    <div class="sales-plan-heading">
+      <div>
+        <p class="sales-plan-index">Pacote de até 7 projetos</p>
+        <h3 id="sales-plan-com_ia">Completo</h3>
+      </div>
+    </div>
+    <p class="sales-plan-description">Até 7 projetos com sugestões de IA nas etapas disponíveis.</p>
+    <div class="sales-price-stack">
+      <strong class="sales-current-price">R$ 69,90</strong>
+    </div>
+    <ul class="sales-plan-benefits">
+    <li><strong>7 créditos de projeto</strong></li>
+    <li><strong>Assistência por IA</strong><span>Sugestões nas etapas disponíveis</span></li>
+    <li><strong>Exportação em PDF</strong></li>
+  </ul>
+    <details class="pix-payment">
+      <summary>Ver pagamento por Pix</summary>
+      <div class="pix-payment-body">
+        <img class="pix-qr" src="/pix/com-ia.svg" width="168" height="168" alt="QR Code Pix do plano Completo">
+        <button class="button button-primary" type="button" data-pix-copy="com_ia">Copiar código Pix</button>
+        <span data-pix-status="com_ia" role="status" aria-live="polite"></span>
+        <details class="pix-code">
+          <summary>Ver código Pix completo</summary>
+          <code class="pix-payload">00020126580014BR.GOV.BCB.PIX0136143e87f8-1f46-46b9-8c61-ad6d24f66c11520400005303986540569.905802BR5920Sivaldo Davi Pereira6009SAO PAULO621405106GaGsYoE0Z6304FDFB</code>
+        </details>
+      </div>
+    </details>
+  </article></div>
+    <div class="sales-pricing-notes">
+      <p><strong>Para liberar o acesso:</strong> entre com Google, envie o comprovante e o e-mail da conta pelo WhatsApp.</p>
+      <p>Projeto extra: R$ 8,00 no Completo ou R$ 5,00 no Essencial.</p>
+    </div>
+  </section>
+
+    <section class="sales-section sales-faq-section" aria-labelledby="sales-faq-title">
+      <div class="sales-section-heading"><h2 id="sales-faq-title">Perguntas Frequentes</h2></div>
+      <div class="sales-faq-list">
+        <details><summary>O que muda entre Essencial e Completo?</summary><p>Os dois pacotes incluem até 7 créditos de projeto. O Completo inclui sugestões por IA nas etapas disponíveis; o Essencial inclui os roteiros e a exportação em PDF.</p></details>
+        <details><summary>Projeto de Paper e Paper Final usam dois créditos?</summary><p>Não. As duas etapas pertencem ao mesmo projeto e usam um crédito.</p></details>
+        <details><summary>Os créditos expiram?</summary><p>Não. Os créditos não expiram e não há renovação automática.</p></details>
+        <details><summary>Como o plano é liberado após o Pix?</summary><p>Entre com Google, envie o comprovante e informe o e-mail da conta pelo WhatsApp. O administrador confirma o pagamento e atribui o plano e os créditos manualmente.</p></details>
+        <details><summary>Posso ver os modelos sem entrar?</summary><p>Sim. Os exemplos preenchidos e os documentos podem ser consultados sem criar uma conta.</p></details>
+      </div>
+    </section>
+
+    <footer class="sales-footer">
+      <div><strong>Assistente Acadêmico</strong><p>Roteiros para organizar Case e Paper.</p></div>
+      <nav aria-label="Links institucionais"><a href="/termos/">Termos</a><a href="/privacidade/">Privacidade</a><a href="/ajuda-ia/">Detalhes da assistência</a><a href="/jornada/">Jornada</a><a href="https://wa.me/5598981417363" target="_blank" rel="noopener noreferrer">WhatsApp</a></nav>
+    </footer>
+  </div></div>
+
+<script id="public-demo-data" type="application/json">{{ demo_models|tojson }}</script>
+<dialog id="public-demo-dialog" aria-labelledby="public-demo-title">
+  <div class="sales-window-body">
+    <div class="sales-window-topline"><span>Exemplo público</span><span class="sales-readonly">Somente leitura</span></div>
+    <h2 id="public-demo-title">Demonstração</h2>
+    <div id="public-demo-body"></div>
+    <form method="dialog" class="sales-window-actions">
+      <button class="button" type="submit" data-demo-close>Fechar</button>
+    </form>
+  </div>
+</dialog>
+
+{% endblock %}

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>export.py - assistente-academico - Assistente Acadêmico v2
+</title>
+<link rel="icon" type="image/png" href="../../../favicon.png" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed" href="../../../atom.xml" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed (tags)" href="../../../tags.xml" />
+<link rel="stylesheet" type="text/css" href="../../../style.css" />
+</head>
+<body>
+<table><tr><td><a href="../../../../"><img src="../../../logo.png" alt="" width="32" height="32" /></a></td><td><h1>assistente-academico</h1><span class="desc">Assistente Acadêmico v2
+</span></td></tr><tr class="url"><td></td><td>git clone <a href="git://git.sivaldodavi.com.br/assistente-academico.git">git://git.sivaldodavi.com.br/assistente-academico.git</a></td></tr><tr><td></td><td>
+<a href="../../../log.html">Log</a> | <a href="../../../files.html">Files</a> | <a href="../../../refs.html">Refs</a> | <a href="../../../file/README.md.html">README</a></td></tr></table>
+<hr/>
+<div id="content">
+<p> export.py (1591B)</p><hr/><pre id="blob">
+<a href="#l1" class="line" id="l1">      1</a> from flask import Blueprint, Response, abort, request
+<a href="#l2" class="line" id="l2">      2</a> 
+<a href="#l3" class="line" id="l3">      3</a> from ..auth import current_account_id, login_required
+<a href="#l4" class="line" id="l4">      4</a> from ..services.export import ExportUnavailable, build_project_html, render_pdf
+<a href="#l5" class="line" id="l5">      5</a> from ..store.projects import get_project
+<a href="#l6" class="line" id="l6">      6</a> from ..store.sources import list_sources
+<a href="#l7" class="line" id="l7">      7</a> 
+<a href="#l8" class="line" id="l8">      8</a> 
+<a href="#l9" class="line" id="l9">      9</a> export_bp = Blueprint(&quot;export&quot;, __name__)
+<a href="#l10" class="line" id="l10">     10</a> 
+<a href="#l11" class="line" id="l11">     11</a> 
+<a href="#l12" class="line" id="l12">     12</a> @export_bp.get(&quot;/projects/&lt;project_id&gt;/export&quot;)
+<a href="#l13" class="line" id="l13">     13</a> @login_required
+<a href="#l14" class="line" id="l14">     14</a> def project_export(project_id):
+<a href="#l15" class="line" id="l15">     15</a>     project = get_project(current_account_id(), project_id)
+<a href="#l16" class="line" id="l16">     16</a>     if project is None:
+<a href="#l17" class="line" id="l17">     17</a>         abort(404)
+<a href="#l18" class="line" id="l18">     18</a>     if project[&#39;project_type&#39;] == &#39;case&#39;:
+<a href="#l19" class="line" id="l19">     19</a>         phase = request.args.get(&#39;phase&#39;, &#39;report&#39;)
+<a href="#l20" class="line" id="l20">     20</a>         if phase not in {&#39;report&#39;, &#39;debate&#39;, &#39;dissertation&#39;}:
+<a href="#l21" class="line" id="l21">     21</a>             abort(400, description=&#39;Documento inválido.&#39;)
+<a href="#l22" class="line" id="l22">     22</a>         project[&#39;export_phase&#39;] = phase
+<a href="#l23" class="line" id="l23">     23</a>     source_ids = set(project.get(&quot;source_ids&quot;, []))
+<a href="#l24" class="line" id="l24">     24</a>     sources = [source for source in list_sources(current_account_id()) if source[&quot;id&quot;] in source_ids]
+<a href="#l25" class="line" id="l25">     25</a>     export_format = request.args.get(&quot;format&quot;, &quot;html&quot;)
+<a href="#l26" class="line" id="l26">     26</a>     if export_format == &quot;html&quot;:
+<a href="#l27" class="line" id="l27">     27</a>         return Response(build_project_html(project, sources), mimetype=&quot;text/html&quot;)
+<a href="#l28" class="line" id="l28">     28</a>     if export_format == &quot;pdf&quot;:
+<a href="#l29" class="line" id="l29">     29</a>         try:
+<a href="#l30" class="line" id="l30">     30</a>             pdf = render_pdf(project, sources)
+<a href="#l31" class="line" id="l31">     31</a>         except ExportUnavailable as error:
+<a href="#l32" class="line" id="l32">     32</a>             abort(503, description=str(error))
+<a href="#l33" class="line" id="l33">     33</a>         except Exception:
+<a href="#l34" class="line" id="l34">     34</a>             abort(503, description=&quot;Não foi possível gerar o PDF neste momento.&quot;)
+<a href="#l35" class="line" id="l35">     35</a>         return Response(pdf, mimetype=&quot;application/pdf&quot;, headers={&quot;Content-Disposition&quot;: &quot;attachment; filename=assistente-academico.pdf&quot;})
+<a href="#l36" class="line" id="l36">     36</a>     abort(400, description=&quot;Formato de exportação inválido.&quot;)
+</pre>
+</div>
+</body>
+</html>

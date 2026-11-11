@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>feat: adicionar biblioteca pessoal e fontes vinculadas - assistente-academico - Assistente Acadêmico v2
+</title>
+<link rel="icon" type="image/png" href="../favicon.png" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed" href="../atom.xml" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed (tags)" href="../tags.xml" />
+<link rel="stylesheet" type="text/css" href="../style.css" />
+</head>
+<body>
+<table><tr><td><a href="../../"><img src="../logo.png" alt="" width="32" height="32" /></a></td><td><h1>assistente-academico</h1><span class="desc">Assistente Acadêmico v2
+</span></td></tr><tr class="url"><td></td><td>git clone <a href="git://git.sivaldodavi.com.br/assistente-academico.git">git://git.sivaldodavi.com.br/assistente-academico.git</a></td></tr><tr><td></td><td>
+<a href="../log.html">Log</a> | <a href="../files.html">Files</a> | <a href="../refs.html">Refs</a> | <a href="../file/README.md.html">README</a></td></tr></table>
+<hr/>
+<div id="content">
+<pre><b>commit</b> <a href="../commit/7a96eafb2c9a8e3471d80e703c7d68b91f8308f1.html">7a96eafb2c9a8e3471d80e703c7d68b91f8308f1</a>
+<b>parent</b> <a href="../commit/fa9757c778ee38ded07467d0f6de25eebce3fb40.html">fa9757c778ee38ded07467d0f6de25eebce3fb40</a>
+<b>Author:</b> Sivaldo Davi &lt;<span class="offview">g<span>x</span>i<span>x</span>t<span>x</span>@<span>x</span>s<span>x</span>i<span>x</span>v<span>x</span>a<span>x</span>l<span>x</span>d<span>x</span>o<span>x</span>d<span>x</span>a<span>x</span>v<span>x</span>i<span>x</span>.<span>x</span>c<span>x</span>o<span>x</span>m</span>&gt;
+<b>Date:</b>   Mon, 26 Oct 2026 16:07:21 +0000
+
+feat: adicionar biblioteca pessoal e fontes vinculadas
+
+<b>Diffstat:</b>
+<table><tr><td class="M">M</td><td><a href="#h0">app/__init__.py</a></td><td> | </td><td class="num">2</td><td><span class="i">++</span><span class="d"></span></td></tr>
+<tr><td class="A">A</td><td><a href="#h1">app/routes/library.py</a></td><td> | </td><td class="num">31</td><td><span class="i">+++++++++++++++++++++++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="M">M</td><td><a href="#h2">app/routes/projects.py</a></td><td> | </td><td class="num">10</td><td><span class="i">++++++++</span><span class="d">--</span></td></tr>
+<tr><td class="M">M</td><td><a href="#h3">app/store/schema.sql</a></td><td> | </td><td class="num">16</td><td><span class="i">+++++++++++++++</span><span class="d">-</span></td></tr>
+<tr><td class="A">A</td><td><a href="#h4">app/store/sources.py</a></td><td> | </td><td class="num">48</td><td><span class="i">++++++++++++++++++++++++++++++++++++++++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="A">A</td><td><a href="#h5">docs/ia/BIBLIOTECA-PESSOAL.md</a></td><td> | </td><td class="num">25</td><td><span class="i">+++++++++++++++++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="M">M</td><td><a href="#h6">docs/ia/MATRIZ-FUNCIONAL.md</a></td><td> | </td><td class="num">4</td><td><span class="i">++</span><span class="d">--</span></td></tr>
+<tr><td class="M">M</td><td><a href="#h7">static/css/app.css</a></td><td> | </td><td class="num">8</td><td><span class="i">++++++++</span><span class="d"></span></td></tr>
+<tr><td class="M">M</td><td><a href="#h8">static/js/project-editor.js</a></td><td> | </td><td class="num">27</td><td><span class="i">++++++++++++++++++++++++</span><span class="d">---</span></td></tr>
+<tr><td class="M">M</td><td><a href="#h9">templates/account/home.html</a></td><td> | </td><td class="num">2</td><td><span class="i">+</span><span class="d">-</span></td></tr>
+<tr><td class="A">A</td><td><a href="#h10">templates/library/home.html</a></td><td> | </td><td class="num">25</td><td><span class="i">+++++++++++++++++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="M">M</td><td><a href="#h11">templates/projects/editor.html</a></td><td> | </td><td class="num">5</td><td><span class="i">+++</span><span class="d">--</span></td></tr>
+<tr><td class="A">A</td><td><a href="#h12">tests/test_library.py</a></td><td> | </td><td class="num">36</td><td><span class="i">++++++++++++++++++++++++++++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="M">M</td><td><a href="#h13">tests/test_projects.py</a></td><td> | </td><td class="num">10</td><td><span class="i">++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="M">M</td><td><a href="#h14">tests/test_smoke.py</a></td><td> | </td><td class="num">2</td><td><span class="i">+</span><span class="d">-</span></td></tr>
+</table></pre><pre>15 files changed, 239 insertions(+), 12 deletions(-)
+<hr/><b>diff --git a/<a id="h0" href="../file/app/__init__.py.html">app/__init__.py</a> b/<a href="../file/app/__init__.py.html">app/__init__.py</a></b>
+<a href="#h0-0" id="h0-0" class="h">@@ -32,6 +32,7 @@ def create_app(test_config=None):
+</a> 
+     from .routes.account import account_bp
+     from .routes.auth import auth_bp
+<a href="#h0-0-3" id="h0-0-3" class="i">+    from .routes.library import library_bp
+</a>     from .routes.oauth import oauth_bp
+     from .routes.projects import projects_bp
+     from .routes.public import public_bp
+<a href="#h0-1" id="h0-1" class="h">@@ -39,6 +40,7 @@ def create_app(test_config=None):
+</a>     app.register_blueprint(public_bp)
+     app.register_blueprint(account_bp)
+     app.register_blueprint(auth_bp)
+<a href="#h0-1-3" id="h0-1-3" class="i">+    app.register_blueprint(library_bp)
+</a>     app.register_blueprint(oauth_bp)
+     app.register_blueprint(projects_bp)
+ 
+<b>diff --git a/<a id="h1" href="../file/app/routes/library.py.html">app/routes/library.py</a> b/<a href="../file/app/routes/library.py.html">app/routes/library.py</a></b>
+<a href="#h1-0" id="h1-0" class="h">@@ -0,0 +1,31 @@
+</a><a href="#h1-0-0" id="h1-0-0" class="i">+from flask import Blueprint, abort, redirect, render_template, request, url_for
+</a><a href="#h1-0-1" id="h1-0-1" class="i">+
+</a><a href="#h1-0-2" id="h1-0-2" class="i">+from ..auth import current_account_id, login_required, require_csrf
+</a><a href="#h1-0-3" id="h1-0-3" class="i">+from ..store.sources import SOURCE_KINDS, create_source, list_sources
+</a><a href="#h1-0-4" id="h1-0-4" class="i">+
+</a><a href="#h1-0-5" id="h1-0-5" class="i">+
+</a><a href="#h1-0-6" id="h1-0-6" class="i">+library_bp = Blueprint(&quot;library&quot;, __name__)
+</a><a href="#h1-0-7" id="h1-0-7" class="i">+
+</a><a href="#h1-0-8" id="h1-0-8" class="i">+
+</a><a href="#h1-0-9" id="h1-0-9" class="i">+@library_bp.get(&quot;/library&quot;)
+</a><a href="#h1-0-10" id="h1-0-10" class="i">+@login_required
+</a><a href="#h1-0-11" id="h1-0-11" class="i">+def home():
+</a><a href="#h1-0-12" id="h1-0-12" class="i">+    return render_template(&quot;library/home.html&quot;, sources=list_sources(current_account_id()))
+</a><a href="#h1-0-13" id="h1-0-13" class="i">+
+</a><a href="#h1-0-14" id="h1-0-14" class="i">+
+</a><a href="#h1-0-15" id="h1-0-15" class="i">+@library_bp.post(&quot;/library/sources&quot;)
+</a><a href="#h1-0-16" id="h1-0-16" class="i">+@login_required
+</a><a href="#h1-0-17" id="h1-0-17" class="i">+def add_source():
+</a><a href="#h1-0-18" id="h1-0-18" class="i">+    require_csrf()
+</a><a href="#h1-0-19" id="h1-0-19" class="i">+    title = request.form.get(&quot;title&quot;, &quot;&quot;).strip()
+</a><a href="#h1-0-20" id="h1-0-20" class="i">+    if not title:
+</a><a href="#h1-0-21" id="h1-0-21" class="i">+        abort(400, description=&quot;Informe o título da fonte.&quot;)
+</a><a href="#h1-0-22" id="h1-0-22" class="i">+    create_source(
+</a><a href="#h1-0-23" id="h1-0-23" class="i">+        current_account_id(),
+</a><a href="#h1-0-24" id="h1-0-24" class="i">+        title,
+</a><a href="#h1-0-25" id="h1-0-25" class="i">+        request.form.get(&quot;author&quot;, &quot;&quot;),
+</a><a href="#h1-0-26" id="h1-0-26" class="i">+        request.form.get(&quot;kind&quot;, &quot;other&quot;),
+</a><a href="#h1-0-27" id="h1-0-27" class="i">+        request.form.get(&quot;reference&quot;, &quot;&quot;),
+</a><a href="#h1-0-28" id="h1-0-28" class="i">+        request.form.get(&quot;notes&quot;, &quot;&quot;),
+</a><a href="#h1-0-29" id="h1-0-29" class="i">+    )
+</a><a href="#h1-0-30" id="h1-0-30" class="i">+    return redirect(url_for(&quot;library.home&quot;, saved=&quot;source&quot;))
+</a><b>diff --git a/<a id="h2" href="../file/app/routes/projects.py.html">app/routes/projects.py</a> b/<a href="../file/app/routes/projects.py.html">app/routes/projects.py</a></b>
+<a href="#h2-0" id="h2-0" class="h">@@ -6,6 +6,7 @@ from ..auth import current_account_id, login_required, require_csrf
+</a> from ..domain.timeline import normalize_timeline, new_fact
+ from ..store.accounts import get_account
+ from ..store.projects import ProjectConflict, create_project, get_project, list_projects, save_project
+<a href="#h2-0-3" id="h2-0-3" class="i">+from ..store.sources import list_sources, owned_source_ids
+</a> 
+ 
+ projects_bp = Blueprint(&quot;projects&quot;, __name__)
+<a href="#h2-1" id="h2-1" class="h">@@ -39,7 +40,7 @@ def editor(project_id):
+</a>     if project is None:
+         abort(404)
+     timeline = project[&quot;timeline&quot;] or [new_fact()]
+<a href="#h2-1-3" id="h2-1-3" class="d">-    return render_template(&quot;projects/editor.html&quot;, project=project, timeline=timeline)
+</a><a href="#h2-1-4" id="h2-1-4" class="i">+    return render_template(&quot;projects/editor.html&quot;, project=project, timeline=timeline, sources=list_sources(current_account_id()))
+</a> 
+ 
+ @projects_bp.post(&quot;/projects/&lt;project_id&gt;/save&quot;)
+<a href="#h2-2" id="h2-2" class="h">@@ -55,10 +56,15 @@ def save(project_id):
+</a>     if not isinstance(payload, dict):
+         abort(400, description=&quot;Projeto inválido.&quot;)
+     fields = payload.get(&quot;fields&quot;) if isinstance(payload.get(&quot;fields&quot;), dict) else {}
+<a href="#h2-2-3" id="h2-2-3" class="i">+    timeline = normalize_timeline(payload.get(&quot;timeline&quot;))
+</a><a href="#h2-2-4" id="h2-2-4" class="i">+    requested_source_ids = [source_id for fact in timeline for source_id in fact[&quot;source_ids&quot;]]
+</a><a href="#h2-2-5" id="h2-2-5" class="i">+    valid_source_ids = owned_source_ids(current_account_id(), requested_source_ids)
+</a><a href="#h2-2-6" id="h2-2-6" class="i">+    for fact in timeline:
+</a><a href="#h2-2-7" id="h2-2-7" class="i">+        fact[&quot;source_ids&quot;] = [source_id for source_id in fact[&quot;source_ids&quot;] if source_id in valid_source_ids]
+</a>     payload = {
+         &quot;version&quot;: 1,
+         &quot;fields&quot;: {&quot;title&quot;: str(fields.get(&quot;title&quot;) or &quot;&quot;)[:240]},
+<a href="#h2-2-11" id="h2-2-11" class="d">-        &quot;timeline&quot;: normalize_timeline(payload.get(&quot;timeline&quot;)),
+</a><a href="#h2-2-12" id="h2-2-12" class="i">+        &quot;timeline&quot;: timeline,
+</a>     }
+     try:
+         next_revision = save_project(current_account_id(), project_id, revision, payload)
+<b>diff --git a/<a id="h3" href="../file/app/store/schema.sql.html">app/store/schema.sql</a> b/<a href="../file/app/store/schema.sql.html">app/store/schema.sql</a></b>
+<a href="#h3-0" id="h3-0" class="h">@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS app_meta (
+</a> );
+ 
+ INSERT INTO app_meta (key, value)
+<a href="#h3-0-3" id="h3-0-3" class="d">-VALUES (&#39;schema_version&#39;, &#39;4&#39;)
+</a><a href="#h3-0-4" id="h3-0-4" class="i">+VALUES (&#39;schema_version&#39;, &#39;5&#39;)
+</a> ON CONFLICT(key) DO UPDATE SET value = excluded.value;
+ 
+ CREATE TABLE IF NOT EXISTS accounts (
+<a href="#h3-1" id="h3-1" class="h">@@ -35,3 +35,17 @@ CREATE TABLE IF NOT EXISTS projects (
+</a> );
+ 
+ CREATE INDEX IF NOT EXISTS projects_by_account ON projects(account_id, updated_at DESC);
+<a href="#h3-1-3" id="h3-1-3" class="i">+
+</a><a href="#h3-1-4" id="h3-1-4" class="i">+CREATE TABLE IF NOT EXISTS sources (
+</a><a href="#h3-1-5" id="h3-1-5" class="i">+    id TEXT PRIMARY KEY,
+</a><a href="#h3-1-6" id="h3-1-6" class="i">+    account_id TEXT NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
+</a><a href="#h3-1-7" id="h3-1-7" class="i">+    title TEXT NOT NULL,
+</a><a href="#h3-1-8" id="h3-1-8" class="i">+    author TEXT NOT NULL DEFAULT &#39;&#39;,
+</a><a href="#h3-1-9" id="h3-1-9" class="i">+    kind TEXT NOT NULL DEFAULT &#39;other&#39;,
+</a><a href="#h3-1-10" id="h3-1-10" class="i">+    reference TEXT NOT NULL DEFAULT &#39;&#39;,
+</a><a href="#h3-1-11" id="h3-1-11" class="i">+    notes TEXT NOT NULL DEFAULT &#39;&#39;,
+</a><a href="#h3-1-12" id="h3-1-12" class="i">+    created_at INTEGER NOT NULL,
+</a><a href="#h3-1-13" id="h3-1-13" class="i">+    updated_at INTEGER NOT NULL
+</a><a href="#h3-1-14" id="h3-1-14" class="i">+);
+</a><a href="#h3-1-15" id="h3-1-15" class="i">+
+</a><a href="#h3-1-16" id="h3-1-16" class="i">+CREATE INDEX IF NOT EXISTS sources_by_account ON sources(account_id, updated_at DESC);
+</a><b>diff --git a/<a id="h4" href="../file/app/store/sources.py.html">app/store/sources.py</a> b/<a href="../file/app/store/sources.py.html">app/store/sources.py</a></b>
+<a href="#h4-0" id="h4-0" class="h">@@ -0,0 +1,48 @@
+</a><a href="#h4-0-0" id="h4-0-0" class="i">+import time
+</a><a href="#h4-0-1" id="h4-0-1" class="i">+from uuid import uuid4
+</a><a href="#h4-0-2" id="h4-0-2" class="i">+
+</a><a href="#h4-0-3" id="h4-0-3" class="i">+from .db import get_db
+</a><a href="#h4-0-4" id="h4-0-4" class="i">+
+</a><a href="#h4-0-5" id="h4-0-5" class="i">+SOURCE_KINDS = {&quot;book&quot;, &quot;article&quot;, &quot;legislation&quot;, &quot;case_law&quot;, &quot;website&quot;, &quot;other&quot;}
+</a><a href="#h4-0-6" id="h4-0-6" class="i">+
+</a><a href="#h4-0-7" id="h4-0-7" class="i">+
+</a><a href="#h4-0-8" id="h4-0-8" class="i">+def create_source(account_id: str, title: str, author: str, kind: str, reference: str, notes: str) -&gt; str:
+</a><a href="#h4-0-9" id="h4-0-9" class="i">+    source_id = str(uuid4())
+</a><a href="#h4-0-10" id="h4-0-10" class="i">+    get_db().execute(
+</a><a href="#h4-0-11" id="h4-0-11" class="i">+        &quot;&quot;&quot;INSERT INTO sources (id, account_id, title, author, kind, reference, notes, created_at, updated_at)
+</a><a href="#h4-0-12" id="h4-0-12" class="i">+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)&quot;&quot;&quot;,
+</a><a href="#h4-0-13" id="h4-0-13" class="i">+        (
+</a><a href="#h4-0-14" id="h4-0-14" class="i">+            source_id,
+</a><a href="#h4-0-15" id="h4-0-15" class="i">+            account_id,
+</a><a href="#h4-0-16" id="h4-0-16" class="i">+            str(title or &quot;&quot;).strip()[:240],
+</a><a href="#h4-0-17" id="h4-0-17" class="i">+            str(author or &quot;&quot;).strip()[:240],
+</a><a href="#h4-0-18" id="h4-0-18" class="i">+            kind if kind in SOURCE_KINDS else &quot;other&quot;,
+</a><a href="#h4-0-19" id="h4-0-19" class="i">+            str(reference or &quot;&quot;).strip()[:500],
+</a><a href="#h4-0-20" id="h4-0-20" class="i">+            str(notes or &quot;&quot;).strip()[:1000],
+</a><a href="#h4-0-21" id="h4-0-21" class="i">+            int(time.time()),
+</a><a href="#h4-0-22" id="h4-0-22" class="i">+            int(time.time()),
+</a><a href="#h4-0-23" id="h4-0-23" class="i">+        ),
+</a><a href="#h4-0-24" id="h4-0-24" class="i">+    )
+</a><a href="#h4-0-25" id="h4-0-25" class="i">+    get_db().commit()
+</a><a href="#h4-0-26" id="h4-0-26" class="i">+    return source_id
+</a><a href="#h4-0-27" id="h4-0-27" class="i">+
+</a><a href="#h4-0-28" id="h4-0-28" class="i">+
+</a><a href="#h4-0-29" id="h4-0-29" class="i">+def list_sources(account_id: str):
+</a><a href="#h4-0-30" id="h4-0-30" class="i">+    rows = get_db().execute(
+</a><a href="#h4-0-31" id="h4-0-31" class="i">+        &quot;&quot;&quot;SELECT id, title, author, kind, reference, notes, created_at, updated_at
+</a><a href="#h4-0-32" id="h4-0-32" class="i">+           FROM sources WHERE account_id = ? ORDER BY updated_at DESC, title COLLATE NOCASE&quot;&quot;&quot;,
+</a><a href="#h4-0-33" id="h4-0-33" class="i">+        (account_id,),
+</a><a href="#h4-0-34" id="h4-0-34" class="i">+    ).fetchall()
+</a><a href="#h4-0-35" id="h4-0-35" class="i">+    return [dict(row) for row in rows]
+</a><a href="#h4-0-36" id="h4-0-36" class="i">+
+</a><a href="#h4-0-37" id="h4-0-37" class="i">+
+</a><a href="#h4-0-38" id="h4-0-38" class="i">+def owned_source_ids(account_id: str, source_ids: list[str]) -&gt; set[str]:
+</a><a href="#h4-0-39" id="h4-0-39" class="i">+    clean = {str(source_id) for source_id in source_ids if isinstance(source_id, str) and source_id}
+</a><a href="#h4-0-40" id="h4-0-40" class="i">+    if not clean:
+</a><a href="#h4-0-41" id="h4-0-41" class="i">+        return set()
+</a><a href="#h4-0-42" id="h4-0-42" class="i">+    placeholders = &quot;,&quot;.join(&quot;?&quot; for _ in clean)
+</a><a href="#h4-0-43" id="h4-0-43" class="i">+    rows = get_db().execute(
+</a><a href="#h4-0-44" id="h4-0-44" class="i">+        f&quot;SELECT id FROM sources WHERE account_id = ? AND id IN ({placeholders})&quot;,
+</a><a href="#h4-0-45" id="h4-0-45" class="i">+        (account_id, *clean),
+</a><a href="#h4-0-46" id="h4-0-46" class="i">+    ).fetchall()
+</a><a href="#h4-0-47" id="h4-0-47" class="i">+    return {row[&quot;id&quot;] for row in rows}
+</a><b>diff --git a/<a id="h5" href="../file/docs/ia/BIBLIOTECA-PESSOAL.md.html">docs/ia/BIBLIOTECA-PESSOAL.md</a> b/<a href="../file/docs/ia/BIBLIOTECA-PESSOAL.md.html">docs/ia/BIBLIOTECA-PESSOAL.md</a></b>
+<a href="#h5-0" id="h5-0" class="h">@@ -0,0 +1,25 @@
+</a><a href="#h5-0-0" id="h5-0-0" class="i">+# Biblioteca Pessoal
+</a><a href="#h5-0-1" id="h5-0-1" class="i">+
+</a><a href="#h5-0-2" id="h5-0-2" class="i">+## Objetivo
+</a><a href="#h5-0-3" id="h5-0-3" class="i">+
+</a><a href="#h5-0-4" id="h5-0-4" class="i">+A Biblioteca Pessoal guarda referências que pertencem à conta e podem ser reutilizadas em mais de um projeto. Ela não é uma lixeira de textos nem uma lista pública de obras.
+</a><a href="#h5-0-5" id="h5-0-5" class="i">+
+</a><a href="#h5-0-6" id="h5-0-6" class="i">+## Registro de fonte
+</a><a href="#h5-0-7" id="h5-0-7" class="i">+
+</a><a href="#h5-0-8" id="h5-0-8" class="i">+Uma fonte possui título obrigatório, autor/órgão opcional, tipo, referência bibliográfica ou link e nota pessoal curta. O tipo é controlado: livro, artigo, legislação, jurisprudência, site ou outro.
+</a><a href="#h5-0-9" id="h5-0-9" class="i">+
+</a><a href="#h5-0-10" id="h5-0-10" class="i">+A fonte não recebe uma descrição acadêmica longa. A análise, o fichamento e a relação com teses pertencem aos recursos que usam a fonte.
+</a><a href="#h5-0-11" id="h5-0-11" class="i">+
+</a><a href="#h5-0-12" id="h5-0-12" class="i">+## Vínculo com projeto
+</a><a href="#h5-0-13" id="h5-0-13" class="i">+
+</a><a href="#h5-0-14" id="h5-0-14" class="i">+A Linha do Tempo e as etapas acadêmicas guardam somente IDs de fontes. No servidor, cada ID é validado contra a conta proprietária antes de ser salvo. Um usuário não consegue vincular ou descobrir a fonte de outra conta enviando um ID arbitrário.
+</a><a href="#h5-0-15" id="h5-0-15" class="i">+
+</a><a href="#h5-0-16" id="h5-0-16" class="i">+O editor apresenta fontes disponíveis em seleção múltipla. Não é necessário digitar UUID ou texto solto para criar um vínculo.
+</a><a href="#h5-0-17" id="h5-0-17" class="i">+
+</a><a href="#h5-0-18" id="h5-0-18" class="i">+## Experiência visual
+</a><a href="#h5-0-19" id="h5-0-19" class="i">+
+</a><a href="#h5-0-20" id="h5-0-20" class="i">+A biblioteca usa uma coluna curta para cadastro e uma lista plana com divisórias para leitura. Título, autor/tipo e referência aparecem primeiro; a nota pessoal fica recolhida quando existe. O layout deve funcionar em uma coluna no celular e continuar usando os componentes escuros do site.
+</a><a href="#h5-0-21" id="h5-0-21" class="i">+
+</a><a href="#h5-0-22" id="h5-0-22" class="i">+## Próximas extensões
+</a><a href="#h5-0-23" id="h5-0-23" class="i">+
+</a><a href="#h5-0-24" id="h5-0-24" class="i">+Fichamento estruturado, classificação pessoal, busca e citações só entram depois que o cadastro e o vínculo básico estiverem estáveis. A tabela não será expandida com campos sem fluxo de usuário definido.
+</a><b>diff --git a/<a id="h6" href="../file/docs/ia/MATRIZ-FUNCIONAL.md.html">docs/ia/MATRIZ-FUNCIONAL.md</a> b/<a href="../file/docs/ia/MATRIZ-FUNCIONAL.md.html">docs/ia/MATRIZ-FUNCIONAL.md</a></b>
+<a href="#h6-0" id="h6-0" class="h">@@ -39,8 +39,8 @@ Esta matriz define equivalência de produto. Ela não descreve classes antigas n
+</a> 
+ | Área | O usuário precisa conseguir | Estado |
+ | --- | --- | --- |
+<a href="#h6-0-3" id="h6-0-3" class="d">-| Fontes | cadastrar, classificar, citar, vincular teses e localizar | Pendente |
+</a><a href="#h6-0-4" id="h6-0-4" class="d">-| Biblioteca | marcar obra institucional e manter fichamento pessoal separado | Pendente |
+</a><a href="#h6-0-5" id="h6-0-5" class="i">+| Fontes | cadastrar, classificar, vincular a fatos e manter referências por conta | Em construção |
+</a><a href="#h6-0-6" id="h6-0-6" class="i">+| Biblioteca | cadastrar e reutilizar referências; fichamento pessoal entra depois | Em construção |
+</a> | Conceitos | relacionar conceito, definição, fundamento, teses e fontes | Pendente |
+ | Linha do Tempo | registrar fatos estruturados, fontes, certeza e relevância | Em construção |
+ | Agenda | organizar datas e tarefas sem calendário vazio artificial | Pendente |
+<b>diff --git a/<a id="h7" href="../file/static/css/app.css.html">static/css/app.css</a> b/<a href="../file/static/css/app.css.html">static/css/app.css</a></b>
+<a href="#h7-0" id="h7-0" class="h">@@ -49,5 +49,13 @@ input, select { width: 100%; min-height: 44px; padding: .65rem .75rem; border: 1
+</a> .settings-card h2 { margin: 0; font-size: 1.2rem; }
+ .check-row { display: flex; grid-template-columns: none; align-items: flex-start; gap: .65rem; font-weight: 500; line-height: 1.5; }
+ .check-row input { width: 1.1rem; min-height: 1.1rem; margin-top: .2rem; }
+<a href="#h7-0-3" id="h7-0-3" class="i">+.library-grid { display: grid; grid-template-columns: minmax(260px, .75fr) minmax(0, 1.25fr); gap: 2rem; max-width: 1100px; margin: 0 auto; padding: 0 4vw; }
+</a><a href="#h7-0-4" id="h7-0-4" class="i">+.source-list { min-width: 0; }
+</a><a href="#h7-0-5" id="h7-0-5" class="i">+.source-list h2 { margin-top: 0; }
+</a><a href="#h7-0-6" id="h7-0-6" class="i">+.source-row { padding: 1rem 0; border-top: 1px solid var(--line); }
+</a><a href="#h7-0-7" id="h7-0-7" class="i">+.source-row h3 { margin: .35rem 0; font-size: 1.05rem; }
+</a><a href="#h7-0-8" id="h7-0-8" class="i">+.source-row p { margin: .35rem 0; color: var(--muted); line-height: 1.5; }
+</a><a href="#h7-0-9" id="h7-0-9" class="i">+textarea { width: 100%; padding: .65rem .75rem; border: 1px solid var(--line); background: #101010; color: var(--ink); resize: vertical; }
+</a> @media (max-width: 640px) { .section-heading, .editor-actions { align-items: stretch; flex-direction: column; } .fact-grid { grid-template-columns: 1fr; } }
+ @media (max-width: 760px) { .settings-grid { grid-template-columns: 1fr; } }
+<a href="#h7-0-12" id="h7-0-12" class="i">+@media (max-width: 820px) { .library-grid { grid-template-columns: 1fr; } }
+</a><b>diff --git a/<a id="h8" href="../file/static/js/project-editor.js.html">static/js/project-editor.js</a> b/<a href="../file/static/js/project-editor.js.html">static/js/project-editor.js</a></b>
+<a href="#h8-0" id="h8-0" class="h">@@ -1,6 +1,7 @@
+</a> const form = document.querySelector(&quot;[data-project-editor]&quot;);
+ const facts = form?.querySelector(&quot;[data-facts]&quot;);
+ const saveState = form?.querySelector(&quot;[data-save-state]&quot;);
+<a href="#h8-0-3" id="h8-0-3" class="i">+const sourceOptions = JSON.parse(form?.querySelector(&quot;[data-source-options]&quot;)?.textContent || &quot;[]&quot;);
+</a> let timer;
+ 
+ function collectPayload() {
+<a href="#h8-1" id="h8-1" class="h">@@ -18,7 +19,7 @@ function collectPayload() {
+</a>         fact: value(&quot;fact&quot;),
+         certainty: value(&quot;certainty&quot;),
+         relevance: value(&quot;relevance&quot;),
+<a href="#h8-1-3" id="h8-1-3" class="d">-        source_ids: (card.querySelector(&quot;[data-fact-sources]&quot;)?.value || &quot;&quot;).split(&quot;,&quot;).map((item) =&gt; item.trim()).filter(Boolean),
+</a><a href="#h8-1-4" id="h8-1-4" class="i">+        source_ids: [...(card.querySelector(&quot;[data-fact-sources]&quot;)?.selectedOptions || [])].map((option) =&gt; option.value),
+</a>         context_note: value(&quot;context_note&quot;),
+       };
+     }),
+<a href="#h8-2" id="h8-2" class="h">@@ -53,6 +54,22 @@ function renumber() {
+</a>   form.querySelectorAll(&quot;[data-fact-number]&quot;).forEach((node, index) =&gt; { node.textContent = String(index + 1); });
+ }
+ 
+<a href="#h8-2-3" id="h8-2-3" class="i">+function addSourceOptions(select) {
+</a><a href="#h8-2-4" id="h8-2-4" class="i">+  if (!sourceOptions.length) {
+</a><a href="#h8-2-5" id="h8-2-5" class="i">+    const option = document.createElement(&quot;option&quot;);
+</a><a href="#h8-2-6" id="h8-2-6" class="i">+    option.disabled = true;
+</a><a href="#h8-2-7" id="h8-2-7" class="i">+    option.textContent = &quot;Cadastre uma fonte na Biblioteca Pessoal&quot;;
+</a><a href="#h8-2-8" id="h8-2-8" class="i">+    select.append(option);
+</a><a href="#h8-2-9" id="h8-2-9" class="i">+    return;
+</a><a href="#h8-2-10" id="h8-2-10" class="i">+  }
+</a><a href="#h8-2-11" id="h8-2-11" class="i">+  sourceOptions.forEach((source) =&gt; {
+</a><a href="#h8-2-12" id="h8-2-12" class="i">+    const option = document.createElement(&quot;option&quot;);
+</a><a href="#h8-2-13" id="h8-2-13" class="i">+    option.value = source.id;
+</a><a href="#h8-2-14" id="h8-2-14" class="i">+    option.textContent = source.title;
+</a><a href="#h8-2-15" id="h8-2-15" class="i">+    select.append(option);
+</a><a href="#h8-2-16" id="h8-2-16" class="i">+  });
+</a><a href="#h8-2-17" id="h8-2-17" class="i">+}
+</a><a href="#h8-2-18" id="h8-2-18" class="i">+
+</a> form?.addEventListener(&quot;input&quot;, scheduleSave);
+ form?.addEventListener(&quot;change&quot;, scheduleSave);
+ form?.addEventListener(&quot;submit&quot;, (event) =&gt; { event.preventDefault(); window.clearTimeout(timer); void save(); });
+<a href="#h8-3" id="h8-3" class="h">@@ -63,6 +80,10 @@ form?.querySelector(&quot;[data-add-fact]&quot;)?.addEventListener(&quot;click&quot;, () =&gt; {
+</a>   const card = document.createElement(&quot;fieldset&quot;);
+   card.className = &quot;fact-card&quot;;
+   card.dataset.fact = &quot;&quot;;
+<a href="#h8-3-3" id="h8-3-3" class="d">-  card.innerHTML = `&lt;legend&gt;Fato &lt;span data-fact-number&gt;&lt;/span&gt;&lt;/legend&gt;&lt;div class=&quot;fact-grid&quot;&gt;&lt;label&gt;Quando?&lt;input data-fact-field=&quot;date_value&quot; maxlength=&quot;80&quot;&gt;&lt;/label&gt;&lt;label&gt;Precisão&lt;select data-fact-field=&quot;date_precision&quot;&gt;&lt;option value=&quot;unknown&quot;&gt;Não definida&lt;/option&gt;&lt;option value=&quot;exact&quot;&gt;Data exata&lt;/option&gt;&lt;option value=&quot;month&quot;&gt;Mês&lt;/option&gt;&lt;option value=&quot;year&quot;&gt;Ano&lt;/option&gt;&lt;option value=&quot;sequence&quot;&gt;Ordem dos fatos&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;&lt;label&gt;Quem aparece?&lt;input data-fact-field=&quot;actor&quot; maxlength=&quot;160&quot;&gt;&lt;/label&gt;&lt;label&gt;Tipo&lt;select data-fact-field=&quot;event_type&quot;&gt;&lt;option value=&quot;other&quot;&gt;Outro&lt;/option&gt;&lt;option value=&quot;communication&quot;&gt;Comunicação&lt;/option&gt;&lt;option value=&quot;document&quot;&gt;Documento&lt;/option&gt;&lt;option value=&quot;action&quot;&gt;Ação&lt;/option&gt;&lt;option value=&quot;deadline&quot;&gt;Prazo&lt;/option&gt;&lt;option value=&quot;decision&quot;&gt;Decisão&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;&lt;/div&gt;&lt;label&gt;O que ocorreu?&lt;input data-fact-field=&quot;fact&quot; maxlength=&quot;240&quot;&gt;&lt;/label&gt;&lt;div class=&quot;fact-grid&quot;&gt;&lt;label&gt;Certeza&lt;select data-fact-field=&quot;certainty&quot;&gt;&lt;option value=&quot;established&quot;&gt;Estabelecido&lt;/option&gt;&lt;option value=&quot;alleged&quot;&gt;Alegado&lt;/option&gt;&lt;option value=&quot;unclear&quot;&gt;Incerto&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;&lt;label&gt;Relevância&lt;select data-fact-field=&quot;relevance&quot;&gt;&lt;option value=&quot;central&quot;&gt;Central&lt;/option&gt;&lt;option value=&quot;supporting&quot;&gt;De apoio&lt;/option&gt;&lt;option value=&quot;context&quot;&gt;Contexto&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;&lt;/div&gt;&lt;label&gt;Fonte vinculada&lt;input data-fact-sources maxlength=&quot;300&quot;&gt;&lt;/label&gt;&lt;label&gt;Observação contextual curta&lt;input data-fact-field=&quot;context_note&quot; maxlength=&quot;280&quot;&gt;&lt;/label&gt;&lt;button type=&quot;button&quot; class=&quot;quiet-button danger&quot; data-remove-fact&gt;Remover fato&lt;/button&gt;`;
+</a><a href="#h8-3-4" id="h8-3-4" class="d">-  facts.append(card); renumber(); scheduleSave();
+</a><a href="#h8-3-5" id="h8-3-5" class="i">+  card.dataset.factId = crypto.randomUUID();
+</a><a href="#h8-3-6" id="h8-3-6" class="i">+  card.innerHTML = `&lt;legend&gt;Fato &lt;span data-fact-number&gt;&lt;/span&gt;&lt;/legend&gt;&lt;div class=&quot;fact-grid&quot;&gt;&lt;label&gt;Quando?&lt;input data-fact-field=&quot;date_value&quot; maxlength=&quot;80&quot;&gt;&lt;/label&gt;&lt;label&gt;Precisão&lt;select data-fact-field=&quot;date_precision&quot;&gt;&lt;option value=&quot;unknown&quot;&gt;Não definida&lt;/option&gt;&lt;option value=&quot;exact&quot;&gt;Data exata&lt;/option&gt;&lt;option value=&quot;month&quot;&gt;Mês&lt;/option&gt;&lt;option value=&quot;year&quot;&gt;Ano&lt;/option&gt;&lt;option value=&quot;sequence&quot;&gt;Ordem dos fatos&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;&lt;label&gt;Quem aparece?&lt;input data-fact-field=&quot;actor&quot; maxlength=&quot;160&quot;&gt;&lt;/label&gt;&lt;label&gt;Tipo&lt;select data-fact-field=&quot;event_type&quot;&gt;&lt;option value=&quot;other&quot;&gt;Outro&lt;/option&gt;&lt;option value=&quot;communication&quot;&gt;Comunicação&lt;/option&gt;&lt;option value=&quot;document&quot;&gt;Documento&lt;/option&gt;&lt;option value=&quot;action&quot;&gt;Ação&lt;/option&gt;&lt;option value=&quot;deadline&quot;&gt;Prazo&lt;/option&gt;&lt;option value=&quot;decision&quot;&gt;Decisão&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;&lt;/div&gt;&lt;label&gt;O que ocorreu?&lt;input data-fact-field=&quot;fact&quot; maxlength=&quot;240&quot;&gt;&lt;/label&gt;&lt;div class=&quot;fact-grid&quot;&gt;&lt;label&gt;Certeza&lt;select data-fact-field=&quot;certainty&quot;&gt;&lt;option value=&quot;established&quot;&gt;Estabelecido&lt;/option&gt;&lt;option value=&quot;alleged&quot;&gt;Alegado&lt;/option&gt;&lt;option value=&quot;unclear&quot;&gt;Incerto&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;&lt;label&gt;Relevância&lt;select data-fact-field=&quot;relevance&quot;&gt;&lt;option value=&quot;central&quot;&gt;Central&lt;/option&gt;&lt;option value=&quot;supporting&quot;&gt;De apoio&lt;/option&gt;&lt;option value=&quot;context&quot;&gt;Contexto&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;&lt;/div&gt;&lt;label&gt;Fontes vinculadas&lt;select data-fact-sources multiple size=&quot;3&quot;&gt;&lt;/select&gt;&lt;/label&gt;&lt;label&gt;Observação contextual curta&lt;input data-fact-field=&quot;context_note&quot; maxlength=&quot;280&quot;&gt;&lt;/label&gt;&lt;button type=&quot;button&quot; class=&quot;quiet-button danger&quot; data-remove-fact&gt;Remover fato&lt;/button&gt;`;
+</a><a href="#h8-3-7" id="h8-3-7" class="i">+  facts.append(card);
+</a><a href="#h8-3-8" id="h8-3-8" class="i">+  addSourceOptions(card.querySelector(&quot;[data-fact-sources]&quot;));
+</a><a href="#h8-3-9" id="h8-3-9" class="i">+  renumber();
+</a><a href="#h8-3-10" id="h8-3-10" class="i">+  scheduleSave();
+</a> });
+<b>diff --git a/<a id="h9" href="../file/templates/account/home.html.html">templates/account/home.html</a> b/<a href="../file/templates/account/home.html.html">templates/account/home.html</a></b>
+<a href="#h9-0" id="h9-0" class="h">@@ -1,7 +1,7 @@
+</a> {% extends &quot;base.html&quot; %}
+ {% block title %}Minha conta — Assistente Acadêmico{% endblock %}
+ {% block content %}
+<a href="#h9-0-3" id="h9-0-3" class="d">-&lt;section class=&quot;page-heading&quot;&gt;&lt;p class=&quot;eyebrow&quot;&gt;{{ account[&#39;email&#39;] }}&lt;/p&gt;&lt;h1&gt;Meus trabalhos&lt;/h1&gt;&lt;p class=&quot;lead&quot;&gt;Organize Case e Paper em projetos separados.&lt;/p&gt;&lt;p&gt;&lt;a class=&quot;back-link&quot; href=&quot;{{ url_for(&#39;account.settings&#39;) }}&quot;&gt;Perfil e consentimentos →&lt;/a&gt;&lt;/p&gt;&lt;/section&gt;
+</a><a href="#h9-0-4" id="h9-0-4" class="i">+&lt;section class=&quot;page-heading&quot;&gt;&lt;p class=&quot;eyebrow&quot;&gt;{{ account[&#39;email&#39;] }}&lt;/p&gt;&lt;h1&gt;Meus trabalhos&lt;/h1&gt;&lt;p class=&quot;lead&quot;&gt;Organize Case e Paper em projetos separados.&lt;/p&gt;&lt;p&gt;&lt;a class=&quot;back-link&quot; href=&quot;{{ url_for(&#39;account.settings&#39;) }}&quot;&gt;Perfil e consentimentos →&lt;/a&gt; · &lt;a class=&quot;back-link&quot; href=&quot;{{ url_for(&#39;library.home&#39;) }}&quot;&gt;Biblioteca Pessoal →&lt;/a&gt;&lt;/p&gt;&lt;/section&gt;
+</a> &lt;section class=&quot;project-list&quot;&gt;
+   {% for project in projects %}
+     &lt;a class=&quot;project-row&quot; href=&quot;{{ url_for(&#39;projects.editor&#39;, project_id=project[&#39;id&#39;]) }}&quot;&gt;
+<b>diff --git a/<a id="h10" href="../file/templates/library/home.html.html">templates/library/home.html</a> b/<a href="../file/templates/library/home.html.html">templates/library/home.html</a></b>
+<a href="#h10-0" id="h10-0" class="h">@@ -0,0 +1,25 @@
+</a><a href="#h10-0-0" id="h10-0-0" class="i">+{% extends &quot;base.html&quot; %}
+</a><a href="#h10-0-1" id="h10-0-1" class="i">+{% block title %}Biblioteca Pessoal — Assistente Acadêmico{% endblock %}
+</a><a href="#h10-0-2" id="h10-0-2" class="i">+{% block content %}
+</a><a href="#h10-0-3" id="h10-0-3" class="i">+&lt;section class=&quot;page-heading&quot;&gt;&lt;a class=&quot;back-link&quot; href=&quot;{{ url_for(&#39;projects.account&#39;) }}&quot;&gt;← Meus trabalhos&lt;/a&gt;&lt;p class=&quot;eyebrow&quot;&gt;Biblioteca Pessoal&lt;/p&gt;&lt;h1&gt;Fontes que você quer reutilizar&lt;/h1&gt;&lt;p class=&quot;lead&quot;&gt;Cadastre referências uma vez e vincule-as aos fatos e etapas dos seus projetos.&lt;/p&gt;&lt;/section&gt;
+</a><a href="#h10-0-4" id="h10-0-4" class="i">+&lt;section class=&quot;library-grid&quot;&gt;
+</a><a href="#h10-0-5" id="h10-0-5" class="i">+  &lt;form class=&quot;settings-card&quot; method=&quot;post&quot; action=&quot;{{ url_for(&#39;library.add_source&#39;) }}&quot;&gt;
+</a><a href="#h10-0-6" id="h10-0-6" class="i">+    &lt;input type=&quot;hidden&quot; name=&quot;csrf_token&quot; value=&quot;{{ csrf_token() }}&quot;&gt;
+</a><a href="#h10-0-7" id="h10-0-7" class="i">+    &lt;h2&gt;Adicionar fonte&lt;/h2&gt;
+</a><a href="#h10-0-8" id="h10-0-8" class="i">+    &lt;label&gt;Título&lt;input name=&quot;title&quot; maxlength=&quot;240&quot; required placeholder=&quot;Livro, artigo, lei ou decisão&quot;&gt;&lt;/label&gt;
+</a><a href="#h10-0-9" id="h10-0-9" class="i">+    &lt;label&gt;Autor ou órgão&lt;input name=&quot;author&quot; maxlength=&quot;240&quot;&gt;&lt;/label&gt;
+</a><a href="#h10-0-10" id="h10-0-10" class="i">+    &lt;label&gt;Tipo&lt;select name=&quot;kind&quot;&gt;&lt;option value=&quot;book&quot;&gt;Livro&lt;/option&gt;&lt;option value=&quot;article&quot;&gt;Artigo&lt;/option&gt;&lt;option value=&quot;legislation&quot;&gt;Legislação&lt;/option&gt;&lt;option value=&quot;case_law&quot;&gt;Jurisprudência&lt;/option&gt;&lt;option value=&quot;website&quot;&gt;Site&lt;/option&gt;&lt;option value=&quot;other&quot;&gt;Outro&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;
+</a><a href="#h10-0-11" id="h10-0-11" class="i">+    &lt;label&gt;Referência&lt;input name=&quot;reference&quot; maxlength=&quot;500&quot; placeholder=&quot;Dados bibliográficos ou link&quot;&gt;&lt;/label&gt;
+</a><a href="#h10-0-12" id="h10-0-12" class="i">+    &lt;label&gt;Nota pessoal curta&lt;textarea name=&quot;notes&quot; maxlength=&quot;1000&quot; rows=&quot;4&quot;&gt;&lt;/textarea&gt;&lt;/label&gt;
+</a><a href="#h10-0-13" id="h10-0-13" class="i">+    &lt;button type=&quot;submit&quot;&gt;Adicionar à biblioteca&lt;/button&gt;
+</a><a href="#h10-0-14" id="h10-0-14" class="i">+  &lt;/form&gt;
+</a><a href="#h10-0-15" id="h10-0-15" class="i">+  &lt;section class=&quot;source-list&quot; aria-labelledby=&quot;source-list-title&quot;&gt;
+</a><a href="#h10-0-16" id="h10-0-16" class="i">+    &lt;h2 id=&quot;source-list-title&quot;&gt;Suas fontes&lt;/h2&gt;
+</a><a href="#h10-0-17" id="h10-0-17" class="i">+    {% for source in sources %}
+</a><a href="#h10-0-18" id="h10-0-18" class="i">+      &lt;article class=&quot;source-row&quot;&gt;&lt;div&gt;&lt;p class=&quot;eyebrow&quot;&gt;{{ source[&#39;kind&#39;] }}{% if source[&#39;author&#39;] %} · {{ source[&#39;author&#39;] }}{% endif %}&lt;/p&gt;&lt;h3&gt;{{ source[&#39;title&#39;] }}&lt;/h3&gt;{% if source[&#39;reference&#39;] %}&lt;p&gt;{{ source[&#39;reference&#39;] }}&lt;/p&gt;{% endif %}{% if source[&#39;notes&#39;] %}&lt;details&gt;&lt;summary&gt;Nota pessoal&lt;/summary&gt;&lt;p&gt;{{ source[&#39;notes&#39;] }}&lt;/p&gt;&lt;/details&gt;{% endif %}&lt;/div&gt;&lt;/article&gt;
+</a><a href="#h10-0-19" id="h10-0-19" class="i">+    {% else %}
+</a><a href="#h10-0-20" id="h10-0-20" class="i">+      &lt;p class=&quot;empty-state&quot;&gt;Sua biblioteca ainda está vazia.&lt;/p&gt;
+</a><a href="#h10-0-21" id="h10-0-21" class="i">+    {% endfor %}
+</a><a href="#h10-0-22" id="h10-0-22" class="i">+  &lt;/section&gt;
+</a><a href="#h10-0-23" id="h10-0-23" class="i">+&lt;/section&gt;
+</a><a href="#h10-0-24" id="h10-0-24" class="i">+{% endblock %}
+</a><b>diff --git a/<a id="h11" href="../file/templates/projects/editor.html.html">templates/projects/editor.html</a> b/<a href="../file/templates/projects/editor.html.html">templates/projects/editor.html</a></b>
+<a href="#h11-0" id="h11-0" class="h">@@ -4,13 +4,14 @@
+</a> &lt;section class=&quot;page-heading&quot;&gt;&lt;a class=&quot;back-link&quot; href=&quot;{{ url_for(&#39;projects.account&#39;) }}&quot;&gt;← Minha conta&lt;/a&gt;&lt;p class=&quot;eyebrow&quot;&gt;{{ project[&#39;project_type&#39;] }}&lt;/p&gt;&lt;h1&gt;Organizar este trabalho&lt;/h1&gt;&lt;/section&gt;
+ &lt;form class=&quot;editor-form&quot; data-project-editor data-save-url=&quot;{{ url_for(&#39;projects.save&#39;, project_id=project[&#39;id&#39;]) }}&quot; data-revision=&quot;{{ project[&#39;revision&#39;] }}&quot;&gt;
+   &lt;input type=&quot;hidden&quot; name=&quot;csrf_token&quot; value=&quot;{{ csrf_token() }}&quot;&gt;
+<a href="#h11-0-3" id="h11-0-3" class="i">+  &lt;script type=&quot;application/json&quot; data-source-options&gt;{{ sources|tojson }}&lt;/script&gt;
+</a>   &lt;label&gt;Título do trabalho&lt;input data-project-title name=&quot;title&quot; maxlength=&quot;240&quot; value=&quot;{{ project[&#39;fields&#39;].get(&#39;title&#39;, &#39;&#39;) }}&quot; placeholder=&quot;Dê um nome para localizar este trabalho&quot;&gt;&lt;/label&gt;
+   &lt;section class=&quot;timeline-editor&quot; aria-labelledby=&quot;timeline-title&quot;&gt;
+     &lt;div class=&quot;section-heading&quot;&gt;&lt;div&gt;&lt;p class=&quot;eyebrow&quot;&gt;Fatos do caso&lt;/p&gt;&lt;h2 id=&quot;timeline-title&quot;&gt;Linha do Tempo dos Fatos&lt;/h2&gt;&lt;/div&gt;&lt;button type=&quot;button&quot; class=&quot;quiet-button&quot; data-add-fact&gt;Adicionar fato&lt;/button&gt;&lt;/div&gt;
+     &lt;p class=&quot;field-help&quot;&gt;Organize acontecimentos verificáveis. Não escreva aqui a descrição completa do caso.&lt;/p&gt;
+     &lt;div data-facts&gt;
+       {% for fact in timeline %}
+<a href="#h11-0-10" id="h11-0-10" class="d">-      &lt;fieldset class=&quot;fact-card&quot; data-fact&gt;
+</a><a href="#h11-0-11" id="h11-0-11" class="i">+      &lt;fieldset class=&quot;fact-card&quot; data-fact data-fact-id=&quot;{{ fact[&#39;id&#39;] }}&quot;&gt;
+</a>         &lt;legend&gt;Fato &lt;span data-fact-number&gt;{{ loop.index }}&lt;/span&gt;&lt;/legend&gt;
+         &lt;div class=&quot;fact-grid&quot;&gt;
+           &lt;label&gt;Quando?&lt;input data-fact-field=&quot;date_value&quot; value=&quot;{{ fact[&#39;date_value&#39;] }}&quot; maxlength=&quot;80&quot; placeholder=&quot;Ex.: março de 2024&quot;&gt;&lt;/label&gt;
+<a href="#h11-1" id="h11-1" class="h">@@ -23,7 +24,7 @@
+</a>           &lt;label&gt;Certeza&lt;select data-fact-field=&quot;certainty&quot;&gt;&lt;option value=&quot;established&quot;&gt;Estabelecido&lt;/option&gt;&lt;option value=&quot;alleged&quot;&gt;Alegado&lt;/option&gt;&lt;option value=&quot;unclear&quot;&gt;Incerto&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;
+           &lt;label&gt;Relevância&lt;select data-fact-field=&quot;relevance&quot;&gt;&lt;option value=&quot;central&quot;&gt;Central&lt;/option&gt;&lt;option value=&quot;supporting&quot;&gt;De apoio&lt;/option&gt;&lt;option value=&quot;context&quot;&gt;Contexto&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;
+         &lt;/div&gt;
+<a href="#h11-1-3" id="h11-1-3" class="d">-        &lt;label&gt;Fonte vinculada&lt;input data-fact-sources value=&quot;{{ fact[&#39;source_ids&#39;]|join(&#39;, &#39;) }}&quot; maxlength=&quot;300&quot; placeholder=&quot;IDs de fontes, separados por vírgula&quot;&gt;&lt;/label&gt;
+</a><a href="#h11-1-4" id="h11-1-4" class="i">+        &lt;label&gt;Fontes vinculadas&lt;select data-fact-sources multiple size=&quot;3&quot;&gt;{% for source in sources %}&lt;option value=&quot;{{ source[&#39;id&#39;] }}&quot; {% if source[&#39;id&#39;] in fact[&#39;source_ids&#39;] %}selected{% endif %}&gt;{{ source[&#39;title&#39;] }}&lt;/option&gt;{% else %}&lt;option disabled&gt;Cadastre uma fonte na Biblioteca Pessoal&lt;/option&gt;{% endfor %}&lt;/select&gt;&lt;/label&gt;
+</a>         &lt;label class=&quot;optional-field&quot;&gt;Observação contextual curta&lt;input data-fact-field=&quot;context_note&quot; value=&quot;{{ fact[&#39;context_note&#39;] }}&quot; maxlength=&quot;280&quot;&gt;&lt;/label&gt;
+         &lt;button type=&quot;button&quot; class=&quot;quiet-button danger&quot; data-remove-fact&gt;Remover fato&lt;/button&gt;
+       &lt;/fieldset&gt;
+<b>diff --git a/<a id="h12" href="../file/tests/test_library.py.html">tests/test_library.py</a> b/<a href="../file/tests/test_library.py.html">tests/test_library.py</a></b>
+<a href="#h12-0" id="h12-0" class="h">@@ -0,0 +1,36 @@
+</a><a href="#h12-0-0" id="h12-0-0" class="i">+def login(client, email):
+</a><a href="#h12-0-1" id="h12-0-1" class="i">+    response = client.post(&quot;/auth/dev-login&quot;, data={&quot;email&quot;: email, &quot;name&quot;: &quot;Leitor&quot;})
+</a><a href="#h12-0-2" id="h12-0-2" class="i">+    assert response.status_code == 302
+</a><a href="#h12-0-3" id="h12-0-3" class="i">+
+</a><a href="#h12-0-4" id="h12-0-4" class="i">+
+</a><a href="#h12-0-5" id="h12-0-5" class="i">+def csrf(client):
+</a><a href="#h12-0-6" id="h12-0-6" class="i">+    with client.session_transaction() as session:
+</a><a href="#h12-0-7" id="h12-0-7" class="i">+        return session[&quot;csrf_token&quot;]
+</a><a href="#h12-0-8" id="h12-0-8" class="i">+
+</a><a href="#h12-0-9" id="h12-0-9" class="i">+
+</a><a href="#h12-0-10" id="h12-0-10" class="i">+def test_library_adds_and_lists_source(client):
+</a><a href="#h12-0-11" id="h12-0-11" class="i">+    login(client, &quot;biblioteca@example.test&quot;)
+</a><a href="#h12-0-12" id="h12-0-12" class="i">+    response = client.get(&quot;/library&quot;)
+</a><a href="#h12-0-13" id="h12-0-13" class="i">+    assert response.status_code == 200
+</a><a href="#h12-0-14" id="h12-0-14" class="i">+    assert &quot;Biblioteca Pessoal&quot; in response.get_data(as_text=True)
+</a><a href="#h12-0-15" id="h12-0-15" class="i">+    response = client.post(
+</a><a href="#h12-0-16" id="h12-0-16" class="i">+        &quot;/library/sources&quot;,
+</a><a href="#h12-0-17" id="h12-0-17" class="i">+        data={
+</a><a href="#h12-0-18" id="h12-0-18" class="i">+            &quot;csrf_token&quot;: csrf(client),
+</a><a href="#h12-0-19" id="h12-0-19" class="i">+            &quot;title&quot;: &quot;Teoria do Direito&quot;,
+</a><a href="#h12-0-20" id="h12-0-20" class="i">+            &quot;author&quot;: &quot;Autoria Exemplo&quot;,
+</a><a href="#h12-0-21" id="h12-0-21" class="i">+            &quot;kind&quot;: &quot;book&quot;,
+</a><a href="#h12-0-22" id="h12-0-22" class="i">+            &quot;reference&quot;: &quot;São Paulo, 2026&quot;,
+</a><a href="#h12-0-23" id="h12-0-23" class="i">+            &quot;notes&quot;: &quot;Usar no capítulo inicial.&quot;,
+</a><a href="#h12-0-24" id="h12-0-24" class="i">+        },
+</a><a href="#h12-0-25" id="h12-0-25" class="i">+    )
+</a><a href="#h12-0-26" id="h12-0-26" class="i">+    assert response.status_code == 302
+</a><a href="#h12-0-27" id="h12-0-27" class="i">+    assert &quot;Teoria do Direito&quot; in client.get(&quot;/library&quot;).get_data(as_text=True)
+</a><a href="#h12-0-28" id="h12-0-28" class="i">+
+</a><a href="#h12-0-29" id="h12-0-29" class="i">+
+</a><a href="#h12-0-30" id="h12-0-30" class="i">+def test_library_does_not_expose_other_account_sources(client):
+</a><a href="#h12-0-31" id="h12-0-31" class="i">+    login(client, &quot;primeira@example.test&quot;)
+</a><a href="#h12-0-32" id="h12-0-32" class="i">+    client.post(&quot;/library/sources&quot;, data={&quot;csrf_token&quot;: csrf(client), &quot;title&quot;: &quot;Privada&quot;})
+</a><a href="#h12-0-33" id="h12-0-33" class="i">+    client.post(&quot;/auth/logout&quot;, data={&quot;csrf_token&quot;: csrf(client)})
+</a><a href="#h12-0-34" id="h12-0-34" class="i">+    login(client, &quot;segunda@example.test&quot;)
+</a><a href="#h12-0-35" id="h12-0-35" class="i">+    assert &quot;Privada&quot; not in client.get(&quot;/library&quot;).get_data(as_text=True)
+</a><b>diff --git a/<a id="h13" href="../file/tests/test_projects.py.html">tests/test_projects.py</a> b/<a href="../file/tests/test_projects.py.html">tests/test_projects.py</a></b>
+<a href="#h13-0" id="h13-0" class="h">@@ -21,6 +21,16 @@ def test_login_create_and_open_case(client):
+</a>     assert &quot;Linha do Tempo dos Fatos&quot; in editor.get_data(as_text=True)
+ 
+ 
+<a href="#h13-0-3" id="h13-0-3" class="i">+def test_editor_uses_sources_from_personal_library(client):
+</a><a href="#h13-0-4" id="h13-0-4" class="i">+    login(client)
+</a><a href="#h13-0-5" id="h13-0-5" class="i">+    client.post(&quot;/library/sources&quot;, data={&quot;csrf_token&quot;: csrf(client), &quot;title&quot;: &quot;Fonte do Case&quot;})
+</a><a href="#h13-0-6" id="h13-0-6" class="i">+    response = client.post(&quot;/projects&quot;, data={&quot;csrf_token&quot;: csrf(client), &quot;project_type&quot;: &quot;case&quot;})
+</a><a href="#h13-0-7" id="h13-0-7" class="i">+    editor = client.get(response.headers[&quot;Location&quot;])
+</a><a href="#h13-0-8" id="h13-0-8" class="i">+    body = editor.get_data(as_text=True)
+</a><a href="#h13-0-9" id="h13-0-9" class="i">+    assert &quot;Fonte do Case&quot; in body
+</a><a href="#h13-0-10" id="h13-0-10" class="i">+    assert &#39;data-fact-sources&#39; in body
+</a><a href="#h13-0-11" id="h13-0-11" class="i">+
+</a><a href="#h13-0-12" id="h13-0-12" class="i">+
+</a> def test_save_rejects_stale_revision(client):
+     login(client)
+     created = client.post(&quot;/projects&quot;, data={&quot;csrf_token&quot;: csrf(client), &quot;project_type&quot;: &quot;case&quot;})
+<b>diff --git a/<a id="h14" href="../file/tests/test_smoke.py.html">tests/test_smoke.py</a> b/<a href="../file/tests/test_smoke.py.html">tests/test_smoke.py</a></b>
+<a href="#h14-0" id="h14-0" class="h">@@ -19,5 +19,5 @@ def test_database_starts_without_legacy_tables(app):
+</a>         names = {row[0] for row in get_db().execute(
+             &quot;SELECT name FROM sqlite_master WHERE type = &#39;table&#39;&quot;
+         )}
+<a href="#h14-0-3" id="h14-0-3" class="d">-    assert names == {&quot;app_meta&quot;, &quot;accounts&quot;, &quot;projects&quot;}
+</a><a href="#h14-0-4" id="h14-0-4" class="i">+    assert names == {&quot;app_meta&quot;, &quot;accounts&quot;, &quot;projects&quot;, &quot;sources&quot;}
+</a>     assert not any(&quot;legacy&quot; in name.lower() for name in names)
+</pre>
+</div>
+</body>
+</html>

@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>feat(contas): adiciona acesso permanente do proprietário - assistente-academico - Repositório assistente-academico
+</title>
+<link rel="icon" type="image/png" href="../favicon.png" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed" href="../atom.xml" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed (tags)" href="../tags.xml" />
+<link rel="stylesheet" type="text/css" href="../style.css" />
+</head>
+<body>
+<table><tr><td><a href="../../"><img src="../logo.png" alt="" width="32" height="32" /></a></td><td><h1>assistente-academico</h1><span class="desc">Repositório assistente-academico
+</span></td></tr><tr class="url"><td></td><td>git clone <a href="git://git.sivaldodavi.com/assistente-academico.git">git://git.sivaldodavi.com/assistente-academico.git</a></td></tr><tr><td></td><td>
+<a href="../log.html">Log</a> | <a href="../files.html">Files</a> | <a href="../refs.html">Refs</a> | <a href="../file/README.md.html">README</a></td></tr></table>
+<hr/>
+<div id="content">
+<pre><b>commit</b> <a href="../commit/2e4b565a0108b0d1f6157192612f9d3ab60634fd.html">2e4b565a0108b0d1f6157192612f9d3ab60634fd</a>
+<b>parent</b> <a href="../commit/e1a27c25a3f4e33213950d93c98deff4fbd69a02.html">e1a27c25a3f4e33213950d93c98deff4fbd69a02</a>
+<b>Author:</b> Sivaldo Davi  &lt;<a href="mailto:sivaldo@sivaldodavi">sivaldo@sivaldodavi</a>&gt;
+<b>Date:</b>   Sat, 17 Oct 2026 22:37:50 -0300
+
+feat(contas): adiciona acesso permanente do proprietário
+
+Permite códigos personalizados para uma conta sem expiração ou limites internos. Inclui criação administrativa com confirmação oculta, indicação das cotas ilimitadas e testes do fluxo.
+
+Co-authored-by: Copilot &lt;223556219+Copilot@users.noreply.github.com&gt;
+
+<b>Diffstat:</b>
+<table><tr><td class="M">M</td><td><a href="#h0">README.md</a></td><td> | </td><td class="num">5</td><td><span class="i">+++++</span><span class="d"></span></td></tr>
+<tr><td class="M">M</td><td><a href="#h1">assets/js/main.js</a></td><td> | </td><td class="num">39</td><td><span class="i">+++++++++++++++++++++++++++</span><span class="d">------------</span></td></tr>
+<tr><td class="M">M</td><td><a href="#h2">server.py</a></td><td> | </td><td class="num">90</td><td><span class="i">+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</span><span class="d">--------------</span></td></tr>
+<tr><td class="M">M</td><td><a href="#h3">tests/test_server.py</a></td><td> | </td><td class="num">86</td><td><span class="i">+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</span><span class="d"></span></td></tr>
+</table></pre><pre>4 files changed, 192 insertions(+), 28 deletions(-)
+<hr/><b>diff --git a/<a id="h0" href="../file/README.md.html">README.md</a> b/<a href="../file/README.md.html">README.md</a></b>
+<a href="#h0-0" id="h0-0" class="h">@@ -65,6 +65,7 @@ privado e mantenha a relação entre colega e código fora do servidor e do Git.
+</a> 
+ ```sh
+ python3 /app/server.py issue-batch --count 100 --days 7 --projects 1 --analyses 5
+<a href="#h0-0-3" id="h0-0-3" class="i">+python3 /app/server.py create-owner
+</a> python3 /app/server.py list
+ python3 /app/server.py set --days 14 --projects 3 --analyses 10
+ python3 /app/server.py extend 7
+<a href="#h0-1" id="h0-1" class="h">@@ -82,6 +83,10 @@ dias ao prazo restante ou ao prazo padrão. `rotate` emite um código substituto
+</a> invalida o anterior e encerra as sessões existentes. Cada conta começa com cinco
+ análises Jev por licença; use `set --analyses N` para ajustar a cota. A cota
+ reinicia na renovação; zero desativa a análise para aquela conta.
+<a href="#h0-1-3" id="h0-1-3" class="i">+`create-owner` pede e confirma um código personalizado em entrada oculta e cria
+</a><a href="#h0-1-4" id="h0-1-4" class="i">+uma conta permanente, sem limites de projetos ou de análises dentro do app.
+</a><a href="#h0-1-5" id="h0-1-5" class="i">+Esse código concede acesso total aos dados dessa conta; escolha e compartilhe-o
+</a><a href="#h0-1-6" id="h0-1-6" class="i">+com cuidado. As chamadas Jev ainda podem consumir créditos da TypeSafe.
+</a> 
+ Não há expurgo automático por vencimento nem botão para excluir projetos. Para
+ atender a um pedido explícito de remoção, a exclusão da conta e de seus projetos
+<b>diff --git a/<a id="h1" href="../file/assets/js/main.js.html">assets/js/main.js</a> b/<a href="../file/assets/js/main.js.html">assets/js/main.js</a></b>
+<a href="#h1-0" id="h1-0" class="h">@@ -796,9 +796,21 @@ function formatDate(timestamp) {
+</a>   return new Date(timestamp * 1000).toLocaleDateString(&quot;pt-BR&quot;);
+ }
+ 
+<a href="#h1-0-3" id="h1-0-3" class="i">+function analysisQuotaLabel() {
+</a><a href="#h1-0-4" id="h1-0-4" class="i">+  return accountInfo?.unlimited
+</a><a href="#h1-0-5" id="h1-0-5" class="i">+    ? &quot;ilimitadas&quot;
+</a><a href="#h1-0-6" id="h1-0-6" class="i">+    : `${accountInfo?.ai_analysis_remaining ?? 0} restantes`;
+</a><a href="#h1-0-7" id="h1-0-7" class="i">+}
+</a><a href="#h1-0-8" id="h1-0-8" class="i">+
+</a><a href="#h1-0-9" id="h1-0-9" class="i">+function analysisQuotaConfirmation() {
+</a><a href="#h1-0-10" id="h1-0-10" class="i">+  return accountInfo?.unlimited
+</a><a href="#h1-0-11" id="h1-0-11" class="i">+    ? &quot;Seu código de proprietário não tem limite de análises no aplicativo. Cada chamada ainda pode consumir créditos da conta TypeSafe.&quot;
+</a><a href="#h1-0-12" id="h1-0-12" class="i">+    : `Este envio consome 1 das ${accountInfo.ai_analysis_limit} análises da licença, mesmo se o serviço falhar.`;
+</a><a href="#h1-0-13" id="h1-0-13" class="i">+}
+</a><a href="#h1-0-14" id="h1-0-14" class="i">+
+</a> function scheduleLicenseExpiry() {
+   clearTimeout(licenseTimer);
+<a href="#h1-0-17" id="h1-0-17" class="d">-  if (!accountInfo?.active || !accountInfo.expires_at) return;
+</a><a href="#h1-0-18" id="h1-0-18" class="i">+  if (!accountInfo?.active || accountInfo.unlimited || !accountInfo.expires_at) return;
+</a>   const delay = accountInfo.expires_at * 1000 - Date.now();
+   if (delay &lt;= 0) {
+     accountInfo.active = false;
+<a href="#h1-1" id="h1-1" class="h">@@ -1051,7 +1063,7 @@ function addTopbar() {
+</a>     &lt;header class=&quot;topbar&quot;&gt;
+       &lt;div class=&quot;brand&quot;&gt;roteiro&lt;/div&gt;
+       &lt;div class=&quot;topbar-actions&quot;&gt;
+<a href="#h1-1-3" id="h1-1-3" class="d">-        &lt;div class=&quot;topnote&quot;&gt;${accountInfo ? `Licença até ${formatDate(accountInfo.expires_at)}` : &quot;Escrita acadêmica · Direito&quot;}&lt;/div&gt;
+</a><a href="#h1-1-4" id="h1-1-4" class="i">+        &lt;div class=&quot;topnote&quot;&gt;${accountInfo ? accountInfo.unlimited ? &quot;Acesso do proprietário · ilimitado&quot; : `Licença até ${formatDate(accountInfo.expires_at)}` : &quot;Escrita acadêmica · Direito&quot;}&lt;/div&gt;
+</a>         ${accountInfo ? &#39;&lt;button class=&quot;text-button&quot; type=&quot;button&quot; id=&quot;logout-button&quot;&gt;Sair&lt;/button&gt;&#39; : &quot;&quot;}
+       &lt;/div&gt;
+     &lt;/header&gt;
+<a href="#h1-2" id="h1-2" class="h">@@ -1436,7 +1448,8 @@ function showLanding(message = &quot;&quot;) {
+</a>   }
+   addTopbar();
+   const main = document.querySelector(&quot;#main&quot;);
+<a href="#h1-2-3" id="h1-2-3" class="d">-  const canCreate = licenseIsActive() &amp;&amp; accountInfo.project_count &lt; accountInfo.project_limit;
+</a><a href="#h1-2-4" id="h1-2-4" class="i">+  const canCreate = licenseIsActive()
+</a><a href="#h1-2-5" id="h1-2-5" class="i">+    &amp;&amp; (accountInfo.unlimited || accountInfo.project_count &lt; accountInfo.project_limit);
+</a>   const hasLocalDraft = Boolean(
+     localStorage.getItem(STORAGE_KEY)
+     || localStorage.getItem(LEGACY_STORAGE_KEY)
+<a href="#h1-3" id="h1-3" class="h">@@ -1448,7 +1461,9 @@ function showLanding(message = &quot;&quot;) {
+</a>       &lt;p class=&quot;eyebrow&quot;&gt;Conta por código · Escrita acadêmica&lt;/p&gt;
+       &lt;h1 id=&quot;page-title&quot;&gt;Seus projetos.&lt;/h1&gt;
+       &lt;p class=&quot;lede&quot;&gt;${licenseIsActive()
+<a href="#h1-3-3" id="h1-3-3" class="d">-    ? `Licença ativa até ${formatDate(accountInfo.expires_at)}. Você usa ${accountInfo.project_count} de ${accountInfo.project_limit} projetos permitidos.`
+</a><a href="#h1-3-4" id="h1-3-4" class="i">+    ? accountInfo.unlimited
+</a><a href="#h1-3-5" id="h1-3-5" class="i">+      ? &quot;Acesso do proprietário ativo, sem limite de projetos ou análises Jev no aplicativo.&quot;
+</a><a href="#h1-3-6" id="h1-3-6" class="i">+      : `Licença ativa até ${formatDate(accountInfo.expires_at)}. Você usa ${accountInfo.project_count} de ${accountInfo.project_limit} projetos permitidos.`
+</a>     : `A licença venceu em ${formatDate(accountInfo.expires_at)}. Seus projetos foram mantidos: você ainda pode ler e exportar; a edição será liberada quando a licença for renovada.`}&lt;/p&gt;
+       ${message ? `&lt;p class=&quot;notice&quot; role=&quot;status&quot;&gt;${escapeHtml(message)}&lt;/p&gt;` : &quot;&quot;}
+       ${canCreate ? `&lt;div class=&quot;project-create-actions&quot;&gt;
+<a href="#h1-4" id="h1-4" class="h">@@ -1570,7 +1585,7 @@ function renderChecks(stage) {
+</a>   ${stage.analysisSection ? `
+     &lt;section class=&quot;ai-analysis-controls&quot; aria-label=&quot;Análise Jev da checklist&quot;&gt;
+       &lt;p class=&quot;field-hint&quot;&gt;O Jev estima se cada item parece atendido com base apenas no texto disponível. A resposta é separada da checklist e não marca nenhuma caixa. Cada chamada consome uma análise da cota, inclusive se o serviço falhar.&lt;/p&gt;
+<a href="#h1-4-3" id="h1-4-3" class="d">-      &lt;button class=&quot;button&quot; type=&quot;button&quot; data-analyze-case-section=&quot;${escapeHtml(stage.analysisSection)}&quot; ${aiAnalysisInProgress || !canEditProject() || accountInfo?.ai_analysis_remaining === 0 ? &quot;disabled&quot; : &quot;&quot;}&gt;Analisar esta checklist com Jev · ${accountInfo?.ai_analysis_remaining ?? 0} restantes&lt;/button&gt;
+</a><a href="#h1-4-4" id="h1-4-4" class="i">+      &lt;button class=&quot;button&quot; type=&quot;button&quot; data-analyze-case-section=&quot;${escapeHtml(stage.analysisSection)}&quot; ${aiAnalysisInProgress || !canEditProject() || accountInfo?.ai_analysis_remaining === 0 ? &quot;disabled&quot; : &quot;&quot;}&gt;Analisar esta checklist com Jev · ${analysisQuotaLabel()}&lt;/button&gt;
+</a>       &lt;div class=&quot;ai-analysis-result&quot; data-ai-analysis-result=&quot;section&quot; aria-live=&quot;polite&quot;&gt;${analysis ? renderChecklistAnalysis(analysis) : &quot;&quot;}&lt;/div&gt;
+     &lt;/section&gt;` : &quot;&quot;}
+   ${stage.analysisUnavailable ? `&lt;p class=&quot;notice&quot;&gt;${escapeHtml(stage.analysisUnavailable)}&lt;/p&gt;` : &quot;&quot;}`;
+<a href="#h1-5" id="h1-5" class="h">@@ -1873,7 +1888,7 @@ function renderReview() {
+</a>         &lt;p class=&quot;field-hint&quot;&gt;Compara o conteúdo preenchido à rubrica do manual FACSUR. Estima até 3,5 pontos nos três critérios de conteúdo; o critério formal/ABNT (0,5 ponto), a existência e correção das fontes, o debate e a dissertação não são avaliados. Não gera nem reescreve o trabalho.&lt;/p&gt;
+         &lt;p class=&quot;field-hint&quot;&gt;A análise envia fatos, pergunta, base conceitual, decisões, teses e conceitos/valores cadastrados à TypeSafe AI. Não envia nome do aluno, dados da conta nem a lista de referências. Evite incluir dados identificadores de terceiros nos textos. Cada envio consome uma análise, mesmo se o serviço falhar.&lt;/p&gt;
+         &lt;p class=&quot;field-hint&quot;&gt;O manual traz regra específica contra IA generativa/redação automática na etapa da dissertação. Esta ferramenta só analisa o relatório e não redige; confira as orientações do professor sobre análise automatizada.&lt;/p&gt;
+<a href="#h1-5-3" id="h1-5-3" class="d">-        &lt;button class=&quot;button&quot; type=&quot;button&quot; data-analyze-case-report ${aiAnalysisInProgress || !canEditProject() || accountInfo?.ai_analysis_remaining === 0 ? &quot;disabled&quot; : &quot;&quot;}&gt;Analisar relatório com Jev · ${accountInfo?.ai_analysis_remaining ?? 0} restantes&lt;/button&gt;
+</a><a href="#h1-5-4" id="h1-5-4" class="i">+        &lt;button class=&quot;button&quot; type=&quot;button&quot; data-analyze-case-report ${aiAnalysisInProgress || !canEditProject() || accountInfo?.ai_analysis_remaining === 0 ? &quot;disabled&quot; : &quot;&quot;}&gt;Analisar relatório com Jev · ${analysisQuotaLabel()}&lt;/button&gt;
+</a>         &lt;div class=&quot;ai-analysis-result&quot; id=&quot;ai-analysis-case-report&quot; aria-live=&quot;polite&quot;&gt;&lt;/div&gt;
+       &lt;/section&gt;` : &quot;&quot;}
+     ${project.finalized ? `
+<a href="#h1-6" id="h1-6" class="h">@@ -2147,7 +2162,7 @@ async function analyzeCaseReport() {
+</a>   if (!resultElement) return;
+   if (!button) return;
+   if (!window.confirm(
+<a href="#h1-6-3" id="h1-6-3" class="d">-    `O conteúdo do relatório (fatos, pergunta-problema, base conceitual, decisões, teses e conceitos/valores cadastrados) será enviado à TypeSafe AI para avaliação orientativa. Não serão enviados o nome do aluno, os dados da conta nem a lista de referências. Evite incluir dados identificadores de terceiros. A ferramenta não verifica a correção das fontes, não avalia formatação/ABNT e não reescreve o trabalho. Este envio consome 1 das ${accountInfo.ai_analysis_limit} análises da licença. Continuar?`,
+</a><a href="#h1-6-4" id="h1-6-4" class="i">+    `O conteúdo do relatório (fatos, pergunta-problema, base conceitual, decisões, teses e conceitos/valores cadastrados) será enviado à TypeSafe AI para avaliação orientativa. Não serão enviados o nome do aluno, os dados da conta nem a lista de referências. Evite incluir dados identificadores de terceiros. A ferramenta não verifica a correção das fontes, não avalia formatação/ABNT e não reescreve o trabalho. ${analysisQuotaConfirmation()} Continuar?`,
+</a>   )) return;
+   aiAnalysisInProgress = true;
+   updateAnalysisButtons();
+<a href="#h1-7" id="h1-7" class="h">@@ -2206,7 +2221,7 @@ async function analyzeCaseSection(section) {
+</a>     ? &quot; O enunciado original será enviado junto com a narrativa apenas para comparar a redação; semelhanças inevitáveis não serão tratadas como cópia.&quot;
+     : &quot;&quot;;
+   if (!window.confirm(
+<a href="#h1-7-3" id="h1-7-3" class="d">-    `Serão enviados à TypeSafe AI ${contentDescription} para avaliar os itens inferíveis desta checklist.${originalPromptNotice} O Jev não marcará nenhuma caixa nem verificará a correção das fontes. Evite dados pessoais desnecessários. Este envio consome 1 das ${accountInfo.ai_analysis_limit} análises da licença, mesmo se o serviço falhar. Continuar?`,
+</a><a href="#h1-7-4" id="h1-7-4" class="i">+    `Serão enviados à TypeSafe AI ${contentDescription} para avaliar os itens inferíveis desta checklist.${originalPromptNotice} O Jev não marcará nenhuma caixa nem verificará a correção das fontes. Evite dados pessoais desnecessários. ${analysisQuotaConfirmation()} Continuar?`,
+</a>   )) return;
+   const projectId = project.id;
+   const version = analysisVersionForProject(projectId);
+<a href="#h1-8" id="h1-8" class="h">@@ -2248,13 +2263,13 @@ async function analyzeCaseSection(section) {
+</a> 
+ function updateAnalysisButtons() {
+   document.querySelectorAll(&quot;[data-analyze-case-report]&quot;).forEach((button) =&gt; {
+<a href="#h1-8-3" id="h1-8-3" class="d">-    const remaining = accountInfo?.ai_analysis_remaining ?? 0;
+</a><a href="#h1-8-4" id="h1-8-4" class="d">-    button.textContent = `Analisar relatório com Jev · ${remaining} restantes`;
+</a><a href="#h1-8-5" id="h1-8-5" class="i">+    const remaining = accountInfo?.ai_analysis_remaining;
+</a><a href="#h1-8-6" id="h1-8-6" class="i">+    button.textContent = `Analisar relatório com Jev · ${analysisQuotaLabel()}`;
+</a>     button.disabled = aiAnalysisInProgress || !canEditProject() || remaining === 0;
+   });
+   document.querySelectorAll(&quot;[data-analyze-case-section]&quot;).forEach((button) =&gt; {
+<a href="#h1-8-10" id="h1-8-10" class="d">-    const remaining = accountInfo?.ai_analysis_remaining ?? 0;
+</a><a href="#h1-8-11" id="h1-8-11" class="d">-    button.textContent = `Analisar esta checklist com Jev · ${remaining} restantes`;
+</a><a href="#h1-8-12" id="h1-8-12" class="i">+    const remaining = accountInfo?.ai_analysis_remaining;
+</a><a href="#h1-8-13" id="h1-8-13" class="i">+    button.textContent = `Analisar esta checklist com Jev · ${analysisQuotaLabel()}`;
+</a>     button.disabled = aiAnalysisInProgress || !canEditProject() || remaining === 0;
+   });
+ }
+<b>diff --git a/<a id="h2" href="../file/server.py.html">server.py</a> b/<a href="../file/server.py.html">server.py</a></b>
+<a href="#h2-0" id="h2-0" class="h">@@ -40,6 +40,7 @@ DEFAULT_AI_ANALYSIS_LIMIT = 5
+</a> MAX_AI_ANALYSIS_LIMIT = 1000
+ AI_ANALYSIS_TIMEOUT_SECONDS = 30
+ CODE_PATTERN = re.compile(r&quot;^[0-9A-F]{32}$&quot;)
+<a href="#h2-0-3" id="h2-0-3" class="i">+CUSTOM_CODE_PATTERN = re.compile(r&quot;^[A-Z0-9]{7,32}$&quot;)
+</a> RATE_WINDOW_SECONDS = 10 * 60
+ RATE_MAX_FAILURES = 5
+ LOGIN_FAILURES = defaultdict(deque)
+<a href="#h2-1" id="h2-1" class="h">@@ -255,7 +256,10 @@ def normalize_code(code):
+</a>     if normalized.startswith(&quot;ROTE-&quot;):
+         normalized = normalized[5:]
+     normalized = re.sub(r&quot;[\s-]&quot;, &quot;&quot;, normalized)
+<a href="#h2-1-3" id="h2-1-3" class="d">-    return normalized if CODE_PATTERN.fullmatch(normalized) else &quot;&quot;
+</a><a href="#h2-1-4" id="h2-1-4" class="i">+    return normalized if (
+</a><a href="#h2-1-5" id="h2-1-5" class="i">+        CODE_PATTERN.fullmatch(normalized)
+</a><a href="#h2-1-6" id="h2-1-6" class="i">+        or CUSTOM_CODE_PATTERN.fullmatch(normalized)
+</a><a href="#h2-1-7" id="h2-1-7" class="i">+    ) else &quot;&quot;
+</a> 
+ 
+ def hash_secret(value):
+<a href="#h2-2" id="h2-2" class="h">@@ -301,6 +305,7 @@ class Store:
+</a>                     project_limit INTEGER NOT NULL CHECK(project_limit BETWEEN 1 AND 1000),
+                     ai_analysis_limit INTEGER NOT NULL DEFAULT 5 CHECK(ai_analysis_limit BETWEEN 0 AND 1000),
+                     ai_analysis_used INTEGER NOT NULL DEFAULT 0 CHECK(ai_analysis_used &gt;= 0),
+<a href="#h2-2-3" id="h2-2-3" class="i">+                    owner INTEGER NOT NULL DEFAULT 0 CHECK(owner IN (0, 1)),
+</a>                     activated_at INTEGER,
+                     expires_at INTEGER,
+                     revoked INTEGER NOT NULL DEFAULT 0 CHECK(revoked IN (0, 1))
+<a href="#h2-3" id="h2-3" class="h">@@ -342,6 +347,10 @@ class Store:
+</a>                 connection.execute(
+                     &quot;ALTER TABLE accounts ADD COLUMN ai_analysis_used INTEGER NOT NULL DEFAULT 0&quot;
+                 )
+<a href="#h2-3-3" id="h2-3-3" class="i">+            if &quot;owner&quot; not in account_columns:
+</a><a href="#h2-3-4" id="h2-3-4" class="i">+                connection.execute(
+</a><a href="#h2-3-5" id="h2-3-5" class="i">+                    &quot;ALTER TABLE accounts ADD COLUMN owner INTEGER NOT NULL DEFAULT 0&quot;
+</a><a href="#h2-3-6" id="h2-3-6" class="i">+                )
+</a>         if self.database.exists():
+             os.chmod(self.database, 0o600)
+ 
+<a href="#h2-4" id="h2-4" class="h">@@ -384,6 +393,25 @@ class Store:
+</a>                         continue
+         return issued
+ 
+<a href="#h2-4-3" id="h2-4-3" class="i">+    def create_owner_account(self, code, current_time=None):
+</a><a href="#h2-4-4" id="h2-4-4" class="i">+        normalized = normalize_code(code)
+</a><a href="#h2-4-5" id="h2-4-5" class="i">+        if not normalized or not CUSTOM_CODE_PATTERN.fullmatch(normalized):
+</a><a href="#h2-4-6" id="h2-4-6" class="i">+            raise ValueError(&quot;O código personalizado deve ter entre 7 e 32 letras ou números.&quot;)
+</a><a href="#h2-4-7" id="h2-4-7" class="i">+        current_time = now_seconds() if current_time is None else int(current_time)
+</a><a href="#h2-4-8" id="h2-4-8" class="i">+        account_id = self._new_account_id()
+</a><a href="#h2-4-9" id="h2-4-9" class="i">+        try:
+</a><a href="#h2-4-10" id="h2-4-10" class="i">+            with self.connect() as connection:
+</a><a href="#h2-4-11" id="h2-4-11" class="i">+                connection.execute(
+</a><a href="#h2-4-12" id="h2-4-12" class="i">+                    &quot;&quot;&quot;INSERT INTO accounts
+</a><a href="#h2-4-13" id="h2-4-13" class="i">+                       (id, code_hash, default_days, project_limit, ai_analysis_limit,
+</a><a href="#h2-4-14" id="h2-4-14" class="i">+                        activated_at, expires_at, owner)
+</a><a href="#h2-4-15" id="h2-4-15" class="i">+                       VALUES (?, ?, 3650, 1000, 1000, ?, NULL, 1)&quot;&quot;&quot;,
+</a><a href="#h2-4-16" id="h2-4-16" class="i">+                    (account_id, hash_secret(normalized), current_time),
+</a><a href="#h2-4-17" id="h2-4-17" class="i">+                )
+</a><a href="#h2-4-18" id="h2-4-18" class="i">+        except sqlite3.IntegrityError as error:
+</a><a href="#h2-4-19" id="h2-4-19" class="i">+            raise ValueError(&quot;Esse código já está cadastrado.&quot;) from error
+</a><a href="#h2-4-20" id="h2-4-20" class="i">+        return account_id
+</a><a href="#h2-4-21" id="h2-4-21" class="i">+
+</a>     def account_by_code(self, code):
+         normalized = normalize_code(code)
+         if not normalized:
+<a href="#h2-5" id="h2-5" class="h">@@ -455,7 +483,9 @@ class Store:
+</a>     @staticmethod
+     def license_active(account, current_time=None):
+         current_time = now_seconds() if current_time is None else int(current_time)
+<a href="#h2-5-3" id="h2-5-3" class="d">-        return account[&quot;activated_at&quot;] is not None and account[&quot;expires_at&quot;] &gt; current_time
+</a><a href="#h2-5-4" id="h2-5-4" class="i">+        return bool(account[&quot;owner&quot;]) or (
+</a><a href="#h2-5-5" id="h2-5-5" class="i">+            account[&quot;activated_at&quot;] is not None and account[&quot;expires_at&quot;] &gt; current_time
+</a><a href="#h2-5-6" id="h2-5-6" class="i">+        )
+</a> 
+     def account_summary(self, account, current_time=None):
+         current_time = now_seconds() if current_time is None else int(current_time)
+<a href="#h2-6" id="h2-6" class="h">@@ -464,16 +494,20 @@ class Store:
+</a>                 &quot;SELECT COUNT(*) FROM projects WHERE account_id = ?&quot;,
+                 (account[&quot;id&quot;],),
+             ).fetchone()[0]
+<a href="#h2-6-3" id="h2-6-3" class="i">+        is_owner = bool(account[&quot;owner&quot;])
+</a>         return {
+             &quot;active&quot;: self.license_active(account, current_time),
+<a href="#h2-6-6" id="h2-6-6" class="d">-            &quot;expires_at&quot;: account[&quot;expires_at&quot;],
+</a><a href="#h2-6-7" id="h2-6-7" class="i">+            &quot;expires_at&quot;: None if is_owner else account[&quot;expires_at&quot;],
+</a>             &quot;project_count&quot;: project_count,
+<a href="#h2-6-9" id="h2-6-9" class="d">-            &quot;project_limit&quot;: account[&quot;project_limit&quot;],
+</a><a href="#h2-6-10" id="h2-6-10" class="d">-            &quot;ai_analysis_limit&quot;: account[&quot;ai_analysis_limit&quot;],
+</a><a href="#h2-6-11" id="h2-6-11" class="i">+            &quot;project_limit&quot;: None if is_owner else account[&quot;project_limit&quot;],
+</a><a href="#h2-6-12" id="h2-6-12" class="i">+            &quot;ai_analysis_limit&quot;: None if is_owner else account[&quot;ai_analysis_limit&quot;],
+</a>             &quot;ai_analysis_used&quot;: account[&quot;ai_analysis_used&quot;],
+<a href="#h2-6-14" id="h2-6-14" class="d">-            &quot;ai_analysis_remaining&quot;: max(
+</a><a href="#h2-6-15" id="h2-6-15" class="d">-                0, account[&quot;ai_analysis_limit&quot;] - account[&quot;ai_analysis_used&quot;]
+</a><a href="#h2-6-16" id="h2-6-16" class="i">+            &quot;ai_analysis_remaining&quot;: (
+</a><a href="#h2-6-17" id="h2-6-17" class="i">+                None
+</a><a href="#h2-6-18" id="h2-6-18" class="i">+                if is_owner
+</a><a href="#h2-6-19" id="h2-6-19" class="i">+                else max(0, account[&quot;ai_analysis_limit&quot;] - account[&quot;ai_analysis_used&quot;])
+</a>             ),
+<a href="#h2-6-21" id="h2-6-21" class="i">+            &quot;unlimited&quot;: is_owner,
+</a>         }
+ 
+     def reserve_case_analysis(
+<a href="#h2-7" id="h2-7" class="h">@@ -505,7 +539,7 @@ class Store:
+</a>             if row[&quot;project_type&quot;] != &quot;case&quot;:
+                 connection.rollback()
+                 raise ApiError(400, &quot;case_analysis_only&quot;, &quot;A análise Jev está disponível apenas para relatórios de case.&quot;)
+<a href="#h2-7-3" id="h2-7-3" class="d">-            if account[&quot;ai_analysis_used&quot;] &gt;= account[&quot;ai_analysis_limit&quot;]:
+</a><a href="#h2-7-4" id="h2-7-4" class="i">+            if not account[&quot;owner&quot;] and account[&quot;ai_analysis_used&quot;] &gt;= account[&quot;ai_analysis_limit&quot;]:
+</a>                 connection.rollback()
+                 raise ApiError(429, &quot;ai_quota_exhausted&quot;, &quot;O limite de análises Jev desta licença foi atingido.&quot;)
+             payload = json.loads(row[&quot;payload&quot;])
+<a href="#h2-8" id="h2-8" class="h">@@ -561,9 +595,13 @@ class Store:
+</a>             used = account[&quot;ai_analysis_used&quot;] + 1
+             connection.commit()
+         return state, {
+<a href="#h2-8-3" id="h2-8-3" class="d">-            &quot;limit&quot;: account[&quot;ai_analysis_limit&quot;],
+</a><a href="#h2-8-4" id="h2-8-4" class="i">+            &quot;limit&quot;: None if account[&quot;owner&quot;] else account[&quot;ai_analysis_limit&quot;],
+</a>             &quot;used&quot;: used,
+<a href="#h2-8-6" id="h2-8-6" class="d">-            &quot;remaining&quot;: max(0, account[&quot;ai_analysis_limit&quot;] - used),
+</a><a href="#h2-8-7" id="h2-8-7" class="i">+            &quot;remaining&quot;: (
+</a><a href="#h2-8-8" id="h2-8-8" class="i">+                None
+</a><a href="#h2-8-9" id="h2-8-9" class="i">+                if account[&quot;owner&quot;]
+</a><a href="#h2-8-10" id="h2-8-10" class="i">+                else max(0, account[&quot;ai_analysis_limit&quot;] - used)
+</a><a href="#h2-8-11" id="h2-8-11" class="i">+            ),
+</a>         }
+ 
+     @staticmethod
+<a href="#h2-9" id="h2-9" class="h">@@ -632,7 +670,7 @@ class Store:
+</a>                 &quot;SELECT COUNT(*) FROM projects WHERE account_id = ?&quot;,
+                 (account[&quot;id&quot;],),
+             ).fetchone()[0]
+<a href="#h2-9-3" id="h2-9-3" class="d">-            if count &gt;= current[&quot;project_limit&quot;]:
+</a><a href="#h2-9-4" id="h2-9-4" class="i">+            if not current[&quot;owner&quot;] and count &gt;= current[&quot;project_limit&quot;]:
+</a>                 connection.rollback()
+                 raise ApiError(403, &quot;project_limit&quot;, &quot;O limite de projetos desta conta foi atingido.&quot;)
+             project_id = str(uuid.uuid4())
+<a href="#h2-10" id="h2-10" class="h">@@ -773,6 +811,7 @@ class Store:
+</a>                 &quot;&quot;&quot;SELECT accounts.id, accounts.default_days, accounts.project_limit,
+                           accounts.ai_analysis_limit, accounts.ai_analysis_used,
+                           accounts.activated_at, accounts.expires_at, accounts.revoked,
+<a href="#h2-10-3" id="h2-10-3" class="i">+                          accounts.owner,
+</a>                           COUNT(projects.id) AS project_count
+                    FROM accounts LEFT JOIN projects ON projects.account_id = accounts.id
+                    GROUP BY accounts.id ORDER BY accounts.rowid&quot;&quot;&quot;
+<a href="#h2-11" id="h2-11" class="h">@@ -1226,6 +1265,8 @@ def admin_main(argv):
+</a>     issue_parser.add_argument(&quot;--projects&quot;, type=int, default=1)
+     issue_parser.add_argument(&quot;--analyses&quot;, type=int, default=DEFAULT_AI_ANALYSIS_LIMIT)
+ 
+<a href="#h2-11-3" id="h2-11-3" class="i">+    subparsers.add_parser(&quot;create-owner&quot;, help=&quot;Cria uma conta permanente sem limites no aplicativo.&quot;)
+</a><a href="#h2-11-4" id="h2-11-4" class="i">+
+</a>     set_parser = subparsers.add_parser(&quot;set&quot;, help=&quot;Ajusta validade e/ou limite de projetos de um código.&quot;)
+     set_parser.add_argument(&quot;code&quot;, nargs=&quot;?&quot;)
+     set_parser.add_argument(&quot;--days&quot;, type=int)
+<a href="#h2-12" id="h2-12" class="h">@@ -1260,6 +1301,13 @@ def admin_main(argv):
+</a>         if args.command == &quot;issue-batch&quot;:
+             for code in store.issue_batch(args.count, args.days, args.projects, args.analyses):
+                 print(code)
+<a href="#h2-12-3" id="h2-12-3" class="i">+        elif args.command == &quot;create-owner&quot;:
+</a><a href="#h2-12-4" id="h2-12-4" class="i">+            code = getpass.getpass(&quot;Código do proprietário: &quot;)
+</a><a href="#h2-12-5" id="h2-12-5" class="i">+            confirmation = getpass.getpass(&quot;Confirme o código do proprietário: &quot;)
+</a><a href="#h2-12-6" id="h2-12-6" class="i">+            if code != confirmation:
+</a><a href="#h2-12-7" id="h2-12-7" class="i">+                raise ValueError(&quot;Os códigos não coincidem.&quot;)
+</a><a href="#h2-12-8" id="h2-12-8" class="i">+            store.create_owner_account(code)
+</a><a href="#h2-12-9" id="h2-12-9" class="i">+            print(&quot;Conta do proprietário criada.&quot;)
+</a>         elif args.command == &quot;set&quot;:
+             if args.days is None and args.projects is None and args.analyses is None:
+                 parser.error(&quot;Informe --days, --projects e/ou --analyses.&quot;)
+<a href="#h2-13" id="h2-13" class="h">@@ -1283,14 +1331,24 @@ def admin_main(argv):
+</a>             print(store.backup(args.destination))
+         elif args.command == &quot;list&quot;:
+             for account in store.list_accounts():
+<a href="#h2-13-3" id="h2-13-3" class="d">-                expires = account[&quot;expires_at&quot;] or &quot;-&quot;
+</a><a href="#h2-13-4" id="h2-13-4" class="d">-                status = &quot;revogada&quot; if account[&quot;revoked&quot;] else (
+</a><a href="#h2-13-5" id="h2-13-5" class="i">+                is_owner = bool(account[&quot;owner&quot;])
+</a><a href="#h2-13-6" id="h2-13-6" class="i">+                expires = &quot;-&quot; if is_owner else account[&quot;expires_at&quot;] or &quot;-&quot;
+</a><a href="#h2-13-7" id="h2-13-7" class="i">+                status = &quot;revogada&quot; if account[&quot;revoked&quot;] else &quot;proprietário&quot; if is_owner else (
+</a>                     &quot;não ativada&quot; if account[&quot;activated_at&quot;] is None else &quot;ativada&quot;
+                 )
+<a href="#h2-13-10" id="h2-13-10" class="i">+                project_quota = (
+</a><a href="#h2-13-11" id="h2-13-11" class="i">+                    &quot;ilimitados&quot;
+</a><a href="#h2-13-12" id="h2-13-12" class="i">+                    if is_owner
+</a><a href="#h2-13-13" id="h2-13-13" class="i">+                    else f&#39;{account[&quot;project_count&quot;]}/{account[&quot;project_limit&quot;]}&#39;
+</a><a href="#h2-13-14" id="h2-13-14" class="i">+                )
+</a><a href="#h2-13-15" id="h2-13-15" class="i">+                analysis_quota = (
+</a><a href="#h2-13-16" id="h2-13-16" class="i">+                    f&#39;{account[&quot;ai_analysis_used&quot;]}/ilimitadas&#39;
+</a><a href="#h2-13-17" id="h2-13-17" class="i">+                    if is_owner
+</a><a href="#h2-13-18" id="h2-13-18" class="i">+                    else f&#39;{account[&quot;ai_analysis_used&quot;]}/{account[&quot;ai_analysis_limit&quot;]}&#39;
+</a><a href="#h2-13-19" id="h2-13-19" class="i">+                )
+</a>                 print(
+                     f&#39;{account[&quot;id&quot;]}\t{status}\tvence={expires}\t&#39;
+<a href="#h2-13-22" id="h2-13-22" class="d">-                    f&#39;projetos={account[&quot;project_count&quot;]}/{account[&quot;project_limit&quot;]}\t&#39;
+</a><a href="#h2-13-23" id="h2-13-23" class="d">-                    f&#39;jev={account[&quot;ai_analysis_used&quot;]}/{account[&quot;ai_analysis_limit&quot;]}&#39;
+</a><a href="#h2-13-24" id="h2-13-24" class="i">+                    f&#39;projetos={project_quota}\tjev={analysis_quota}&#39;
+</a>                 )
+     except (ValueError, sqlite3.Error) as error:
+         print(f&quot;Erro: {error}&quot;, file=sys.stderr)
+<a href="#h2-14" id="h2-14" class="h">@@ -1301,7 +1359,7 @@ def admin_main(argv):
+</a> def main():
+     os.umask(0o077)
+     if len(sys.argv) &gt; 1 and sys.argv[1] in {
+<a href="#h2-14-3" id="h2-14-3" class="d">-        &quot;issue-batch&quot;, &quot;set&quot;, &quot;extend&quot;, &quot;revoke&quot;, &quot;restore&quot;,
+</a><a href="#h2-14-4" id="h2-14-4" class="i">+        &quot;issue-batch&quot;, &quot;create-owner&quot;, &quot;set&quot;, &quot;extend&quot;, &quot;revoke&quot;, &quot;restore&quot;,
+</a>         &quot;rotate&quot;, &quot;delete-account&quot;, &quot;backup&quot;, &quot;list&quot;,
+     }:
+         raise SystemExit(admin_main(sys.argv[1:]))
+<b>diff --git a/<a id="h3" href="../file/tests/test_server.py.html">tests/test_server.py</a> b/<a href="../file/tests/test_server.py.html">tests/test_server.py</a></b>
+<a href="#h3-0" id="h3-0" class="h">@@ -1,8 +1,12 @@
+</a><a href="#h3-0-0" id="h3-0-0" class="i">+import contextlib
+</a><a href="#h3-0-1" id="h3-0-1" class="i">+import io
+</a> import tempfile
+ import unittest
+ import stat
+ from pathlib import Path
+<a href="#h3-0-6" id="h3-0-6" class="i">+from unittest.mock import patch
+</a> 
+<a href="#h3-0-8" id="h3-0-8" class="i">+import server
+</a> from server import ApiError, Store
+ 
+ 
+<a href="#h3-1" id="h3-1" class="h">@@ -45,6 +49,88 @@ class StoreTests(unittest.TestCase):
+</a>         self.assertNotEqual(account[&quot;code_hash&quot;], self.first_code)
+         self.assertEqual(len(self.store.list_accounts()), 2)
+ 
+<a href="#h3-1-3" id="h3-1-3" class="i">+    def test_owner_account_has_no_license_project_or_analysis_limits(self):
+</a><a href="#h3-1-4" id="h3-1-4" class="i">+        start = 1_800_000_000
+</a><a href="#h3-1-5" id="h3-1-5" class="i">+        self.store.create_owner_account(&quot;TESTOWNER22&quot;, start)
+</a><a href="#h3-1-6" id="h3-1-6" class="i">+        account = self.store.account_by_code(&quot;testowner22&quot;)
+</a><a href="#h3-1-7" id="h3-1-7" class="i">+        self.assertIsNotNone(account)
+</a><a href="#h3-1-8" id="h3-1-8" class="i">+        self.assertTrue(account[&quot;owner&quot;])
+</a><a href="#h3-1-9" id="h3-1-9" class="i">+        self.assertNotEqual(account[&quot;code_hash&quot;], &quot;TESTOWNER22&quot;)
+</a><a href="#h3-1-10" id="h3-1-10" class="i">+        self.assertTrue(Store.license_active(account, start + 100 * 365 * 24 * 60 * 60))
+</a><a href="#h3-1-11" id="h3-1-11" class="i">+        summary = self.store.account_summary(
+</a><a href="#h3-1-12" id="h3-1-12" class="i">+            account, start + 100 * 365 * 24 * 60 * 60
+</a><a href="#h3-1-13" id="h3-1-13" class="i">+        )
+</a><a href="#h3-1-14" id="h3-1-14" class="i">+        self.assertTrue(summary[&quot;unlimited&quot;])
+</a><a href="#h3-1-15" id="h3-1-15" class="i">+        self.assertTrue(summary[&quot;active&quot;])
+</a><a href="#h3-1-16" id="h3-1-16" class="i">+        self.assertIsNone(summary[&quot;expires_at&quot;])
+</a><a href="#h3-1-17" id="h3-1-17" class="i">+        self.assertIsNone(summary[&quot;project_limit&quot;])
+</a><a href="#h3-1-18" id="h3-1-18" class="i">+        self.assertIsNone(summary[&quot;ai_analysis_limit&quot;])
+</a><a href="#h3-1-19" id="h3-1-19" class="i">+        self.assertIsNone(summary[&quot;ai_analysis_remaining&quot;])
+</a><a href="#h3-1-20" id="h3-1-20" class="i">+
+</a><a href="#h3-1-21" id="h3-1-21" class="i">+        with self.store.connect() as connection:
+</a><a href="#h3-1-22" id="h3-1-22" class="i">+            connection.execute(
+</a><a href="#h3-1-23" id="h3-1-23" class="i">+                &quot;UPDATE accounts SET project_limit = 1, ai_analysis_limit = 1, expires_at = 1 WHERE id = ?&quot;,
+</a><a href="#h3-1-24" id="h3-1-24" class="i">+                (account[&quot;id&quot;],),
+</a><a href="#h3-1-25" id="h3-1-25" class="i">+            )
+</a><a href="#h3-1-26" id="h3-1-26" class="i">+        first_project_id = self.store.create_project(account, project(&quot;Case A&quot;), start + 1)
+</a><a href="#h3-1-27" id="h3-1-27" class="i">+        second_project_id = self.store.create_project(account, project(&quot;Case B&quot;), start + 2)
+</a><a href="#h3-1-28" id="h3-1-28" class="i">+        first_state, first_usage = self.store.reserve_case_analysis(
+</a><a href="#h3-1-29" id="h3-1-29" class="i">+            account[&quot;id&quot;], first_project_id, start + 3
+</a><a href="#h3-1-30" id="h3-1-30" class="i">+        )
+</a><a href="#h3-1-31" id="h3-1-31" class="i">+        second_state, second_usage = self.store.reserve_case_analysis(
+</a><a href="#h3-1-32" id="h3-1-32" class="i">+            account[&quot;id&quot;], second_project_id, start + 4
+</a><a href="#h3-1-33" id="h3-1-33" class="i">+        )
+</a><a href="#h3-1-34" id="h3-1-34" class="i">+        self.assertIn(&quot;case_facts&quot;, first_state)
+</a><a href="#h3-1-35" id="h3-1-35" class="i">+        self.assertIn(&quot;case_facts&quot;, second_state)
+</a><a href="#h3-1-36" id="h3-1-36" class="i">+        self.assertIsNone(first_usage[&quot;limit&quot;])
+</a><a href="#h3-1-37" id="h3-1-37" class="i">+        self.assertIsNone(first_usage[&quot;remaining&quot;])
+</a><a href="#h3-1-38" id="h3-1-38" class="i">+        self.assertIsNone(second_usage[&quot;remaining&quot;])
+</a><a href="#h3-1-39" id="h3-1-39" class="i">+        self.assertEqual(second_usage[&quot;used&quot;], 2)
+</a><a href="#h3-1-40" id="h3-1-40" class="i">+
+</a><a href="#h3-1-41" id="h3-1-41" class="i">+    def test_owner_code_must_be_custom_alphanumeric_and_unique(self):
+</a><a href="#h3-1-42" id="h3-1-42" class="i">+        with self.assertRaises(ValueError):
+</a><a href="#h3-1-43" id="h3-1-43" class="i">+            self.store.create_owner_account(&quot;SHORT&quot;)
+</a><a href="#h3-1-44" id="h3-1-44" class="i">+        self.store.create_owner_account(&quot;TESTOWNER22&quot;)
+</a><a href="#h3-1-45" id="h3-1-45" class="i">+        with self.assertRaises(ValueError):
+</a><a href="#h3-1-46" id="h3-1-46" class="i">+            self.store.create_owner_account(&quot;TESTOWNER22&quot;)
+</a><a href="#h3-1-47" id="h3-1-47" class="i">+
+</a><a href="#h3-1-48" id="h3-1-48" class="i">+    def test_create_owner_command_confirms_code_without_printing_it(self):
+</a><a href="#h3-1-49" id="h3-1-49" class="i">+        with (
+</a><a href="#h3-1-50" id="h3-1-50" class="i">+            patch(&quot;server.Store&quot;, return_value=self.store),
+</a><a href="#h3-1-51" id="h3-1-51" class="i">+            patch(&quot;server.getpass.getpass&quot;, side_effect=[&quot;TESTOWNER22&quot;, &quot;TESTOWNER22&quot;]),
+</a><a href="#h3-1-52" id="h3-1-52" class="i">+            patch(&quot;builtins.print&quot;) as print_mock,
+</a><a href="#h3-1-53" id="h3-1-53" class="i">+        ):
+</a><a href="#h3-1-54" id="h3-1-54" class="i">+            self.assertEqual(server.admin_main([&quot;create-owner&quot;]), 0)
+</a><a href="#h3-1-55" id="h3-1-55" class="i">+        self.assertIsNotNone(self.store.account_by_code(&quot;TESTOWNER22&quot;))
+</a><a href="#h3-1-56" id="h3-1-56" class="i">+        self.assertEqual(print_mock.call_args.args[0], &quot;Conta do proprietário criada.&quot;)
+</a><a href="#h3-1-57" id="h3-1-57" class="i">+        self.assertNotIn(&quot;TESTOWNER22&quot;, str(print_mock.call_args))
+</a><a href="#h3-1-58" id="h3-1-58" class="i">+
+</a><a href="#h3-1-59" id="h3-1-59" class="i">+    def test_create_owner_command_rejects_mismatched_confirmation(self):
+</a><a href="#h3-1-60" id="h3-1-60" class="i">+        error_output = io.StringIO()
+</a><a href="#h3-1-61" id="h3-1-61" class="i">+        with (
+</a><a href="#h3-1-62" id="h3-1-62" class="i">+            patch(&quot;server.Store&quot;, return_value=self.store),
+</a><a href="#h3-1-63" id="h3-1-63" class="i">+            patch(&quot;server.getpass.getpass&quot;, side_effect=[&quot;TESTOWNER22&quot;, &quot;DIFFERENT22&quot;]),
+</a><a href="#h3-1-64" id="h3-1-64" class="i">+            contextlib.redirect_stderr(error_output),
+</a><a href="#h3-1-65" id="h3-1-65" class="i">+        ):
+</a><a href="#h3-1-66" id="h3-1-66" class="i">+            self.assertEqual(server.admin_main([&quot;create-owner&quot;]), 1)
+</a><a href="#h3-1-67" id="h3-1-67" class="i">+        self.assertIn(&quot;Os códigos não coincidem.&quot;, error_output.getvalue())
+</a><a href="#h3-1-68" id="h3-1-68" class="i">+        self.assertIsNone(self.store.account_by_code(&quot;TESTOWNER22&quot;))
+</a><a href="#h3-1-69" id="h3-1-69" class="i">+
+</a><a href="#h3-1-70" id="h3-1-70" class="i">+    def test_account_list_identifies_owner_and_unlimited_quotas(self):
+</a><a href="#h3-1-71" id="h3-1-71" class="i">+        self.store.create_owner_account(&quot;TESTOWNER22&quot;)
+</a><a href="#h3-1-72" id="h3-1-72" class="i">+        with (
+</a><a href="#h3-1-73" id="h3-1-73" class="i">+            patch(&quot;server.Store&quot;, return_value=self.store),
+</a><a href="#h3-1-74" id="h3-1-74" class="i">+            patch(&quot;builtins.print&quot;) as print_mock,
+</a><a href="#h3-1-75" id="h3-1-75" class="i">+        ):
+</a><a href="#h3-1-76" id="h3-1-76" class="i">+            self.assertEqual(server.admin_main([&quot;list&quot;]), 0)
+</a><a href="#h3-1-77" id="h3-1-77" class="i">+        owner_line = next(
+</a><a href="#h3-1-78" id="h3-1-78" class="i">+            call.args[0]
+</a><a href="#h3-1-79" id="h3-1-79" class="i">+            for call in print_mock.call_args_list
+</a><a href="#h3-1-80" id="h3-1-80" class="i">+            if &quot;proprietário&quot; in call.args[0]
+</a><a href="#h3-1-81" id="h3-1-81" class="i">+        )
+</a><a href="#h3-1-82" id="h3-1-82" class="i">+        self.assertIn(&quot;projetos=ilimitados&quot;, owner_line)
+</a><a href="#h3-1-83" id="h3-1-83" class="i">+        self.assertIn(&quot;jev=0/ilimitadas&quot;, owner_line)
+</a><a href="#h3-1-84" id="h3-1-84" class="i">+
+</a>     def test_initial_batch_can_issue_one_hundred_seven_day_single_project_codes(self):
+         codes = self.store.issue_batch(100, days=7, project_limit=1)
+         self.assertEqual(len(codes), 100)
+</pre>
+</div>
+</body>
+</html>

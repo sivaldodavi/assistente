@@ -1,0 +1,17 @@
+services:
+  assistente-academico-staging:
+    build: .
+    container_name: assistente-academico-staging
+    restart: unless-stopped
+    env_file:
+      - /opt/servidor/config/assistente-academico-staging.env
+    environment:
+      ASSISTENTE_V2_DATA_DIR: /data
+      ASSISTENTE_V2_DATABASE: /data/assistente_v2.sqlite3
+      ASSISTENTE_V2_ALLOW_DEV_AUTH: "0"
+    ports:
+      - "127.0.0.1:18080:8000"
+    volumes:
+      - /opt/servidor/data/assistente-academico-staging:/data
+    security_opt:
+      - no-new-privileges:true

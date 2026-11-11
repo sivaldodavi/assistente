@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SOURCE=/opt/servidor/data/assistente-academico/assistente_v2.sqlite3
+DEST_DIR=/opt/servidor/backups
+RETENTION_DAYS=14
+STAMP=$(date +%Y%m%dT%H%M%S%z)
+DEST="$DEST_DIR/assistente-db-$STAMP.sqlite3"
+TMP="$DEST.tmp.$$"
+RESTORE="$DEST_DIR/.assistente-restore-check.$$"
+
+cleanup() { rm -f "$TMP" "$RESTORE"; }
+trap cleanup EXIT
+
+install -d -m 0700 "$DEST_DIR"
+
+python3 - "$SOURCE" "$TMP" <<'PY'
+import os
+import sqlite3
+import sys
+
+source_path, target_path = sys.argv[1:]
+source = sqlite3.connect(f"file:{source_path}?mode=ro", uri=True)
+target = sqlite3.connect(target_path)
+try:
+    source.backup(target)
+    target.execute("PRAGMA journal_mode=DELETE")
+    target.commit()
+finally:
+    target.close()
+    source.close()
+os.chmod(target_path, 0o600)
+
+check = sqlite3.connect(f"file:{target_path}?mode=ro", uri=True)
+try:
+    result = check.execute("PRAGMA integrity_check").fetchone()[0]
+    if result != "ok":
+        raise SystemExit(f"integrity_check failed: {result}")
+finally:
+    check.close()
+PY
+
+mv -f "$TMP" "$DEST"
+
+# Verifica que o arquivo também pode ser restaurado para uma cópia temporária.
+python3 - "$DEST" "$RESTORE" <<'PY'
+import os
+import sqlite3
+import sys
+
+backup_path, restore_path = sys.argv[1:]
+source = sqlite3.connect(f"file:{backup_path}?mode=ro", uri=True)
+target = sqlite3.connect(restore_path)
+try:
+    source.backup(target)
+    target.execute("PRAGMA journal_mode=DELETE")
+    target.commit()
+finally:
+    target.close()
+    source.close()
+os.chmod(restore_path, 0o600)
+
+check = sqlite3.connect(f"file:{restore_path}?mode=ro", uri=True)
+try:
+    result = check.execute("PRAGMA integrity_check").fetchone()[0]
+    if result != "ok":
+        raise SystemExit(f"restore integrity_check failed: {result}")
+    tables = check.execute("SELECT COUNT(*) FROM sqlite_master WHERE type='table'").fetchone()[0]
+    if tables < 1:
+        raise SystemExit("restore validation found no tables")
+finally:
+    check.close()
+PY
+
+find "$DEST_DIR" -maxdepth 1 -type f -name 'assistente-db-*.sqlite3' -mtime +"$RETENTION_DAYS" -delete
+printf '%s\n' "$DEST"

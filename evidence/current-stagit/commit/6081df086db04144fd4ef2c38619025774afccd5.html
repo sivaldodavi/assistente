@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix: restaurar modelos preenchidos e planos da conta - assistente-academico - Assistente Acadêmico v2
+</title>
+<link rel="icon" type="image/png" href="../favicon.png" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed" href="../atom.xml" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed (tags)" href="../tags.xml" />
+<link rel="stylesheet" type="text/css" href="../style.css" />
+</head>
+<body>
+<table><tr><td><a href="../../"><img src="../logo.png" alt="" width="32" height="32" /></a></td><td><h1>assistente-academico</h1><span class="desc">Assistente Acadêmico v2
+</span></td></tr><tr class="url"><td></td><td>git clone <a href="git://git.sivaldodavi.com.br/assistente-academico.git">git://git.sivaldodavi.com.br/assistente-academico.git</a></td></tr><tr><td></td><td>
+<a href="../log.html">Log</a> | <a href="../files.html">Files</a> | <a href="../refs.html">Refs</a> | <a href="../file/README.md.html">README</a></td></tr></table>
+<hr/>
+<div id="content">
+<pre><b>commit</b> <a href="../commit/6081df086db04144fd4ef2c38619025774afccd5.html">6081df086db04144fd4ef2c38619025774afccd5</a>
+<b>parent</b> <a href="../commit/750ade1b92799e0bcc2ce59da38cd23c6b85e0e3.html">750ade1b92799e0bcc2ce59da38cd23c6b85e0e3</a>
+<b>Author:</b> Sivaldo Davi &lt;<span class="offview">g<span>x</span>i<span>x</span>t<span>x</span>@<span>x</span>s<span>x</span>i<span>x</span>v<span>x</span>a<span>x</span>l<span>x</span>d<span>x</span>o<span>x</span>d<span>x</span>a<span>x</span>v<span>x</span>i<span>x</span>.<span>x</span>c<span>x</span>o<span>x</span>m</span>&gt;
+<b>Date:</b>   Mon, 26 Oct 2026 20:15:11 +0000
+
+fix: restaurar modelos preenchidos e planos da conta
+
+Co-authored-by: Manus &lt;dev-agent@manus.ai&gt;
+
+<b>Diffstat:</b>
+<table><tr><td class="M">M</td><td><a href="#h0">app/routes/public.py</a></td><td> | </td><td class="num">57</td><td><span class="i">++++++++++++++++++++++++++++++++++++++++++++++++++++++++</span><span class="d">-</span></td></tr>
+<tr><td class="M">M</td><td><a href="#h1">app/store/accounts.py</a></td><td> | </td><td class="num">9</td><td><span class="i">++++++++</span><span class="d">-</span></td></tr>
+<tr><td class="M">M</td><td><a href="#h2">static/css/app.css</a></td><td> | </td><td class="num">32</td><td><span class="i">++++++++++++++++++++++++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="M">M</td><td><a href="#h3">static/js/app.js</a></td><td> | </td><td class="num">108</td><td><span class="i">+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</span><span class="d">----------------</span></td></tr>
+<tr><td class="M">M</td><td><a href="#h4">templates/account/home.html</a></td><td> | </td><td class="num">13</td><td><span class="i">+++++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="M">M</td><td><a href="#h5">tests/test_account.py</a></td><td> | </td><td class="num">2</td><td><span class="i">++</span><span class="d"></span></td></tr>
+<tr><td class="M">M</td><td><a href="#h6">tests/test_public_navigation.py</a></td><td> | </td><td class="num">4</td><td><span class="i">++++</span><span class="d"></span></td></tr>
+</table></pre><pre>7 files changed, 201 insertions(+), 24 deletions(-)
+<hr/><b>diff --git a/<a id="h0" href="../file/app/routes/public.py.html">app/routes/public.py</a> b/<a href="../file/app/routes/public.py.html">app/routes/public.py</a></b>
+<a href="#h0-0" id="h0-0" class="h">@@ -1,12 +1,65 @@
+</a> import json
+<a href="#h0-0-1" id="h0-0-1" class="i">+import re
+</a><a href="#h0-0-2" id="h0-0-2" class="i">+from copy import deepcopy
+</a> from pathlib import Path
+ 
+ from flask import Blueprint, abort, current_app, render_template, request, send_from_directory
+ 
+<a href="#h0-0-7" id="h0-0-7" class="i">+from ..domain.workflow import workflow_sections
+</a><a href="#h0-0-8" id="h0-0-8" class="i">+
+</a> 
+ public_bp = Blueprint(&quot;public&quot;, __name__)
+ 
+ 
+<a href="#h0-0-13" id="h0-0-13" class="i">+def _camel_case(value):
+</a><a href="#h0-0-14" id="h0-0-14" class="i">+    return re.sub(r&quot;_([a-z])&quot;, lambda match: match.group(1).upper(), value)
+</a><a href="#h0-0-15" id="h0-0-15" class="i">+
+</a><a href="#h0-0-16" id="h0-0-16" class="i">+
+</a><a href="#h0-0-17" id="h0-0-17" class="i">+def _demo_workflow_key(model_id, workflow):
+</a><a href="#h0-0-18" id="h0-0-18" class="i">+    if model_id == &quot;civil-personality&quot;:
+</a><a href="#h0-0-19" id="h0-0-19" class="i">+        return &quot;case&quot;, &quot;report&quot;
+</a><a href="#h0-0-20" id="h0-0-20" class="i">+    if workflow.get(&quot;fields&quot;, {}).get(&quot;paperKind&quot;) == &quot;project&quot;:
+</a><a href="#h0-0-21" id="h0-0-21" class="i">+        return &quot;paper_project&quot;, &quot;paper_project&quot;
+</a><a href="#h0-0-22" id="h0-0-22" class="i">+    return &quot;paper_final&quot;, &quot;paper_final&quot;
+</a><a href="#h0-0-23" id="h0-0-23" class="i">+
+</a><a href="#h0-0-24" id="h0-0-24" class="i">+
+</a><a href="#h0-0-25" id="h0-0-25" class="i">+def _demo_stage_sections(model_id, index):
+</a><a href="#h0-0-26" id="h0-0-26" class="i">+    maps = {
+</a><a href="#h0-0-27" id="h0-0-27" class="i">+        &quot;civil-personality&quot;: ((), (0,), (2,), (4,), (5,), (6,), (), ()),
+</a><a href="#h0-0-28" id="h0-0-28" class="i">+        &quot;projeto-paper-modelo&quot;: ((0, 1), (2,), (3,), (4,), (5,), (6,), (7,), (8,), ()),
+</a><a href="#h0-0-29" id="h0-0-29" class="i">+        &quot;paper-final-modelo&quot;: ((), (0,), (1, 2, 3), (4,), (5,), (), ()),
+</a><a href="#h0-0-30" id="h0-0-30" class="i">+    }
+</a><a href="#h0-0-31" id="h0-0-31" class="i">+    indexes = maps.get(model_id, ())
+</a><a href="#h0-0-32" id="h0-0-32" class="i">+    return indexes[index] if index &lt; len(indexes) else ()
+</a><a href="#h0-0-33" id="h0-0-33" class="i">+
+</a><a href="#h0-0-34" id="h0-0-34" class="i">+
+</a><a href="#h0-0-35" id="h0-0-35" class="i">+def _build_demo_stages(model_id, workflow, sections):
+</a><a href="#h0-0-36" id="h0-0-36" class="i">+    workflow_key, phase = _demo_workflow_key(model_id, workflow)
+</a><a href="#h0-0-37" id="h0-0-37" class="i">+    values = workflow.get(&quot;fields&quot;, {}) if isinstance(workflow, dict) else {}
+</a><a href="#h0-0-38" id="h0-0-38" class="i">+    stages = []
+</a><a href="#h0-0-39" id="h0-0-39" class="i">+    for index, original in enumerate(workflow_sections(workflow_key)):
+</a><a href="#h0-0-40" id="h0-0-40" class="i">+        if original.get(&quot;phase&quot;, &quot;report&quot;) != phase:
+</a><a href="#h0-0-41" id="h0-0-41" class="i">+            continue
+</a><a href="#h0-0-42" id="h0-0-42" class="i">+        stage = deepcopy(original)
+</a><a href="#h0-0-43" id="h0-0-43" class="i">+        fields = []
+</a><a href="#h0-0-44" id="h0-0-44" class="i">+        for field in stage.get(&quot;fields&quot;, []):
+</a><a href="#h0-0-45" id="h0-0-45" class="i">+            field = deepcopy(field)
+</a><a href="#h0-0-46" id="h0-0-46" class="i">+            field_id = str(field.get(&quot;id&quot;) or &quot;&quot;)
+</a><a href="#h0-0-47" id="h0-0-47" class="i">+            candidates = [field_id, _camel_case(field_id)]
+</a><a href="#h0-0-48" id="h0-0-48" class="i">+            if field_id == &quot;authors&quot;:
+</a><a href="#h0-0-49" id="h0-0-49" class="i">+                candidates.insert(0, &quot;author&quot;)
+</a><a href="#h0-0-50" id="h0-0-50" class="i">+            field[&quot;value&quot;] = next((values[key] for key in candidates if key in values), &quot;&quot;)
+</a><a href="#h0-0-51" id="h0-0-51" class="i">+            fields.append(field)
+</a><a href="#h0-0-52" id="h0-0-52" class="i">+        stage[&quot;fields&quot;] = fields
+</a><a href="#h0-0-53" id="h0-0-53" class="i">+        if stage.get(&quot;custom&quot;) == &quot;criteria&quot;:
+</a><a href="#h0-0-54" id="h0-0-54" class="i">+            stage[&quot;criteria_text&quot;] = values.get(&quot;criteriaText&quot;, &quot;&quot;)
+</a><a href="#h0-0-55" id="h0-0-55" class="i">+        if stage.get(&quot;custom&quot;) == &quot;development&quot;:
+</a><a href="#h0-0-56" id="h0-0-56" class="i">+            stage[&quot;development_sections&quot;] = values.get(&quot;developmentSections&quot;, [])
+</a><a href="#h0-0-57" id="h0-0-57" class="i">+        stage[&quot;demo_sections&quot;] = [deepcopy(sections[item]) for item in _demo_stage_sections(model_id, index) if item &lt; len(sections)]
+</a><a href="#h0-0-58" id="h0-0-58" class="i">+        stages.append(stage)
+</a><a href="#h0-0-59" id="h0-0-59" class="i">+    return stages
+</a><a href="#h0-0-60" id="h0-0-60" class="i">+
+</a><a href="#h0-0-61" id="h0-0-61" class="i">+
+</a> # A demonstração pública usa somente conteúdo estático, anonimizado e versionado.
+ # A fonte de verdade foi extraída dos modelos preenchidos do projeto de referência;
+ # não há conta, projeto ou dado de produção neste arquivo.
+<a href="#h0-1" id="h0-1" class="h">@@ -38,6 +91,7 @@ def _load_demo_models():
+</a>         else:
+             question_label = &quot;Resumo&quot;
+             question = raw.get(&quot;abstract&quot;, &quot;&quot;)
+<a href="#h0-1-3" id="h0-1-3" class="i">+        workflow = raw.get(&quot;workflow&quot;, {})
+</a>         models.append({
+             &quot;id&quot;: model_id,
+             &quot;type_label&quot;: raw.get(&quot;typeLabel&quot;, &quot;Modelo preenchido&quot;),
+<a href="#h0-2" id="h0-2" class="h">@@ -57,7 +111,8 @@ def _load_demo_models():
+</a>             &quot;sections&quot;: sections,
+             &quot;citations&quot;: raw.get(&quot;citations&quot;, []),
+             &quot;sources&quot;: raw.get(&quot;sources&quot;, []),
+<a href="#h0-2-3" id="h0-2-3" class="d">-            &quot;workflow&quot;: raw.get(&quot;workflow&quot;, []),
+</a><a href="#h0-2-4" id="h0-2-4" class="i">+            &quot;workflow&quot;: workflow,
+</a><a href="#h0-2-5" id="h0-2-5" class="i">+            &quot;stages&quot;: _build_demo_stages(model_id, workflow, sections),
+</a>         })
+     return tuple(models)
+ 
+<b>diff --git a/<a id="h1" href="../file/app/store/accounts.py.html">app/store/accounts.py</a> b/<a href="../file/app/store/accounts.py.html">app/store/accounts.py</a></b>
+<a href="#h1-0" id="h1-0" class="h">@@ -40,6 +40,7 @@ def get_account(account_id: str) -&gt; dict | None:
+</a>         profile = json.loads(row[&quot;profile_json&quot;] or &quot;{}&quot;)
+     except json.JSONDecodeError:
+         profile = {}
+<a href="#h1-0-3" id="h1-0-3" class="i">+    is_admin = row[&quot;email&quot;].lower() in current_app.config.get(&quot;ADMIN_EMAILS&quot;, set())
+</a>     return {
+         &quot;id&quot;: row[&quot;id&quot;],
+         &quot;email&quot;: row[&quot;email&quot;],
+<a href="#h1-1" id="h1-1" class="h">@@ -49,7 +50,13 @@ def get_account(account_id: str) -&gt; dict | None:
+</a>         &quot;terms_version&quot;: row[&quot;terms_version&quot;],
+         &quot;ai_consent&quot;: bool(row[&quot;ai_consent&quot;]),
+         &quot;is_blocked&quot;: bool(row[&quot;is_blocked&quot;]),
+<a href="#h1-1-3" id="h1-1-3" class="d">-        &quot;is_admin&quot;: row[&quot;email&quot;].lower() in current_app.config.get(&quot;ADMIN_EMAILS&quot;, set()),
+</a><a href="#h1-1-4" id="h1-1-4" class="i">+        &quot;is_admin&quot;: is_admin,
+</a><a href="#h1-1-5" id="h1-1-5" class="i">+        &quot;plan_code&quot;: row[&quot;plan_code&quot;] or &quot;livre&quot;,
+</a><a href="#h1-1-6" id="h1-1-6" class="i">+        &quot;project_limit&quot;: int(row[&quot;project_limit&quot;] or 0),
+</a><a href="#h1-1-7" id="h1-1-7" class="i">+        &quot;project_used&quot;: int(row[&quot;project_used&quot;] or 0),
+</a><a href="#h1-1-8" id="h1-1-8" class="i">+        &quot;ai_limit&quot;: int(row[&quot;ai_limit&quot;] or 0),
+</a><a href="#h1-1-9" id="h1-1-9" class="i">+        &quot;ai_used&quot;: int(row[&quot;ai_used&quot;] or 0),
+</a><a href="#h1-1-10" id="h1-1-10" class="i">+        &quot;unlimited&quot;: is_admin,
+</a>     }
+ 
+ 
+<b>diff --git a/<a id="h2" href="../file/static/css/app.css.html">static/css/app.css</a> b/<a href="../file/static/css/app.css.html">static/css/app.css</a></b>
+<a href="#h2-0" id="h2-0" class="h">@@ -156,6 +156,11 @@ input[type=checkbox] { padding: 0; accent-color: #ededed; flex-shrink: 0; }
+</a> .onboarding-profile-link { display: inline-block; margin-top: 1rem; color: var(--muted); font-size: .9rem; }
+ @media (max-width: 640px) { .onboarding-item { align-items: stretch; flex-direction: column; } .onboarding-item .button { width: 100%; } }
+ 
+<a href="#h2-0-3" id="h2-0-3" class="i">+.account-plan-options, .account-plan-status { max-width: 760px; margin: 1.5rem 0; padding: 1.1rem 1.25rem; border: 1px solid var(--line); background: var(--paper); }
+</a><a href="#h2-0-4" id="h2-0-4" class="i">+.account-plan-options h2 { margin: 0 0 .45rem; font-size: 1.2rem; }
+</a><a href="#h2-0-5" id="h2-0-5" class="i">+.account-plan-options p:not(.eyebrow), .account-plan-status p:not(.eyebrow) { margin: 0 0 1rem; color: var(--muted); }
+</a><a href="#h2-0-6" id="h2-0-6" class="i">+.account-plan-status strong { color: var(--ink); }
+</a><a href="#h2-0-7" id="h2-0-7" class="i">+
+</a> .stage-nav { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 0; }
+ .stage-nav a { padding: 6px 10px; border: 1px solid var(--line); border-radius: 5px; font-size: .8rem; text-decoration: none; color: var(--muted); }
+ .stage-nav a:hover { color: var(--ink); background: var(--soft); }
+<a href="#h2-1" id="h2-1" class="h">@@ -173,6 +178,33 @@ input[type=checkbox] { padding: 0; accent-color: #ededed; flex-shrink: 0; }
+</a> #public-demo-dialog .sales-window-actions { display: flex; justify-content: flex-end; padding-top: 20px; }
+ @media(max-width:640px) { #public-demo-dialog .sales-window-body { padding: 16px; } }
+ 
+<a href="#h2-1-3" id="h2-1-3" class="i">+.public-model-workflow { display: grid; gap: 1rem; }
+</a><a href="#h2-1-4" id="h2-1-4" class="i">+.public-model-note, .public-model-intro { color: var(--muted); }
+</a><a href="#h2-1-5" id="h2-1-5" class="i">+.public-model-step-nav { display: flex; flex-wrap: wrap; gap: .45rem; padding: .75rem 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+</a><a href="#h2-1-6" id="h2-1-6" class="i">+.public-model-step-nav button { display: inline-flex; align-items: center; gap: .45rem; min-height: 34px; padding: .45rem .65rem; color: var(--muted); font-size: .78rem; text-align: left; }
+</a><a href="#h2-1-7" id="h2-1-7" class="i">+.public-model-step-nav button span { color: var(--accent); font-variant-numeric: tabular-nums; }
+</a><a href="#h2-1-8" id="h2-1-8" class="i">+.public-model-step-nav button.is-current { border-color: #aaa; color: var(--ink); background: var(--soft); }
+</a><a href="#h2-1-9" id="h2-1-9" class="i">+.public-model-stage { display: grid; gap: .9rem; }
+</a><a href="#h2-1-10" id="h2-1-10" class="i">+.public-model-stage h3 { margin: 0; border: 0; padding: 0; font-size: 1.35rem; }
+</a><a href="#h2-1-11" id="h2-1-11" class="i">+.public-model-fields { display: grid; gap: .85rem; }
+</a><a href="#h2-1-12" id="h2-1-12" class="i">+.public-model-field { display: grid; gap: .35rem; color: var(--ink); font-size: .88rem; }
+</a><a href="#h2-1-13" id="h2-1-13" class="i">+.public-model-field &gt; span { font-weight: 650; }
+</a><a href="#h2-1-14" id="h2-1-14" class="i">+.public-model-field textarea, .public-model-field select, .public-model-special textarea, .public-model-development textarea { width: 100%; min-height: 42px; padding: .65rem .75rem; border: 1px solid var(--line); border-radius: 5px; background: #101010; color: var(--ink); line-height: 1.55; resize: vertical; }
+</a><a href="#h2-1-15" id="h2-1-15" class="i">+.public-model-field textarea { min-height: 86px; }
+</a><a href="#h2-1-16" id="h2-1-16" class="i">+.public-model-field textarea[readonly], .public-model-field select:disabled, .public-model-special textarea[readonly], .public-model-development textarea[readonly] { opacity: 1; }
+</a><a href="#h2-1-17" id="h2-1-17" class="i">+.public-model-special, .public-model-review { display: grid; gap: .7rem; padding-top: .8rem; border-top: 1px solid var(--line); }
+</a><a href="#h2-1-18" id="h2-1-18" class="i">+.public-model-special h3, .public-model-filled-section h4, .public-model-development h4 { margin: 0; font-size: 1rem; }
+</a><a href="#h2-1-19" id="h2-1-19" class="i">+.public-model-sources { display: grid; gap: .7rem; margin: 0; padding-left: 1.4rem; }
+</a><a href="#h2-1-20" id="h2-1-20" class="i">+.public-model-sources li { padding-left: .25rem; }
+</a><a href="#h2-1-21" id="h2-1-21" class="i">+.public-model-sources strong, .public-model-sources span { display: block; }
+</a><a href="#h2-1-22" id="h2-1-22" class="i">+.public-model-sources span { margin-top: .2rem; color: var(--muted); line-height: 1.55; }
+</a><a href="#h2-1-23" id="h2-1-23" class="i">+.public-model-filled-section { display: grid; gap: .55rem; padding-top: .9rem; border-top: 1px solid var(--line); }
+</a><a href="#h2-1-24" id="h2-1-24" class="i">+.public-model-filled-section p { margin: 0; color: var(--muted); white-space: pre-wrap; }
+</a><a href="#h2-1-25" id="h2-1-25" class="i">+.public-model-development { display: grid; gap: .45rem; }
+</a><a href="#h2-1-26" id="h2-1-26" class="i">+.public-model-actions { display: flex; align-items: center; justify-content: space-between; gap: .7rem; padding-top: 1rem; border-top: 1px solid var(--line); }
+</a><a href="#h2-1-27" id="h2-1-27" class="i">+.public-model-actions &gt; span { color: var(--muted); font-size: .78rem; text-align: center; }
+</a><a href="#h2-1-28" id="h2-1-28" class="i">+@media(max-width:640px) { .public-model-actions { align-items: stretch; flex-direction: column; } .public-model-actions .button { width: 100%; } .public-model-step-nav { display: grid; grid-template-columns: 1fr 1fr; } }
+</a><a href="#h2-1-29" id="h2-1-29" class="i">+
+</a> article.public-document { max-width: 780px; margin: 0 auto; line-height: 1.75; }
+ article.public-document h1 { font-size: clamp(2rem, 5vw, 3rem); line-height: 1.15; letter-spacing: -.04em; }
+ article.public-document h2 { margin-top: 2rem; font-size: 1.3rem; }
+<b>diff --git a/<a id="h3" href="../file/static/js/app.js.html">static/js/app.js</a> b/<a href="../file/static/js/app.js.html">static/js/app.js</a></b>
+<a href="#h3-0" id="h3-0" class="h">@@ -49,6 +49,83 @@ function closePublicDemo(dialog) {
+</a>   }
+ }
+ 
+<a href="#h3-0-3" id="h3-0-3" class="i">+function escapeHtml(value) {
+</a><a href="#h3-0-4" id="h3-0-4" class="i">+  return String(value ?? &quot;&quot;)
+</a><a href="#h3-0-5" id="h3-0-5" class="i">+    .replaceAll(&quot;&amp;&quot;, &quot;&amp;amp;&quot;)
+</a><a href="#h3-0-6" id="h3-0-6" class="i">+    .replaceAll(&quot;&lt;&quot;, &quot;&amp;lt;&quot;)
+</a><a href="#h3-0-7" id="h3-0-7" class="i">+    .replaceAll(&quot;&gt;&quot;, &quot;&amp;gt;&quot;)
+</a><a href="#h3-0-8" id="h3-0-8" class="i">+    .replaceAll(&#39;&quot;&#39;, &quot;&amp;quot;&quot;)
+</a><a href="#h3-0-9" id="h3-0-9" class="i">+    .replaceAll(&quot;&#39;&quot;, &quot;&amp;#039;&quot;);
+</a><a href="#h3-0-10" id="h3-0-10" class="i">+}
+</a><a href="#h3-0-11" id="h3-0-11" class="i">+
+</a><a href="#h3-0-12" id="h3-0-12" class="i">+function publicModelValue(value) {
+</a><a href="#h3-0-13" id="h3-0-13" class="i">+  if (Array.isArray(value)) return value.join(&quot;\n&quot;);
+</a><a href="#h3-0-14" id="h3-0-14" class="i">+  if (value &amp;&amp; typeof value === &quot;object&quot;) return JSON.stringify(value, null, 2);
+</a><a href="#h3-0-15" id="h3-0-15" class="i">+  return String(value ?? &quot;&quot;);
+</a><a href="#h3-0-16" id="h3-0-16" class="i">+}
+</a><a href="#h3-0-17" id="h3-0-17" class="i">+
+</a><a href="#h3-0-18" id="h3-0-18" class="i">+function renderPublicModelField(field) {
+</a><a href="#h3-0-19" id="h3-0-19" class="i">+  const value = publicModelValue(field.value);
+</a><a href="#h3-0-20" id="h3-0-20" class="i">+  const label = `${field.label || &quot;Campo&quot;}${field.required ? &quot; *&quot; : &quot;&quot;}`;
+</a><a href="#h3-0-21" id="h3-0-21" class="i">+  if (field.type === &quot;select&quot;) {
+</a><a href="#h3-0-22" id="h3-0-22" class="i">+    const selected = String(field.value ?? &quot;&quot;);
+</a><a href="#h3-0-23" id="h3-0-23" class="i">+    const options = (field.options || []).map(([option, text]) =&gt;
+</a><a href="#h3-0-24" id="h3-0-24" class="i">+      `&lt;option value=&quot;${escapeHtml(option)}&quot; ${String(option) === selected ? &quot;selected&quot; : &quot;&quot;}&gt;${escapeHtml(text)}&lt;/option&gt;`
+</a><a href="#h3-0-25" id="h3-0-25" class="i">+    ).join(&quot;&quot;);
+</a><a href="#h3-0-26" id="h3-0-26" class="i">+    return `&lt;label class=&quot;public-model-field&quot;&gt;&lt;span&gt;${escapeHtml(label)}&lt;/span&gt;&lt;select disabled&gt;${options || `&lt;option&gt;${escapeHtml(value || &quot;Não preenchido neste modelo.&quot;)}&lt;/option&gt;`}&lt;/select&gt;&lt;/label&gt;`;
+</a><a href="#h3-0-27" id="h3-0-27" class="i">+  }
+</a><a href="#h3-0-28" id="h3-0-28" class="i">+  return `&lt;label class=&quot;public-model-field&quot;&gt;&lt;span&gt;${escapeHtml(label)}&lt;/span&gt;&lt;textarea readonly rows=&quot;${field.size === &quot;large&quot; ? 7 : 3}&quot;&gt;${escapeHtml(value || &quot;Não preenchido neste modelo.&quot;)}&lt;/textarea&gt;&lt;/label&gt;`;
+</a><a href="#h3-0-29" id="h3-0-29" class="i">+}
+</a><a href="#h3-0-30" id="h3-0-30" class="i">+
+</a><a href="#h3-0-31" id="h3-0-31" class="i">+function renderPublicModelSpecial(stage, model) {
+</a><a href="#h3-0-32" id="h3-0-32" class="i">+  if (stage.custom === &quot;criteria&quot;) {
+</a><a href="#h3-0-33" id="h3-0-33" class="i">+    return `&lt;section class=&quot;public-model-special&quot;&gt;&lt;h3&gt;Critérios e valores&lt;/h3&gt;&lt;textarea readonly rows=&quot;8&quot;&gt;${escapeHtml(stage.criteria_text || &quot;Não preenchido neste modelo.&quot;)}&lt;/textarea&gt;&lt;/section&gt;`;
+</a><a href="#h3-0-34" id="h3-0-34" class="i">+  }
+</a><a href="#h3-0-35" id="h3-0-35" class="i">+  if (stage.custom === &quot;sources&quot;) {
+</a><a href="#h3-0-36" id="h3-0-36" class="i">+    const sources = model.workflow?.sources || [];
+</a><a href="#h3-0-37" id="h3-0-37" class="i">+    return `&lt;section class=&quot;public-model-special&quot;&gt;&lt;h3&gt;Fontes registradas&lt;/h3&gt;&lt;ol class=&quot;public-model-sources&quot;&gt;${sources.map((source) =&gt; `&lt;li&gt;&lt;strong&gt;${escapeHtml(source.category || &quot;Fonte&quot;)}&lt;/strong&gt;&lt;span&gt;${escapeHtml(source.reference || &quot;&quot;)}&lt;/span&gt;&lt;/li&gt;`).join(&quot;&quot;)}&lt;/ol&gt;&lt;/section&gt;`;
+</a><a href="#h3-0-38" id="h3-0-38" class="i">+  }
+</a><a href="#h3-0-39" id="h3-0-39" class="i">+  if (stage.custom === &quot;development&quot;) {
+</a><a href="#h3-0-40" id="h3-0-40" class="i">+    return `&lt;section class=&quot;public-model-special&quot;&gt;&lt;h3&gt;Desenvolvimento preenchido&lt;/h3&gt;${(stage.development_sections || []).map((section) =&gt; `&lt;div class=&quot;public-model-development&quot;&gt;&lt;h4&gt;${escapeHtml(section.title || &quot;Tópico&quot;)}&lt;/h4&gt;&lt;textarea readonly rows=&quot;8&quot;&gt;${escapeHtml(section.content || &quot;&quot;)}&lt;/textarea&gt;&lt;/div&gt;`).join(&quot;&quot;)}&lt;/section&gt;`;
+</a><a href="#h3-0-41" id="h3-0-41" class="i">+  }
+</a><a href="#h3-0-42" id="h3-0-42" class="i">+  return &quot;&quot;;
+</a><a href="#h3-0-43" id="h3-0-43" class="i">+}
+</a><a href="#h3-0-44" id="h3-0-44" class="i">+
+</a><a href="#h3-0-45" id="h3-0-45" class="i">+function renderPublicModelSections(stage) {
+</a><a href="#h3-0-46" id="h3-0-46" class="i">+  return (stage.demo_sections || []).map((section) =&gt; `
+</a><a href="#h3-0-47" id="h3-0-47" class="i">+    &lt;section class=&quot;public-model-filled-section&quot;&gt;
+</a><a href="#h3-0-48" id="h3-0-48" class="i">+      &lt;h4&gt;${escapeHtml(section.title || &quot;Seção preenchida&quot;)}&lt;/h4&gt;
+</a><a href="#h3-0-49" id="h3-0-49" class="i">+      ${(section.paragraphs || []).map((paragraph) =&gt; `&lt;p&gt;${escapeHtml(paragraph)}&lt;/p&gt;`).join(&quot;&quot;)}
+</a><a href="#h3-0-50" id="h3-0-50" class="i">+    &lt;/section&gt;`).join(&quot;&quot;);
+</a><a href="#h3-0-51" id="h3-0-51" class="i">+}
+</a><a href="#h3-0-52" id="h3-0-52" class="i">+
+</a><a href="#h3-0-53" id="h3-0-53" class="i">+function renderPublicModelWorkflow(body, model, requestedStep = 0) {
+</a><a href="#h3-0-54" id="h3-0-54" class="i">+  const stages = Array.isArray(model.stages) ? model.stages : [];
+</a><a href="#h3-0-55" id="h3-0-55" class="i">+  if (!stages.length) {
+</a><a href="#h3-0-56" id="h3-0-56" class="i">+    body.innerHTML = `&lt;p class=&quot;sales-lede&quot;&gt;Este modelo preenchido ainda não possui etapas disponíveis.&lt;/p&gt;`;
+</a><a href="#h3-0-57" id="h3-0-57" class="i">+    return;
+</a><a href="#h3-0-58" id="h3-0-58" class="i">+  }
+</a><a href="#h3-0-59" id="h3-0-59" class="i">+  const step = Math.max(0, Math.min(Number(requestedStep) || 0, stages.length - 1));
+</a><a href="#h3-0-60" id="h3-0-60" class="i">+  const stage = stages[step];
+</a><a href="#h3-0-61" id="h3-0-61" class="i">+  body.innerHTML = `
+</a><a href="#h3-0-62" id="h3-0-62" class="i">+    &lt;div class=&quot;public-model-workflow&quot;&gt;
+</a><a href="#h3-0-63" id="h3-0-63" class="i">+      &lt;p class=&quot;public-model-note&quot;&gt;Este é o mesmo roteiro de um trabalho preenchido, em modo somente leitura. Você pode percorrer as etapas sem alterar nenhum projeto.&lt;/p&gt;
+</a><a href="#h3-0-64" id="h3-0-64" class="i">+      &lt;nav class=&quot;public-model-step-nav&quot; aria-label=&quot;Etapas do modelo preenchido&quot;&gt;
+</a><a href="#h3-0-65" id="h3-0-65" class="i">+        ${stages.map((item, index) =&gt; `&lt;button type=&quot;button&quot; data-public-model-step=&quot;${index}&quot; class=&quot;${index === step ? &quot;is-current&quot; : &quot;&quot;}&quot; aria-current=&quot;${index === step ? &quot;step&quot; : &quot;false&quot;}&quot;&gt;&lt;span&gt;${String(index + 1).padStart(2, &quot;0&quot;)}&lt;/span&gt;${escapeHtml(item.title || &quot;Etapa&quot;)}&lt;/button&gt;`).join(&quot;&quot;)}
+</a><a href="#h3-0-66" id="h3-0-66" class="i">+      &lt;/nav&gt;
+</a><a href="#h3-0-67" id="h3-0-67" class="i">+      &lt;article class=&quot;public-model-stage&quot;&gt;
+</a><a href="#h3-0-68" id="h3-0-68" class="i">+        &lt;p class=&quot;sales-kicker&quot;&gt;Etapa ${String(step + 1).padStart(2, &quot;0&quot;)} de ${String(stages.length).padStart(2, &quot;0&quot;)}&lt;/p&gt;
+</a><a href="#h3-0-69" id="h3-0-69" class="i">+        &lt;h3&gt;${escapeHtml(stage.title || &quot;Etapa preenchida&quot;)}&lt;/h3&gt;
+</a><a href="#h3-0-70" id="h3-0-70" class="i">+        &lt;p class=&quot;public-model-intro&quot;&gt;${escapeHtml(stage.intro || &quot;Confira o conteúdo preenchido nesta etapa.&quot;)}&lt;/p&gt;
+</a><a href="#h3-0-71" id="h3-0-71" class="i">+        ${stage.fields?.length ? `&lt;div class=&quot;public-model-fields&quot;&gt;${stage.fields.map(renderPublicModelField).join(&quot;&quot;)}&lt;/div&gt;` : &quot;&quot;}
+</a><a href="#h3-0-72" id="h3-0-72" class="i">+        ${renderPublicModelSpecial(stage, model)}
+</a><a href="#h3-0-73" id="h3-0-73" class="i">+        ${renderPublicModelSections(stage)}
+</a><a href="#h3-0-74" id="h3-0-74" class="i">+        ${stage.custom === &quot;review&quot; ? `&lt;div class=&quot;public-model-review&quot;&gt;&lt;strong&gt;Revisão do modelo&lt;/strong&gt;&lt;p&gt;O trabalho preenchido está disponível para consulta etapa por etapa e também no botão “Ler trabalho completo”.&lt;/p&gt;&lt;/div&gt;` : &quot;&quot;}
+</a><a href="#h3-0-75" id="h3-0-75" class="i">+        &lt;div class=&quot;public-model-actions&quot;&gt;&lt;button type=&quot;button&quot; class=&quot;button&quot; data-public-model-step=&quot;${step - 1}&quot; ${step === 0 ? &quot;disabled&quot; : &quot;&quot;}&gt;Anterior&lt;/button&gt;&lt;span&gt;Modelo para consulta&lt;/span&gt;&lt;button type=&quot;button&quot; class=&quot;button button-primary&quot; data-public-model-step=&quot;${step + 1}&quot; ${step === stages.length - 1 ? &quot;disabled&quot; : &quot;&quot;}&gt;Próxima etapa&lt;/button&gt;&lt;/div&gt;
+</a><a href="#h3-0-76" id="h3-0-76" class="i">+      &lt;/article&gt;
+</a><a href="#h3-0-77" id="h3-0-77" class="i">+    &lt;/div&gt;`;
+</a><a href="#h3-0-78" id="h3-0-78" class="i">+}
+</a><a href="#h3-0-79" id="h3-0-79" class="i">+
+</a> function renderPublicDemo(dialog, model, mode) {
+   const body = document.querySelector(&quot;#public-demo-body&quot;);
+   const title = document.querySelector(&quot;#public-demo-title&quot;);
+<a href="#h3-1" id="h3-1" class="h">@@ -60,28 +137,8 @@ function renderPublicDemo(dialog, model, mode) {
+</a>   appendText(body, &quot;p&quot;, `Disciplina: ${model.discipline || &quot;&quot;}`, &quot;sales-window-note&quot;);
+ 
+   if (mode === &quot;workflow&quot;) {
+<a href="#h3-1-3" id="h3-1-3" class="d">-    appendText(body, &quot;p&quot;, model.summary || &quot;Exemplo preenchido em modo somente leitura.&quot;, &quot;sales-lede&quot;);
+</a><a href="#h3-1-4" id="h3-1-4" class="d">-    const metadata = document.createElement(&quot;dl&quot;);
+</a><a href="#h3-1-5" id="h3-1-5" class="d">-    metadata.className = &quot;sales-model-meta&quot;;
+</a><a href="#h3-1-6" id="h3-1-6" class="d">-    [[&quot;Autor(es)&quot;, model.authors], [&quot;Professor(a)&quot;, model.teacher], [&quot;Turma&quot;, model.class_info], [&quot;Ano&quot;, model.year]].forEach(([label, value]) =&gt; {
+</a><a href="#h3-1-7" id="h3-1-7" class="d">-      if (!value) return;
+</a><a href="#h3-1-8" id="h3-1-8" class="d">-      appendText(metadata, &quot;dt&quot;, label);
+</a><a href="#h3-1-9" id="h3-1-9" class="d">-      appendText(metadata, &quot;dd&quot;, value);
+</a><a href="#h3-1-10" id="h3-1-10" class="d">-    });
+</a><a href="#h3-1-11" id="h3-1-11" class="d">-    body.appendChild(metadata);
+</a><a href="#h3-1-12" id="h3-1-12" class="d">-    const heading = appendText(body, &quot;h3&quot;, &quot;Etapas do modelo preenchido&quot;);
+</a><a href="#h3-1-13" id="h3-1-13" class="d">-    heading.id = &quot;public-demo-sections-title&quot;;
+</a><a href="#h3-1-14" id="h3-1-14" class="d">-    const list = document.createElement(&quot;div&quot;);
+</a><a href="#h3-1-15" id="h3-1-15" class="d">-    list.className = &quot;sales-model-stages&quot;;
+</a><a href="#h3-1-16" id="h3-1-16" class="d">-    list.setAttribute(&quot;aria-labelledby&quot;, heading.id);
+</a><a href="#h3-1-17" id="h3-1-17" class="d">-    for (const section of model.sections || []) {
+</a><a href="#h3-1-18" id="h3-1-18" class="d">-      const stage = document.createElement(&quot;article&quot;);
+</a><a href="#h3-1-19" id="h3-1-19" class="d">-      appendText(stage, &quot;h4&quot;, section.title || &quot;Etapa&quot;);
+</a><a href="#h3-1-20" id="h3-1-20" class="d">-      const preview = (section.paragraphs || []).find((paragraph) =&gt; String(paragraph).trim());
+</a><a href="#h3-1-21" id="h3-1-21" class="d">-      if (preview) appendText(stage, &quot;p&quot;, `${String(preview).slice(0, 420)}${String(preview).length &gt; 420 ? &quot;…&quot; : &quot;&quot;}`);
+</a><a href="#h3-1-22" id="h3-1-22" class="d">-      list.appendChild(stage);
+</a><a href="#h3-1-23" id="h3-1-23" class="d">-    }
+</a><a href="#h3-1-24" id="h3-1-24" class="d">-    body.appendChild(list);
+</a><a href="#h3-1-25" id="h3-1-25" class="i">+    body.dataset.modelId = model.id;
+</a><a href="#h3-1-26" id="h3-1-26" class="i">+    renderPublicModelWorkflow(body, model);
+</a>   } else {
+     const question = document.createElement(&quot;p&quot;);
+     question.className = &quot;sales-preview-question&quot;;
+<a href="#h3-2" id="h3-2" class="h">@@ -122,6 +179,13 @@ function bindPublicDemos() {
+</a>   document.querySelectorAll(&quot;[data-demo-close]&quot;).forEach((button) =&gt; {
+     button.addEventListener(&quot;click&quot;, () =&gt; closePublicDemo(dialog));
+   });
+<a href="#h3-2-3" id="h3-2-3" class="i">+  const demoBody = document.querySelector(&quot;#public-demo-body&quot;);
+</a><a href="#h3-2-4" id="h3-2-4" class="i">+  demoBody?.addEventListener(&quot;click&quot;, (event) =&gt; {
+</a><a href="#h3-2-5" id="h3-2-5" class="i">+    const button = event.target.closest(&quot;[data-public-model-step]&quot;);
+</a><a href="#h3-2-6" id="h3-2-6" class="i">+    if (!button || button.disabled) return;
+</a><a href="#h3-2-7" id="h3-2-7" class="i">+    const model = byId.get(demoBody.dataset.modelId);
+</a><a href="#h3-2-8" id="h3-2-8" class="i">+    if (model) renderPublicModelWorkflow(demoBody, model, Number(button.dataset.publicModelStep));
+</a><a href="#h3-2-9" id="h3-2-9" class="i">+  });
+</a>   dialog.addEventListener(&quot;click&quot;, (event) =&gt; {
+     if (event.target === dialog) closePublicDemo(dialog);
+   });
+<b>diff --git a/<a id="h4" href="../file/templates/account/home.html.html">templates/account/home.html</a> b/<a href="../file/templates/account/home.html.html">templates/account/home.html</a></b>
+<a href="#h4-0" id="h4-0" class="h">@@ -30,6 +30,19 @@
+</a>     &lt;p class=&quot;empty-state&quot;&gt;Nenhum trabalho criado ainda.&lt;/p&gt;
+   {% endfor %}
+ &lt;/section&gt;
+<a href="#h4-0-3" id="h4-0-3" class="i">+{% if account.get(&#39;plan_code&#39;, &#39;livre&#39;) == &#39;livre&#39; %}
+</a><a href="#h4-0-4" id="h4-0-4" class="i">+&lt;section class=&quot;account-plan-options&quot; aria-labelledby=&quot;account-plan-title&quot;&gt;
+</a><a href="#h4-0-5" id="h4-0-5" class="i">+  &lt;p class=&quot;eyebrow&quot;&gt;Acesso&lt;/p&gt;
+</a><a href="#h4-0-6" id="h4-0-6" class="i">+  &lt;h2 id=&quot;account-plan-title&quot;&gt;Planos e valores&lt;/h2&gt;
+</a><a href="#h4-0-7" id="h4-0-7" class="i">+  &lt;p&gt;Você está usando a conta sem plano atribuído. Consulte as opções disponíveis; a liberação é feita manualmente pelo administrador após a confirmação do pagamento.&lt;/p&gt;
+</a><a href="#h4-0-8" id="h4-0-8" class="i">+  &lt;a class=&quot;button&quot; href=&quot;{{ url_for(&#39;public.home&#39;) }}#precos&quot;&gt;Ver planos e valores&lt;/a&gt;
+</a><a href="#h4-0-9" id="h4-0-9" class="i">+&lt;/section&gt;
+</a><a href="#h4-0-10" id="h4-0-10" class="i">+{% else %}
+</a><a href="#h4-0-11" id="h4-0-11" class="i">+&lt;section class=&quot;account-plan-status&quot; aria-label=&quot;Plano atual&quot;&gt;
+</a><a href="#h4-0-12" id="h4-0-12" class="i">+  &lt;p class=&quot;eyebrow&quot;&gt;Acesso&lt;/p&gt;
+</a><a href="#h4-0-13" id="h4-0-13" class="i">+  &lt;p&gt;Plano atual: &lt;strong&gt;{{ {&#39;avulso_ai&#39;: &#39;Avulso com IA&#39;, &#39;sem_ia&#39;: &#39;Essencial&#39;, &#39;com_ia&#39;: &#39;Completo&#39;}.get(account.get(&#39;plan_code&#39;), account.get(&#39;plan_code&#39;)) }}&lt;/strong&gt;&lt;/p&gt;
+</a><a href="#h4-0-14" id="h4-0-14" class="i">+&lt;/section&gt;
+</a><a href="#h4-0-15" id="h4-0-15" class="i">+{% endif %}
+</a> &lt;form class=&quot;create-form&quot; method=&quot;post&quot; action=&quot;{{ url_for(&#39;projects.create&#39;) }}&quot;&gt;
+   &lt;input type=&quot;hidden&quot; name=&quot;csrf_token&quot; value=&quot;{{ csrf_token() }}&quot;&gt;
+   &lt;label&gt;Começar um trabalho
+<b>diff --git a/<a id="h5" href="../file/tests/test_account.py.html">tests/test_account.py</a> b/<a href="../file/tests/test_account.py.html">tests/test_account.py</a></b>
+<a href="#h5-0" id="h5-0" class="h">@@ -15,6 +15,8 @@ def test_account_home_shows_first_login_setup(client):
+</a>     assert &quot;Configure sua conta&quot; in body
+     assert &quot;Termos de uso e privacidade&quot; in body
+     assert &quot;#terms&quot; in body
+<a href="#h5-0-3" id="h5-0-3" class="i">+    assert &quot;Planos e valores&quot; in body
+</a><a href="#h5-0-4" id="h5-0-4" class="i">+    assert &#39;href=&quot;/#precos&quot;&#39; in body
+</a> 
+ 
+ def test_profile_is_saved_separately_from_identity(client):
+<b>diff --git a/<a id="h6" href="../file/tests/test_public_navigation.py.html">tests/test_public_navigation.py</a> b/<a href="../file/tests/test_public_navigation.py.html">tests/test_public_navigation.py</a></b>
+<a href="#h6-0" id="h6-0" class="h">@@ -74,6 +74,10 @@ def test_demo_buttons_have_all_legacy_public_models_and_safe_payload(client):
+</a>     assert &quot;ADPF 130/DF&quot; in html
+     assert &quot;FACSUR&quot; in html
+     assert &quot;quote&quot; not in html
+<a href="#h6-0-3" id="h6-0-3" class="i">+    for model in data:
+</a><a href="#h6-0-4" id="h6-0-4" class="i">+        assert len(model[&quot;stages&quot;]) &gt;= 6
+</a><a href="#h6-0-5" id="h6-0-5" class="i">+        assert any(field.get(&quot;value&quot;) for field in model[&quot;stages&quot;][0].get(&quot;fields&quot;, []))
+</a><a href="#h6-0-6" id="h6-0-6" class="i">+    assert &quot;data-public-model-step&quot; in Path(&quot;static/js/app.js&quot;).read_text(encoding=&quot;utf-8&quot;)
+</a> 
+ 
+ def test_document_pages_do_not_nest_main_elements(client):
+</pre>
+</div>
+</body>
+</html>

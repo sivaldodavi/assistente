@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix: incluir xz para extrair TinyTeX - assistente-academico - Assistente Acadêmico v2
+</title>
+<link rel="icon" type="image/png" href="../favicon.png" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed" href="../atom.xml" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed (tags)" href="../tags.xml" />
+<link rel="stylesheet" type="text/css" href="../style.css" />
+</head>
+<body>
+<table><tr><td><a href="../../"><img src="../logo.png" alt="" width="32" height="32" /></a></td><td><h1>assistente-academico</h1><span class="desc">Assistente Acadêmico v2
+</span></td></tr><tr class="url"><td></td><td>git clone <a href="git://git.sivaldodavi.com.br/assistente-academico.git">git://git.sivaldodavi.com.br/assistente-academico.git</a></td></tr><tr><td></td><td>
+<a href="../log.html">Log</a> | <a href="../files.html">Files</a> | <a href="../refs.html">Refs</a> | <a href="../file/README.md.html">README</a></td></tr></table>
+<hr/>
+<div id="content">
+<pre><b>commit</b> <a href="../commit/80f3020fdfd49077a99a2d8b4b740ba7d989da6e.html">80f3020fdfd49077a99a2d8b4b740ba7d989da6e</a>
+<b>parent</b> <a href="../commit/03e5d62357d75f5a3524dcdfbec6d550d920ec9f.html">03e5d62357d75f5a3524dcdfbec6d550d920ec9f</a>
+<b>Author:</b> Sivaldo Davi &lt;<span class="offview">g<span>x</span>i<span>x</span>t<span>x</span>@<span>x</span>s<span>x</span>i<span>x</span>v<span>x</span>a<span>x</span>l<span>x</span>d<span>x</span>o<span>x</span>d<span>x</span>a<span>x</span>v<span>x</span>i<span>x</span>.<span>x</span>c<span>x</span>o<span>x</span>m</span>&gt;
+<b>Date:</b>   Mon, 26 Oct 2026 16:43:30 +0000
+
+fix: incluir xz para extrair TinyTeX
+
+<b>Diffstat:</b>
+<table><tr><td class="M">M</td><td><a href="#h0">Dockerfile</a></td><td> | </td><td class="num">2</td><td><span class="i">+</span><span class="d">-</span></td></tr>
+</table></pre><pre>1 file changed, 1 insertion(+), 1 deletion(-)
+<hr/><b>diff --git a/<a id="h0" href="../file/Dockerfile.html">Dockerfile</a> b/<a href="../file/Dockerfile.html">Dockerfile</a></b>
+<a href="#h0-0" id="h0-0" class="h">@@ -11,7 +11,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
+</a> 
+ WORKDIR /app
+ RUN apt-get update \
+<a href="#h0-0-3" id="h0-0-3" class="d">-    &amp;&amp; apt-get install -y --no-install-recommends ca-certificates curl tar libfontconfig1 libfreetype6 libglib2.0-0 libgomp1 \
+</a><a href="#h0-0-4" id="h0-0-4" class="i">+    &amp;&amp; apt-get install -y --no-install-recommends ca-certificates curl tar xz-utils libfontconfig1 libfreetype6 libglib2.0-0 libgomp1 \
+</a>     &amp;&amp; curl -fsSL &quot;https://github.com/quarto-dev/quarto-cli/releases/download/v${QUARTO_VERSION}/quarto-${QUARTO_VERSION}-linux-amd64.tar.gz&quot; | tar -xz -C /opt \
+     &amp;&amp; ln -s &quot;/opt/quarto-${QUARTO_VERSION}&quot; /opt/quarto \
+     &amp;&amp; apt-get clean \
+</pre>
+</div>
+</body>
+</html>

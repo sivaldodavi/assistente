@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>feat: criar adaptadores de provedores de IA - assistente-academico - Assistente Acadêmico v2
+</title>
+<link rel="icon" type="image/png" href="../favicon.png" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed" href="../atom.xml" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed (tags)" href="../tags.xml" />
+<link rel="stylesheet" type="text/css" href="../style.css" />
+</head>
+<body>
+<table><tr><td><a href="../../"><img src="../logo.png" alt="" width="32" height="32" /></a></td><td><h1>assistente-academico</h1><span class="desc">Assistente Acadêmico v2
+</span></td></tr><tr class="url"><td></td><td>git clone <a href="git://git.sivaldodavi.com.br/assistente-academico.git">git://git.sivaldodavi.com.br/assistente-academico.git</a></td></tr><tr><td></td><td>
+<a href="../log.html">Log</a> | <a href="../files.html">Files</a> | <a href="../refs.html">Refs</a> | <a href="../file/README.md.html">README</a></td></tr></table>
+<hr/>
+<div id="content">
+<pre><b>commit</b> <a href="../commit/9abce55ed3c2077f9bc5cfe1646e0cccf0101c4f.html">9abce55ed3c2077f9bc5cfe1646e0cccf0101c4f</a>
+<b>parent</b> <a href="../commit/1cdd2b493fe4707786a96e1dbcc6e582bd89ca9f.html">1cdd2b493fe4707786a96e1dbcc6e582bd89ca9f</a>
+<b>Author:</b> Sivaldo Davi &lt;<span class="offview">g<span>x</span>i<span>x</span>t<span>x</span>@<span>x</span>s<span>x</span>i<span>x</span>v<span>x</span>a<span>x</span>l<span>x</span>d<span>x</span>o<span>x</span>d<span>x</span>a<span>x</span>v<span>x</span>i<span>x</span>.<span>x</span>c<span>x</span>o<span>x</span>m</span>&gt;
+<b>Date:</b>   Mon, 26 Oct 2026 16:17:38 +0000
+
+feat: criar adaptadores de provedores de IA
+
+<b>Diffstat:</b>
+<table><tr><td class="M">M</td><td><a href="#h0">.env.example</a></td><td> | </td><td class="num">4</td><td><span class="i">++++</span><span class="d"></span></td></tr>
+<tr><td class="A">A</td><td><a href="#h1">app/services/providers.py</a></td><td> | </td><td class="num">97</td><td><span class="i">+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="A">A</td><td><a href="#h2">docs/ia/PROVEDORES-IA.md</a></td><td> | </td><td class="num">27</td><td><span class="i">+++++++++++++++++++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="A">A</td><td><a href="#h3">tests/test_providers.py</a></td><td> | </td><td class="num">55</td><td><span class="i">+++++++++++++++++++++++++++++++++++++++++++++++++++++++</span><span class="d"></span></td></tr>
+</table></pre><pre>4 files changed, 183 insertions(+), 0 deletions(-)
+<hr/><b>diff --git a/<a id="h0" href="../file/.env.example.html">.env.example</a> b/<a href="../file/.env.example.html">.env.example</a></b>
+<a href="#h0-0" id="h0-0" class="h">@@ -4,7 +4,11 @@ ASSISTENTE_GOOGLE_CLIENT_ID=
+</a> ASSISTENTE_GOOGLE_CLIENT_SECRET=
+ ASSISTENTE_GOOGLE_REDIRECT_URI=
+ DEEPSEEK_API_KEY_FILE=
+<a href="#h0-0-3" id="h0-0-3" class="i">+DEEPSEEK_API_URL=https://api.deepseek.com/chat/completions
+</a><a href="#h0-0-4" id="h0-0-4" class="i">+DEEPSEEK_MODEL=deepseek-chat
+</a> TYPESAFE_API_KEY_FILE=
+<a href="#h0-0-6" id="h0-0-6" class="i">+TYPESAFE_API_URL=https://api.typesafe.ai/v1/systemone
+</a><a href="#h0-0-7" id="h0-0-7" class="i">+TYPESAFE_MODEL=jev-latest
+</a> ZAP_URL=
+ ZAP_TOKEN_FILE=
+ QUARTO_BINARY=quarto
+<b>diff --git a/<a id="h1" href="../file/app/services/providers.py.html">app/services/providers.py</a> b/<a href="../file/app/services/providers.py.html">app/services/providers.py</a></b>
+<a href="#h1-0" id="h1-0" class="h">@@ -0,0 +1,97 @@
+</a><a href="#h1-0-0" id="h1-0-0" class="i">+from __future__ import annotations
+</a><a href="#h1-0-1" id="h1-0-1" class="i">+
+</a><a href="#h1-0-2" id="h1-0-2" class="i">+import json
+</a><a href="#h1-0-3" id="h1-0-3" class="i">+import os
+</a><a href="#h1-0-4" id="h1-0-4" class="i">+from pathlib import Path
+</a><a href="#h1-0-5" id="h1-0-5" class="i">+from urllib.error import HTTPError, URLError
+</a><a href="#h1-0-6" id="h1-0-6" class="i">+from urllib.request import Request, urlopen
+</a><a href="#h1-0-7" id="h1-0-7" class="i">+
+</a><a href="#h1-0-8" id="h1-0-8" class="i">+
+</a><a href="#h1-0-9" id="h1-0-9" class="i">+class ProviderError(RuntimeError):
+</a><a href="#h1-0-10" id="h1-0-10" class="i">+    def __init__(self, code: str, message: str, status: int = 503):
+</a><a href="#h1-0-11" id="h1-0-11" class="i">+        self.code = code
+</a><a href="#h1-0-12" id="h1-0-12" class="i">+        self.status = status
+</a><a href="#h1-0-13" id="h1-0-13" class="i">+        super().__init__(message)
+</a><a href="#h1-0-14" id="h1-0-14" class="i">+
+</a><a href="#h1-0-15" id="h1-0-15" class="i">+
+</a><a href="#h1-0-16" id="h1-0-16" class="i">+def load_secret(env_name: str, file_env_name: str, default_file: str = &quot;&quot;) -&gt; str:
+</a><a href="#h1-0-17" id="h1-0-17" class="i">+    value = os.environ.get(env_name, &quot;&quot;).strip()
+</a><a href="#h1-0-18" id="h1-0-18" class="i">+    path = os.environ.get(file_env_name, default_file)
+</a><a href="#h1-0-19" id="h1-0-19" class="i">+    if not value and path:
+</a><a href="#h1-0-20" id="h1-0-20" class="i">+        try:
+</a><a href="#h1-0-21" id="h1-0-21" class="i">+            value = Path(path).read_text(encoding=&quot;utf-8&quot;).strip()
+</a><a href="#h1-0-22" id="h1-0-22" class="i">+        except (OSError, UnicodeError) as error:
+</a><a href="#h1-0-23" id="h1-0-23" class="i">+            raise ProviderError(&quot;secret_unavailable&quot;, &quot;A configuração do provedor não pôde ser carregada.&quot;) from error
+</a><a href="#h1-0-24" id="h1-0-24" class="i">+    if not value or len(value) &gt; 4096 or &quot;\n&quot; in value or &quot;\r&quot; in value:
+</a><a href="#h1-0-25" id="h1-0-25" class="i">+        raise ProviderError(&quot;secret_invalid&quot;, &quot;A configuração do provedor é inválida.&quot;)
+</a><a href="#h1-0-26" id="h1-0-26" class="i">+    return value
+</a><a href="#h1-0-27" id="h1-0-27" class="i">+
+</a><a href="#h1-0-28" id="h1-0-28" class="i">+
+</a><a href="#h1-0-29" id="h1-0-29" class="i">+class _JsonProvider:
+</a><a href="#h1-0-30" id="h1-0-30" class="i">+    def __init__(self, api_key: str, api_url: str, model: str, opener=urlopen):
+</a><a href="#h1-0-31" id="h1-0-31" class="i">+        self.api_key = api_key
+</a><a href="#h1-0-32" id="h1-0-32" class="i">+        self.api_url = api_url
+</a><a href="#h1-0-33" id="h1-0-33" class="i">+        self.model = model
+</a><a href="#h1-0-34" id="h1-0-34" class="i">+        self.opener = opener
+</a><a href="#h1-0-35" id="h1-0-35" class="i">+
+</a><a href="#h1-0-36" id="h1-0-36" class="i">+    def post(self, payload: dict, timeout: int = 30) -&gt; dict:
+</a><a href="#h1-0-37" id="h1-0-37" class="i">+        body = json.dumps(payload, ensure_ascii=False, separators=(&quot;,&quot;, &quot;:&quot;)).encode(&quot;utf-8&quot;)
+</a><a href="#h1-0-38" id="h1-0-38" class="i">+        request = Request(
+</a><a href="#h1-0-39" id="h1-0-39" class="i">+            self.api_url,
+</a><a href="#h1-0-40" id="h1-0-40" class="i">+            data=body,
+</a><a href="#h1-0-41" id="h1-0-41" class="i">+            headers={&quot;Authorization&quot;: f&quot;Bearer {self.api_key}&quot;, &quot;Content-Type&quot;: &quot;application/json&quot;},
+</a><a href="#h1-0-42" id="h1-0-42" class="i">+            method=&quot;POST&quot;,
+</a><a href="#h1-0-43" id="h1-0-43" class="i">+        )
+</a><a href="#h1-0-44" id="h1-0-44" class="i">+        try:
+</a><a href="#h1-0-45" id="h1-0-45" class="i">+            with self.opener(request, timeout=timeout) as response:
+</a><a href="#h1-0-46" id="h1-0-46" class="i">+                raw = response.read(4 * 1024 * 1024 + 1)
+</a><a href="#h1-0-47" id="h1-0-47" class="i">+        except HTTPError as error:
+</a><a href="#h1-0-48" id="h1-0-48" class="i">+            status = error.code
+</a><a href="#h1-0-49" id="h1-0-49" class="i">+            error.close()
+</a><a href="#h1-0-50" id="h1-0-50" class="i">+            if status in {429, 529}:
+</a><a href="#h1-0-51" id="h1-0-51" class="i">+                raise ProviderError(&quot;provider_busy&quot;, &quot;O provedor está temporariamente ocupado.&quot;, 503) from error
+</a><a href="#h1-0-52" id="h1-0-52" class="i">+            if status == 401:
+</a><a href="#h1-0-53" id="h1-0-53" class="i">+                raise ProviderError(&quot;provider_auth&quot;, &quot;A configuração do provedor foi recusada.&quot;, 502) from error
+</a><a href="#h1-0-54" id="h1-0-54" class="i">+            raise ProviderError(&quot;provider_error&quot;, &quot;O provedor não concluiu a solicitação.&quot;, 502) from error
+</a><a href="#h1-0-55" id="h1-0-55" class="i">+        except (TimeoutError, URLError, OSError) as error:
+</a><a href="#h1-0-56" id="h1-0-56" class="i">+            raise ProviderError(&quot;provider_unreachable&quot;, &quot;Não foi possível conectar ao provedor.&quot;, 503) from error
+</a><a href="#h1-0-57" id="h1-0-57" class="i">+        if len(raw) &gt; 4 * 1024 * 1024:
+</a><a href="#h1-0-58" id="h1-0-58" class="i">+            raise ProviderError(&quot;response_too_large&quot;, &quot;A resposta do provedor é grande demais.&quot;, 502)
+</a><a href="#h1-0-59" id="h1-0-59" class="i">+        try:
+</a><a href="#h1-0-60" id="h1-0-60" class="i">+            data = json.loads(raw)
+</a><a href="#h1-0-61" id="h1-0-61" class="i">+        except (TypeError, ValueError, json.JSONDecodeError) as error:
+</a><a href="#h1-0-62" id="h1-0-62" class="i">+            raise ProviderError(&quot;invalid_response&quot;, &quot;O provedor retornou uma resposta inválida.&quot;, 502) from error
+</a><a href="#h1-0-63" id="h1-0-63" class="i">+        if not isinstance(data, dict):
+</a><a href="#h1-0-64" id="h1-0-64" class="i">+            raise ProviderError(&quot;invalid_response&quot;, &quot;O provedor retornou uma resposta inválida.&quot;, 502)
+</a><a href="#h1-0-65" id="h1-0-65" class="i">+        return data
+</a><a href="#h1-0-66" id="h1-0-66" class="i">+
+</a><a href="#h1-0-67" id="h1-0-67" class="i">+
+</a><a href="#h1-0-68" id="h1-0-68" class="i">+class DeepSeekClient(_JsonProvider):
+</a><a href="#h1-0-69" id="h1-0-69" class="i">+    def __init__(self, api_key: str, api_url: str = &quot;https://api.deepseek.com/chat/completions&quot;, model: str = &quot;deepseek-chat&quot;, opener=urlopen):
+</a><a href="#h1-0-70" id="h1-0-70" class="i">+        super().__init__(api_key, api_url, model, opener)
+</a><a href="#h1-0-71" id="h1-0-71" class="i">+
+</a><a href="#h1-0-72" id="h1-0-72" class="i">+    def complete_json(self, messages: list[dict], max_tokens: int = 1400) -&gt; dict:
+</a><a href="#h1-0-73" id="h1-0-73" class="i">+        response = self.post({&quot;model&quot;: self.model, &quot;messages&quot;: messages, &quot;response_format&quot;: {&quot;type&quot;: &quot;json_object&quot;}, &quot;max_tokens&quot;: max_tokens, &quot;stream&quot;: False})
+</a><a href="#h1-0-74" id="h1-0-74" class="i">+        choices = response.get(&quot;choices&quot;)
+</a><a href="#h1-0-75" id="h1-0-75" class="i">+        content = choices[0].get(&quot;message&quot;, {}).get(&quot;content&quot;) if isinstance(choices, list) and len(choices) == 1 else None
+</a><a href="#h1-0-76" id="h1-0-76" class="i">+        if not isinstance(content, str):
+</a><a href="#h1-0-77" id="h1-0-77" class="i">+            raise ProviderError(&quot;invalid_response&quot;, &quot;A resposta DeepSeek não trouxe conteúdo JSON.&quot;, 502)
+</a><a href="#h1-0-78" id="h1-0-78" class="i">+        try:
+</a><a href="#h1-0-79" id="h1-0-79" class="i">+            result = json.loads(content)
+</a><a href="#h1-0-80" id="h1-0-80" class="i">+        except (TypeError, ValueError, json.JSONDecodeError) as error:
+</a><a href="#h1-0-81" id="h1-0-81" class="i">+            raise ProviderError(&quot;invalid_response&quot;, &quot;A resposta DeepSeek não trouxe JSON válido.&quot;, 502) from error
+</a><a href="#h1-0-82" id="h1-0-82" class="i">+        if not isinstance(result, dict):
+</a><a href="#h1-0-83" id="h1-0-83" class="i">+            raise ProviderError(&quot;invalid_response&quot;, &quot;A resposta DeepSeek não trouxe um objeto JSON.&quot;, 502)
+</a><a href="#h1-0-84" id="h1-0-84" class="i">+        return {&quot;model&quot;: response.get(&quot;model&quot;) or self.model, &quot;result&quot;: result, &quot;usage&quot;: response.get(&quot;usage&quot;, {})}
+</a><a href="#h1-0-85" id="h1-0-85" class="i">+
+</a><a href="#h1-0-86" id="h1-0-86" class="i">+
+</a><a href="#h1-0-87" id="h1-0-87" class="i">+class JevClient(_JsonProvider):
+</a><a href="#h1-0-88" id="h1-0-88" class="i">+    def __init__(self, api_key: str, api_url: str = &quot;https://api.typesafe.ai/v1/systemone&quot;, model: str = &quot;jev-latest&quot;, opener=urlopen):
+</a><a href="#h1-0-89" id="h1-0-89" class="i">+        super().__init__(api_key, api_url, model, opener)
+</a><a href="#h1-0-90" id="h1-0-90" class="i">+
+</a><a href="#h1-0-91" id="h1-0-91" class="i">+    def score(self, state: dict, questions: dict) -&gt; dict:
+</a><a href="#h1-0-92" id="h1-0-92" class="i">+        response = self.post({&quot;state&quot;: state, &quot;model&quot;: self.model, &quot;questions&quot;: questions})
+</a><a href="#h1-0-93" id="h1-0-93" class="i">+        answers = response.get(&quot;answers&quot;)
+</a><a href="#h1-0-94" id="h1-0-94" class="i">+        if not isinstance(answers, dict):
+</a><a href="#h1-0-95" id="h1-0-95" class="i">+            raise ProviderError(&quot;invalid_response&quot;, &quot;A resposta JEV não trouxe respostas estruturadas.&quot;, 502)
+</a><a href="#h1-0-96" id="h1-0-96" class="i">+        return {&quot;model&quot;: response.get(&quot;model&quot;) or self.model, &quot;answers&quot;: answers, &quot;usage&quot;: response.get(&quot;usage&quot;, {})}
+</a><b>diff --git a/<a id="h2" href="../file/docs/ia/PROVEDORES-IA.md.html">docs/ia/PROVEDORES-IA.md</a> b/<a href="../file/docs/ia/PROVEDORES-IA.md.html">docs/ia/PROVEDORES-IA.md</a></b>
+<a href="#h2-0" id="h2-0" class="h">@@ -0,0 +1,27 @@
+</a><a href="#h2-0-0" id="h2-0-0" class="i">+# Provedores externos de IA
+</a><a href="#h2-0-1" id="h2-0-1" class="i">+
+</a><a href="#h2-0-2" id="h2-0-2" class="i">+## Fronteira
+</a><a href="#h2-0-3" id="h2-0-3" class="i">+
+</a><a href="#h2-0-4" id="h2-0-4" class="i">+DeepSeek e JEV/Typesafe são serviços externos atrás de adaptadores em `app/services/providers.py`. Rotas e domínio não montam `urllib.Request` diretamente.
+</a><a href="#h2-0-5" id="h2-0-5" class="i">+
+</a><a href="#h2-0-6" id="h2-0-6" class="i">+Os adaptadores recebem a chave, a URL e um transporte injetável. O transporte falso é usado na suíte; testes não fazem chamadas reais.
+</a><a href="#h2-0-7" id="h2-0-7" class="i">+
+</a><a href="#h2-0-8" id="h2-0-8" class="i">+## DeepSeek
+</a><a href="#h2-0-9" id="h2-0-9" class="i">+
+</a><a href="#h2-0-10" id="h2-0-10" class="i">+O contrato envia `model`, `messages`, `response_format` JSON, `max_tokens` e `stream: false` ao endpoint configurado. A resposta precisa ter uma única escolha com conteúdo JSON objeto. O adaptador devolve modelo, resultado estruturado e uso; não interpreta a regra acadêmica.
+</a><a href="#h2-0-11" id="h2-0-11" class="i">+
+</a><a href="#h2-0-12" id="h2-0-12" class="i">+## JEV/Typesafe
+</a><a href="#h2-0-13" id="h2-0-13" class="i">+
+</a><a href="#h2-0-14" id="h2-0-14" class="i">+O contrato envia `state`, `model` e `questions` ao endpoint configurado. A resposta precisa conter `answers` como objeto. A validação detalhada de rubric, itens permitidos, confiança e persistência de uso pertence ao serviço de aplicação que chamará o adaptador, não ao transporte.
+</a><a href="#h2-0-15" id="h2-0-15" class="i">+
+</a><a href="#h2-0-16" id="h2-0-16" class="i">+## Secrets
+</a><a href="#h2-0-17" id="h2-0-17" class="i">+
+</a><a href="#h2-0-18" id="h2-0-18" class="i">+A chave pode vir de variável de ambiente ou de arquivo indicado por `*_API_KEY_FILE`, compatível com secrets montados pelo Docker. O valor não é impresso, salvo no banco, enviado ao frontend ou incluído em exceções.
+</a><a href="#h2-0-19" id="h2-0-19" class="i">+
+</a><a href="#h2-0-20" id="h2-0-20" class="i">+## Falhas
+</a><a href="#h2-0-21" id="h2-0-21" class="i">+
+</a><a href="#h2-0-22" id="h2-0-22" class="i">+401 vira erro de configuração; 429/529 vira indisponibilidade temporária; timeout e erro de rede não são convertidos em resposta de sucesso. Corpo de erro do provedor não é registrado no log.
+</a><a href="#h2-0-23" id="h2-0-23" class="i">+
+</a><a href="#h2-0-24" id="h2-0-24" class="i">+## Limites do produto
+</a><a href="#h2-0-25" id="h2-0-25" class="i">+
+</a><a href="#h2-0-26" id="h2-0-26" class="i">+Nenhum adaptador libera sozinho uma chamada para um projeto. Consentimento de IA, reserva de uso, contexto mínimo, ação permitida, validação da resposta e registro de uso serão contratos separados. O provedor nunca decide o conteúdo do projeto sem confirmação explícita do usuário.
+</a><b>diff --git a/<a id="h3" href="../file/tests/test_providers.py.html">tests/test_providers.py</a> b/<a href="../file/tests/test_providers.py.html">tests/test_providers.py</a></b>
+<a href="#h3-0" id="h3-0" class="h">@@ -0,0 +1,55 @@
+</a><a href="#h3-0-0" id="h3-0-0" class="i">+import json
+</a><a href="#h3-0-1" id="h3-0-1" class="i">+
+</a><a href="#h3-0-2" id="h3-0-2" class="i">+import pytest
+</a><a href="#h3-0-3" id="h3-0-3" class="i">+
+</a><a href="#h3-0-4" id="h3-0-4" class="i">+from app.services.providers import DeepSeekClient, JevClient, ProviderError, load_secret
+</a><a href="#h3-0-5" id="h3-0-5" class="i">+
+</a><a href="#h3-0-6" id="h3-0-6" class="i">+
+</a><a href="#h3-0-7" id="h3-0-7" class="i">+class FakeResponse:
+</a><a href="#h3-0-8" id="h3-0-8" class="i">+    def __init__(self, payload):
+</a><a href="#h3-0-9" id="h3-0-9" class="i">+        self.payload = json.dumps(payload).encode()
+</a><a href="#h3-0-10" id="h3-0-10" class="i">+
+</a><a href="#h3-0-11" id="h3-0-11" class="i">+    def __enter__(self):
+</a><a href="#h3-0-12" id="h3-0-12" class="i">+        return self
+</a><a href="#h3-0-13" id="h3-0-13" class="i">+
+</a><a href="#h3-0-14" id="h3-0-14" class="i">+    def __exit__(self, *_):
+</a><a href="#h3-0-15" id="h3-0-15" class="i">+        return None
+</a><a href="#h3-0-16" id="h3-0-16" class="i">+
+</a><a href="#h3-0-17" id="h3-0-17" class="i">+    def read(self, _limit):
+</a><a href="#h3-0-18" id="h3-0-18" class="i">+        return self.payload
+</a><a href="#h3-0-19" id="h3-0-19" class="i">+
+</a><a href="#h3-0-20" id="h3-0-20" class="i">+
+</a><a href="#h3-0-21" id="h3-0-21" class="i">+def fake_opener(payload):
+</a><a href="#h3-0-22" id="h3-0-22" class="i">+    def opener(request, timeout):
+</a><a href="#h3-0-23" id="h3-0-23" class="i">+        assert request.get_method() == &quot;POST&quot;
+</a><a href="#h3-0-24" id="h3-0-24" class="i">+        assert request.headers[&quot;Authorization&quot;] == &quot;Bearer secret&quot;
+</a><a href="#h3-0-25" id="h3-0-25" class="i">+        assert timeout == 30
+</a><a href="#h3-0-26" id="h3-0-26" class="i">+        return FakeResponse(payload)
+</a><a href="#h3-0-27" id="h3-0-27" class="i">+    return opener
+</a><a href="#h3-0-28" id="h3-0-28" class="i">+
+</a><a href="#h3-0-29" id="h3-0-29" class="i">+
+</a><a href="#h3-0-30" id="h3-0-30" class="i">+def test_deepseek_client_parses_structured_json_without_network():
+</a><a href="#h3-0-31" id="h3-0-31" class="i">+    client = DeepSeekClient(&quot;secret&quot;, opener=fake_opener({&quot;model&quot;: &quot;deepseek-chat&quot;, &quot;choices&quot;: [{&quot;message&quot;: {&quot;content&quot;: &#39;{&quot;answer&quot;:&quot;ok&quot;}&#39;}}], &quot;usage&quot;: {&quot;prompt_tokens&quot;: 1}}))
+</a><a href="#h3-0-32" id="h3-0-32" class="i">+    result = client.complete_json([{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;teste&quot;}])
+</a><a href="#h3-0-33" id="h3-0-33" class="i">+    assert result[&quot;result&quot;] == {&quot;answer&quot;: &quot;ok&quot;}
+</a><a href="#h3-0-34" id="h3-0-34" class="i">+
+</a><a href="#h3-0-35" id="h3-0-35" class="i">+
+</a><a href="#h3-0-36" id="h3-0-36" class="i">+def test_jev_client_preserves_structured_answers():
+</a><a href="#h3-0-37" id="h3-0-37" class="i">+    client = JevClient(&quot;secret&quot;, opener=fake_opener({&quot;model&quot;: &quot;jev-latest&quot;, &quot;answers&quot;: {&quot;q1&quot;: {&quot;score&quot;: 2}}, &quot;usage&quot;: {&quot;input_tokens&quot;: 1}}))
+</a><a href="#h3-0-38" id="h3-0-38" class="i">+    result = client.score({&quot;text&quot;: &quot;teste&quot;}, {&quot;q1&quot;: {&quot;type&quot;: &quot;score&quot;}})
+</a><a href="#h3-0-39" id="h3-0-39" class="i">+    assert result[&quot;answers&quot;][&quot;q1&quot;][&quot;score&quot;] == 2
+</a><a href="#h3-0-40" id="h3-0-40" class="i">+
+</a><a href="#h3-0-41" id="h3-0-41" class="i">+
+</a><a href="#h3-0-42" id="h3-0-42" class="i">+def test_provider_rejects_invalid_json_content():
+</a><a href="#h3-0-43" id="h3-0-43" class="i">+    client = DeepSeekClient(&quot;secret&quot;, opener=fake_opener({&quot;choices&quot;: [{&quot;message&quot;: {&quot;content&quot;: &quot;não-json&quot;}}]}))
+</a><a href="#h3-0-44" id="h3-0-44" class="i">+    with pytest.raises(ProviderError) as error:
+</a><a href="#h3-0-45" id="h3-0-45" class="i">+        client.complete_json([])
+</a><a href="#h3-0-46" id="h3-0-46" class="i">+    assert error.value.code == &quot;invalid_response&quot;
+</a><a href="#h3-0-47" id="h3-0-47" class="i">+
+</a><a href="#h3-0-48" id="h3-0-48" class="i">+
+</a><a href="#h3-0-49" id="h3-0-49" class="i">+def test_secret_file_is_loaded_without_printing_value(tmp_path, monkeypatch):
+</a><a href="#h3-0-50" id="h3-0-50" class="i">+    secret_file = tmp_path / &quot;key&quot;
+</a><a href="#h3-0-51" id="h3-0-51" class="i">+    secret_file.write_text(&quot;file-secret\n&quot;, encoding=&quot;utf-8&quot;)
+</a><a href="#h3-0-52" id="h3-0-52" class="i">+    monkeypatch.delenv(&quot;TEST_SECRET&quot;, raising=False)
+</a><a href="#h3-0-53" id="h3-0-53" class="i">+    monkeypatch.setenv(&quot;TEST_SECRET_FILE&quot;, str(secret_file))
+</a><a href="#h3-0-54" id="h3-0-54" class="i">+    assert load_secret(&quot;TEST_SECRET&quot;, &quot;TEST_SECRET_FILE&quot;) == &quot;file-secret&quot;
+</a></pre>
+</div>
+</body>
+</html>

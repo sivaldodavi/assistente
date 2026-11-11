@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fix: alinhar modelos públicos aos roteiros - assistente-academico - Assistente Acadêmico v2
+</title>
+<link rel="icon" type="image/png" href="../favicon.png" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed" href="../atom.xml" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed (tags)" href="../tags.xml" />
+<link rel="stylesheet" type="text/css" href="../style.css" />
+</head>
+<body>
+<table><tr><td><a href="../../"><img src="../logo.png" alt="" width="32" height="32" /></a></td><td><h1>assistente-academico</h1><span class="desc">Assistente Acadêmico v2
+</span></td></tr><tr class="url"><td></td><td>git clone <a href="git://git.sivaldodavi.com.br/assistente-academico.git">git://git.sivaldodavi.com.br/assistente-academico.git</a></td></tr><tr><td></td><td>
+<a href="../log.html">Log</a> | <a href="../files.html">Files</a> | <a href="../refs.html">Refs</a> | <a href="../file/README.md.html">README</a></td></tr></table>
+<hr/>
+<div id="content">
+<pre><b>commit</b> <a href="../commit/48969c3ad375238177ffb360379647f001f2494d.html">48969c3ad375238177ffb360379647f001f2494d</a>
+<b>parent</b> <a href="../commit/0fcd513b5210573a55ea81c5caa0e49d80dcd918.html">0fcd513b5210573a55ea81c5caa0e49d80dcd918</a>
+<b>Author:</b> Sivaldo Davi &lt;<span class="offview">g<span>x</span>i<span>x</span>t<span>x</span>@<span>x</span>s<span>x</span>i<span>x</span>v<span>x</span>a<span>x</span>l<span>x</span>d<span>x</span>o<span>x</span>d<span>x</span>a<span>x</span>v<span>x</span>i<span>x</span>.<span>x</span>c<span>x</span>o<span>x</span>m</span>&gt;
+<b>Date:</b>   Mon, 26 Oct 2026 20:56:57 +0000
+
+fix: alinhar modelos públicos aos roteiros
+
+Co-authored-by: Manus &lt;dev-agent@manus.ai&gt;
+
+<b>Diffstat:</b>
+<table><tr><td class="M">M</td><td><a href="#h0">app/domain/public-models.json</a></td><td> | </td><td class="num">15</td><td><span class="i">+++++++++++</span><span class="d">----</span></td></tr>
+<tr><td class="M">M</td><td><a href="#h1">app/routes/public.py</a></td><td> | </td><td class="num">59</td><td><span class="i">++++++++++++++++++++++++++++++++++++++++++++++++++++</span><span class="d">-------</span></td></tr>
+<tr><td class="M">M</td><td><a href="#h2">docs/ia/PARIDADE-FUNCIONAL-ATUAL.md</a></td><td> | </td><td class="num">2</td><td><span class="i">+</span><span class="d">-</span></td></tr>
+<tr><td class="M">M</td><td><a href="#h3">templates/account/home.html</a></td><td> | </td><td class="num">5</td><td><span class="i">+++</span><span class="d">--</span></td></tr>
+<tr><td class="M">M</td><td><a href="#h4">tests/test_account.py</a></td><td> | </td><td class="num">4</td><td><span class="i">++++</span><span class="d"></span></td></tr>
+<tr><td class="M">M</td><td><a href="#h5">tests/test_public_navigation.py</a></td><td> | </td><td class="num">27</td><td><span class="i">+++++++++++++++++++++++++++</span><span class="d"></span></td></tr>
+</table></pre><pre>6 files changed, 98 insertions(+), 14 deletions(-)
+<hr/><b>diff --git a/<a id="h0" href="../file/app/domain/public-models.json.html">app/domain/public-models.json</a> b/<a href="../file/app/domain/public-models.json.html">app/domain/public-models.json</a></b>
+<a href="#h0-0" id="h0-0" class="h">@@ -397,7 +397,14 @@
+</a>         &quot;objective3&quot;: &quot;Discutir os limites do art. 155 do Código de Processo Penal diante dessa mudança.&quot;,
+         &quot;justification&quot;: &quot;O tema interessa à formação jurídica porque define como a defesa atua desde o início da persecução penal e quais elementos podem chegar ao processo. A pesquisa busca organizar os argumentos doutrinários sobre uma alteração legislativa com impacto prático na atuação dos advogados e na análise das nulidades.&quot;,
+         &quot;theory&quot;: &quot;A pesquisa apoia-se na Constituição Federal (art. 5º, LV), no Código de Processo Penal (arts. 9º e 155) e no Estatuto da OAB, alterado pela Lei nº 13.245/2016. Na doutrina, o estudo parte dos manuais de processo penal, que tratam o inquérito como procedimento preparatório e discutem sua inquisitividade, e da Súmula Vinculante nº 14 do Supremo Tribunal Federal, sobre o acesso do defensor aos elementos de prova já documentados.&quot;,
+<a href="#h0-0-3" id="h0-0-3" class="d">-        &quot;instruments&quot;: &quot;Pesquisa bibliográfica e documental, de abordagem qualitativa e método dedutivo. O levantamento será feito em livros e artigos jurídicos publicados após 2016, na legislação e na jurisprudência do Supremo Tribunal Federal disponível em bases oficiais. Cada fonte será registrada com referência completa e as informações serão organizadas em fichamentos antes da redação dos tópicos.&quot;
+</a><a href="#h0-0-4" id="h0-0-4" class="i">+        &quot;instruments&quot;: &quot;Pesquisa bibliográfica e documental, de abordagem qualitativa e método dedutivo. O levantamento será feito em livros e artigos jurídicos publicados após 2016, na legislação e na jurisprudência do Supremo Tribunal Federal disponível em bases oficiais. Cada fonte será registrada com referência completa e as informações serão organizadas em fichamentos antes da redação dos tópicos.&quot;,
+</a><a href="#h0-0-5" id="h0-0-5" class="i">+        &quot;profile&quot;: &quot;facsure&quot;,
+</a><a href="#h0-0-6" id="h0-0-6" class="i">+        &quot;delimitation&quot;: &quot;investigação criminal no Brasil a partir da alteração do art. 7º do Estatuto da OAB pela Lei nº 13.245/2016, com foco na participação do advogado e no valor probatório dos atos do inquérito.&quot;,
+</a><a href="#h0-0-7" id="h0-0-7" class="i">+        &quot;researchContext&quot;: &quot;Desde a Lei nº 13.245/2016, o advogado pode examinar autos de investigação e acompanhar o interrogatório e os depoimentos do cliente investigado. Como o inquérito policial é tradicionalmente tratado como peça informativa, sem contraditório, a alteração legislativa levanta dúvidas sobre o alcance prático da presença da defesa nessa fase e sobre o peso que seus atos podem ter no processo.&quot;,
+</a><a href="#h0-0-8" id="h0-0-8" class="i">+        &quot;researchObject&quot;: &quot;A participação da defesa técnica na fase investigatória e o valor probatório dos atos do inquérito policial.&quot;,
+</a><a href="#h0-0-9" id="h0-0-9" class="i">+        &quot;nature&quot;: &quot;Bibliográfica e documental&quot;,
+</a><a href="#h0-0-10" id="h0-0-10" class="i">+        &quot;approach&quot;: &quot;Qualitativa&quot;,
+</a><a href="#h0-0-11" id="h0-0-11" class="i">+        &quot;procedure&quot;: &quot;Levantamento em livros e artigos jurídicos publicados após 2016, na legislação e na jurisprudência do Supremo Tribunal Federal disponível em bases oficiais.&quot;
+</a>       },
+       &quot;sources&quot;: [
+         {
+<a href="#h0-1" id="h0-1" class="h">@@ -585,7 +592,8 @@
+</a>             &quot;content&quot;: &quot;A doutrina se divide diante dessas mudanças. Uma corrente sustenta que a presença do advogado não altera a natureza do inquérito, que permanece informativo, porque não há acusação formalizada nem relação processual (LOPES JR., [ano]). Outra corrente entende que a participação defensiva introduz uma forma de contraditório na investigação, conferindo maior confiabilidade aos atos e fortalecendo sua utilização no processo.\n\nA discussão se concentra no conceito de contraditório. Em sentido estrito, ele pressupõe a relação processual e a possibilidade de influir na decisão. Em sentido amplo, abrange a possibilidade de a parte acompanhar a produção da prova e de apresentar sua versão. A Constituição Federal assegura o contraditório e a ampla defesa aos litigantes em processo judicial ou administrativo e aos acusados em geral (BRASIL, 1988, art. 5º, LV). Assim, mesmo sem processo judicial, a presença da defesa na investigação se aproxima da garantia constitucional, sem se confundir com ela.\n\nEsse ponto leva de volta ao art. 155 do Código de Processo Penal. A regra continua exigindo que a condenação se apoie em prova produzida em contraditório judicial, e os elementos do inquérito não bastam, por si, para fundamentar a decisão (BRASIL, 1941). Mesmo que a participação do advogado torne o ato mais confiável, o juiz deverá verificar se a prova foi repetida ou confirmada em juízo, ressalvadas as exceções legais.\n\nConclui-se que a Lei nº 13.245/2016 aumenta a qualidade do material colhido na investigação, mas não lhe atribui valor de prova plena. A alteração influencia, sobretudo, a legitimidade dos atos e a possibilidade de a defesa impugnar nulidades, e não a regra de que a condenação exige contraditório judicial.&quot;
+           }
+         ],
+<a href="#h0-1-3" id="h0-1-3" class="d">-        &quot;conclusion&quot;: &quot;A análise permitiu responder ao problema proposto. A participação da defesa técnica na fase investigatória, introduzida pela Lei nº 13.245/2016, altera a forma como os atos do inquérito são praticados e controlados, mas não modifica, por si, a natureza informativa dessa fase. A hipótese inicial, de que a presença do defensor qualifica a regularidade dos atos sem convertê-los em prova plena, foi confirmada pelo exame do texto legal e do art. 155 do Código de Processo Penal.\n\nOs objetivos foram atingidos: o inquérito foi caracterizado como procedimento administrativo de finalidade preparatória, as alterações do art. 7º do Estatuto da OAB foram examinadas e os limites da convicção judicial foram discutidos a partir do contraditório judicial. Resta, contudo, uma questão aberta, sobre como a defesa deve documentar sua participação para que o registro tenha utilidade no processo, tema que pode ser objeto de pesquisa posterior.\n\nPor fim, a presença do advogado no inquérito é um instrumento de garantia que fortalece o devido processo legal desde o início da persecução penal. Seu valor, porém, depende de confirmação em juízo. A defesa deve atuar não apenas para acompanhar o ato, mas para assegurar que ele seja reproduzido e examinado sob o contraditório judicial.&quot;
+</a><a href="#h0-1-4" id="h0-1-4" class="i">+        &quot;conclusion&quot;: &quot;A análise permitiu responder ao problema proposto. A participação da defesa técnica na fase investigatória, introduzida pela Lei nº 13.245/2016, altera a forma como os atos do inquérito são praticados e controlados, mas não modifica, por si, a natureza informativa dessa fase. A hipótese inicial, de que a presença do defensor qualifica a regularidade dos atos sem convertê-los em prova plena, foi confirmada pelo exame do texto legal e do art. 155 do Código de Processo Penal.\n\nOs objetivos foram atingidos: o inquérito foi caracterizado como procedimento administrativo de finalidade preparatória, as alterações do art. 7º do Estatuto da OAB foram examinadas e os limites da convicção judicial foram discutidos a partir do contraditório judicial. Resta, contudo, uma questão aberta, sobre como a defesa deve documentar sua participação para que o registro tenha utilidade no processo, tema que pode ser objeto de pesquisa posterior.\n\nPor fim, a presença do advogado no inquérito é um instrumento de garantia que fortalece o devido processo legal desde o início da persecução penal. Seu valor, porém, depende de confirmação em juízo. A defesa deve atuar não apenas para acompanhar o ato, mas para assegurar que ele seja reproduzido e examinado sob o contraditório judicial.&quot;,
+</a><a href="#h0-1-5" id="h0-1-5" class="i">+        &quot;profile&quot;: &quot;facsure&quot;
+</a>       },
+       &quot;sources&quot;: [
+         {
+<a href="#h0-2" id="h0-2" class="h">@@ -626,4 +634,4 @@
+</a>       ]
+     }
+   }
+<a href="#h0-2-3" id="h0-2-3" class="d">-]
+</a><a href="#h0-2-4" id="h0-2-4" class="d">-\ No newline at end of file
+</a><a href="#h0-2-5" id="h0-2-5" class="i">+]
+</a><b>diff --git a/<a id="h1" href="../file/app/routes/public.py.html">app/routes/public.py</a> b/<a href="../file/app/routes/public.py.html">app/routes/public.py</a></b>
+<a href="#h1-0" id="h1-0" class="h">@@ -1,5 +1,6 @@
+</a> import json
+ import re
+<a href="#h1-0-2" id="h1-0-2" class="i">+import unicodedata
+</a> from copy import deepcopy
+ from pathlib import Path
+ 
+<a href="#h1-1" id="h1-1" class="h">@@ -27,14 +28,54 @@ def _demo_workflow_key(model_id, workflow):
+</a>     return &quot;paper_final&quot;, &quot;paper_final&quot;
+ 
+ 
+<a href="#h1-1-3" id="h1-1-3" class="d">-def _demo_stage_sections(model_id, index):
+</a><a href="#h1-1-4" id="h1-1-4" class="i">+def _normalise_demo_title(value):
+</a><a href="#h1-1-5" id="h1-1-5" class="i">+    value = unicodedata.normalize(&quot;NFD&quot;, str(value or &quot;&quot;).casefold())
+</a><a href="#h1-1-6" id="h1-1-6" class="i">+    value = &quot;&quot;.join(character for character in value if unicodedata.category(character) != &quot;Mn&quot;)
+</a><a href="#h1-1-7" id="h1-1-7" class="i">+    return &quot; &quot;.join(value.replace(&quot;·&quot;, &quot; &quot;).replace(&quot;.&quot;, &quot; &quot;).split())
+</a><a href="#h1-1-8" id="h1-1-8" class="i">+
+</a><a href="#h1-1-9" id="h1-1-9" class="i">+
+</a><a href="#h1-1-10" id="h1-1-10" class="i">+def _demo_stage_sections(model_id, stage_title, sections):
+</a><a href="#h1-1-11" id="h1-1-11" class="i">+    &quot;&quot;&quot;Relaciona o conteúdo preenchido ao mesmo estágio usado no editor.
+</a><a href="#h1-1-12" id="h1-1-12" class="i">+
+</a><a href="#h1-1-13" id="h1-1-13" class="i">+    Os modelos legados têm subtítulos vazios (por exemplo, cabeçalhos de
+</a><a href="#h1-1-14" id="h1-1-14" class="i">+    agrupamento). Por isso, a associação não deve depender da posição bruta
+</a><a href="#h1-1-15" id="h1-1-15" class="i">+    da lista de parágrafos: o título do estágio e o título textual da seção
+</a><a href="#h1-1-16" id="h1-1-16" class="i">+    são as identidades estáveis.
+</a><a href="#h1-1-17" id="h1-1-17" class="i">+    &quot;&quot;&quot;
+</a>     maps = {
+<a href="#h1-1-19" id="h1-1-19" class="d">-        &quot;civil-personality&quot;: ((), (0,), (2,), (4,), (5,), (6,), (), ()),
+</a><a href="#h1-1-20" id="h1-1-20" class="d">-        &quot;projeto-paper-modelo&quot;: ((0, 1), (2,), (3,), (4,), (5,), (6,), (7,), (8,), ()),
+</a><a href="#h1-1-21" id="h1-1-21" class="d">-        &quot;paper-final-modelo&quot;: ((), (0,), (1, 2, 3), (4,), (5,), (), ()),
+</a><a href="#h1-1-22" id="h1-1-22" class="i">+        &quot;civil-personality&quot;: {
+</a><a href="#h1-1-23" id="h1-1-23" class="i">+            &quot;1 · Descrição do caso&quot;: (&quot;1 descricao do caso&quot;,),
+</a><a href="#h1-1-24" id="h1-1-24" class="i">+            &quot;2.1 · Decisões possíveis&quot;: (&quot;2 1 descricao das decisoes possiveis&quot;,),
+</a><a href="#h1-1-25" id="h1-1-25" class="i">+            &quot;2.2.1 · Argumentação da tese A&quot;: (&quot;2 2 1&quot;,),
+</a><a href="#h1-1-26" id="h1-1-26" class="i">+            &quot;2.2.2 · Argumentação da tese B&quot;: (&quot;2 2 2&quot;,),
+</a><a href="#h1-1-27" id="h1-1-27" class="i">+            &quot;2.3 · Critérios e valores&quot;: (&quot;2 3 descricao dos criterios e valores&quot;,),
+</a><a href="#h1-1-28" id="h1-1-28" class="i">+        },
+</a><a href="#h1-1-29" id="h1-1-29" class="i">+        &quot;projeto-paper-modelo&quot;: {
+</a><a href="#h1-1-30" id="h1-1-30" class="i">+            &quot;Identificação e delimitação&quot;: (&quot;1 tema&quot;, &quot;2 titulo e delimitacao do tema&quot;),
+</a><a href="#h1-1-31" id="h1-1-31" class="i">+            &quot;Problema de pesquisa&quot;: (&quot;3 problema&quot;,),
+</a><a href="#h1-1-32" id="h1-1-32" class="i">+            &quot;Hipótese&quot;: (&quot;4 hipoteses&quot;,),
+</a><a href="#h1-1-33" id="h1-1-33" class="i">+            &quot;Justificativa&quot;: (&quot;5 justificativa&quot;,),
+</a><a href="#h1-1-34" id="h1-1-34" class="i">+            &quot;Objetivos&quot;: (&quot;6 objetivos gerais e especificos&quot;,),
+</a><a href="#h1-1-35" id="h1-1-35" class="i">+            &quot;Referencial teórico&quot;: (&quot;7 referencial teorico&quot;,),
+</a><a href="#h1-1-36" id="h1-1-36" class="i">+            &quot;Metodologia&quot;: (&quot;8 metodologia&quot;,),
+</a><a href="#h1-1-37" id="h1-1-37" class="i">+            &quot;Referências do projeto&quot;: (&quot;9 referencias&quot;,),
+</a><a href="#h1-1-38" id="h1-1-38" class="i">+        },
+</a><a href="#h1-1-39" id="h1-1-39" class="i">+        &quot;paper-final-modelo&quot;: {
+</a><a href="#h1-1-40" id="h1-1-40" class="i">+            &quot;Introdução&quot;: (&quot;1 introducao&quot;,),
+</a><a href="#h1-1-41" id="h1-1-41" class="i">+            &quot;Desenvolvimento&quot;: (&quot;2 o inquerito policial&quot;, &quot;3 a lei&quot;, &quot;4 valor probatorio&quot;),
+</a><a href="#h1-1-42" id="h1-1-42" class="i">+            &quot;Conclusão&quot;: (&quot;5 conclusao&quot;,),
+</a><a href="#h1-1-43" id="h1-1-43" class="i">+            &quot;Referências finais&quot;: (&quot;referencias&quot;,),
+</a><a href="#h1-1-44" id="h1-1-44" class="i">+        },
+</a>     }
+<a href="#h1-1-46" id="h1-1-46" class="d">-    indexes = maps.get(model_id, ())
+</a><a href="#h1-1-47" id="h1-1-47" class="d">-    return indexes[index] if index &lt; len(indexes) else ()
+</a><a href="#h1-1-48" id="h1-1-48" class="i">+    patterns = maps.get(model_id, {}).get(stage_title, ())
+</a><a href="#h1-1-49" id="h1-1-49" class="i">+    if not patterns:
+</a><a href="#h1-1-50" id="h1-1-50" class="i">+        return ()
+</a><a href="#h1-1-51" id="h1-1-51" class="i">+    normalized_sections = [_normalise_demo_title(section.get(&quot;title&quot;)) for section in sections]
+</a><a href="#h1-1-52" id="h1-1-52" class="i">+    return tuple(
+</a><a href="#h1-1-53" id="h1-1-53" class="i">+        index
+</a><a href="#h1-1-54" id="h1-1-54" class="i">+        for index, title in enumerate(normalized_sections)
+</a><a href="#h1-1-55" id="h1-1-55" class="i">+        if any(title.startswith(pattern) for pattern in patterns)
+</a><a href="#h1-1-56" id="h1-1-56" class="i">+    )
+</a> 
+ 
+ def _build_demo_stages(model_id, workflow, sections):
+<a href="#h1-2" id="h1-2" class="h">@@ -59,7 +100,11 @@ def _build_demo_stages(model_id, workflow, sections):
+</a>             stage[&quot;criteria_text&quot;] = values.get(&quot;criteriaText&quot;, &quot;&quot;)
+         if stage.get(&quot;custom&quot;) == &quot;development&quot;:
+             stage[&quot;development_sections&quot;] = values.get(&quot;developmentSections&quot;, [])
+<a href="#h1-2-3" id="h1-2-3" class="d">-        stage[&quot;demo_sections&quot;] = [deepcopy(sections[item]) for item in _demo_stage_sections(model_id, index) if item &lt; len(sections)]
+</a><a href="#h1-2-4" id="h1-2-4" class="i">+        stage[&quot;demo_sections&quot;] = [
+</a><a href="#h1-2-5" id="h1-2-5" class="i">+            deepcopy(sections[item])
+</a><a href="#h1-2-6" id="h1-2-6" class="i">+            for item in _demo_stage_sections(model_id, stage.get(&quot;title&quot;, &quot;&quot;), sections)
+</a><a href="#h1-2-7" id="h1-2-7" class="i">+            if item &lt; len(sections)
+</a><a href="#h1-2-8" id="h1-2-8" class="i">+        ]
+</a>         stages.append(stage)
+     return stages
+ 
+<b>diff --git a/<a id="h2" href="../file/docs/ia/PARIDADE-FUNCIONAL-ATUAL.md.html">docs/ia/PARIDADE-FUNCIONAL-ATUAL.md</a> b/<a href="../file/docs/ia/PARIDADE-FUNCIONAL-ATUAL.md.html">docs/ia/PARIDADE-FUNCIONAL-ATUAL.md</a></b>
+<a href="#h2-0" id="h2-0" class="h">@@ -4,7 +4,7 @@ Este documento é a referência permanente para comparar a experiência do Assis
+</a> 
+ ## Correções que fazem parte do contrato atual
+ 
+<a href="#h2-0-3" id="h2-0-3" class="d">-- A vitrine oferece três modelos preenchidos em modo somente leitura, navegáveis pelo roteiro correto de Case, Projeto de Paper e Paper Final. O conteúdo de cada seção é associado pela posição original do modelo; seções vazias não podem deslocar o texto de outra etapa.
+</a><a href="#h2-0-4" id="h2-0-4" class="i">+- A vitrine oferece três modelos preenchidos em modo somente leitura, navegáveis pelo roteiro correto de Case, Projeto de Paper e Paper Final. O conteúdo de cada seção é associado ao título canônico da etapa; os cabeçalhos vazios preservados no modelo legado não podem deslocar o texto para outra etapa. Os campos visíveis usam os valores do modelo anonimizado e, quando o roteiro novo separa um campo que antes estava agregado, somente trechos literais ou diretamente identificáveis do mesmo conteúdo são reutilizados.
+</a> - A conta sem plano exibe planos e valores em uma tela direta (`/planos`). O link não deve obrigar a pessoa a voltar à home e localizar manualmente a seção de preços. Pagamentos continuam manuais; não existe pagamento automático.
+ - A criação de projetos respeita créditos de projeto de forma atômica. A conta administrativa configurada não fica limitada; as demais contas são bloqueadas quando o saldo chega a zero. A duplicação usa a mesma regra.
+ - Paper Final é uma transição do Projeto de Paper pelo fluxo do próprio projeto. Não é uma terceira opção inicial no formulário da conta. Registros existentes desse tipo continuam legíveis.
+<b>diff --git a/<a id="h3" href="../file/templates/account/home.html.html">templates/account/home.html</a> b/<a href="../file/templates/account/home.html.html">templates/account/home.html</a></b>
+<a href="#h3-0" id="h3-0" class="h">@@ -46,9 +46,10 @@
+</a> {% endif %}
+ {% if account[&#39;unlimited&#39;] or account[&#39;project_remaining&#39;] &gt; 0 %}&lt;form class=&quot;create-form&quot; method=&quot;post&quot; action=&quot;{{ url_for(&#39;projects.create&#39;) }}&quot;&gt;
+   &lt;input type=&quot;hidden&quot; name=&quot;csrf_token&quot; value=&quot;{{ csrf_token() }}&quot;&gt;
+<a href="#h3-0-3" id="h3-0-3" class="d">-  &lt;label&gt;Começar um trabalho
+</a><a href="#h3-0-4" id="h3-0-4" class="d">-    &lt;select name=&quot;project_type&quot;&gt;&lt;option value=&quot;case&quot;&gt;Case&lt;/option&gt;&lt;option value=&quot;paper_project&quot;&gt;Projeto de Paper&lt;/option&gt;&lt;/select&gt;
+</a><a href="#h3-0-5" id="h3-0-5" class="i">+  &lt;label for=&quot;project-type&quot;&gt;Escolha o roteiro inicial
+</a><a href="#h3-0-6" id="h3-0-6" class="i">+    &lt;select id=&quot;project-type&quot; name=&quot;project_type&quot; aria-describedby=&quot;project-type-help&quot;&gt;&lt;option value=&quot;case&quot;&gt;Case — relatório, debate e dissertação&lt;/option&gt;&lt;option value=&quot;paper_project&quot;&gt;Paper — começar pelo Projeto de Paper&lt;/option&gt;&lt;/select&gt;
+</a>   &lt;/label&gt;
+<a href="#h3-0-8" id="h3-0-8" class="i">+  &lt;p class=&quot;field-help&quot; id=&quot;project-type-help&quot;&gt;O Paper começa pelo Projeto de Paper e, depois da revisão, continua como Paper Final no mesmo trabalho e crédito.&lt;/p&gt;
+</a>   &lt;button class=&quot;button button-primary&quot; type=&quot;submit&quot;&gt;Criar trabalho&lt;/button&gt;
+ &lt;/form&gt;{% else %}&lt;section class=&quot;account-plan-options account-plan-blocked&quot;&gt;&lt;p class=&quot;eyebrow&quot;&gt;Acesso&lt;/p&gt;&lt;p&gt;Crie um trabalho depois que um plano ou crédito for atribuído à sua conta.&lt;/p&gt;&lt;a class=&quot;button&quot; href=&quot;{{ url_for(&#39;public.pricing&#39;) }}&quot;&gt;Ver planos e valores&lt;/a&gt;&lt;/section&gt;{% endif %}
+ &lt;form method=&quot;post&quot; action=&quot;{{ url_for(&#39;auth.logout&#39;) }}&quot;&gt;&lt;input type=&quot;hidden&quot; name=&quot;csrf_token&quot; value=&quot;{{ csrf_token() }}&quot;&gt;&lt;button class=&quot;quiet-button&quot; type=&quot;submit&quot;&gt;Sair&lt;/button&gt;&lt;/form&gt;
+<b>diff --git a/<a id="h4" href="../file/tests/test_account.py.html">tests/test_account.py</a> b/<a href="../file/tests/test_account.py.html">tests/test_account.py</a></b>
+<a href="#h4-0" id="h4-0" class="h">@@ -18,6 +18,10 @@ def test_account_home_shows_first_login_setup(client):
+</a>     assert &quot;Planos e valores&quot; in body
+     assert &#39;href=&quot;/planos&quot;&#39; in body
+     assert &#39;value=&quot;paper_final&quot;&#39; not in body
+<a href="#h4-0-3" id="h4-0-3" class="i">+    assert &quot;Escolha o roteiro inicial&quot; in body
+</a><a href="#h4-0-4" id="h4-0-4" class="i">+    assert &quot;Case — relatório, debate e dissertação&quot; in body
+</a><a href="#h4-0-5" id="h4-0-5" class="i">+    assert &quot;Paper — começar pelo Projeto de Paper&quot; in body
+</a><a href="#h4-0-6" id="h4-0-6" class="i">+    assert &quot;continua como Paper Final no mesmo trabalho e crédito&quot; in body
+</a> 
+ 
+ def test_profile_is_saved_separately_from_identity(client):
+<b>diff --git a/<a id="h5" href="../file/tests/test_public_navigation.py.html">tests/test_public_navigation.py</a> b/<a href="../file/tests/test_public_navigation.py.html">tests/test_public_navigation.py</a></b>
+<a href="#h5-0" id="h5-0" class="h">@@ -98,6 +98,33 @@ def test_filled_models_keep_their_original_workflow(client):
+</a>     assert models[&quot;paper-final-modelo&quot;][&quot;stages&quot;][0][&quot;title&quot;] == &quot;Identificação, resumo e palavras-chave&quot;
+ 
+ 
+<a href="#h5-0-3" id="h5-0-3" class="i">+def test_filled_models_attach_legacy_text_to_the_matching_stage(client):
+</a><a href="#h5-0-4" id="h5-0-4" class="i">+    html = client.get(&quot;/&quot;).get_data(as_text=True)
+</a><a href="#h5-0-5" id="h5-0-5" class="i">+    data = json.loads(html.split(&#39;&lt;script id=&quot;public-demo-data&quot; type=&quot;application/json&quot;&gt;&#39;, 1)[1].split(&quot;&lt;/script&gt;&quot;, 1)[0])
+</a><a href="#h5-0-6" id="h5-0-6" class="i">+    models = {model[&quot;id&quot;]: model for model in data}
+</a><a href="#h5-0-7" id="h5-0-7" class="i">+
+</a><a href="#h5-0-8" id="h5-0-8" class="i">+    case_stages = models[&quot;civil-personality&quot;][&quot;stages&quot;]
+</a><a href="#h5-0-9" id="h5-0-9" class="i">+    assert case_stages[1][&quot;demo_sections&quot;][0][&quot;title&quot;] == &quot;1 DESCRIÇÃO DO CASO&quot;
+</a><a href="#h5-0-10" id="h5-0-10" class="i">+    assert case_stages[2][&quot;demo_sections&quot;][0][&quot;title&quot;] == &quot;2.1. Descrição das decisões possíveis&quot;
+</a><a href="#h5-0-11" id="h5-0-11" class="i">+    assert &quot;liberdade de expressão&quot; in case_stages[3][&quot;demo_sections&quot;][0][&quot;title&quot;].lower()
+</a><a href="#h5-0-12" id="h5-0-12" class="i">+    assert &quot;interesse público&quot; in case_stages[4][&quot;demo_sections&quot;][0][&quot;title&quot;].lower()
+</a><a href="#h5-0-13" id="h5-0-13" class="i">+    assert case_stages[5][&quot;demo_sections&quot;][0][&quot;title&quot;] == &quot;2.3. Descrição dos critérios e valores&quot;
+</a><a href="#h5-0-14" id="h5-0-14" class="i">+
+</a><a href="#h5-0-15" id="h5-0-15" class="i">+    paper_stages = models[&quot;projeto-paper-modelo&quot;][&quot;stages&quot;]
+</a><a href="#h5-0-16" id="h5-0-16" class="i">+    paper_fields = {field[&quot;id&quot;]: field[&quot;value&quot;] for field in paper_stages[0][&quot;fields&quot;]}
+</a><a href="#h5-0-17" id="h5-0-17" class="i">+    assert paper_fields[&quot;delimitation&quot;]
+</a><a href="#h5-0-18" id="h5-0-18" class="i">+    assert paper_fields[&quot;research_context&quot;]
+</a><a href="#h5-0-19" id="h5-0-19" class="i">+    assert paper_fields[&quot;research_object&quot;]
+</a><a href="#h5-0-20" id="h5-0-20" class="i">+    assert paper_stages[1][&quot;demo_sections&quot;][0][&quot;title&quot;] == &quot;3 PROBLEMA&quot;
+</a><a href="#h5-0-21" id="h5-0-21" class="i">+    assert paper_stages[7][&quot;demo_sections&quot;][0][&quot;title&quot;] == &quot;9 REFERÊNCIAS&quot;
+</a><a href="#h5-0-22" id="h5-0-22" class="i">+
+</a><a href="#h5-0-23" id="h5-0-23" class="i">+    final_stages = models[&quot;paper-final-modelo&quot;][&quot;stages&quot;]
+</a><a href="#h5-0-24" id="h5-0-24" class="i">+    assert final_stages[1][&quot;demo_sections&quot;][0][&quot;title&quot;] == &quot;1 INTRODUÇÃO&quot;
+</a><a href="#h5-0-25" id="h5-0-25" class="i">+    assert len(final_stages[2][&quot;demo_sections&quot;]) == 3
+</a><a href="#h5-0-26" id="h5-0-26" class="i">+    assert final_stages[3][&quot;demo_sections&quot;][0][&quot;title&quot;] == &quot;5 CONCLUSÃO&quot;
+</a><a href="#h5-0-27" id="h5-0-27" class="i">+    assert final_stages[4][&quot;demo_sections&quot;][0][&quot;title&quot;] == &quot;REFERÊNCIAS&quot;
+</a><a href="#h5-0-28" id="h5-0-28" class="i">+
+</a><a href="#h5-0-29" id="h5-0-29" class="i">+
+</a> def test_document_pages_do_not_nest_main_elements(client):
+     for path in (&quot;/termos/&quot;, &quot;/privacidade/&quot;, &quot;/ajuda-ia/&quot;, &quot;/jornada/&quot;):
+         html = client.get(path).get_data(as_text=True)
+</pre>
+</div>
+</body>
+</html>

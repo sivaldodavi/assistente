@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ADMINISTRACAO.md - assistente-academico - Assistente Acadêmico v2
+</title>
+<link rel="icon" type="image/png" href="../../../favicon.png" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed" href="../../../atom.xml" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed (tags)" href="../../../tags.xml" />
+<link rel="stylesheet" type="text/css" href="../../../style.css" />
+</head>
+<body>
+<table><tr><td><a href="../../../../"><img src="../../../logo.png" alt="" width="32" height="32" /></a></td><td><h1>assistente-academico</h1><span class="desc">Assistente Acadêmico v2
+</span></td></tr><tr class="url"><td></td><td>git clone <a href="git://git.sivaldodavi.com.br/assistente-academico.git">git://git.sivaldodavi.com.br/assistente-academico.git</a></td></tr><tr><td></td><td>
+<a href="../../../log.html">Log</a> | <a href="../../../files.html">Files</a> | <a href="../../../refs.html">Refs</a> | <a href="../../../file/README.md.html">README</a></td></tr></table>
+<hr/>
+<div id="content">
+<p> ADMINISTRACAO.md (2126B)</p><hr/><pre id="blob">
+<a href="#l1" class="line" id="l1">      1</a> # Administração manual
+<a href="#l2" class="line" id="l2">      2</a> 
+<a href="#l3" class="line" id="l3">      3</a> Administradores são definidos por `ASSISTENTE_V2_ADMIN_EMAILS`; não existe promoção automática da primeira conta. `/admin/accounts` permite listar contas, atribuir selos de plano, ajustar créditos e bloquear acesso. `/admin/projects` mostra conteúdo apenas de trabalhos cujo proprietário autorizou leitura.
+<a href="#l4" class="line" id="l4">      4</a> 
+<a href="#l5" class="line" id="l5">      5</a> ## Planos e créditos
+<a href="#l6" class="line" id="l6">      6</a> 
+<a href="#l7" class="line" id="l7">      7</a> Os códigos de plano são `livre`, `avulso_ai`, `sem_ia` e `com_ia`. Alterar plano não modifica saldo silenciosamente. O formulário de créditos define o saldo desejado; `project_limit = project_used + saldo`, limitado a 1.000. Criar um trabalho registra consumo em `project_used`. A aplicação de limites na criação e os controles completos de uso de IA precisam seguir os contratos do produto de referência; não apresentar a simples existência desses contadores como prova de equivalência integral.
+<a href="#l8" class="line" id="l8">      8</a> 
+<a href="#l9" class="line" id="l9">      9</a> As colunas administrativas são aplicadas aditivamente em `app/store/db.py`, preservando contas, projetos e dados acadêmicos. O schema novo contém as mesmas colunas. A concessão é manual, com POST e CSRF; não existe checkout, confirmação Pix nem liberação por pagamento automático.
+<a href="#l10" class="line" id="l10">     10</a> 
+<a href="#l11" class="line" id="l11">     11</a> ## Bloqueio e conteúdo privado
+<a href="#l12" class="line" id="l12">     12</a> 
+<a href="#l13" class="line" id="l13">     13</a> Conta bloqueada não inicia login Google/de desenvolvimento nem continua uma sessão autenticada: o próximo acesso protegido invalida a sessão e devolve 403. O store impede bloquear a própria sessão administrativa ou a única conta administradora configurada.
+<a href="#l14" class="line" id="l14">     14</a> 
+<a href="#l15" class="line" id="l15">     15</a> Listagens de contas e projetos mostram identidade e metadados, não payload acadêmico. A rota de conteúdo devolve 404 se `allow_admin_view` não estiver autorizado; comentários dependem também de `allow_admin_comments`. Ser administrador não substitui consentimento do titular.
+<a href="#l16" class="line" id="l16">     16</a> 
+<a href="#l17" class="line" id="l17">     17</a> ## Organização
+<a href="#l18" class="line" id="l18">     18</a> 
+<a href="#l19" class="line" id="l19">     19</a> `app/store/admin.py` contém mutações e consultas de administração; `app/routes/admin.py` contém formulários e autorização; `templates/admin/` e `static/css/admin.css` contêm apresentação. `tests/test_admin_accounts.py` cobre CSRF, permissões, concessão, proteção contra bloqueio da própria conta e acesso somente a conteúdo compartilhado.
+</pre>
+</div>
+</body>
+</html>

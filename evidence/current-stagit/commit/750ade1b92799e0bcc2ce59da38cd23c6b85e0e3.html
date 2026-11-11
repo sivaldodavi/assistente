@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>docs: esclarecer origem do deploy no vps - assistente-academico - Assistente Acadêmico v2
+</title>
+<link rel="icon" type="image/png" href="../favicon.png" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed" href="../atom.xml" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed (tags)" href="../tags.xml" />
+<link rel="stylesheet" type="text/css" href="../style.css" />
+</head>
+<body>
+<table><tr><td><a href="../../"><img src="../logo.png" alt="" width="32" height="32" /></a></td><td><h1>assistente-academico</h1><span class="desc">Assistente Acadêmico v2
+</span></td></tr><tr class="url"><td></td><td>git clone <a href="git://git.sivaldodavi.com.br/assistente-academico.git">git://git.sivaldodavi.com.br/assistente-academico.git</a></td></tr><tr><td></td><td>
+<a href="../log.html">Log</a> | <a href="../files.html">Files</a> | <a href="../refs.html">Refs</a> | <a href="../file/README.md.html">README</a></td></tr></table>
+<hr/>
+<div id="content">
+<pre><b>commit</b> <a href="../commit/750ade1b92799e0bcc2ce59da38cd23c6b85e0e3.html">750ade1b92799e0bcc2ce59da38cd23c6b85e0e3</a>
+<b>parent</b> <a href="../commit/0989bb6d68162a6cffe9e168c204f4bf41f44bbb.html">0989bb6d68162a6cffe9e168c204f4bf41f44bbb</a>
+<b>Author:</b> Sivaldo Davi &lt;<span class="offview">g<span>x</span>i<span>x</span>t<span>x</span>@<span>x</span>s<span>x</span>i<span>x</span>v<span>x</span>a<span>x</span>l<span>x</span>d<span>x</span>o<span>x</span>d<span>x</span>a<span>x</span>v<span>x</span>i<span>x</span>.<span>x</span>c<span>x</span>o<span>x</span>m</span>&gt;
+<b>Date:</b>   Mon, 26 Oct 2026 20:09:19 +0000
+
+docs: esclarecer origem do deploy no vps
+
+Co-authored-by: Manus &lt;dev-agent@manus.ai&gt;
+
+<b>Diffstat:</b>
+<table><tr><td class="M">M</td><td><a href="#h0">docs/ia/ESTADO.md</a></td><td> | </td><td class="num">2</td><td><span class="i">+</span><span class="d">-</span></td></tr>
+<tr><td class="M">M</td><td><a href="#h1">docs/ia/OPERACAO-GIT-VPS.md</a></td><td> | </td><td class="num">4</td><td><span class="i">++</span><span class="d">--</span></td></tr>
+<tr><td class="M">M</td><td><a href="#h2">docs/ia/OPERACAO-STAGING.md</a></td><td> | </td><td class="num">2</td><td><span class="i">+</span><span class="d">-</span></td></tr>
+</table></pre><pre>3 files changed, 4 insertions(+), 4 deletions(-)
+<hr/><b>diff --git a/<a id="h0" href="../file/docs/ia/ESTADO.md.html">docs/ia/ESTADO.md</a> b/<a href="../file/docs/ia/ESTADO.md.html">docs/ia/ESTADO.md</a></b>
+<a href="#h0-0" id="h0-0" class="h">@@ -30,7 +30,7 @@ O domínio `https://trab.sivaldodavi.com.br` aponta para o container `site-assis
+</a> 
+ O código e o banco anteriores foram preservados em `/opt/servidor/sites/assistente-academico-legado/` e `/opt/servidor/data/assistente-academico-legado/`. O legado possui Compose e bare repository próprios para consulta ou recuperação controlada, mas não atende o domínio principal.
+ 
+<a href="#h0-0-3" id="h0-0-3" class="d">-O bare repository principal é `/home/git/repos/assistente-academico.git`; o legado é `/home/git/repos/assistente-academico-legado.git`. O checkout operacional principal é `/opt/servidor/work/assistente-academico/`.
+</a><a href="#h0-0-4" id="h0-0-4" class="i">+O bare repository principal é `/home/git/repos/assistente-academico.git`; o legado é `/home/git/repos/assistente-academico-legado.git`. O checkout `/opt/servidor/work/assistente-academico/` é uma cópia de trabalho opcional. A publicação usa `/opt/servidor/deploy-site assistente-academico main`, que extrai a referência do bare repository para o diretório de sites.
+</a> 
+ O monitor técnico registra somente indicadores locais de site, container, banco e disco. O contato manual de atendimento fica fora da aplicação. Quarto 1.10.19 e a cadeia Typst/ABNT fazem parte da imagem/documentação de exportação.
+ 
+<b>diff --git a/<a id="h1" href="../file/docs/ia/OPERACAO-GIT-VPS.md.html">docs/ia/OPERACAO-GIT-VPS.md</a> b/<a href="../file/docs/ia/OPERACAO-GIT-VPS.md.html">docs/ia/OPERACAO-GIT-VPS.md</a></b>
+<a href="#h1-0" id="h1-0" class="h">@@ -30,7 +30,7 @@ Esse repositório é referência e recuperação controlada. Seu hook atualiza s
+</a> 
+ ## O que um push faz
+ 
+<a href="#h1-0-3" id="h1-0-3" class="d">-O hook `post-receive` do repositório principal atualiza somente a página do histórico no stagit. O push não cria imagem Docker, não muda Caddy, não reinicia serviço e não toca em banco ou secrets. A publicação é feita no checkout operacional após testes e validação.
+</a><a href="#h1-0-4" id="h1-0-4" class="i">+O hook `post-receive` do repositório principal atualiza somente a página do histórico no stagit. O push não cria imagem Docker, não muda Caddy, não reinicia serviço e não toca em banco ou secrets. A publicação é feita separadamente pelo comando de deploy, após testes e validação.
+</a> 
+ O histórico principal fica em `/opt/servidor/data/stagit/assistente-academico/`. O histórico anterior fica em `/opt/servidor/data/stagit/assistente-academico-legado/`.
+ 
+<a href="#h1-1" id="h1-1" class="h">@@ -51,7 +51,7 @@ ssh root@159.223.136.31 \
+</a> 
+ ## Publicação
+ 
+<a href="#h1-1-3" id="h1-1-3" class="d">-O checkout operacional principal é `/opt/servidor/work/assistente-academico/`. O código publicado é copiado para `/opt/servidor/sites/assistente-academico/` e o serviço `site-assistente-academico` é reconstruído usando os Compose principal, override e `docker-compose.production.yml`.
+</a><a href="#h1-1-4" id="h1-1-4" class="i">+O checkout `/opt/servidor/work/assistente-academico/` é uma cópia de trabalho para inspeção e staging; ele não é a fonte automática da publicação. O comando de deploy lê a referência indicada diretamente do bare repository, extrai-a para uma área temporária, substitui `/opt/servidor/sites/assistente-academico/` e reconstrói o serviço `site-assistente-academico` usando os Compose principal, override e `docker-compose.production.yml`.
+</a> 
+ O diretório `/opt/servidor/sites/assistente-academico-legado/` e seu Compose de recuperação ficam fora desse fluxo. Nunca use o hook do legado para publicar a aplicação principal.
+ 
+<b>diff --git a/<a id="h2" href="../file/docs/ia/OPERACAO-STAGING.md.html">docs/ia/OPERACAO-STAGING.md</a> b/<a href="../file/docs/ia/OPERACAO-STAGING.md.html">docs/ia/OPERACAO-STAGING.md</a></b>
+<a href="#h2-0" id="h2-0" class="h">@@ -8,7 +8,7 @@ O staging serve para validação técnica antes de uma mudança. O domínio púb
+</a> 
+ ## Publicação do código
+ 
+<a href="#h2-0-3" id="h2-0-3" class="d">-O bare repo principal fica em `/home/git/repos/assistente-academico.git` e alimenta o stagit. O checkout operacional é `/opt/servidor/work/assistente-academico`.
+</a><a href="#h2-0-4" id="h2-0-4" class="i">+O bare repo principal fica em `/home/git/repos/assistente-academico.git` e alimenta o stagit. O checkout `/opt/servidor/work/assistente-academico` é apenas uma cópia de trabalho para inspeção e staging; o deploy do domínio extrai a referência diretamente do bare repository.
+</a> 
+ ```sh
+ git clone /home/git/repos/assistente-academico.git /opt/servidor/work/assistente-academico
+</pre>
+</div>
+</body>
+</html>

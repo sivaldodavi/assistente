@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>base.html - assistente-academico - Assistente Acadêmico v2
+</title>
+<link rel="icon" type="image/png" href="../../favicon.png" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed" href="../../atom.xml" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed (tags)" href="../../tags.xml" />
+<link rel="stylesheet" type="text/css" href="../../style.css" />
+</head>
+<body>
+<table><tr><td><a href="../../../"><img src="../../logo.png" alt="" width="32" height="32" /></a></td><td><h1>assistente-academico</h1><span class="desc">Assistente Acadêmico v2
+</span></td></tr><tr class="url"><td></td><td>git clone <a href="git://git.sivaldodavi.com.br/assistente-academico.git">git://git.sivaldodavi.com.br/assistente-academico.git</a></td></tr><tr><td></td><td>
+<a href="../../log.html">Log</a> | <a href="../../files.html">Files</a> | <a href="../../refs.html">Refs</a> | <a href="../../file/README.md.html">README</a></td></tr></table>
+<hr/>
+<div id="content">
+<p> base.html (1645B)</p><hr/><pre id="blob">
+<a href="#l1" class="line" id="l1">      1</a> &lt;!doctype html&gt;
+<a href="#l2" class="line" id="l2">      2</a> &lt;html lang=&quot;pt-BR&quot;&gt;
+<a href="#l3" class="line" id="l3">      3</a>   &lt;head&gt;
+<a href="#l4" class="line" id="l4">      4</a>     &lt;meta charset=&quot;utf-8&quot;&gt;
+<a href="#l5" class="line" id="l5">      5</a>     &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+<a href="#l6" class="line" id="l6">      6</a>     &lt;title&gt;{% block title %}Assistente Acadêmico{% endblock %}&lt;/title&gt;
+<a href="#l7" class="line" id="l7">      7</a>     &lt;link rel=&quot;stylesheet&quot; href=&quot;{{ url_for(&#39;static&#39;, filename=&#39;css/tokens.css&#39;) }}&quot;&gt;
+<a href="#l8" class="line" id="l8">      8</a>     &lt;link rel=&quot;stylesheet&quot; href=&quot;{{ url_for(&#39;static&#39;, filename=&#39;css/app.css&#39;) }}&quot;&gt;
+<a href="#l9" class="line" id="l9">      9</a>     &lt;link rel=&quot;stylesheet&quot; href=&quot;{{ url_for(&#39;static&#39;, filename=&#39;css/marketing.css&#39;) }}&quot;&gt;
+<a href="#l10" class="line" id="l10">     10</a>     {% block extra_css %}{% endblock %}
+<a href="#l11" class="line" id="l11">     11</a>   &lt;/head&gt;
+<a href="#l12" class="line" id="l12">     12</a>   &lt;body&gt;
+<a href="#l13" class="line" id="l13">     13</a>     {% if request.endpoint not in (&#39;public.home&#39;, &#39;public.pricing&#39;) %}
+<a href="#l14" class="line" id="l14">     14</a>     &lt;header class=&quot;topbar app-header&quot;&gt;
+<a href="#l15" class="line" id="l15">     15</a>       &lt;a class=&quot;brand&quot; href=&quot;{{ url_for(&#39;public.home&#39;) }}&quot;&gt;Assistente Acadêmico&lt;/a&gt;
+<a href="#l16" class="line" id="l16">     16</a>       &lt;nav class=&quot;app-nav&quot; aria-label=&quot;Navegação principal&quot;&gt;
+<a href="#l17" class="line" id="l17">     17</a>         {% if session.get(&#39;account_id&#39;) %}
+<a href="#l18" class="line" id="l18">     18</a>         &lt;a href=&quot;{{ url_for(&#39;projects.account&#39;) }}&quot;&gt;Meus trabalhos&lt;/a&gt;
+<a href="#l19" class="line" id="l19">     19</a>         &lt;a href=&quot;{{ url_for(&#39;library.home&#39;) }}&quot;&gt;Biblioteca Pessoal&lt;/a&gt;
+<a href="#l20" class="line" id="l20">     20</a>         &lt;a href=&quot;{{ url_for(&#39;account.settings&#39;) }}&quot;&gt;Meu perfil&lt;/a&gt;
+<a href="#l21" class="line" id="l21">     21</a>         {% if navigation_account and navigation_account.get(&#39;is_admin&#39;) %}&lt;a href=&quot;{{ url_for(&#39;admin.accounts&#39;) }}&quot;&gt;Administração&lt;/a&gt;{% endif %}
+<a href="#l22" class="line" id="l22">     22</a>         {% else %}&lt;a class=&quot;button button-primary&quot; href=&quot;{{ url_for(&#39;oauth.google_start&#39;) }}&quot;&gt;Entrar com Google&lt;/a&gt;{% endif %}
+<a href="#l23" class="line" id="l23">     23</a>       &lt;/nav&gt;
+<a href="#l24" class="line" id="l24">     24</a>     &lt;/header&gt;
+<a href="#l25" class="line" id="l25">     25</a>     {% endif %}
+<a href="#l26" class="line" id="l26">     26</a>     &lt;main{% if request.endpoint != &#39;public.home&#39; %} class=&quot;app-shell&quot;{% endif %}&gt;
+<a href="#l27" class="line" id="l27">     27</a>       {% block content %}{% endblock %}
+<a href="#l28" class="line" id="l28">     28</a>     &lt;/main&gt;
+<a href="#l29" class="line" id="l29">     29</a>     &lt;script type=&quot;module&quot; src=&quot;{{ url_for(&#39;static&#39;, filename=&#39;js/app.js&#39;) }}&quot;&gt;&lt;/script&gt;
+<a href="#l30" class="line" id="l30">     30</a>     {% block extra_scripts %}{% endblock %}
+<a href="#l31" class="line" id="l31">     31</a>   &lt;/body&gt;
+<a href="#l32" class="line" id="l32">     32</a> &lt;/html&gt;
+</pre>
+</div>
+</body>
+</html>

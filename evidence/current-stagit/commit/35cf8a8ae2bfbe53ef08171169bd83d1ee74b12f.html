@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>feat: adicionar nucleo academico do case - assistente-academico - Assistente Acadêmico v2
+</title>
+<link rel="icon" type="image/png" href="../favicon.png" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed" href="../atom.xml" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed (tags)" href="../tags.xml" />
+<link rel="stylesheet" type="text/css" href="../style.css" />
+</head>
+<body>
+<table><tr><td><a href="../../"><img src="../logo.png" alt="" width="32" height="32" /></a></td><td><h1>assistente-academico</h1><span class="desc">Assistente Acadêmico v2
+</span></td></tr><tr class="url"><td></td><td>git clone <a href="git://git.sivaldodavi.com.br/assistente-academico.git">git://git.sivaldodavi.com.br/assistente-academico.git</a></td></tr><tr><td></td><td>
+<a href="../log.html">Log</a> | <a href="../files.html">Files</a> | <a href="../refs.html">Refs</a> | <a href="../file/README.md.html">README</a></td></tr></table>
+<hr/>
+<div id="content">
+<pre><b>commit</b> <a href="../commit/35cf8a8ae2bfbe53ef08171169bd83d1ee74b12f.html">35cf8a8ae2bfbe53ef08171169bd83d1ee74b12f</a>
+<b>parent</b> <a href="../commit/551dc39df8eaea14ed47f8217adc1ee764c77c0a.html">551dc39df8eaea14ed47f8217adc1ee764c77c0a</a>
+<b>Author:</b> Sivaldo Davi &lt;<span class="offview">g<span>x</span>i<span>x</span>t<span>x</span>@<span>x</span>s<span>x</span>i<span>x</span>v<span>x</span>a<span>x</span>l<span>x</span>d<span>x</span>o<span>x</span>d<span>x</span>a<span>x</span>v<span>x</span>i<span>x</span>.<span>x</span>c<span>x</span>o<span>x</span>m</span>&gt;
+<b>Date:</b>   Mon, 26 Oct 2026 16:11:37 +0000
+
+feat: adicionar nucleo academico do case
+
+<b>Diffstat:</b>
+<table><tr><td class="A">A</td><td><a href="#h0">app/domain/case.py</a></td><td> | </td><td class="num">69</td><td><span class="i">+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="M">M</td><td><a href="#h1">app/routes/projects.py</a></td><td> | </td><td class="num">17</td><td><span class="i">+++++++++++++++</span><span class="d">--</span></td></tr>
+<tr><td class="A">A</td><td><a href="#h2">docs/ia/CASE.md</a></td><td> | </td><td class="num">25</td><td><span class="i">+++++++++++++++++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="M">M</td><td><a href="#h3">static/css/app.css</a></td><td> | </td><td class="num">8</td><td><span class="i">++++++++</span><span class="d"></span></td></tr>
+<tr><td class="M">M</td><td><a href="#h4">static/js/project-editor.js</a></td><td> | </td><td class="num">8</td><td><span class="i">+++++++</span><span class="d">-</span></td></tr>
+<tr><td class="M">M</td><td><a href="#h5">templates/projects/editor.html</a></td><td> | </td><td class="num">23</td><td><span class="i">+++++++++++++++++</span><span class="d">------</span></td></tr>
+<tr><td class="A">A</td><td><a href="#h6">tests/test_case_domain.py</a></td><td> | </td><td class="num">23</td><td><span class="i">+++++++++++++++++++++++</span><span class="d"></span></td></tr>
+<tr><td class="M">M</td><td><a href="#h7">tests/test_projects.py</a></td><td> | </td><td class="num">26</td><td><span class="i">++++++++++++++++++++++++++</span><span class="d"></span></td></tr>
+</table></pre><pre>8 files changed, 190 insertions(+), 9 deletions(-)
+<hr/><b>diff --git a/<a id="h0" href="../file/app/domain/case.py.html">app/domain/case.py</a> b/<a href="../file/app/domain/case.py.html">app/domain/case.py</a></b>
+<a href="#h0-0" id="h0-0" class="h">@@ -0,0 +1,69 @@
+</a><a href="#h0-0-0" id="h0-0-0" class="i">+from __future__ import annotations
+</a><a href="#h0-0-1" id="h0-0-1" class="i">+
+</a><a href="#h0-0-2" id="h0-0-2" class="i">+CASE_SECTIONS = [
+</a><a href="#h0-0-3" id="h0-0-3" class="i">+    {
+</a><a href="#h0-0-4" id="h0-0-4" class="i">+        &quot;id&quot;: &quot;identification&quot;,
+</a><a href="#h0-0-5" id="h0-0-5" class="i">+        &quot;title&quot;: &quot;Identificação&quot;,
+</a><a href="#h0-0-6" id="h0-0-6" class="i">+        &quot;intro&quot;: &quot;Registre os dados do trabalho e a proposta da atividade. O enunciado é opcional para salvar, mas ajuda a conferir adequação depois.&quot;,
+</a><a href="#h0-0-7" id="h0-0-7" class="i">+        &quot;fields&quot;: [
+</a><a href="#h0-0-8" id="h0-0-8" class="i">+            {&quot;id&quot;: &quot;title&quot;, &quot;label&quot;: &quot;Título do relatório&quot;, &quot;required&quot;: True, &quot;limit&quot;: 240},
+</a><a href="#h0-0-9" id="h0-0-9" class="i">+            {&quot;id&quot;: &quot;authors&quot;, &quot;label&quot;: &quot;Autor(es)&quot;, &quot;type&quot;: &quot;textarea&quot;, &quot;required&quot;: True, &quot;limit&quot;: 1200, &quot;hint&quot;: &quot;Escreva um nome por linha.&quot;},
+</a><a href="#h0-0-10" id="h0-0-10" class="i">+            {&quot;id&quot;: &quot;assignment_prompt&quot;, &quot;label&quot;: &quot;Proposta, enunciado ou instruções do professor&quot;, &quot;type&quot;: &quot;textarea&quot;, &quot;limit&quot;: 12000, &quot;hint&quot;: &quot;Opcional para salvar o projeto; a assistência usa esse contexto quando você pedir.&quot;},
+</a><a href="#h0-0-11" id="h0-0-11" class="i">+            {&quot;id&quot;: &quot;discipline&quot;, &quot;label&quot;: &quot;Disciplina&quot;, &quot;required&quot;: True, &quot;limit&quot;: 160},
+</a><a href="#h0-0-12" id="h0-0-12" class="i">+            {&quot;id&quot;: &quot;teacher&quot;, &quot;label&quot;: &quot;Professor(a)&quot;, &quot;required&quot;: True, &quot;limit&quot;: 160},
+</a><a href="#h0-0-13" id="h0-0-13" class="i">+            {&quot;id&quot;: &quot;period&quot;, &quot;label&quot;: &quot;Período&quot;, &quot;limit&quot;: 80},
+</a><a href="#h0-0-14" id="h0-0-14" class="i">+            {&quot;id&quot;: &quot;shift&quot;, &quot;label&quot;: &quot;Turno&quot;, &quot;limit&quot;: 80},
+</a><a href="#h0-0-15" id="h0-0-15" class="i">+            {&quot;id&quot;: &quot;partner&quot;, &quot;label&quot;: &quot;Colega de dupla (opcional)&quot;, &quot;limit&quot;: 160},
+</a><a href="#h0-0-16" id="h0-0-16" class="i">+            {&quot;id&quot;: &quot;year&quot;, &quot;label&quot;: &quot;Ano&quot;, &quot;limit&quot;: 4},
+</a><a href="#h0-0-17" id="h0-0-17" class="i">+        ],
+</a><a href="#h0-0-18" id="h0-0-18" class="i">+    },
+</a><a href="#h0-0-19" id="h0-0-19" class="i">+    {
+</a><a href="#h0-0-20" id="h0-0-20" class="i">+        &quot;id&quot;: &quot;description&quot;,
+</a><a href="#h0-0-21" id="h0-0-21" class="i">+        &quot;title&quot;: &quot;1 · Descrição do caso&quot;,
+</a><a href="#h0-0-22" id="h0-0-22" class="i">+        &quot;intro&quot;: &quot;Reescreva a situação com suas palavras, apresente os fatos relevantes e feche com uma pergunta jurídica clara.&quot;,
+</a><a href="#h0-0-23" id="h0-0-23" class="i">+        &quot;fields&quot;: [
+</a><a href="#h0-0-24" id="h0-0-24" class="i">+            {&quot;id&quot;: &quot;facts&quot;, &quot;label&quot;: &quot;Narrativa dos fatos&quot;, &quot;type&quot;: &quot;textarea&quot;, &quot;required&quot;: True, &quot;limit&quot;: 16000, &quot;hint&quot;: &quot;Use quem está envolvido, o que aconteceu, contexto e conflito. Evite antecipar a solução.&quot;},
+</a><a href="#h0-0-25" id="h0-0-25" class="i">+            {&quot;id&quot;: &quot;problem&quot;, &quot;label&quot;: &quot;Pergunta-problema&quot;, &quot;type&quot;: &quot;textarea&quot;, &quot;required&quot;: True, &quot;limit&quot;: 4000, &quot;hint&quot;: &quot;Termine com uma pergunta aberta ligada aos fatos.&quot;},
+</a><a href="#h0-0-26" id="h0-0-26" class="i">+        ],
+</a><a href="#h0-0-27" id="h0-0-27" class="i">+    },
+</a><a href="#h0-0-28" id="h0-0-28" class="i">+    {
+</a><a href="#h0-0-29" id="h0-0-29" class="i">+        &quot;id&quot;: &quot;decisions&quot;,
+</a><a href="#h0-0-30" id="h0-0-30" class="i">+        &quot;title&quot;: &quot;2.1 · Decisões possíveis&quot;,
+</a><a href="#h0-0-31" id="h0-0-31" class="i">+        &quot;intro&quot;: &quot;Apresente a base conceitual e duas alternativas juridicamente plausíveis, em tom neutro.&quot;,
+</a><a href="#h0-0-32" id="h0-0-32" class="i">+        &quot;fields&quot;: [
+</a><a href="#h0-0-33" id="h0-0-33" class="i">+            {&quot;id&quot;: &quot;decision_basis&quot;, &quot;label&quot;: &quot;Apresentação das soluções possíveis&quot;, &quot;type&quot;: &quot;textarea&quot;, &quot;required&quot;: True, &quot;limit&quot;: 12000, &quot;hint&quot;: &quot;Termine o parágrafo introdutório com dois-pontos; as alternativas ficam separadas abaixo.&quot;},
+</a><a href="#h0-0-34" id="h0-0-34" class="i">+            {&quot;id&quot;: &quot;decision_a&quot;, &quot;label&quot;: &quot;Solução possível — alternativa A&quot;, &quot;type&quot;: &quot;textarea&quot;, &quot;required&quot;: True, &quot;limit&quot;: 6000},
+</a><a href="#h0-0-35" id="h0-0-35" class="i">+            {&quot;id&quot;: &quot;decision_b&quot;, &quot;label&quot;: &quot;Solução possível — alternativa B&quot;, &quot;type&quot;: &quot;textarea&quot;, &quot;required&quot;: True, &quot;limit&quot;: 6000},
+</a><a href="#h0-0-36" id="h0-0-36" class="i">+        ],
+</a><a href="#h0-0-37" id="h0-0-37" class="i">+    },
+</a><a href="#h0-0-38" id="h0-0-38" class="i">+]
+</a><a href="#h0-0-39" id="h0-0-39" class="i">+
+</a><a href="#h0-0-40" id="h0-0-40" class="i">+_FIELD_RULES = {field[&quot;id&quot;]: field for section in CASE_SECTIONS for field in section[&quot;fields&quot;]}
+</a><a href="#h0-0-41" id="h0-0-41" class="i">+REQUIRED_CASE_FIELDS = tuple(field_id for field_id, field in _FIELD_RULES.items() if field.get(&quot;required&quot;))
+</a><a href="#h0-0-42" id="h0-0-42" class="i">+
+</a><a href="#h0-0-43" id="h0-0-43" class="i">+
+</a><a href="#h0-0-44" id="h0-0-44" class="i">+def case_sections() -&gt; list[dict]:
+</a><a href="#h0-0-45" id="h0-0-45" class="i">+    return CASE_SECTIONS
+</a><a href="#h0-0-46" id="h0-0-46" class="i">+
+</a><a href="#h0-0-47" id="h0-0-47" class="i">+
+</a><a href="#h0-0-48" id="h0-0-48" class="i">+def normalize_case_fields(raw: object) -&gt; dict:
+</a><a href="#h0-0-49" id="h0-0-49" class="i">+    source = raw if isinstance(raw, dict) else {}
+</a><a href="#h0-0-50" id="h0-0-50" class="i">+    normalized = {}
+</a><a href="#h0-0-51" id="h0-0-51" class="i">+    for field_id, rule in _FIELD_RULES.items():
+</a><a href="#h0-0-52" id="h0-0-52" class="i">+        value = source.get(field_id, &quot;&quot;)
+</a><a href="#h0-0-53" id="h0-0-53" class="i">+        if not isinstance(value, str):
+</a><a href="#h0-0-54" id="h0-0-54" class="i">+            value = str(value or &quot;&quot;)
+</a><a href="#h0-0-55" id="h0-0-55" class="i">+        normalized[field_id] = value.strip()[: rule[&quot;limit&quot;]]
+</a><a href="#h0-0-56" id="h0-0-56" class="i">+    return normalized
+</a><a href="#h0-0-57" id="h0-0-57" class="i">+
+</a><a href="#h0-0-58" id="h0-0-58" class="i">+
+</a><a href="#h0-0-59" id="h0-0-59" class="i">+def case_progress(fields: object) -&gt; dict:
+</a><a href="#h0-0-60" id="h0-0-60" class="i">+    normalized = normalize_case_fields(fields)
+</a><a href="#h0-0-61" id="h0-0-61" class="i">+    done = sum(bool(normalized.get(field_id, &quot;&quot;)) for field_id in REQUIRED_CASE_FIELDS)
+</a><a href="#h0-0-62" id="h0-0-62" class="i">+    total = len(REQUIRED_CASE_FIELDS)
+</a><a href="#h0-0-63" id="h0-0-63" class="i">+    return {&quot;done&quot;: done, &quot;total&quot;: total, &quot;percent&quot;: round(done / total * 100) if total else 100}
+</a><a href="#h0-0-64" id="h0-0-64" class="i">+
+</a><a href="#h0-0-65" id="h0-0-65" class="i">+
+</a><a href="#h0-0-66" id="h0-0-66" class="i">+def missing_case_fields(fields: object) -&gt; list[str]:
+</a><a href="#h0-0-67" id="h0-0-67" class="i">+    normalized = normalize_case_fields(fields)
+</a><a href="#h0-0-68" id="h0-0-68" class="i">+    return [field_id for field_id in REQUIRED_CASE_FIELDS if not normalized.get(field_id)]
+</a><b>diff --git a/<a id="h1" href="../file/app/routes/projects.py.html">app/routes/projects.py</a> b/<a href="../file/app/routes/projects.py.html">app/routes/projects.py</a></b>
+<a href="#h1-0" id="h1-0" class="h">@@ -3,6 +3,7 @@ import json
+</a> from flask import Blueprint, abort, jsonify, redirect, render_template, request, url_for
+ 
+ from ..auth import current_account_id, login_required, require_csrf
+<a href="#h1-0-3" id="h1-0-3" class="i">+from ..domain.case import case_progress, case_sections, normalize_case_fields
+</a> from ..domain.timeline import normalize_timeline, new_fact
+ from ..store.accounts import get_account
+ from ..store.projects import ProjectConflict, create_project, get_project, list_projects, save_project
+<a href="#h1-1" id="h1-1" class="h">@@ -45,7 +46,15 @@ def editor(project_id):
+</a>     if project is None:
+         abort(404)
+     timeline = project[&quot;timeline&quot;] or [new_fact()]
+<a href="#h1-1-3" id="h1-1-3" class="d">-    return render_template(&quot;projects/editor.html&quot;, project=project, timeline=timeline, sources=list_sources(current_account_id()))
+</a><a href="#h1-1-4" id="h1-1-4" class="i">+    is_case = project[&quot;project_type&quot;] == &quot;case&quot;
+</a><a href="#h1-1-5" id="h1-1-5" class="i">+    return render_template(
+</a><a href="#h1-1-6" id="h1-1-6" class="i">+        &quot;projects/editor.html&quot;,
+</a><a href="#h1-1-7" id="h1-1-7" class="i">+        project=project,
+</a><a href="#h1-1-8" id="h1-1-8" class="i">+        timeline=timeline,
+</a><a href="#h1-1-9" id="h1-1-9" class="i">+        sources=list_sources(current_account_id()),
+</a><a href="#h1-1-10" id="h1-1-10" class="i">+        case_sections=case_sections() if is_case else [],
+</a><a href="#h1-1-11" id="h1-1-11" class="i">+        case_progress=case_progress(project.get(&quot;fields&quot;, {})) if is_case else None,
+</a><a href="#h1-1-12" id="h1-1-12" class="i">+    )
+</a> 
+ 
+ @projects_bp.post(&quot;/projects/&lt;project_id&gt;/save&quot;)
+<a href="#h1-2" id="h1-2" class="h">@@ -53,6 +62,9 @@ def editor(project_id):
+</a> def save(project_id):
+     require_csrf()
+     body = request.get_json(silent=True) or {}
+<a href="#h1-2-3" id="h1-2-3" class="i">+    current_project = get_project(current_account_id(), project_id)
+</a><a href="#h1-2-4" id="h1-2-4" class="i">+    if current_project is None:
+</a><a href="#h1-2-5" id="h1-2-5" class="i">+        abort(404)
+</a>     try:
+         revision = int(body.get(&quot;revision&quot;))
+     except (TypeError, ValueError):
+<a href="#h1-3" id="h1-3" class="h">@@ -61,6 +73,7 @@ def save(project_id):
+</a>     if not isinstance(payload, dict):
+         abort(400, description=&quot;Projeto inválido.&quot;)
+     fields = payload.get(&quot;fields&quot;) if isinstance(payload.get(&quot;fields&quot;), dict) else {}
+<a href="#h1-3-3" id="h1-3-3" class="i">+    normalized_fields = normalize_case_fields(fields) if current_project[&quot;project_type&quot;] == &quot;case&quot; else {&quot;title&quot;: str(fields.get(&quot;title&quot;) or &quot;&quot;)[:240]}
+</a>     timeline = normalize_timeline(payload.get(&quot;timeline&quot;))
+     requested_source_ids = [source_id for fact in timeline for source_id in fact[&quot;source_ids&quot;]]
+     valid_source_ids = owned_source_ids(current_account_id(), requested_source_ids)
+<a href="#h1-4" id="h1-4" class="h">@@ -68,7 +81,7 @@ def save(project_id):
+</a>         fact[&quot;source_ids&quot;] = [source_id for source_id in fact[&quot;source_ids&quot;] if source_id in valid_source_ids]
+     payload = {
+         &quot;version&quot;: 1,
+<a href="#h1-4-3" id="h1-4-3" class="d">-        &quot;fields&quot;: {&quot;title&quot;: str(fields.get(&quot;title&quot;) or &quot;&quot;)[:240]},
+</a><a href="#h1-4-4" id="h1-4-4" class="i">+        &quot;fields&quot;: normalized_fields,
+</a>         &quot;timeline&quot;: timeline,
+     }
+     try:
+<b>diff --git a/<a id="h2" href="../file/docs/ia/CASE.md.html">docs/ia/CASE.md</a> b/<a href="../file/docs/ia/CASE.md.html">docs/ia/CASE.md</a></b>
+<a href="#h2-0" id="h2-0" class="h">@@ -0,0 +1,25 @@
+</a><a href="#h2-0-0" id="h2-0-0" class="i">+# Case na v2
+</a><a href="#h2-0-1" id="h2-0-1" class="i">+
+</a><a href="#h2-0-2" id="h2-0-2" class="i">+## Estrutura
+</a><a href="#h2-0-3" id="h2-0-3" class="i">+
+</a><a href="#h2-0-4" id="h2-0-4" class="i">+O Case tem um roteiro acadêmico próprio. A v2 começa por três blocos:
+</a><a href="#h2-0-5" id="h2-0-5" class="i">+
+</a><a href="#h2-0-6" id="h2-0-6" class="i">+1. **Identificação:** título, autores, proposta da atividade, disciplina, professor, turma e ano;
+</a><a href="#h2-0-7" id="h2-0-7" class="i">+2. **Descrição do caso:** narrativa dos fatos e pergunta-problema;
+</a><a href="#h2-0-8" id="h2-0-8" class="i">+3. **Decisões possíveis:** base conceitual e duas alternativas juridicamente plausíveis.
+</a><a href="#h2-0-9" id="h2-0-9" class="i">+
+</a><a href="#h2-0-10" id="h2-0-10" class="i">+Teses A e B, critérios, referências, debate, dissertação, revisão e PDF serão acrescentados como blocos posteriores do mesmo projeto, sem criar outro banco ou duplicar o Case.
+</a><a href="#h2-0-11" id="h2-0-11" class="i">+
+</a><a href="#h2-0-12" id="h2-0-12" class="i">+## Narrativa e Linha do Tempo
+</a><a href="#h2-0-13" id="h2-0-13" class="i">+
+</a><a href="#h2-0-14" id="h2-0-14" class="i">+A narrativa da descrição é o texto acadêmico que o aluno redige. A Linha do Tempo é um apoio estruturado com fatos, datas, atores, tipo, fontes, certeza e relevância. Um recurso não substitui o outro.
+</a><a href="#h2-0-15" id="h2-0-15" class="i">+
+</a><a href="#h2-0-16" id="h2-0-16" class="i">+A narrativa pode ter parágrafos longos; a Linha do Tempo não. A Linha do Tempo não possui campo `description` e não deve ser usada para contornar a etapa de redação.
+</a><a href="#h2-0-17" id="h2-0-17" class="i">+
+</a><a href="#h2-0-18" id="h2-0-18" class="i">+## Progresso
+</a><a href="#h2-0-19" id="h2-0-19" class="i">+
+</a><a href="#h2-0-20" id="h2-0-20" class="i">+O progresso é uma conferência simples de campos obrigatórios preenchidos. Ele não avalia correção jurídica, originalidade, qualidade da tese ou adequação acadêmica. Essas avaliações exigem revisão humana e, quando autorizada, assistência explícita de IA.
+</a><a href="#h2-0-21" id="h2-0-21" class="i">+
+</a><a href="#h2-0-22" id="h2-0-22" class="i">+## Salvamento
+</a><a href="#h2-0-23" id="h2-0-23" class="i">+
+</a><a href="#h2-0-24" id="h2-0-24" class="i">+Campos de Case, fatos e vínculos de fontes são salvos no mesmo snapshot do projeto, protegido por revisão otimista. O servidor limita tamanho, normaliza strings e descarta chaves desconhecidas. O navegador não decide sozinho o que é um Case válido.
+</a><b>diff --git a/<a id="h3" href="../file/static/css/app.css.html">static/css/app.css</a> b/<a href="../file/static/css/app.css.html">static/css/app.css</a></b>
+<a href="#h3-0" id="h3-0" class="h">@@ -31,6 +31,14 @@ button, input, textarea, select { font: inherit; color-scheme: dark; }
+</a> .project-row { display: flex; justify-content: space-between; gap: 1rem; padding: 1rem 0; color: var(--ink); border-bottom: 1px solid var(--line); text-decoration: none; }
+ .project-row small { display: block; margin-top: .3rem; color: var(--muted); }
+ .empty-state, .field-help { color: var(--muted); }
+<a href="#h3-0-3" id="h3-0-3" class="i">+.case-progress { display: grid; gap: .55rem; max-width: 900px; margin: 0 auto 1.5rem; padding: 1rem 4vw; border: 1px solid var(--line); background: #151515; }
+</a><a href="#h3-0-4" id="h3-0-4" class="i">+.case-progress &gt; span { color: var(--muted); font-size: .9rem; }
+</a><a href="#h3-0-5" id="h3-0-5" class="i">+.progress-track { height: 5px; overflow: hidden; background: #2b2b2b; }
+</a><a href="#h3-0-6" id="h3-0-6" class="i">+.progress-track span { display: block; height: 100%; background: #c9c9c9; }
+</a><a href="#h3-0-7" id="h3-0-7" class="i">+.case-section { display: grid; gap: 1rem; margin: 1.5rem 0; padding-top: 1.5rem; border-top: 1px solid var(--line); }
+</a><a href="#h3-0-8" id="h3-0-8" class="i">+.case-section h2 { margin: 0; font-size: 1.45rem; }
+</a><a href="#h3-0-9" id="h3-0-9" class="i">+.case-fields { display: grid; gap: 1rem; }
+</a><a href="#h3-0-10" id="h3-0-10" class="i">+.required-mark { color: var(--muted); font-size: .75rem; font-weight: 500; }
+</a> .create-form, .editor-form { display: grid; gap: 1rem; max-width: 900px; margin: 2rem auto 0; padding: 0 4vw; }
+ label { display: grid; gap: .4rem; color: var(--ink); font-weight: 650; }
+ input, select { width: 100%; min-height: 44px; padding: .65rem .75rem; border: 1px solid var(--line); background: #101010; color: var(--ink); }
+<b>diff --git a/<a id="h4" href="../file/static/js/project-editor.js.html">static/js/project-editor.js</a> b/<a href="../file/static/js/project-editor.js.html">static/js/project-editor.js</a></b>
+<a href="#h4-0" id="h4-0" class="h">@@ -4,10 +4,16 @@ const saveState = form?.querySelector(&quot;[data-save-state]&quot;);
+</a> const sourceOptions = JSON.parse(form?.querySelector(&quot;[data-source-options]&quot;)?.textContent || &quot;[]&quot;);
+ let timer;
+ 
+<a href="#h4-0-3" id="h4-0-3" class="i">+function collectFields() {
+</a><a href="#h4-0-4" id="h4-0-4" class="i">+  const fields = Object.fromEntries([...form.querySelectorAll(&quot;[data-case-field]&quot;)].map((element) =&gt; [element.dataset.caseField, element.value]));
+</a><a href="#h4-0-5" id="h4-0-5" class="i">+  const title = fields.title || form.querySelector(&quot;[data-project-title]&quot;)?.value || &quot;&quot;;
+</a><a href="#h4-0-6" id="h4-0-6" class="i">+  return { ...fields, title };
+</a><a href="#h4-0-7" id="h4-0-7" class="i">+}
+</a><a href="#h4-0-8" id="h4-0-8" class="i">+
+</a> function collectPayload() {
+   return {
+     version: 1,
+<a href="#h4-0-12" id="h4-0-12" class="d">-    fields: { title: form.querySelector(&quot;[data-project-title]&quot;).value },
+</a><a href="#h4-0-13" id="h4-0-13" class="i">+    fields: collectFields(),
+</a>     timeline: [...form.querySelectorAll(&quot;[data-fact]&quot;)].map((card) =&gt; {
+       const value = (key) =&gt; card.querySelector(`[data-fact-field=&quot;${key}&quot;]`)?.value || &quot;&quot;;
+       return {
+<b>diff --git a/<a id="h5" href="../file/templates/projects/editor.html.html">templates/projects/editor.html</a> b/<a href="../file/templates/projects/editor.html.html">templates/projects/editor.html</a></b>
+<a href="#h5-0" id="h5-0" class="h">@@ -5,10 +5,21 @@
+</a> &lt;form class=&quot;editor-form&quot; data-project-editor data-save-url=&quot;{{ url_for(&#39;projects.save&#39;, project_id=project[&#39;id&#39;]) }}&quot; data-revision=&quot;{{ project[&#39;revision&#39;] }}&quot;&gt;
+   &lt;input type=&quot;hidden&quot; name=&quot;csrf_token&quot; value=&quot;{{ csrf_token() }}&quot;&gt;
+   &lt;script type=&quot;application/json&quot; data-source-options&gt;{{ sources|tojson }}&lt;/script&gt;
+<a href="#h5-0-3" id="h5-0-3" class="d">-  &lt;label&gt;Título do trabalho&lt;input data-project-title name=&quot;title&quot; maxlength=&quot;240&quot; value=&quot;{{ project[&#39;fields&#39;].get(&#39;title&#39;, &#39;&#39;) }}&quot; placeholder=&quot;Dê um nome para localizar este trabalho&quot;&gt;&lt;/label&gt;
+</a><a href="#h5-0-4" id="h5-0-4" class="i">+  {% if case_sections %}
+</a><a href="#h5-0-5" id="h5-0-5" class="i">+    &lt;section class=&quot;case-progress&quot; aria-label=&quot;Progresso do Case&quot;&gt;&lt;strong&gt;Progresso do Case&lt;/strong&gt;&lt;span&gt;{{ case_progress[&#39;done&#39;] }}/{{ case_progress[&#39;total&#39;] }} campos obrigatórios · {{ case_progress[&#39;percent&#39;] }}%&lt;/span&gt;&lt;div class=&quot;progress-track&quot;&gt;&lt;span style=&quot;width: {{ case_progress[&#39;percent&#39;] }}%&quot;&gt;&lt;/span&gt;&lt;/div&gt;&lt;/section&gt;
+</a><a href="#h5-0-6" id="h5-0-6" class="i">+    {% for section in case_sections %}
+</a><a href="#h5-0-7" id="h5-0-7" class="i">+      &lt;section class=&quot;case-section&quot; aria-labelledby=&quot;case-section-{{ section[&#39;id&#39;] }}&quot;&gt;&lt;p class=&quot;eyebrow&quot;&gt;Etapa&lt;/p&gt;&lt;h2 id=&quot;case-section-{{ section[&#39;id&#39;] }}&quot;&gt;{{ section[&#39;title&#39;] }}&lt;/h2&gt;&lt;p class=&quot;field-help&quot;&gt;{{ section[&#39;intro&#39;] }}&lt;/p&gt;&lt;div class=&quot;case-fields&quot;&gt;
+</a><a href="#h5-0-8" id="h5-0-8" class="i">+      {% for field in section[&#39;fields&#39;] %}
+</a><a href="#h5-0-9" id="h5-0-9" class="i">+        &lt;label&gt;{{ field[&#39;label&#39;] }}{% if field.get(&#39;required&#39;) %} &lt;span class=&quot;required-mark&quot;&gt;Obrigatório&lt;/span&gt;{% endif %}{% if field.get(&#39;type&#39;) == &#39;textarea&#39; %}&lt;textarea data-case-field=&quot;{{ field[&#39;id&#39;] }}&quot; maxlength=&quot;{{ field[&#39;limit&#39;] }}&quot; rows=&quot;{{ 8 if field[&#39;id&#39;] in [&#39;facts&#39;, &#39;assignment_prompt&#39;, &#39;decision_basis&#39;, &#39;decision_a&#39;, &#39;decision_b&#39;] else 4 }}&quot;&gt;{{ project[&#39;fields&#39;].get(field[&#39;id&#39;], &#39;&#39;) }}&lt;/textarea&gt;{% else %}&lt;input data-case-field=&quot;{{ field[&#39;id&#39;] }}&quot; maxlength=&quot;{{ field[&#39;limit&#39;] }}&quot; value=&quot;{{ project[&#39;fields&#39;].get(field[&#39;id&#39;], &#39;&#39;) }}&quot;&gt;{% endif %}{% if field.get(&#39;hint&#39;) %}&lt;span class=&quot;field-help&quot;&gt;{{ field[&#39;hint&#39;] }}&lt;/span&gt;{% endif %}&lt;/label&gt;
+</a><a href="#h5-0-10" id="h5-0-10" class="i">+      {% endfor %}
+</a><a href="#h5-0-11" id="h5-0-11" class="i">+      &lt;/div&gt;&lt;/section&gt;
+</a><a href="#h5-0-12" id="h5-0-12" class="i">+    {% endfor %}
+</a><a href="#h5-0-13" id="h5-0-13" class="i">+  {% else %}
+</a><a href="#h5-0-14" id="h5-0-14" class="i">+    &lt;label&gt;Título do trabalho&lt;input data-project-title data-case-field=&quot;title&quot; name=&quot;title&quot; maxlength=&quot;240&quot; value=&quot;{{ project[&#39;fields&#39;].get(&#39;title&#39;, &#39;&#39;) }}&quot; placeholder=&quot;Dê um nome para localizar este trabalho&quot;&gt;&lt;/label&gt;
+</a><a href="#h5-0-15" id="h5-0-15" class="i">+  {% endif %}
+</a>   &lt;section class=&quot;timeline-editor&quot; aria-labelledby=&quot;timeline-title&quot;&gt;
+<a href="#h5-0-17" id="h5-0-17" class="d">-    &lt;div class=&quot;section-heading&quot;&gt;&lt;div&gt;&lt;p class=&quot;eyebrow&quot;&gt;Fatos do caso&lt;/p&gt;&lt;h2 id=&quot;timeline-title&quot;&gt;Linha do Tempo dos Fatos&lt;/h2&gt;&lt;/div&gt;&lt;button type=&quot;button&quot; class=&quot;quiet-button&quot; data-add-fact&gt;Adicionar fato&lt;/button&gt;&lt;/div&gt;
+</a><a href="#h5-0-18" id="h5-0-18" class="d">-    &lt;p class=&quot;field-help&quot;&gt;Organize acontecimentos verificáveis. Não escreva aqui a descrição completa do caso.&lt;/p&gt;
+</a><a href="#h5-0-19" id="h5-0-19" class="i">+    &lt;div class=&quot;section-heading&quot;&gt;&lt;div&gt;&lt;p class=&quot;eyebrow&quot;&gt;Apoio estruturado&lt;/p&gt;&lt;h2 id=&quot;timeline-title&quot;&gt;Linha do Tempo dos Fatos&lt;/h2&gt;&lt;/div&gt;&lt;button type=&quot;button&quot; class=&quot;quiet-button&quot; data-add-fact&gt;Adicionar fato&lt;/button&gt;&lt;/div&gt;
+</a><a href="#h5-0-20" id="h5-0-20" class="i">+    &lt;p class=&quot;field-help&quot;&gt;Organize acontecimentos verificáveis. A Linha do Tempo não substitui a narrativa da descrição do caso.&lt;/p&gt;
+</a>     &lt;div data-facts&gt;
+       {% for fact in timeline %}
+       &lt;fieldset class=&quot;fact-card&quot; data-fact data-fact-id=&quot;{{ fact[&#39;id&#39;] }}&quot;&gt;
+<a href="#h5-1" id="h5-1" class="h">@@ -17,12 +28,12 @@
+</a>           &lt;label&gt;Quando?&lt;input data-fact-field=&quot;date_value&quot; value=&quot;{{ fact[&#39;date_value&#39;] }}&quot; maxlength=&quot;80&quot; placeholder=&quot;Ex.: março de 2024&quot;&gt;&lt;/label&gt;
+           &lt;label&gt;Precisão&lt;select data-fact-field=&quot;date_precision&quot;&gt;&lt;option value=&quot;unknown&quot; {% if fact[&#39;date_precision&#39;] == &#39;unknown&#39; %}selected{% endif %}&gt;Não definida&lt;/option&gt;&lt;option value=&quot;exact&quot; {% if fact[&#39;date_precision&#39;] == &#39;exact&#39; %}selected{% endif %}&gt;Data exata&lt;/option&gt;&lt;option value=&quot;month&quot; {% if fact[&#39;date_precision&#39;] == &#39;month&#39; %}selected{% endif %}&gt;Mês&lt;/option&gt;&lt;option value=&quot;year&quot; {% if fact[&#39;date_precision&#39;] == &#39;year&#39; %}selected{% endif %}&gt;Ano&lt;/option&gt;&lt;option value=&quot;sequence&quot; {% if fact[&#39;date_precision&#39;] == &#39;sequence&#39; %}selected{% endif %}&gt;Ordem dos fatos&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;
+           &lt;label&gt;Quem aparece?&lt;input data-fact-field=&quot;actor&quot; value=&quot;{{ fact[&#39;actor&#39;] }}&quot; maxlength=&quot;160&quot;&gt;&lt;/label&gt;
+<a href="#h5-1-3" id="h5-1-3" class="d">-          &lt;label&gt;Tipo&lt;select data-fact-field=&quot;event_type&quot;&gt;&lt;option value=&quot;other&quot;&gt;Outro&lt;/option&gt;&lt;option value=&quot;communication&quot;&gt;Comunicação&lt;/option&gt;&lt;option value=&quot;document&quot;&gt;Documento&lt;/option&gt;&lt;option value=&quot;action&quot;&gt;Ação&lt;/option&gt;&lt;option value=&quot;deadline&quot;&gt;Prazo&lt;/option&gt;&lt;option value=&quot;decision&quot;&gt;Decisão&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;
+</a><a href="#h5-1-4" id="h5-1-4" class="i">+          &lt;label&gt;Tipo&lt;select data-fact-field=&quot;event_type&quot;&gt;&lt;option value=&quot;other&quot; {% if fact[&#39;event_type&#39;] == &#39;other&#39; %}selected{% endif %}&gt;Outro&lt;/option&gt;&lt;option value=&quot;communication&quot; {% if fact[&#39;event_type&#39;] == &#39;communication&#39; %}selected{% endif %}&gt;Comunicação&lt;/option&gt;&lt;option value=&quot;document&quot; {% if fact[&#39;event_type&#39;] == &#39;document&#39; %}selected{% endif %}&gt;Documento&lt;/option&gt;&lt;option value=&quot;action&quot; {% if fact[&#39;event_type&#39;] == &#39;action&#39; %}selected{% endif %}&gt;Ação&lt;/option&gt;&lt;option value=&quot;deadline&quot; {% if fact[&#39;event_type&#39;] == &#39;deadline&#39; %}selected{% endif %}&gt;Prazo&lt;/option&gt;&lt;option value=&quot;decision&quot; {% if fact[&#39;event_type&#39;] == &#39;decision&#39; %}selected{% endif %}&gt;Decisão&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;
+</a>         &lt;/div&gt;
+         &lt;label&gt;O que ocorreu?&lt;input data-fact-field=&quot;fact&quot; value=&quot;{{ fact[&#39;fact&#39;] }}&quot; maxlength=&quot;240&quot; placeholder=&quot;Um acontecimento curto e verificável&quot;&gt;&lt;/label&gt;
+         &lt;div class=&quot;fact-grid&quot;&gt;
+<a href="#h5-1-8" id="h5-1-8" class="d">-          &lt;label&gt;Certeza&lt;select data-fact-field=&quot;certainty&quot;&gt;&lt;option value=&quot;established&quot;&gt;Estabelecido&lt;/option&gt;&lt;option value=&quot;alleged&quot;&gt;Alegado&lt;/option&gt;&lt;option value=&quot;unclear&quot;&gt;Incerto&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;
+</a><a href="#h5-1-9" id="h5-1-9" class="d">-          &lt;label&gt;Relevância&lt;select data-fact-field=&quot;relevance&quot;&gt;&lt;option value=&quot;central&quot;&gt;Central&lt;/option&gt;&lt;option value=&quot;supporting&quot;&gt;De apoio&lt;/option&gt;&lt;option value=&quot;context&quot;&gt;Contexto&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;
+</a><a href="#h5-1-10" id="h5-1-10" class="i">+          &lt;label&gt;Certeza&lt;select data-fact-field=&quot;certainty&quot;&gt;&lt;option value=&quot;established&quot; {% if fact[&#39;certainty&#39;] == &#39;established&#39; %}selected{% endif %}&gt;Estabelecido&lt;/option&gt;&lt;option value=&quot;alleged&quot; {% if fact[&#39;certainty&#39;] == &#39;alleged&#39; %}selected{% endif %}&gt;Alegado&lt;/option&gt;&lt;option value=&quot;unclear&quot; {% if fact[&#39;certainty&#39;] == &#39;unclear&#39; %}selected{% endif %}&gt;Incerto&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;
+</a><a href="#h5-1-11" id="h5-1-11" class="i">+          &lt;label&gt;Relevância&lt;select data-fact-field=&quot;relevance&quot;&gt;&lt;option value=&quot;central&quot; {% if fact[&#39;relevance&#39;] == &#39;central&#39; %}selected{% endif %}&gt;Central&lt;/option&gt;&lt;option value=&quot;supporting&quot; {% if fact[&#39;relevance&#39;] == &#39;supporting&#39; %}selected{% endif %}&gt;De apoio&lt;/option&gt;&lt;option value=&quot;context&quot; {% if fact[&#39;relevance&#39;] == &#39;context&#39; %}selected{% endif %}&gt;Contexto&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;
+</a>         &lt;/div&gt;
+         &lt;label&gt;Fontes vinculadas&lt;select data-fact-sources multiple size=&quot;3&quot;&gt;{% for source in sources %}&lt;option value=&quot;{{ source[&#39;id&#39;] }}&quot; {% if source[&#39;id&#39;] in fact[&#39;source_ids&#39;] %}selected{% endif %}&gt;{{ source[&#39;title&#39;] }}&lt;/option&gt;{% else %}&lt;option disabled&gt;Cadastre uma fonte na Biblioteca Pessoal&lt;/option&gt;{% endfor %}&lt;/select&gt;&lt;/label&gt;
+         &lt;label class=&quot;optional-field&quot;&gt;Observação contextual curta&lt;input data-fact-field=&quot;context_note&quot; value=&quot;{{ fact[&#39;context_note&#39;] }}&quot; maxlength=&quot;280&quot;&gt;&lt;/label&gt;
+<b>diff --git a/<a id="h6" href="../file/tests/test_case_domain.py.html">tests/test_case_domain.py</a> b/<a href="../file/tests/test_case_domain.py.html">tests/test_case_domain.py</a></b>
+<a href="#h6-0" id="h6-0" class="h">@@ -0,0 +1,23 @@
+</a><a href="#h6-0-0" id="h6-0-0" class="i">+from app.domain.case import case_progress, missing_case_fields, normalize_case_fields
+</a><a href="#h6-0-1" id="h6-0-1" class="i">+
+</a><a href="#h6-0-2" id="h6-0-2" class="i">+
+</a><a href="#h6-0-3" id="h6-0-3" class="i">+def test_case_progress_only_counts_required_fields():
+</a><a href="#h6-0-4" id="h6-0-4" class="i">+    fields = {&quot;title&quot;: &quot;Case&quot;, &quot;authors&quot;: &quot;Ana&quot;, &quot;discipline&quot;: &quot;Direito&quot;, &quot;teacher&quot;: &quot;Prof.&quot;}
+</a><a href="#h6-0-5" id="h6-0-5" class="i">+    progress = case_progress(fields)
+</a><a href="#h6-0-6" id="h6-0-6" class="i">+    assert progress[&quot;done&quot;] == 4
+</a><a href="#h6-0-7" id="h6-0-7" class="i">+    assert progress[&quot;total&quot;] == 9
+</a><a href="#h6-0-8" id="h6-0-8" class="i">+    assert progress[&quot;percent&quot;] == 44
+</a><a href="#h6-0-9" id="h6-0-9" class="i">+
+</a><a href="#h6-0-10" id="h6-0-10" class="i">+
+</a><a href="#h6-0-11" id="h6-0-11" class="i">+def test_case_normalization_keeps_known_fields_and_bounds_text():
+</a><a href="#h6-0-12" id="h6-0-12" class="i">+    fields = normalize_case_fields({&quot;title&quot;: &quot;  Case  &quot;, &quot;facts&quot;: &quot;X&quot; * 20000, &quot;unknown&quot;: &quot;não persistir&quot;})
+</a><a href="#h6-0-13" id="h6-0-13" class="i">+    assert fields[&quot;title&quot;] == &quot;Case&quot;
+</a><a href="#h6-0-14" id="h6-0-14" class="i">+    assert len(fields[&quot;facts&quot;]) == 16000
+</a><a href="#h6-0-15" id="h6-0-15" class="i">+    assert &quot;unknown&quot; not in fields
+</a><a href="#h6-0-16" id="h6-0-16" class="i">+
+</a><a href="#h6-0-17" id="h6-0-17" class="i">+
+</a><a href="#h6-0-18" id="h6-0-18" class="i">+def test_case_missing_fields_are_explicit():
+</a><a href="#h6-0-19" id="h6-0-19" class="i">+    missing = missing_case_fields({&quot;title&quot;: &quot;Case&quot;})
+</a><a href="#h6-0-20" id="h6-0-20" class="i">+    assert missing[:3] == [&quot;authors&quot;, &quot;discipline&quot;, &quot;teacher&quot;]
+</a><a href="#h6-0-21" id="h6-0-21" class="i">+    assert &quot;facts&quot; in missing
+</a><a href="#h6-0-22" id="h6-0-22" class="i">+    assert &quot;decision_b&quot; in missing
+</a><b>diff --git a/<a id="h7" href="../file/tests/test_projects.py.html">tests/test_projects.py</a> b/<a href="../file/tests/test_projects.py.html">tests/test_projects.py</a></b>
+<a href="#h7-0" id="h7-0" class="h">@@ -47,6 +47,32 @@ def test_save_rejects_stale_revision(client):
+</a>     assert stale.get_json()[&quot;error&quot;] == &quot;project_conflict&quot;
+ 
+ 
+<a href="#h7-0-3" id="h7-0-3" class="i">+def test_case_fields_are_saved_and_normalized_on_server(client):
+</a><a href="#h7-0-4" id="h7-0-4" class="i">+    login(client)
+</a><a href="#h7-0-5" id="h7-0-5" class="i">+    created = client.post(&quot;/projects&quot;, data={&quot;csrf_token&quot;: csrf(client), &quot;project_type&quot;: &quot;case&quot;})
+</a><a href="#h7-0-6" id="h7-0-6" class="i">+    project_id = created.headers[&quot;Location&quot;].rsplit(&quot;/&quot;, 1)[-1]
+</a><a href="#h7-0-7" id="h7-0-7" class="i">+    payload = {
+</a><a href="#h7-0-8" id="h7-0-8" class="i">+        &quot;version&quot;: 1,
+</a><a href="#h7-0-9" id="h7-0-9" class="i">+        &quot;fields&quot;: {
+</a><a href="#h7-0-10" id="h7-0-10" class="i">+            &quot;title&quot;: &quot;  Caso de teste  &quot;,
+</a><a href="#h7-0-11" id="h7-0-11" class="i">+            &quot;authors&quot;: &quot;Ana&quot;,
+</a><a href="#h7-0-12" id="h7-0-12" class="i">+            &quot;facts&quot;: &quot;Fatos do caso&quot;,
+</a><a href="#h7-0-13" id="h7-0-13" class="i">+            &quot;unknown&quot;: &quot;não salvar&quot;,
+</a><a href="#h7-0-14" id="h7-0-14" class="i">+        },
+</a><a href="#h7-0-15" id="h7-0-15" class="i">+        &quot;timeline&quot;: [],
+</a><a href="#h7-0-16" id="h7-0-16" class="i">+    }
+</a><a href="#h7-0-17" id="h7-0-17" class="i">+    response = client.post(
+</a><a href="#h7-0-18" id="h7-0-18" class="i">+        f&quot;/projects/{project_id}/save&quot;,
+</a><a href="#h7-0-19" id="h7-0-19" class="i">+        headers={&quot;Content-Type&quot;: &quot;application/json&quot;, &quot;X-CSRF-Token&quot;: csrf(client)},
+</a><a href="#h7-0-20" id="h7-0-20" class="i">+        json={&quot;revision&quot;: 1, &quot;payload&quot;: payload},
+</a><a href="#h7-0-21" id="h7-0-21" class="i">+    )
+</a><a href="#h7-0-22" id="h7-0-22" class="i">+    assert response.status_code == 200
+</a><a href="#h7-0-23" id="h7-0-23" class="i">+    editor = client.get(f&quot;/projects/{project_id}&quot;).get_data(as_text=True)
+</a><a href="#h7-0-24" id="h7-0-24" class="i">+    assert &quot;Caso de teste&quot; in editor
+</a><a href="#h7-0-25" id="h7-0-25" class="i">+    assert &quot;Fatos do caso&quot; in editor
+</a><a href="#h7-0-26" id="h7-0-26" class="i">+    assert &quot;não salvar&quot; not in editor
+</a><a href="#h7-0-27" id="h7-0-27" class="i">+
+</a><a href="#h7-0-28" id="h7-0-28" class="i">+
+</a> def test_project_creation_redirects_unaccepted_account_to_terms(client):
+     client.post(&quot;/auth/dev-login&quot;, data={&quot;email&quot;: &quot;sem-termos@example.test&quot;, &quot;name&quot;: &quot;Sem Termos&quot;})
+     response = client.post(&quot;/projects&quot;, data={&quot;csrf_token&quot;: csrf(client), &quot;project_type&quot;: &quot;case&quot;})
+</pre>
+</div>
+</body>
+</html>

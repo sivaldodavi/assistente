@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>test_public_navigation.py - assistente-academico - Assistente Acadêmico v2
+</title>
+<link rel="icon" type="image/png" href="../../favicon.png" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed" href="../../atom.xml" />
+<link rel="alternate" type="application/atom+xml" title="assistente-academico.git Atom Feed (tags)" href="../../tags.xml" />
+<link rel="stylesheet" type="text/css" href="../../style.css" />
+</head>
+<body>
+<table><tr><td><a href="../../../"><img src="../../logo.png" alt="" width="32" height="32" /></a></td><td><h1>assistente-academico</h1><span class="desc">Assistente Acadêmico v2
+</span></td></tr><tr class="url"><td></td><td>git clone <a href="git://git.sivaldodavi.com.br/assistente-academico.git">git://git.sivaldodavi.com.br/assistente-academico.git</a></td></tr><tr><td></td><td>
+<a href="../../log.html">Log</a> | <a href="../../files.html">Files</a> | <a href="../../refs.html">Refs</a> | <a href="../../file/README.md.html">README</a></td></tr></table>
+<hr/>
+<div id="content">
+<p> test_public_navigation.py (6547B)</p><hr/><pre id="blob">
+<a href="#l1" class="line" id="l1">      1</a> import json
+<a href="#l2" class="line" id="l2">      2</a> from pathlib import Path
+<a href="#l3" class="line" id="l3">      3</a> 
+<a href="#l4" class="line" id="l4">      4</a> import pytest
+<a href="#l5" class="line" id="l5">      5</a> 
+<a href="#l6" class="line" id="l6">      6</a> from app import create_app
+<a href="#l7" class="line" id="l7">      7</a> 
+<a href="#l8" class="line" id="l8">      8</a> 
+<a href="#l9" class="line" id="l9">      9</a> @pytest.fixture()
+<a href="#l10" class="line" id="l10">     10</a> def app(tmp_path: Path):
+<a href="#l11" class="line" id="l11">     11</a>     return create_app(
+<a href="#l12" class="line" id="l12">     12</a>         {
+<a href="#l13" class="line" id="l13">     13</a>             &quot;TESTING&quot;: True,
+<a href="#l14" class="line" id="l14">     14</a>             &quot;SECRET_KEY&quot;: &quot;public-navigation-test&quot;,
+<a href="#l15" class="line" id="l15">     15</a>             &quot;DATA_DIR&quot;: str(tmp_path),
+<a href="#l16" class="line" id="l16">     16</a>             &quot;DATABASE&quot;: str(tmp_path / &quot;test.sqlite3&quot;),
+<a href="#l17" class="line" id="l17">     17</a>             &quot;ALLOW_DEV_AUTH&quot;: True,
+<a href="#l18" class="line" id="l18">     18</a>         }
+<a href="#l19" class="line" id="l19">     19</a>     )
+<a href="#l20" class="line" id="l20">     20</a> 
+<a href="#l21" class="line" id="l21">     21</a> 
+<a href="#l22" class="line" id="l22">     22</a> @pytest.fixture()
+<a href="#l23" class="line" id="l23">     23</a> def client(app):
+<a href="#l24" class="line" id="l24">     24</a>     return app.test_client()
+<a href="#l25" class="line" id="l25">     25</a> 
+<a href="#l26" class="line" id="l26">     26</a> 
+<a href="#l27" class="line" id="l27">     27</a> @pytest.mark.parametrize(&quot;path&quot;, [&quot;/termos&quot;, &quot;/termos/&quot;, &quot;/privacidade&quot;, &quot;/privacidade/&quot;, &quot;/ajuda-ia&quot;, &quot;/ajuda-ia/&quot;, &quot;/jornada&quot;, &quot;/jornada/&quot;])
+<a href="#l28" class="line" id="l28">     28</a> def test_public_document_routes_are_reachable(client, path):
+<a href="#l29" class="line" id="l29">     29</a>     response = client.get(path)
+<a href="#l30" class="line" id="l30">     30</a>     assert response.status_code == 200
+<a href="#l31" class="line" id="l31">     31</a>     assert response.content_type.startswith(&quot;text/html&quot;)
+<a href="#l32" class="line" id="l32">     32</a>     assert &quot;Assistente Acadêmico&quot; in response.get_data(as_text=True)
+<a href="#l33" class="line" id="l33">     33</a> 
+<a href="#l34" class="line" id="l34">     34</a> 
+<a href="#l35" class="line" id="l35">     35</a> def test_public_home_uses_real_routes_and_no_old_site_hash(client):
+<a href="#l36" class="line" id="l36">     36</a>     html = client.get(&quot;/&quot;).get_data(as_text=True)
+<a href="#l37" class="line" id="l37">     37</a> 
+<a href="#l38" class="line" id="l38">     38</a>     assert &quot;#/site&quot; not in html
+<a href="#l39" class="line" id="l39">     39</a>     assert &#39;href=&quot;/termos/&quot;&#39; in html
+<a href="#l40" class="line" id="l40">     40</a>     assert &#39;href=&quot;/privacidade/&quot;&#39; in html
+<a href="#l41" class="line" id="l41">     41</a>     assert &#39;href=&quot;/ajuda-ia/&quot;&#39; in html
+<a href="#l42" class="line" id="l42">     42</a>     assert &#39;href=&quot;/jornada/&quot;&#39; in html
+<a href="#l43" class="line" id="l43">     43</a>     assert html.count(&quot;&lt;main&quot;) == 1
+<a href="#l44" class="line" id="l44">     44</a>     assert &#39;href=&quot;/oauth/google/start&quot;&#39; in html
+<a href="#l45" class="line" id="l45">     45</a>     assert &quot;Começar com Google&quot; in html
+<a href="#l46" class="line" id="l46">     46</a> 
+<a href="#l47" class="line" id="l47">     47</a> 
+<a href="#l48" class="line" id="l48">     48</a> def test_plans_have_a_direct_destination(client):
+<a href="#l49" class="line" id="l49">     49</a>     response = client.get(&quot;/planos&quot;)
+<a href="#l50" class="line" id="l50">     50</a>     body = response.get_data(as_text=True)
+<a href="#l51" class="line" id="l51">     51</a>     assert response.status_code == 200
+<a href="#l52" class="line" id="l52">     52</a>     assert &#39;class=&quot;sales-page pricing-only&quot;&#39; in body
+<a href="#l53" class="line" id="l53">     53</a>     assert &quot;Planos&quot; in body
+<a href="#l54" class="line" id="l54">     54</a>     assert &quot;Voltar à apresentação&quot; in body
+<a href="#l55" class="line" id="l55">     55</a> 
+<a href="#l56" class="line" id="l56">     56</a> 
+<a href="#l57" class="line" id="l57">     57</a> def test_authenticated_home_points_to_account_instead_of_google(client):
+<a href="#l58" class="line" id="l58">     58</a>     with client.session_transaction() as session:
+<a href="#l59" class="line" id="l59">     59</a>         session[&quot;account_id&quot;] = &quot;temporary-account&quot;
+<a href="#l60" class="line" id="l60">     60</a> 
+<a href="#l61" class="line" id="l61">     61</a>     html = client.get(&quot;/&quot;).get_data(as_text=True)
+<a href="#l62" class="line" id="l62">     62</a> 
+<a href="#l63" class="line" id="l63">     63</a>     assert &#39;href=&quot;/account&quot;&#39; in html
+<a href="#l64" class="line" id="l64">     64</a>     assert &quot;Minha conta&quot; in html
+<a href="#l65" class="line" id="l65">     65</a>     assert &quot;Meus trabalhos&quot; in html
+<a href="#l66" class="line" id="l66">     66</a>     assert &quot;Começar com Google&quot; not in html
+<a href="#l67" class="line" id="l67">     67</a>     assert &#39;href=&quot;/oauth/google/start&quot;&#39; not in html
+<a href="#l68" class="line" id="l68">     68</a> 
+<a href="#l69" class="line" id="l69">     69</a> 
+<a href="#l70" class="line" id="l70">     70</a> def test_demo_buttons_have_all_legacy_public_models_and_safe_payload(client):
+<a href="#l71" class="line" id="l71">     71</a>     html = client.get(&quot;/&quot;).get_data(as_text=True)
+<a href="#l72" class="line" id="l72">     72</a>     data = json.loads(html.split(&#39;&lt;script id=&quot;public-demo-data&quot; type=&quot;application/json&quot;&gt;&#39;, 1)[1].split(&quot;&lt;/script&gt;&quot;, 1)[0])
+<a href="#l73" class="line" id="l73">     73</a>     model_ids = {model[&quot;id&quot;] for model in data}
+<a href="#l74" class="line" id="l74">     74</a> 
+<a href="#l75" class="line" id="l75">     75</a>     assert model_ids == {&quot;civil-personality&quot;, &quot;projeto-paper-modelo&quot;, &quot;paper-final-modelo&quot;}
+<a href="#l76" class="line" id="l76">     76</a>     for model_id in model_ids:
+<a href="#l77" class="line" id="l77">     77</a>         assert f&#39;data-model-workflow=&quot;{model_id}&quot;&#39; in html
+<a href="#l78" class="line" id="l78">     78</a>     assert &#39;data-model-document=&quot;civil-personality&quot;&#39; in html
+<a href="#l79" class="line" id="l79">     79</a>     assert &#39;data-model-workflow=&quot;projeto-paper-modelo&quot;&#39; in html
+<a href="#l80" class="line" id="l80">     80</a>     assert &#39;data-model-workflow=&quot;paper-final-modelo&quot;&#39; in html
+<a href="#l81" class="line" id="l81">     81</a>     assert &quot;public-demo-dialog&quot; in html
+<a href="#l82" class="line" id="l82">     82</a>     assert len(next(model for model in data if model[&quot;id&quot;] == &quot;civil-personality&quot;)[&quot;sections&quot;]) &gt;= 5
+<a href="#l83" class="line" id="l83">     83</a>     assert &quot;ADPF 130/DF&quot; in html
+<a href="#l84" class="line" id="l84">     84</a>     assert &quot;FACSUR&quot; in html
+<a href="#l85" class="line" id="l85">     85</a>     assert &quot;quote&quot; not in html
+<a href="#l86" class="line" id="l86">     86</a>     for model in data:
+<a href="#l87" class="line" id="l87">     87</a>         assert len(model[&quot;stages&quot;]) &gt;= 6
+<a href="#l88" class="line" id="l88">     88</a>         assert any(field.get(&quot;value&quot;) for field in model[&quot;stages&quot;][0].get(&quot;fields&quot;, []))
+<a href="#l89" class="line" id="l89">     89</a>     assert &quot;data-public-model-step&quot; in Path(&quot;static/js/app.js&quot;).read_text(encoding=&quot;utf-8&quot;)
+<a href="#l90" class="line" id="l90">     90</a> 
+<a href="#l91" class="line" id="l91">     91</a> 
+<a href="#l92" class="line" id="l92">     92</a> def test_filled_models_keep_their_original_workflow(client):
+<a href="#l93" class="line" id="l93">     93</a>     html = client.get(&quot;/&quot;).get_data(as_text=True)
+<a href="#l94" class="line" id="l94">     94</a>     data = json.loads(html.split(&#39;&lt;script id=&quot;public-demo-data&quot; type=&quot;application/json&quot;&gt;&#39;, 1)[1].split(&quot;&lt;/script&gt;&quot;, 1)[0])
+<a href="#l95" class="line" id="l95">     95</a>     models = {model[&quot;id&quot;]: model for model in data}
+<a href="#l96" class="line" id="l96">     96</a>     assert models[&quot;civil-personality&quot;][&quot;stages&quot;][2][&quot;title&quot;] == &quot;2.1 · Decisões possíveis&quot;
+<a href="#l97" class="line" id="l97">     97</a>     assert models[&quot;projeto-paper-modelo&quot;][&quot;stages&quot;][0][&quot;title&quot;] == &quot;Identificação e delimitação&quot;
+<a href="#l98" class="line" id="l98">     98</a>     assert models[&quot;paper-final-modelo&quot;][&quot;stages&quot;][0][&quot;title&quot;] == &quot;Identificação, resumo e palavras-chave&quot;
+<a href="#l99" class="line" id="l99">     99</a> 
+<a href="#l100" class="line" id="l100">    100</a> 
+<a href="#l101" class="line" id="l101">    101</a> def test_filled_models_attach_legacy_text_to_the_matching_stage(client):
+<a href="#l102" class="line" id="l102">    102</a>     html = client.get(&quot;/&quot;).get_data(as_text=True)
+<a href="#l103" class="line" id="l103">    103</a>     data = json.loads(html.split(&#39;&lt;script id=&quot;public-demo-data&quot; type=&quot;application/json&quot;&gt;&#39;, 1)[1].split(&quot;&lt;/script&gt;&quot;, 1)[0])
+<a href="#l104" class="line" id="l104">    104</a>     models = {model[&quot;id&quot;]: model for model in data}
+<a href="#l105" class="line" id="l105">    105</a> 
+<a href="#l106" class="line" id="l106">    106</a>     case_stages = models[&quot;civil-personality&quot;][&quot;stages&quot;]
+<a href="#l107" class="line" id="l107">    107</a>     assert case_stages[1][&quot;demo_sections&quot;][0][&quot;title&quot;] == &quot;1 DESCRIÇÃO DO CASO&quot;
+<a href="#l108" class="line" id="l108">    108</a>     assert case_stages[2][&quot;demo_sections&quot;][0][&quot;title&quot;] == &quot;2.1. Descrição das decisões possíveis&quot;
+<a href="#l109" class="line" id="l109">    109</a>     assert &quot;liberdade de expressão&quot; in case_stages[3][&quot;demo_sections&quot;][0][&quot;title&quot;].lower()
+<a href="#l110" class="line" id="l110">    110</a>     assert &quot;interesse público&quot; in case_stages[4][&quot;demo_sections&quot;][0][&quot;title&quot;].lower()
+<a href="#l111" class="line" id="l111">    111</a>     assert case_stages[5][&quot;demo_sections&quot;][0][&quot;title&quot;] == &quot;2.3. Descrição dos critérios e valores&quot;
+<a href="#l112" class="line" id="l112">    112</a> 
+<a href="#l113" class="line" id="l113">    113</a>     paper_stages = models[&quot;projeto-paper-modelo&quot;][&quot;stages&quot;]
+<a href="#l114" class="line" id="l114">    114</a>     paper_fields = {field[&quot;id&quot;]: field[&quot;value&quot;] for field in paper_stages[0][&quot;fields&quot;]}
+<a href="#l115" class="line" id="l115">    115</a>     assert paper_fields[&quot;delimitation&quot;]
+<a href="#l116" class="line" id="l116">    116</a>     assert paper_fields[&quot;research_context&quot;]
+<a href="#l117" class="line" id="l117">    117</a>     assert paper_fields[&quot;research_object&quot;]
+<a href="#l118" class="line" id="l118">    118</a>     assert paper_stages[1][&quot;demo_sections&quot;][0][&quot;title&quot;] == &quot;3 PROBLEMA&quot;
+<a href="#l119" class="line" id="l119">    119</a>     assert paper_stages[7][&quot;demo_sections&quot;][0][&quot;title&quot;] == &quot;9 REFERÊNCIAS&quot;
+<a href="#l120" class="line" id="l120">    120</a> 
+<a href="#l121" class="line" id="l121">    121</a>     final_stages = models[&quot;paper-final-modelo&quot;][&quot;stages&quot;]
+<a href="#l122" class="line" id="l122">    122</a>     assert final_stages[1][&quot;demo_sections&quot;][0][&quot;title&quot;] == &quot;1 INTRODUÇÃO&quot;
+<a href="#l123" class="line" id="l123">    123</a>     assert len(final_stages[2][&quot;demo_sections&quot;]) == 3
+<a href="#l124" class="line" id="l124">    124</a>     assert final_stages[3][&quot;demo_sections&quot;][0][&quot;title&quot;] == &quot;5 CONCLUSÃO&quot;
+<a href="#l125" class="line" id="l125">    125</a>     assert final_stages[4][&quot;demo_sections&quot;][0][&quot;title&quot;] == &quot;REFERÊNCIAS&quot;
+<a href="#l126" class="line" id="l126">    126</a> 
+<a href="#l127" class="line" id="l127">    127</a> 
+<a href="#l128" class="line" id="l128">    128</a> def test_document_pages_do_not_nest_main_elements(client):
+<a href="#l129" class="line" id="l129">    129</a>     for path in (&quot;/termos/&quot;, &quot;/privacidade/&quot;, &quot;/ajuda-ia/&quot;, &quot;/jornada/&quot;):
+<a href="#l130" class="line" id="l130">    130</a>         html = client.get(path).get_data(as_text=True)
+<a href="#l131" class="line" id="l131">    131</a>         assert html.count(&quot;&lt;main&quot;) == 1, path
+<a href="#l132" class="line" id="l132">    132</a>         assert &quot;&lt;main class=\&quot;shell sales-shell\&quot;&quot; not in html, path
+<a href="#l133" class="line" id="l133">    133</a> 
+<a href="#l134" class="line" id="l134">    134</a> 
+<a href="#l135" class="line" id="l135">    135</a> @pytest.mark.parametrize(&quot;filename&quot;, [&quot;avulso-ai.svg&quot;, &quot;sem-ia.svg&quot;, &quot;com-ia.svg&quot;])
+<a href="#l136" class="line" id="l136">    136</a> def test_existing_pix_assets_are_served_without_copying_new_payment(client, filename):
+<a href="#l137" class="line" id="l137">    137</a>     response = client.get(f&quot;/pix/{filename}&quot;)
+<a href="#l138" class="line" id="l138">    138</a>     assert response.status_code == 200
+<a href="#l139" class="line" id="l139">    139</a>     assert response.content_type.startswith(&quot;image/svg+xml&quot;)
+<a href="#l140" class="line" id="l140">    140</a>     assert response.data.startswith(b&quot;&lt;?xml&quot;)
+<a href="#l141" class="line" id="l141">    141</a> 
+<a href="#l142" class="line" id="l142">    142</a> 
+<a href="#l143" class="line" id="l143">    143</a> def test_pix_asset_route_is_allowlisted(client):
+<a href="#l144" class="line" id="l144">    144</a>     assert client.get(&quot;/pix/extra-completo.svg&quot;).status_code == 404
+<a href="#l145" class="line" id="l145">    145</a>     assert client.get(&quot;/pix/not-an-asset.svg&quot;).status_code == 404
+<a href="#l146" class="line" id="l146">    146</a> 
+<a href="#l147" class="line" id="l147">    147</a> 
+<a href="#l148" class="line" id="l148">    148</a> def test_public_js_contains_handlers_for_demo_and_pix_actions():
+<a href="#l149" class="line" id="l149">    149</a>     source = Path(&quot;static/js/app.js&quot;).read_text(encoding=&quot;utf-8&quot;)
+<a href="#l150" class="line" id="l150">    150</a>     assert &quot;data-model-workflow&quot; in source
+<a href="#l151" class="line" id="l151">    151</a>     assert &quot;data-model-document&quot; in source
+<a href="#l152" class="line" id="l152">    152</a>     assert &quot;data-pix-copy&quot; in source
+<a href="#l153" class="line" id="l153">    153</a>     assert &quot;public-demo-dialog&quot; in source
+<a href="#l154" class="line" id="l154">    154</a>     assert &quot;Etapas do modelo preenchido&quot; in source
+</pre>
+</div>
+</body>
+</html>
