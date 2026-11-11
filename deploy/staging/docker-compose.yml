@@ -25,9 +25,7 @@ services:
       - mercadopago_access_token
       - mercadopago_webhook_secret
     healthcheck:
-      test:
-        - CMD-SHELL
-        - curl -fsS -H 'X-Forwarded-Proto: https' http://127.0.0.1/up >/dev/null || exit 1
+      test: ["CMD-SHELL", "curl -fsS -H 'X-Forwarded-Proto: https' http://127.0.0.1/up >/dev/null || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 3
