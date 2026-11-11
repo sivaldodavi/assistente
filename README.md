@@ -70,7 +70,7 @@ O port da matriz de testes da fonte original ainda está em andamento. Google, D
 
 ## Staging e banco
 
-O SQLite de desenvolvimento fica em `storage/development.sqlite3`; testes usam `storage/test.sqlite3`. Em produção, `DATABASE_PATH` define o arquivo; o padrão é `storage/production.sqlite3`. O compose `deploy/staging/docker-compose.yml` monta um volume durável e se conecta à rede externa `servidor_default`. Ele espera um arquivo de ambiente protegido em `/opt/servidor/secrets/assistente-academico.env`; não versionar esse arquivo, `SECRET_KEY_BASE` ou credenciais.
+O SQLite de desenvolvimento fica em `storage/development.sqlite3`; testes usam `storage/test.sqlite3`. Em produção, `DATABASE_PATH` define o arquivo; o padrão é `storage/production.sqlite3`. O compose `deploy/staging/docker-compose.yml` monta um volume durável e se conecta à rede externa `servidor_default`. Ele espera `SECRET_KEY_BASE` em `/opt/servidor/secrets/assistente-academico/rails.env` e os arquivos `mercadopago_access_token` e `mercadopago_webhook_secret` nesse diretório. Mantenha-os fora do Git e restrinja as permissões.
 
 Esse compose mantém o gate de autenticação fechado e injeta apenas credenciais sandbox do Mercado Pago. O Caddy deve encaminhar somente `POST /api/mercadopago/webhook` e `POST /webhooks/mercadopago` para o container de staging. Não exponha a porta do Rails no host, nem habilite tráfego público para as páginas antes de validar autenticação.
 

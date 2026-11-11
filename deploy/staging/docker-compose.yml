@@ -6,19 +6,24 @@ services:
     container_name: assistente-academico-staging
     restart: unless-stopped
     env_file:
-      - /opt/servidor/secrets/assistente-academico.env
+      - /opt/servidor/secrets/assistente-academico/rails.env
     environment:
       DATABASE_PATH: /rails/storage/production.sqlite3
       GOOGLE_CLIENT_ID: staging-disabled
       GOOGLE_CLIENT_SECRET: staging-disabled
       GOOGLE_REDIRECT_URI: https://trab.sivaldodavi.com.br/auth/google_oauth2/callback
       MERCADOPAGO_WEBHOOK_URL: https://trab.sivaldodavi.com.br/api/mercadopago/webhook
+      MERCADOPAGO_ACCESS_TOKEN_FILE: /run/secrets/mercadopago_access_token
+      MERCADOPAGO_WEBHOOK_SECRET_FILE: /run/secrets/mercadopago_webhook_secret
     volumes:
       - assistente_academico_staging_storage:/rails/storage
     expose:
       - "80"
     networks:
       - servidor_default
+    secrets:
+      - mercadopago_access_token
+      - mercadopago_webhook_secret
     healthcheck:
       test:
         - CMD-SHELL
@@ -35,3 +40,9 @@ networks:
 volumes:
   assistente_academico_staging_storage:
     name: assistente-academico-staging-storage
+
+secrets:
+  mercadopago_access_token:
+    file: /opt/servidor/secrets/assistente-academico/mercadopago_access_token
+  mercadopago_webhook_secret:
+    file: /opt/servidor/secrets/assistente-academico/mercadopago_webhook_secret
