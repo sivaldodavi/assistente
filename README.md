@@ -1,6 +1,6 @@
 # Assistente Acadêmico
 
-Reconstrução Rails do Assistente Acadêmico a partir do código original preservado em `recovery/original-zip`. O código validado segue para `main` por fast-forward; o staging fica em `feat/rails-staging` e publica somente o webhook do Mercado Pago. O site completo não está liberado para acesso público.
+Reconstrução Rails do Assistente Acadêmico a partir do código original preservado em `recovery/original-zip`. O `main` contém a configuração separada de staging e produção. O acesso às páginas continua fechado; apenas as rotas de webhook são públicas.
 
 ## Stack
 
@@ -38,7 +38,7 @@ bin/rails runner script/configure_credentials.rb
 
 O script preserva entradas existentes como `secret_key_base`, aceita valores em branco para manter ou pular campos e exige confirmação digitando `SIM`. A digitação aparece no terminal e no histórico visual da sessão; use apenas em uma máquina confiável e não compartilhe a tela. `config/master.key` existe neste checkout e é ignorado pelo Git; mantenha-o protegido. No servidor, forneça a chave mestra como `RAILS_MASTER_KEY` e injete os segredos por ambiente ou arquivos Docker em `/run/secrets`. Este projeto não carrega `.env` automaticamente.
 
-**O site permanece bloqueado por padrão:** `AUTHENTICATION_READY` ausente ou diferente de `true` mantém as páginas da aplicação em `503`. No staging, ele é fixado em `false` e o Caddy encaminha publicamente apenas os caminhos de webhook. Só habilite `AUTHENTICATION_READY=true` depois de configurar e validar OAuth Google de produção, autorização, pagamentos e operações; essa variável não substitui esses testes.
+**O site permanece bloqueado por padrão:** `AUTHENTICATION_READY` ausente ou diferente de `true` mantém as páginas da aplicação em `503`. O Caddy atualmente retorna 404 para as páginas e encaminha `/api/mercadopago/webhook` ao staging e `/webhooks/mercadopago` à produção. Só habilite `AUTHENTICATION_READY=true` depois de validar OAuth Google, autorização, pagamentos e operações; essa variável não substitui esses testes.
 
 ## Roteiros
 
@@ -72,28 +72,28 @@ O port da matriz de testes da fonte original ainda está em andamento. Google, D
 
 O SQLite de desenvolvimento fica em `storage/development.sqlite3`; testes usam `storage/test.sqlite3`. Em produção, `DATABASE_PATH` define o arquivo; o padrão é `storage/production.sqlite3`. O compose `deploy/staging/docker-compose.yml` monta um volume durável e se conecta à rede externa `servidor_default`. Ele espera `SECRET_KEY_BASE` em `/opt/servidor/secrets/assistente-academico/rails.env` e os arquivos `mercadopago_access_token` e `mercadopago_webhook_secret` nesse diretório. Mantenha-os fora do Git e restrinja as permissões.
 
-Esse compose mantém o gate de autenticação fechado e injeta apenas credenciais sandbox do Mercado Pago. O Caddy deve encaminhar somente `POST /api/mercadopago/webhook` e `POST /webhooks/mercadopago` para o container de staging. Não exponha a porta do Rails no host, nem habilite tráfego público para as páginas antes de validar autenticação.
+Esse compose mantém o gate de autenticação fechado e injeta apenas credenciais sandbox do Mercado Pago. O Caddy encaminha `POST /api/mercadopago/webhook` ao staging; o caminho de produção é separado. Não exponha a porta do Rails no host nem habilite tráfego público para as páginas antes de validar autenticação.
 
 O compose de produção (`deploy/production/docker-compose.yml`) é separado do staging e usa outro volume persistente, credenciais e diretório de segredos. Ele mantém `AUTHENTICATION_READY=false` por padrão. O arquivo `rails.env` deve ficar em `/opt/servidor/secrets/assistente-academico-production/rails.env` com `SECRET_KEY_BASE`, `GOOGLE_CLIENT_ID` e `GOOGLE_CLIENT_SECRET` em `root:root`, modo `600`. Os quatro arquivos montados como segredos (`mercadopago_access_token`, `mercadopago_webhook_secret`, `deepseek_api_key` e `typesafe_api_key`) devem pertencer a UID/GID `1000:1000`, modo `400`, para leitura pelo usuário Rails do container; a pasta pai permanece `root:root`, modo `700`, fora do alcance dos usuários do host. Não reutilize os segredos sandbox.
 
-Para adicionar as credenciais de produção do Mercado Pago sem tocar no staging, selecione **Produção** em Suas integrações > aplicação > Credenciais e obtenha o Access Token. O segredo de assinatura fica em Webhooks > Configurar notificações, no ambiente de produção. Confira o seletor de ambiente: tokens de teste e produção podem ter prefixos semelhantes. No checkout local, execute `ruby script/configure_production_mercadopago.rb`; o script mostra os valores digitados e uma prévia, pede confirmação dupla e os envia diretamente por SSH para os arquivos de produção com modo `600`. Ele não inicia serviços, não altera o Caddy e recusa sobrescrever arquivos existentes. Não cole credenciais no chat. A URL prevista é `https://trab.sivaldodavi.com.br/webhooks/mercadopago`; não use o botão de teste do painel até o Caddy ser atualizado para encaminhar essa rota ao container de produção.
+Para adicionar credenciais de produção do Mercado Pago sem tocar no staging, selecione **Produção** em Suas integrações > aplicação > Credenciais e obtenha o Access Token. O segredo de assinatura fica em Webhooks > Configurar notificações no ambiente de produção. Confira o seletor: tokens de teste e produção podem ter prefixos semelhantes. O instalador `ruby script/configure_production_mercadopago.rb` mostra os valores digitados, pede confirmação dupla e envia somente os dois segredos por SSH; ele não inicia serviços, não altera o Caddy e recusa sobrescrever arquivos existentes. A rota `https://trab.sivaldodavi.com.br/webhooks/mercadopago` já aponta para o container de produção; a entrega nativa pelo painel ainda precisa ser confirmada. Não cole credenciais no chat.
 
-Para produção, use o callback Google `https://trab.sivaldodavi.com.br/auth/google_oauth2/callback`, credenciais OAuth/MP específicas de produção e segredos fora do Git. O segredo de assinatura do webhook de produção é distinto do sandbox. Revise os textos legais, valide login e autorização, configure backup/restore e o scheduler de reconciliação. Só então, com autorização explícita, habilite `AUTHENTICATION_READY=true` e altere o Caddy para encaminhar o tráfego ao container de produção.
+Para produção, use o callback Google `https://trab.sivaldodavi.com.br/auth/google_oauth2/callback`, credenciais OAuth/MP específicas de produção e segredos fora do Git. O container de produção está saudável com `AUTHENTICATION_READY=false`; suas páginas continuam inacessíveis. Antes de abrir o site, ainda é preciso confirmar login real e webhook nativo, revisar os textos legais e decidir a retenção dos backups automáticos. O Caddy já separa os webhooks; somente após essas validações e autorização final devem-se abrir as demais rotas e habilitar `AUTHENTICATION_READY=true`.
 
 O arquivo do banco nunca deve ser commitado. Faça backups consistentes em destino protegido, confirme permissões e teste a restauração em ambiente isolado.
 
-Pedidos Pix pendentes podem ser reconciliados com `bin/rails payments:reconcile`. A tarefa verifica pedidos sem atualização há pelo menos cinco minutos, consulta o pagamento pelo ID salvo ou pesquisa pelo identificador externo e só concede créditos após validar a resposta pelo mesmo serviço idempotente do webhook. Ausência de resultado não cancela o pedido; somente um estado terminal confirmado pelo Mercado Pago o encerra. A tarefa verifica até 100 pedidos por execução e não é agendada automaticamente: configure um scheduler confiável no host para executá-la periodicamente. Falhas do provedor ficam nos logs e fazem a tarefa terminar com erro.
+Pedidos Pix pendentes podem ser reconciliados com `bin/rails payments:reconcile`. A tarefa verifica pedidos sem atualização há pelo menos cinco minutos, consulta o pagamento pelo ID salvo ou pesquisa pelo identificador externo e só concede créditos após validar a resposta pelo mesmo serviço idempotente do webhook. Ausência de resultado não cancela o pedido; somente um estado terminal confirmado pelo Mercado Pago o encerra. A tarefa verifica até 100 pedidos por execução. O timer systemd de produção está habilitado para executá-la a cada dez minutos; falhas ficam no journal e fazem a tarefa terminar com erro.
 
-Para produção em systemd, use `deploy/production/assistente-academico-reconcile.service` e `.timer`; o timer executa a tarefa Rails a cada dez minutos no container de produção, sem criar pagamentos. Acompanhe a execução com `journalctl -u assistente-academico-reconcile.service`.
+Para produção em systemd, os arquivos `deploy/production/assistente-academico-reconcile.service` e `.timer` executam a tarefa Rails a cada dez minutos no container de produção, sem criar pagamentos. Acompanhe a execução com `journalctl -u assistente-academico-reconcile.service`.
 
-Para fazer um backup consistente de um banco SQLite já configurado, use a ferramenta `sqlite3` no host com um destino protegido fora do checkout:
+Uma cópia do banco de produção já foi criada em `/opt/servidor/backups/assistente-academico-production/` e restaurada em arquivo isolado; ambas passaram `PRAGMA integrity_check`. No VPS, `sqlite3` está disponível dentro do container, não no host. Backups automáticos ainda não foram ativados: a retenção precisa ser escolhida.
 
 ```sh
-sqlite3 /caminho/do/banco.sqlite3 ".backup '/caminho/protegido/assistente-academico.sqlite3'"
-sqlite3 /caminho/protegido/assistente-academico.sqlite3 "PRAGMA integrity_check;"
+docker exec assistente-academico-production sqlite3 /rails/storage/production.sqlite3 ".backup '/tmp/assistente-academico.sqlite3'"
+docker cp assistente-academico-production:/tmp/assistente-academico.sqlite3 /opt/servidor/backups/assistente-academico-production/
 ```
 
-O resultado esperado da verificação é `ok`. Restrinja acesso ao arquivo, defina retenção e criptografia no ambiente de hospedagem, e teste periodicamente uma restauração em ambiente isolado. Não copie o banco ativo com um `cp` comum quando o SQLite estiver em uso; não há rotina automática de backup configurada neste projeto.
+Verifique a cópia com `PRAGMA integrity_check` dentro do container e teste uma restauração em arquivo isolado. Restrinja o diretório de backups a `root` e modo `700`, os arquivos a modo `600`, defina retenção/criptografia e não copie o banco ativo com `cp` comum.
 
 ## Git e publicação
 

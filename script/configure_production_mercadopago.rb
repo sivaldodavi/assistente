@@ -88,7 +88,7 @@ module ProductionMercadoPagoSetup
     output.puts "Os valores digitados e a conferência ficarão visíveis neste terminal."
     output.puts "Não cole credenciais no chat."
     output.puts "A URL de webhook da aplicação é https://trab.sivaldodavi.com.br/webhooks/mercadopago."
-    output.puts "Não envie um teste de webhook ainda; a rota pública continua apontando para staging."
+    output.puts "Só teste o webhook depois de confirmar que o Caddy o encaminha ao container de produção."
     output.puts
 
     access_token = read_value(input, output, "Access Token de produção")
