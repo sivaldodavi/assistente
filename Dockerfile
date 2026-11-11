@@ -55,7 +55,7 @@ RUN bundle exec bootsnap precompile -j 1 app/ lib/
 RUN SECRET_KEY_BASE_DUMMY=1 \
     GOOGLE_CLIENT_ID=build-only \
     GOOGLE_CLIENT_SECRET=build-only \
-    GOOGLE_REDIRECT_URI=https://example.invalid/auth/google_oauth2/callback \
+    GOOGLE_REDIRECT_URI=https://trab.sivaldodavi.com.br/auth/google_oauth2/callback \
     ./bin/rails assets:precompile
 
 
