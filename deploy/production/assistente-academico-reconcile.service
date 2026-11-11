@@ -1,0 +1,11 @@
+[Unit]
+Description=Reconcile pending production Mercado Pago payments
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory=/opt/servidor/apps/assistente-academico
+ExecStart=/usr/bin/docker compose -f deploy/production/docker-compose.yml exec -T web bin/rails payments:reconcile
+TimeoutStartSec=300

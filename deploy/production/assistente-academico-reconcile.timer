@@ -1,0 +1,11 @@
+[Unit]
+Description=Schedule production Mercado Pago payment reconciliation
+
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=10min
+AccuracySec=1min
+Unit=assistente-academico-reconcile.service
+
+[Install]
+WantedBy=timers.target
