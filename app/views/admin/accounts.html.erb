@@ -1,0 +1,73 @@
+<% content_for :title, "Contas administrativas — Assistente Acadêmico" %>
+
+<header class="site-header">
+  <%= link_to "Assistente Acadêmico", projects_path, class: "brand" %>
+  <div class="header-actions">
+    <%= link_to "Painel", admin_dashboard_path, class: "header-link" %>
+    <%= link_to "Auditoria", admin_audit_path, class: "header-link" %>
+  </div>
+</header>
+
+<main class="page-shell admin-shell">
+  <p class="eyebrow">Administração</p>
+  <h1>Contas e créditos</h1>
+  <p class="muted">O painel exibe apenas metadados e saldos. O conteúdo privado de projetos não é disponibilizado aqui.</p>
+  <% if flash[:notice] %><p class="flash flash-notice" role="status"><%= flash[:notice] %></p><% end %>
+  <% if flash[:alert] %><p class="flash flash-alert" role="alert"><%= flash[:alert] %></p><% end %>
+
+  <%= form_with url: admin_accounts_path, method: :get, class: "admin-search" do |form| %>
+    <%= form.label :email, "Filtrar por e-mail" %>
+    <%= form.email_field :email, value: params[:email], class: "text-control" %>
+    <%= form.submit "Buscar", class: "button button-secondary" %>
+  <% end %>
+
+  <p class="field-hint"><%= @total %> contas · página <%= @page %></p>
+  <div class="admin-account-list">
+    <% @accounts.each do |account| %>
+      <article class="admin-account-card">
+        <header class="admin-account-heading">
+          <div>
+            <h2><%= account.name.presence || "Sem nome" %></h2>
+            <p><%= account.email %> <% if account.admin? %><span class="project-type">Admin</span><% end %></p>
+          </div>
+          <div class="admin-account-status"><span><%= account.plan_code.humanize %></span><span><%= account.is_blocked? ? "Bloqueada" : "Ativa" %></span></div>
+        </header>
+
+        <dl class="admin-credit-summary">
+          <div><dt>Projetos</dt><dd><%= account.project_used %> usados · <%= account.project_credits_remaining %> disponíveis</dd></div>
+          <div><dt>Avaliações JEV</dt><dd><%= account.ai_used %> usados · <%= [account.ai_limit - account.ai_used, 0].max %> disponíveis</dd></div>
+          <div><dt>DeepSeek</dt><dd><%= account.deepseek_used %> usados · <%= account.deepseek_credits_remaining %> disponíveis</dd></div>
+          <div><dt>Projetos salvos</dt><dd><%= account[:projects_count] %></dd></div>
+        </dl>
+
+        <div class="admin-account-actions">
+          <%= form_with url: admin_account_plan_path(account), method: :patch, class: "admin-inline-form" do |form| %>
+            <%= form.label :plan_code, "Pacote" %>
+            <%= form.select :plan_code, [["Sem pacote", "livre"]] + PaymentPackages::DEFINITIONS.map { |code, item| [item[:label], code] }, { selected: account.plan_code }, class: "text-control" %>
+            <%= form.submit "Salvar", class: "button button-secondary" %>
+          <% end %>
+
+          <%= form_with url: admin_account_credits_path(account), method: :patch, class: "admin-credit-form" do %>
+            <label>Projetos disponíveis<%= number_field_tag "credits[projects]", account.project_credits_remaining, min: 0, max: AdminController::MAX_MANUAL_CREDITS, class: "text-control" %></label>
+            <label>Avaliações JEV disponíveis<%= number_field_tag "credits[ai]", [account.ai_limit - account.ai_used, 0].max, min: 0, max: AdminController::MAX_MANUAL_CREDITS, class: "text-control" %></label>
+            <label>Usos DeepSeek disponíveis<%= number_field_tag "credits[deepseek]", account.deepseek_credits_remaining, min: 0, max: AdminController::MAX_MANUAL_CREDITS, class: "text-control" %></label>
+            <%= submit_tag "Atualizar saldos", class: "button button-secondary" %>
+          <% end %>
+
+          <% unless account.admin? %>
+            <%= button_to account.is_blocked? ? "Desbloquear conta" : "Bloquear conta",
+              admin_account_block_path(account),
+              method: :patch,
+              params: { blocked: account.is_blocked? ? "0" : "1" },
+              form: { data: { turbo_confirm: account.is_blocked? ? "Desbloquear esta conta?" : "Bloquear esta conta?" } },
+              class: account.is_blocked? ? "button button-secondary" : "button button-danger" %>
+          <% end %>
+        </div>
+      </article>
+    <% end %>
+  </div>
+
+  <% if @total > @page * AdminController::PAGE_SIZE %>
+    <%= link_to "Próxima página", admin_accounts_path(email: params[:email], page: @page + 1), class: "button button-secondary" %>
+  <% end %>
+</main>

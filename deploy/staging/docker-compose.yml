@@ -1,0 +1,37 @@
+services:
+  web:
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+    container_name: assistente-academico-staging
+    restart: unless-stopped
+    env_file:
+      - /opt/servidor/secrets/assistente-academico.env
+    environment:
+      DATABASE_PATH: /rails/storage/production.sqlite3
+      GOOGLE_CLIENT_ID: staging-disabled
+      GOOGLE_CLIENT_SECRET: staging-disabled
+      GOOGLE_REDIRECT_URI: https://trab.sivaldodavi.com.br/auth/google_oauth2/callback
+      MERCADOPAGO_WEBHOOK_URL: https://trab.sivaldodavi.com.br/api/mercadopago/webhook
+    volumes:
+      - assistente_academico_staging_storage:/rails/storage
+    expose:
+      - "80"
+    networks:
+      - servidor_default
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - curl -fsS -H 'X-Forwarded-Proto: https' http://127.0.0.1/up >/dev/null || exit 1
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+
+networks:
+  servidor_default:
+    external: true
+
+volumes:
+  assistente_academico_staging_storage:
+    name: assistente-academico-staging-storage

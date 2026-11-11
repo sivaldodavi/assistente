@@ -1,0 +1,13 @@
+<div class="task-row" data-task data-task-id="<%= task["id"] %>" data-task-template-key="<%= task["template_key"] %>" data-task-stage="<%= task["stage"] %>">
+  <%= hidden_field_tag "project[schedule][tasks][#{index}][id]", task["id"] %>
+  <%= hidden_field_tag "project[schedule][tasks][#{index}][template_key]", task["template_key"] %>
+  <%= hidden_field_tag "project[schedule][tasks][#{index}][stage]", task["stage"] %>
+  <%= hidden_field_tag "project[schedule][tasks][#{index}][done]", "0" %>
+  <label class="task-row-done" title="Marcar tarefa como concluída">
+    <%= check_box_tag "project[schedule][tasks][#{index}][done]", "1", task["done"] == true, data: { task_field: "done" } %>
+    <span class="visually-hidden">Concluir tarefa</span>
+  </label>
+  <%= text_field_tag "project[schedule][tasks][#{index}][title]", task["title"], maxlength: 180, placeholder: "Tarefa", class: "text-control task-row-title", data: { task_field: "title" } %>
+  <label class="task-row-date"><span class="visually-hidden">Data da tarefa</span><%= date_field_tag "project[schedule][tasks][#{index}][date]", task["date"], class: "text-control", data: { task_field: "date", schedule_field: "task_date" } %></label>
+  <button type="button" class="text-button danger-text" data-remove-task>Remover</button>
+</div>

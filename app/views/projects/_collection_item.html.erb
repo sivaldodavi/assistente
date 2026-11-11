@@ -1,0 +1,28 @@
+<% if kind == "criteria" %>
+  <fieldset class="collection-card" data-collection-item>
+    <legend>Critério</legend>
+    <%= hidden_field_tag "project[criteria][#{index}][id]", item["id"] %>
+    <label>Conceito ou princípio
+      <%= text_field_tag "project[criteria][#{index}][title]", item["title"], maxlength: 180, class: "text-control" %>
+    </label>
+    <label>Definição
+      <%= text_area_tag "project[criteria][#{index}][definition]", item["definition"], maxlength: 3000, rows: 3, class: "text-control" %>
+    </label>
+    <label>Base normativa ou ética
+      <%= text_field_tag "project[criteria][#{index}][basis]", item["basis"], maxlength: 1000, class: "text-control" %>
+    </label>
+    <button type="button" class="text-button danger-text" data-collection-remove>Remover critério</button>
+  </fieldset>
+<% else %>
+  <fieldset class="collection-card" data-collection-item>
+    <legend>Tópico</legend>
+    <%= hidden_field_tag "project[development_sections][#{index}][id]", item["id"] %>
+    <label>Título do tópico
+      <%= text_field_tag "project[development_sections][#{index}][title]", item["title"], maxlength: 240, class: "text-control" %>
+    </label>
+    <label>Fundamentação
+      <%= text_area_tag "project[development_sections][#{index}][body]", item["body"], maxlength: 30000, rows: 7, class: "text-control" %>
+    </label>
+    <button type="button" class="text-button danger-text" data-collection-remove>Remover tópico</button>
+  </fieldset>
+<% end %>

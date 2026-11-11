@@ -1,0 +1,28 @@
+<% content_for :title, "Política de Privacidade — Assistente Acadêmico" %>
+
+<header class="site-header">
+  <%= link_to "Assistente Acadêmico", root_path, class: "brand" %>
+  <div class="header-actions"><%= link_to "Termos", terms_path, class: "header-link" %><%= link_to "Entrar", login_path, class: "header-link" %></div>
+</header>
+
+<main class="page-shell narrow-shell">
+  <article class="panel public-document">
+    <p class="eyebrow">Privacidade</p>
+    <h1>Como seus dados são tratados</h1>
+    <p>Esta aplicação trata dados para autenticar sua conta e fornecer os roteiros, biblioteca, agenda, assistência acadêmica e pagamentos solicitados.</p>
+
+    <h2>Dados armazenados</h2>
+    <p>Podemos armazenar identificador, nome e e-mail da conta Google; informações de perfil; respostas, revisões, tarefas, fontes e fichamentos inseridos por você; consentimentos; uso e saldo de créditos; e identificadores e status necessários para registrar compras Pix. Não recebemos nem armazenamos dados do cartão ou da conta bancária usados no Pix.</p>
+
+    <h2>Compartilhamento necessário</h2>
+    <p>Quando você solicita assistência e autoriza a IA, o contexto acadêmico necessário é enviado ao DeepSeek para sugestões ou ao TypeSafe para a avaliação JEV. Esses serviços são independentes, e nenhum texto é enviado automaticamente sem sua solicitação. Para comprar créditos por Pix, dados mínimos do pedido e do pagador são enviados ao Mercado Pago. Consulte também as políticas desses provedores.</p>
+
+    <h2>Armazenamento e segurança</h2>
+    <p>Os dados da aplicação são associados à sua conta e isolados dos demais usuários. Sessões autenticadas usam proteção contra requisições forjadas. Registros técnicos e administrativos são usados para operar o serviço, investigar falhas e prevenir concessões duplicadas. Não inclua dados pessoais sensíveis que não sejam necessários ao seu trabalho.</p>
+
+    <h2>Seus direitos</h2>
+    <p>Você pode corrigir o perfil e excluir sua conta nas configurações. Para solicitações relacionadas aos direitos previstos na LGPD que não estejam disponíveis na interface, use o canal de atendimento informado pelo responsável pela aplicação. A exclusão no Assistente Acadêmico não apaga registros que provedores mantenham sob suas próprias políticas ou obrigações legais.</p>
+
+    <p><%= link_to "Termos de uso", terms_path %> · <%= link_to "Assistência de IA", ai_help_path %></p>
+  </article>
+</main>

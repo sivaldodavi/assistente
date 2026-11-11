@@ -1,0 +1,30 @@
+<% content_for :title, "Novo trabalho — Assistente Acadêmico" %>
+
+<main class="page-shell narrow-shell">
+  <%= link_to "← Voltar aos projetos", projects_path, class: "back-link" %>
+  <section class="panel">
+    <p class="eyebrow">Novo roteiro</p>
+    <h1>Que trabalho você vai desenvolver?</h1>
+    <p class="muted">O Paper Final é iniciado a partir de um Projeto de Paper já existente.</p>
+
+    <% if @project.errors.any? %>
+      <div class="alert" role="alert"><%= @project.errors.full_messages.to_sentence %></div>
+      <p>Você pode <%= link_to "escolher um pacote de créditos", plans_path %> para iniciar um roteiro.</p>
+    <% end %>
+
+    <%= form_with url: projects_path, scope: :project do |form| %>
+      <fieldset class="type-options">
+        <legend>Escolha o roteiro</legend>
+        <label class="type-option">
+          <%= form.radio_button :project_type, "case", checked: true %>
+          <span><strong>Case</strong><small>Relatório, debate em grupo e dissertação.</small></span>
+        </label>
+        <label class="type-option">
+          <%= form.radio_button :project_type, "paper_project" %>
+          <span><strong>Projeto de Paper</strong><small>Delimite a pesquisa e avance para o Paper Final quando estiver pronto.</small></span>
+        </label>
+      </fieldset>
+      <%= form.submit "Criar roteiro", class: "button button-primary" %>
+    <% end %>
+  </section>
+</main>

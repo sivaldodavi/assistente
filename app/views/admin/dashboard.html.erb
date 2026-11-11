@@ -1,0 +1,29 @@
+<% content_for :title, "Administração — Assistente Acadêmico" %>
+
+<header class="site-header">
+  <%= link_to "Assistente Acadêmico", projects_path, class: "brand" %>
+  <div class="header-actions">
+    <%= link_to "Contas", admin_accounts_path, class: "header-link" %>
+    <%= link_to "Auditoria", admin_audit_path, class: "header-link" %>
+    <%= link_to "Minha conta", account_settings_path, class: "header-link" %>
+  </div>
+</header>
+
+<main class="page-shell">
+  <p class="eyebrow">Administração</p>
+  <h1>Painel operacional</h1>
+  <div class="admin-summary-grid">
+    <% @summary.each do |label, value| %>
+      <article class="admin-summary-card">
+        <span><%= { accounts: "Contas", projects: "Projetos", pending_payments: "Pagamentos pendentes", ai_requests: "Usos de IA" }.fetch(label) %></span>
+        <strong><%= value %></strong>
+      </article>
+    <% end %>
+  </div>
+  <nav class="admin-links" aria-label="Ferramentas administrativas">
+    <%= link_to "Gerenciar contas e créditos", admin_accounts_path, class: "button button-primary" %>
+    <%= link_to "Auditoria", admin_audit_path, class: "button button-secondary" %>
+    <%= link_to "Uso agregado (JSON)", admin_usage_path, class: "button button-secondary" %>
+    <%= link_to "Saúde do banco (JSON)", admin_health_path, class: "button button-secondary" %>
+  </nav>
+</main>

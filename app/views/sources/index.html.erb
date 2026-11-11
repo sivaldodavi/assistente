@@ -1,0 +1,81 @@
+<% content_for :title, "Biblioteca Pessoal — Assistente Acadêmico" %>
+
+<header class="site-header">
+  <%= link_to "Assistente Acadêmico", projects_path, class: "brand" %>
+  <div class="header-actions">
+    <%= link_to "Minha conta", account_settings_path, class: "header-link" %>
+    <%= link_to "Voltar aos projetos", projects_path, class: "header-link" %>
+  </div>
+</header>
+
+<main class="page-shell narrow-shell">
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow">Suas referências</p>
+      <h1>Biblioteca Pessoal</h1>
+    </div>
+  </div>
+
+  <section class="panel library-form-panel">
+    <h2><%= @source.persisted? ? "Editar fonte" : "Adicionar fonte" %></h2>
+    <% if @source.errors.any? %>
+      <div class="alert" role="alert"><%= @source.errors.full_messages.to_sentence %></div>
+    <% end %>
+    <%= form_with model: @source, url: @source.persisted? ? source_path(@source) : sources_path, method: @source.persisted? ? :patch : :post do |form| %>
+      <div class="field-grid library-field-grid">
+        <div class="field">
+          <%= form.label :title, "Título" %>
+          <%= form.text_field :title, required: true, maxlength: 240, class: "text-control" %>
+        </div>
+        <div class="field">
+          <%= form.label :author, "Autor ou entidade" %>
+          <%= form.text_field :author, maxlength: 240, class: "text-control" %>
+        </div>
+        <div class="field">
+          <%= form.label :kind, "Tipo" %>
+          <%= form.select :kind, SourcesController::SOURCE_KIND_LABELS.map { |value, label| [label, value] }, {}, class: "text-control" %>
+        </div>
+        <div class="field">
+          <%= form.label :reference, "Referência bibliográfica" %>
+          <%= form.text_field :reference, maxlength: 500, class: "text-control" %>
+        </div>
+        <div class="field library-notes">
+          <%= form.label :notes, "Fichamento pessoal" %>
+          <%= form.text_area :notes, maxlength: Source::MAX_NOTES_LENGTH, rows: 5, class: "text-control" %>
+        </div>
+      </div>
+      <div class="editor-actions">
+        <% if @source.persisted? %><%= link_to "Cancelar", library_path, class: "text-button" %><% else %><span></span><% end %>
+        <%= form.submit @source.persisted? ? "Salvar fonte" : "Adicionar à biblioteca", class: "button button-primary" %>
+      </div>
+    <% end %>
+  </section>
+
+  <section class="library-list" aria-labelledby="library-title">
+    <div class="section-heading">
+      <h2 id="library-title">Minhas fontes</h2>
+      <span class="muted"><%= @sources.length %></span>
+    </div>
+    <% if @sources.any? %>
+      <div class="library-grid">
+        <% @sources.each do |source| %>
+          <article class="library-card">
+            <div class="library-card-heading">
+              <span class="project-type"><%= SourcesController::SOURCE_KIND_LABELS.fetch(source.kind) %></span>
+              <div class="library-card-actions">
+                <%= link_to "Editar", edit_source_path(source), class: "text-button" %>
+                <%= button_to "Remover", delete_source_path(source), method: :post, form: { data: { turbo_confirm: "Remover esta fonte da sua biblioteca?" } }, class: "text-button danger-text" %>
+              </div>
+            </div>
+            <h3><%= source.title %></h3>
+            <% if source.author.present? %><p><%= source.author %></p><% end %>
+            <% if source.reference.present? %><p class="library-reference"><%= source.reference %></p><% end %>
+            <% if source.notes.present? %><details><summary>Fichamento</summary><p><%= source.notes %></p></details><% end %>
+          </article>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="empty-state"><p>Sua Biblioteca Pessoal ainda está vazia. Adicione referências para vinculá-las aos projetos.</p></div>
+    <% end %>
+  </section>
+</main>

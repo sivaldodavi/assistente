@@ -1,0 +1,18 @@
+<% entries = Array(items) %>
+<section class="collection-section">
+  <div class="section-heading">
+    <div>
+      <h3><%= title %></h3>
+      <% if kind == "criteria" %><p class="field-hint">Registre os conceitos técnicos e princípios usados nas teses.</p><% end %>
+    </div>
+    <button type="button" class="button button-secondary" data-collection-add>Adicionar <%= kind == "criteria" ? "critério" : "tópico" %></button>
+  </div>
+  <div class="collection-list" data-collection-list data-collection-kind="<%= kind %>" data-collection-limit="<%= kind == "criteria" ? 40 : 20 %>" data-next-index="<%= entries.length %>">
+    <% entries.each_with_index do |item, index| %>
+      <%= render "collection_item", kind:, item:, index: %>
+    <% end %>
+  </div>
+  <template data-collection-template>
+    <%= render "collection_item", kind:, item: {}, index: "INDEX_PLACEHOLDER" %>
+  </template>
+</section>

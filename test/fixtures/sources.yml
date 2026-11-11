@@ -1,0 +1,8 @@
+one:
+  public_id: 00000000-0000-4000-8000-000000000001
+  account: one
+  title: Fixture source
+  author: Fixture author
+  kind: book
+  reference: Fixture reference
+  notes: Fixture note

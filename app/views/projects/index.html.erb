@@ -1,0 +1,83 @@
+<% content_for :title, "Assistente Acadêmico" %>
+
+<header class="site-header">
+  <%= link_to "Assistente Acadêmico", projects_path, class: "brand" %>
+  <% if current_account %>
+    <div class="header-actions">
+      <%= link_to "Biblioteca Pessoal", library_path, class: "header-link" %>
+      <%= link_to "Pacotes", plans_path, class: "header-link" %>
+      <% if current_account.admin? %><%= link_to "Administração", admin_dashboard_path, class: "header-link" %><% end %>
+      <%= link_to "Minha conta", account_settings_path, class: "header-link" %>
+      <%= button_to "Sair", logout_path, method: :delete, class: "text-button" %>
+    </div>
+  <% else %>
+    <%= link_to "Entrar", login_path, class: "button button-primary" %>
+  <% end %>
+</header>
+
+<main class="page-shell">
+  <section class="hero">
+    <p class="eyebrow">Planejamento acadêmico, etapa por etapa</p>
+    <h1>Transforme uma ideia em um trabalho bem estruturado.</h1>
+    <p>Preencha o roteiro no seu ritmo. Seus projetos e referências ficam associados à sua conta.</p>
+    <% if current_account %>
+      <%= link_to "Começar um trabalho", new_project_path, class: "button button-primary" %>
+      <p class="field-hint"><%= current_account.project_credits_remaining %> créditos de projeto disponíveis · <%= link_to "Ver pacotes", plans_path %></p>
+    <% else %>
+      <%= link_to "Entrar para começar", login_path, class: "button button-primary" %>
+    <% end %>
+  </section>
+
+  <% if @upcoming_schedule["has_entries"] %>
+    <section class="agenda-panel" aria-labelledby="agenda-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Agenda</p>
+          <h2 id="agenda-title">Próximas datas</h2>
+        </div>
+      </div>
+      <ol class="agenda-list">
+        <% @upcoming_schedule["entries"].each do |entry| %>
+          <li class="agenda-item <%= "is-overdue" if entry["overdue"] %>">
+            <time datetime="<%= entry["date"] %>"><%= entry["date_label"] %></time>
+            <div class="agenda-item-content">
+              <strong><%= entry["label"] %></strong>
+              <span><%= entry["title"] %></span>
+            </div>
+            <% if entry["overdue"] %>
+              <span class="agenda-status">Atrasada</span>
+            <% end %>
+            <%= link_to "Abrir", project_path(entry["project_id"]), class: "agenda-link" %>
+          </li>
+        <% end %>
+      </ol>
+    </section>
+  <% end %>
+
+  <section class="project-list" aria-labelledby="projects-title">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Seu espaço de trabalho</p>
+        <h2 id="projects-title">Projetos</h2>
+      </div>
+    </div>
+
+    <% if @projects.any? %>
+      <div class="project-grid">
+        <% @projects.each do |project| %>
+          <%= link_to project_path(project, stage: project.current_stage), class: "project-card" do %>
+            <span class="project-type"><%= project.project_type == "case" ? "Case" : project.project_type == "paper_final" ? "Paper Final" : "Projeto de Paper" %></span>
+            <h3><%= project.title %></h3>
+            <p><%= project.progress["done"] %> de <%= project.progress["total"] %> campos obrigatórios nesta etapa</p>
+            <span class="card-action">Continuar <span aria-hidden="true">→</span></span>
+          <% end %>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="empty-state">
+        <h3>Nenhum projeto por aqui ainda</h3>
+        <p>Comece por um Case ou por um Projeto de Paper.</p>
+      </div>
+    <% end %>
+  </section>
+</main>

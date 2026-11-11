@@ -1,0 +1,49 @@
+<% content_for :title, "Pacotes e créditos — Assistente Acadêmico" %>
+
+<header class="site-header">
+  <%= link_to "Assistente Acadêmico", root_path, class: "brand" %>
+  <div class="header-actions">
+    <% if current_account %>
+      <%= link_to "Meus projetos", projects_path, class: "header-link" %>
+      <%= link_to "Minha conta", account_settings_path, class: "header-link" %>
+    <% else %>
+      <%= link_to "Entrar", login_path, class: "header-link" %>
+    <% end %>
+  </div>
+</header>
+
+<main class="page-shell">
+  <section class="hero">
+    <p class="eyebrow">Pacotes de créditos</p>
+    <h1>Escolha o pacote para seu trabalho.</h1>
+    <p>Pagamento único por Pix. Os créditos são liberados após a confirmação do Mercado Pago.</p>
+  </section>
+
+  <% if current_account %>
+    <p class="field-hint">Créditos disponíveis: <%= current_account.project_credits_remaining %> projetos, <%= [current_account.ai_limit - current_account.ai_used, 0].max %> avaliações JEV e <%= current_account.deepseek_credits_remaining %> usos DeepSeek.</p>
+  <% end %>
+  <section class="package-grid" aria-label="Pacotes disponíveis">
+    <% @packages.each do |code, package| %>
+      <article class="package-card"<% if current_account %> data-package-card="<%= code %>"<% end %>>
+        <p class="eyebrow"><%= package[:label] %></p>
+        <h2><%= number_to_currency(package[:price_cents] / 100.0, unit: "R$ ", separator: ",", delimiter: ".") %></h2>
+        <ul>
+          <li><%= package[:project_credits] %> projetos</li>
+          <li><%= package[:ai_credits] %> avaliações JEV</li>
+          <li><%= package[:deepseek_credits] %> usos DeepSeek</li>
+        </ul>
+        <% if current_account %>
+          <label>Quantidade
+            <%= select_tag "quantity_#{code}", options_for_select((1..PaymentPackages::MAX_QUANTITY).map { |number| [number, number] }, 1), class: "text-control", data: { package_quantity: true } %>
+          </label>
+          <button class="button button-primary" type="button" data-buy-package="<%= code %>">Gerar Pix</button>
+          <p class="field-hint" data-payment-status role="status" aria-live="polite"></p>
+          <div class="payment-result" data-payment-result aria-live="polite"></div>
+        <% else %>
+          <%= link_to "Entrar para comprar", login_path, class: "button button-primary" %>
+        <% end %>
+      </article>
+    <% end %>
+  </section>
+  <p class="field-hint">Ao continuar, você confirma que leu os <%= link_to "termos de uso", terms_path %> e a <%= link_to "política de privacidade", privacy_path %>. Saiba também <%= link_to "como funciona a IA", ai_help_path %>.</p>
+</main>

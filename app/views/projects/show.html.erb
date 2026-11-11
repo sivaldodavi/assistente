@@ -1,0 +1,258 @@
+<% content_for :title, "#{@project.title} — Assistente Acadêmico" %>
+
+<header class="site-header">
+  <%= link_to "Assistente Acadêmico", projects_path, class: "brand" %>
+  <div class="header-actions">
+    <%= link_to "Biblioteca Pessoal", library_path, class: "header-link" %>
+    <%= link_to "Pacotes", plans_path, class: "header-link" %>
+    <% if current_account.admin? %><%= link_to "Administração", admin_dashboard_path, class: "header-link" %><% end %>
+    <%= link_to "Minha conta", account_settings_path, class: "header-link" %>
+    <%= link_to "Todos os projetos", projects_path, class: "header-link" %>
+    <%= button_to "Sair", logout_path, method: :delete, class: "text-button" %>
+  </div>
+</header>
+
+<main class="page-shell editor-shell">
+  <div class="editor-heading">
+    <div>
+      <p class="eyebrow"><%= @project.project_type == "case" ? "Roteiro de Case" : @project.project_type == "paper_final" ? "Paper Final" : "Projeto de Paper" %></p>
+      <h1><%= @project.title %></h1>
+    </div>
+    <div class="progress-chip" aria-label="Progresso dos campos obrigatórios nesta fase">
+      <strong><%= @progress["percent"] %>%</strong>
+      <span><%= @progress["done"] %>/<%= @progress["total"] %> campos</span>
+    </div>
+  </div>
+
+  <div class="phase-label"><%= @stage["phase"].humanize %> · Etapa <%= @stage_index + 1 %> de <%= @stages.length %></div>
+
+  <%= form_with model: @project, url: project_path(@project), method: :patch, id: "project-editor", class: "editor-form" do %>
+    <%= hidden_field_tag "project[lock_version]", @project.lock_version %>
+    <%= hidden_field_tag "project[current_stage]", @stage["id"] %>
+
+    <% schedule_dates = @project.schedule.except("tasks").values.count(&:present?) + @project.schedule.fetch("tasks", []).count { |task| task["date"].present? } %>
+    <% schedule_date_summary = schedule_dates.zero? ? "sem datas definidas" : "#{schedule_dates} #{schedule_dates == 1 ? "data definida" : "datas definidas"}" %>
+    <section class="planning-launcher" data-schedule-editor data-project-type="<%= @project.project_type %>" data-schedule-templates="<%= json_escape(AcademicSchedule.templates(@project.project_type).to_json) %>">
+      <button class="planning-launcher-button" type="button" data-planning-open aria-haspopup="dialog" aria-controls="project-planning">
+        <span>Planejar este trabalho</span>
+        <span class="disclosure-meta" data-schedule-meta><%= @schedule_summary["task_done"] %>/<%= @schedule_summary["task_total"] %> tarefas · <%= schedule_date_summary %></span>
+        <span class="planning-launcher-icon" aria-hidden="true">+</span>
+      </button>
+      <dialog class="planning-dialog" id="project-planning" aria-labelledby="project-planning-title" data-planning-dialog>
+        <header class="planning-dialog-header">
+          <div><h2 id="project-planning-title">Planejar este trabalho</h2><p>Organize as datas de entrega e suas tarefas.</p></div>
+          <button class="text-button" type="button" data-planning-close aria-label="Fechar planejamento">&times;</button>
+        </header>
+        <div class="planning-dialog-body">
+          <div class="schedule-deadlines">
+            <% if @project.project_type == "case" %>
+              <label>Entrega do relatório<%= date_field_tag "project[schedule][report_date]", @project.schedule["report_date"], class: "text-control", data: { schedule_field: "report_date" } %></label>
+              <label>Debate<%= date_field_tag "project[schedule][debate_date]", @project.schedule["debate_date"], class: "text-control", data: { schedule_field: "debate_date" } %></label>
+              <label>Dissertação<%= date_field_tag "project[schedule][dissertation_date]", @project.schedule["dissertation_date"], class: "text-control", data: { schedule_field: "dissertation_date" } %></label>
+            <% else %>
+              <label>Entrega do Projeto de Paper<%= date_field_tag "project[schedule][report_date]", @project.schedule["report_date"], class: "text-control", data: { schedule_field: "report_date" } %></label>
+              <label>Entrega do Paper Final<%= date_field_tag "project[schedule][final_date]", @project.schedule["final_date"], class: "text-control", data: { schedule_field: "final_date" } %></label>
+            <% end %>
+          </div>
+          <div class="schedule-actions">
+            <button type="button" class="button button-secondary" data-add-suggested-tasks>Usar roteiro sugerido</button>
+            <button type="button" class="button button-secondary" data-add-task>Adicionar tarefa</button>
+            <span class="field-hint" data-schedule-status role="status" aria-live="polite"></span>
+          </div>
+          <div class="schedule-list" data-task-list data-next-index="<%= @project.schedule["tasks"].length %>">
+            <% @project.schedule["tasks"].each_with_index do |task, index| %>
+              <%= render "schedule_task", task:, index: %>
+            <% end %>
+            <% if @project.schedule["tasks"].empty? %>
+              <p class="field-hint" data-empty-task-list>Ainda não há tarefas. Use o roteiro sugerido ou adicione uma tarefa própria.</p>
+            <% end %>
+          </div>
+          <template data-task-template><%= render "schedule_task", task: {}, index: "INDEX_PLACEHOLDER" %></template>
+        </div>
+        <footer class="planning-dialog-footer">
+          <p class="field-hint">Feche o planejamento e salve o roteiro para registrar as alterações.</p>
+          <button class="button button-secondary" type="button" data-planning-close>Fechar</button>
+        </footer>
+      </dialog>
+    </section>
+
+    <nav class="step-nav" aria-label="Etapas do roteiro">
+      <% @stages.each_with_index do |stage, index| %>
+        <%= button_tag "#{format('%02d', index + 1)} · #{stage['title']}",
+          type: "submit",
+          name: "go_to_stage",
+          value: stage["id"],
+          class: ["step-nav-item", ("is-current" if stage["id"] == @stage["id"])].compact.join(" "),
+          aria: { current: stage["id"] == @stage["id"] ? "step" : nil } %>
+      <% end %>
+    </nav>
+
+    <section class="stage-card" aria-labelledby="stage-title">
+      <p class="eyebrow"><%= @stage["phase"].humanize %> · Etapa <%= format("%02d", @stage_index + 1) %></p>
+      <h2 id="stage-title"><%= @stage["title"] %></h2>
+      <p class="stage-intro"><%= @stage["intro"] %></p>
+
+      <div class="field-grid">
+        <% @stage.fetch("fields", []).each do |field| %>
+          <% if @stage["custom"] == "dissertation" && field["id"] == "dissertation_conclusion" %>
+            <%= render "collection", kind: "development_sections", items: @project.development_sections, title: "Desenvolvimento e fundamentação" %>
+          <% end %>
+          <div class="field" data-row="<%= field["row"] %>">
+            <div class="field-label-row">
+              <%= label_tag "project_fields_#{field["id"]}", field["label"] %>
+              <% if field["required"] %><span class="required-label">Obrigatório</span><% end %>
+            </div>
+            <% name = "project[fields][#{field["id"]}]" %>
+            <% value = @project.fields[field["id"]] %>
+            <% if field["type"] == "textarea" %>
+              <%= text_area_tag name, value, id: "project_fields_#{field["id"]}", rows: field["size"] == "large" ? 8 : 4, maxlength: field["limit"], placeholder: field["placeholder"], class: "text-control", aria: { required: field["required"] } %>
+            <% elsif field["type"] == "select" %>
+              <% options = field.fetch("options", []).map { |option_value, label| [label, option_value] } %>
+              <%= select_tag name, options_for_select(options, value), id: "project_fields_#{field["id"]}", class: "text-control", aria: { required: field["required"] } %>
+            <% else %>
+              <%= text_field_tag name, value, id: "project_fields_#{field["id"]}", maxlength: field["limit"], placeholder: field["placeholder"], class: "text-control", aria: { required: field["required"] } %>
+            <% end %>
+            <% if field["hint"].present? %><p class="field-hint"><%= field["hint"] %></p><% end %>
+          </div>
+        <% end %>
+      </div>
+
+      <% case @stage["custom"] %>
+      <% when "criteria" %>
+        <%= render "collection", kind: "criteria", items: @project.criteria, title: "Critérios e valores" %>
+      <% when "development" %>
+        <%= render "collection", kind: "development_sections", items: @project.development_sections, title: "Tópicos do desenvolvimento" %>
+      <% when "sources" %>
+        <fieldset class="source-picker">
+          <legend>Fontes da Biblioteca Pessoal</legend>
+          <p class="field-hint">Selecione as referências usadas neste trabalho. Seus fichamentos permanecem privados na biblioteca.</p>
+          <%= hidden_field_tag "project[source_ids][]", "" %>
+          <% if @sources.any? %>
+            <div class="source-picker-list">
+              <% @sources.each do |source| %>
+                <label class="check-row source-picker-item">
+                  <%= check_box_tag "project[source_ids][]", source.public_id, @project.source_ids.include?(source.public_id) %>
+                  <span><strong><%= source.title %></strong><% if source.author.present? %><small><%= source.author %></small><% end %></span>
+                </label>
+              <% end %>
+            </div>
+          <% else %>
+            <p class="muted">Sua biblioteca está vazia. <%= link_to "Adicionar uma fonte", library_path %>.</p>
+          <% end %>
+        </fieldset>
+      <% when "review" %>
+        <section class="review-card" aria-label="Resumo da revisão">
+          <div class="review-score"><strong><%= @review_summary["percent"] %>%</strong><span><%= @review_summary["done"] %> de <%= @review_summary["total"] %> conferências</span></div>
+          <% if @review_summary["groups"].any? %>
+            <% @review_summary["groups"].each do |group| %>
+              <details class="review-group" <%= "open" if group["done"] == group["total"] %>>
+                <summary><span><%= group["title"] %></span><span><%= group["done"] %>/<%= group["total"] %></span></summary>
+                <ul>
+                  <% group["items"].each do |item| %>
+                    <li class="<%= item["done"] ? "is-done" : "is-pending" %>"><%= item["done"] ? "✓" : "○" %> <%= item["label"] %></li>
+                  <% end %>
+                </ul>
+              </details>
+            <% end %>
+          <% else %>
+            <p class="muted">Não há conferências automáticas nesta fase.</p>
+          <% end %>
+          <% if @project.delivered?(@stage) %>
+            <p class="success-note">Entrega registrada.</p>
+          <% else %>
+            <%= button_tag "Registrar entrega", type: "submit", name: "mark_delivered", value: "1", class: "button button-secondary" %>
+          <% end %>
+          <% if @project.project_type == "paper_project" && @stage["id"] == "review_paper" %>
+            <%= button_tag "Avançar para Paper Final", type: "submit", formaction: paper_mode_project_path(@project), class: "button button-primary" %>
+          <% end %>
+        </section>
+      <% end %>
+
+      <% if @stage.fetch("checks", []).any? %>
+        <fieldset class="checklist">
+          <legend>Conferência da etapa</legend>
+          <% @stage["checks"].each do |key, label| %>
+            <label class="check-row">
+              <%= hidden_field_tag "project[checks][#{key}]", "0" %>
+              <%= check_box_tag "project[checks][#{key}]", "1", @project.checks[key] == true %>
+              <span><%= label %></span>
+            </label>
+          <% end %>
+        </fieldset>
+      <% end %>
+
+      <section class="assist-panel" data-ai-panel data-project-revision="<%= @project.lock_version %>" data-action-url="<%= "/projects/#{@project.id}/ai/action" %>" data-jev-report-url="<%= "/projects/#{@project.id}/ai/jev-report" %>" data-jev-section-url="<%= "/projects/#{@project.id}/ai/jev-section" %>">
+        <p class="eyebrow">Apoio acadêmico</p>
+        <h3>Assistência com IA</h3>
+        <p class="field-hint">A IA usa as respostas salvas. Salve o roteiro antes de analisar. As sugestões só entram no campo quando você escolher usá-las.</p>
+        <label class="assist-message-label" for="ai-assist-message">O que você quer analisar?</label>
+        <textarea class="text-control" id="ai-assist-message" rows="3" maxlength="6000" data-ai-message placeholder="Descreva sua dúvida sobre esta etapa."></textarea>
+        <div class="assist-actions">
+          <button class="button button-secondary" type="button" data-ai-action="proposal_chat">Conversar sobre esta etapa</button>
+          <button class="button button-secondary" type="button" data-ai-action="suggest_problem">Revisar problema</button>
+          <button class="button button-secondary" type="button" data-ai-action="suggest_theses">Analisar teses/hipótese</button>
+        </div>
+        <p class="field-hint" data-ai-status role="status" aria-live="polite"></p>
+        <div class="assist-response" data-ai-response aria-live="polite"></div>
+
+        <% if @project.project_type == "case" %>
+          <div class="jev-tools">
+            <h4>Avaliação formativa JEV</h4>
+            <p class="field-hint">A avaliação usa uma rubrica própria e não representa nota oficial nem substitui a revisão docente.</p>
+            <div class="assist-actions">
+              <label class="jev-section-picker">Etapa para avaliar
+                <%= select_tag "jev_section", options_for_select([
+                  ["Descrição do caso", "case_description"],
+                  ["Decisões possíveis", "case_decisions"],
+                  ["Argumentação da tese A", "thesis_a"],
+                  ["Argumentação da tese B", "thesis_b"],
+                  ["Critérios e valores", "criteria_and_values"]
+                ]), class: "text-control", data: { jev_section_select: true } %>
+              </label>
+              <button class="button button-secondary" type="button" data-jev-section-action>Avaliar etapa</button>
+              <button class="button button-secondary" type="button" data-jev-report>Avaliar relatório</button>
+            </div>
+            <p class="field-hint" data-jev-status role="status" aria-live="polite"></p>
+            <div class="jev-response" data-jev-response aria-live="polite"></div>
+          </div>
+        <% end %>
+      </section>
+
+      <div class="editor-actions">
+        <% if @previous_stage %>
+          <%= button_tag "← Etapa anterior", type: "submit", name: "go_to_stage", value: @previous_stage["id"], class: "button button-secondary" %>
+        <% else %>
+          <span></span>
+        <% end %>
+        <% if @next_stage %>
+          <%= button_tag "Salvar e continuar →", type: "submit", name: "go_to_stage", value: @next_stage["id"], class: "button button-primary" %>
+        <% else %>
+          <%= button_tag "Salvar alterações", type: "submit", class: "button button-primary" %>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
+
+  <section class="export-panel" aria-labelledby="export-title">
+    <div>
+      <p class="eyebrow">Documento acadêmico</p>
+      <h2 id="export-title">Prévia e exportação</h2>
+      <p class="field-hint">A exportação usa as respostas salvas. Salve as alterações antes de gerar o documento.</p>
+    </div>
+    <div class="export-links">
+      <% if @project.project_type == "case" %>
+        <%= link_to "Prévia do relatório", export_project_path(@project, format: :html, phase: :report), target: "_blank", rel: "noopener", class: "button button-secondary" %>
+        <%= link_to "Prévia do debate", export_project_path(@project, format: :html, phase: :debate), target: "_blank", rel: "noopener", class: "button button-secondary" %>
+        <%= link_to "Prévia da dissertação", export_project_path(@project, format: :html, phase: :dissertation), target: "_blank", rel: "noopener", class: "button button-secondary" %>
+        <%= link_to "Baixar PDF do relatório", export_project_path(@project, format: :pdf, phase: :report), class: "button button-primary" %>
+      <% else %>
+        <%= link_to "Prévia HTML", export_project_path(@project, format: :html), target: "_blank", rel: "noopener", class: "button button-secondary" %>
+        <%= link_to "Baixar PDF", export_project_path(@project, format: :pdf), class: "button button-primary" %>
+      <% end %>
+    </div>
+  </section>
+
+  <div class="danger-zone">
+    <%= button_to "Excluir este projeto", project_path(@project), method: :delete, form: { data: { turbo_confirm: "Excluir este projeto e suas revisões?" } }, class: "text-button danger-text" %>
+  </div>
+</main>

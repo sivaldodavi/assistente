@@ -1,0 +1,27 @@
+<% content_for :title, "Auditoria administrativa — Assistente Acadêmico" %>
+
+<header class="site-header">
+  <%= link_to "Assistente Acadêmico", projects_path, class: "brand" %>
+  <div class="header-actions">
+    <%= link_to "Painel", admin_dashboard_path, class: "header-link" %>
+    <%= link_to "Contas", admin_accounts_path, class: "header-link" %>
+  </div>
+</header>
+
+<main class="page-shell admin-shell">
+  <p class="eyebrow">Administração</p>
+  <h1>Auditoria</h1>
+  <p class="muted">Últimas <%= @events.length %> alterações administrativas.</p>
+  <div class="admin-audit-list">
+    <% @events.each do |event| %>
+      <article class="admin-audit-item">
+        <time datetime="<%= event.created_at.iso8601 %>"><%= l(event.created_at, format: :long) %></time>
+        <strong><%= event.action.humanize %></strong>
+        <span>Operador: <%= event.actor_account&.email || "conta removida" %></span>
+        <span>Conta: <%= event.target_account&.email || "conta removida" %></span>
+        <pre><%= JSON.pretty_generate(event.details) %></pre>
+      </article>
+    <% end %>
+    <% if @events.empty? %><p class="muted">Ainda não há alterações administrativas registradas.</p><% end %>
+  </div>
+</main>

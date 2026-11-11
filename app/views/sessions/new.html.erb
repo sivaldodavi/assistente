@@ -1,0 +1,27 @@
+<% content_for :title, "Entrar — Assistente Acadêmico" %>
+
+<main class="page-shell narrow-shell">
+  <section class="panel">
+    <p class="eyebrow">Acesse seu espaço de trabalho</p>
+    <h1>Entrar no Assistente Acadêmico</h1>
+    <p class="muted">Entre com sua conta Google para acessar seus projetos e sua Biblioteca Pessoal.</p>
+    <% if google_oauth_configured? %>
+      <%= button_to "Continuar com Google", "/auth/google_oauth2", method: :post, class: "button button-primary" %>
+    <% else %>
+      <p class="muted">O login Google ainda não está configurado neste ambiente.</p>
+    <% end %>
+
+    <% if Rails.env.development? || Rails.env.test? %>
+      <details class="dev-login">
+        <summary>Acesso local para desenvolvimento</summary>
+        <%= form_with url: dev_login_path, method: :post do |form| %>
+          <%= form.label :email, "E-mail de teste" %>
+          <%= form.email_field :email, value: "dev@example.test", required: true, class: "text-control" %>
+          <%= form.label :name, "Nome" %>
+          <%= form.text_field :name, value: "Conta de desenvolvimento", required: true, class: "text-control" %>
+          <%= form.submit "Entrar localmente", class: "button button-secondary" %>
+        <% end %>
+      </details>
+    <% end %>
+  </section>
+</main>
