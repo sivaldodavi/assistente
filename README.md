@@ -74,7 +74,9 @@ O SQLite de desenvolvimento fica em `storage/development.sqlite3`; testes usam `
 
 Esse compose mantém o gate de autenticação fechado e injeta apenas credenciais sandbox do Mercado Pago. O Caddy deve encaminhar somente `POST /api/mercadopago/webhook` e `POST /webhooks/mercadopago` para o container de staging. Não exponha a porta do Rails no host, nem habilite tráfego público para as páginas antes de validar autenticação.
 
-Para produção, use o callback Google `https://trab.sivaldodavi.com.br/auth/google_oauth2/callback`, credenciais OAuth/MP específicas de produção e segredos fora do Git. O segredo de assinatura do webhook de produção é distinto do sandbox. Revise os textos legais, valide login e autorização, configure backup/restore e só então habilite `AUTHENTICATION_READY=true` e amplie as rotas do Caddy.
+O compose de produção (`deploy/production/docker-compose.yml`) é separado do staging e usa outro volume persistente, credenciais e diretório de segredos. Ele mantém `AUTHENTICATION_READY=false` por padrão. O arquivo `rails.env` deve ficar em `/opt/servidor/secrets/assistente-academico-production/rails.env` com `SECRET_KEY_BASE`, `GOOGLE_CLIENT_ID` e `GOOGLE_CLIENT_SECRET`; o mesmo diretório recebe os arquivos `mercadopago_access_token`, `mercadopago_webhook_secret`, `deepseek_api_key` e `typesafe_api_key`. Restrinja todos a `root` e modo `600`; não reutilize os segredos sandbox. O compose ainda não foi iniciado porque faltam as credenciais de produção do Mercado Pago.
+
+Para produção, use o callback Google `https://trab.sivaldodavi.com.br/auth/google_oauth2/callback`, credenciais OAuth/MP específicas de produção e segredos fora do Git. O segredo de assinatura do webhook de produção é distinto do sandbox. Revise os textos legais, valide login e autorização, configure backup/restore e o scheduler de reconciliação. Só então, com autorização explícita, habilite `AUTHENTICATION_READY=true` e altere o Caddy para encaminhar o tráfego ao container de produção.
 
 O arquivo do banco nunca deve ser commitado. Faça backups consistentes em destino protegido, confirme permissões e teste a restauração em ambiente isolado.
 

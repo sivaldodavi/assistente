@@ -1,0 +1,53 @@
+services:
+  web:
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+    container_name: assistente-academico-production
+    restart: unless-stopped
+    env_file:
+      - ${ASSISTENTE_ACADEMICO_SECRET_DIR:-/opt/servidor/secrets/assistente-academico-production}/rails.env
+    environment:
+      AUTHENTICATION_READY: "${AUTHENTICATION_READY:-false}"
+      DATABASE_PATH: /rails/storage/production.sqlite3
+      GOOGLE_REDIRECT_URI: https://trab.sivaldodavi.com.br/auth/google_oauth2/callback
+      MERCADOPAGO_WEBHOOK_URL: https://trab.sivaldodavi.com.br/webhooks/mercadopago
+      MERCADOPAGO_ACCESS_TOKEN_FILE: /run/secrets/mercadopago_access_token
+      MERCADOPAGO_WEBHOOK_SECRET_FILE: /run/secrets/mercadopago_webhook_secret
+      DEEPSEEK_API_KEY_FILE: /run/secrets/deepseek_api_key
+      TYPESAFE_API_KEY_FILE: /run/secrets/typesafe_api_key
+    volumes:
+      - assistente_academico_production_storage:/rails/storage
+    expose:
+      - "80"
+    networks:
+      - servidor_default
+    secrets:
+      - mercadopago_access_token
+      - mercadopago_webhook_secret
+      - deepseek_api_key
+      - typesafe_api_key
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS -H 'Host: trab.sivaldodavi.com.br' -H 'X-Forwarded-Proto: https' http://127.0.0.1/up >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+
+networks:
+  servidor_default:
+    external: true
+
+volumes:
+  assistente_academico_production_storage:
+    name: assistente-academico-production-storage
+
+secrets:
+  mercadopago_access_token:
+    file: ${ASSISTENTE_ACADEMICO_SECRET_DIR:-/opt/servidor/secrets/assistente-academico-production}/mercadopago_access_token
+  mercadopago_webhook_secret:
+    file: ${ASSISTENTE_ACADEMICO_SECRET_DIR:-/opt/servidor/secrets/assistente-academico-production}/mercadopago_webhook_secret
+  deepseek_api_key:
+    file: ${ASSISTENTE_ACADEMICO_SECRET_DIR:-/opt/servidor/secrets/assistente-academico-production}/deepseek_api_key
+  typesafe_api_key:
+    file: ${ASSISTENTE_ACADEMICO_SECRET_DIR:-/opt/servidor/secrets/assistente-academico-production}/typesafe_api_key
