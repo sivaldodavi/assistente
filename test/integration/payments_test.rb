@@ -59,6 +59,31 @@ class PaymentsTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "Mercado Pago gateway searches payments by the saved external reference" do
+    api = Object.new
+    api.define_singleton_method(:search) do |filters:, request_options:|
+      @filters = filters
+      @request_options = request_options
+      Struct.new(:body) do
+        def [](key)
+          key == :response ? body : nil
+        end
+
+        def raise_for_status!
+          true
+        end
+      end.new({ "results" => [ { "id" => "mp-payment-1" } ] })
+    end
+    sdk = Struct.new(:payment).new(api)
+
+    payments = MercadoPagoGateway.new(access_token: "test-token", sdk:).search_payments(
+      external_reference: "order-reference"
+    )
+
+    assert_equal [ { "id" => "mp-payment-1" } ], payments
+    assert_equal({ external_reference: "order-reference", limit: 100 }, api.instance_variable_get(:@filters))
+  end
+
   test "Mercado Pago webhook URL can be configured through encrypted credentials" do
     credentials = Object.new
     credentials.define_singleton_method(:dig) do |*keys|

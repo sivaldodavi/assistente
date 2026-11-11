@@ -78,6 +78,8 @@ Para produção, use o callback Google `https://trab.sivaldodavi.com.br/auth/goo
 
 O arquivo do banco nunca deve ser commitado. Faça backups consistentes em destino protegido, confirme permissões e teste a restauração em ambiente isolado.
 
+Pedidos Pix pendentes podem ser reconciliados com `bin/rails payments:reconcile`. A tarefa verifica pedidos sem atualização há pelo menos cinco minutos, consulta o pagamento pelo ID salvo ou pesquisa pelo identificador externo e só concede créditos após validar a resposta pelo mesmo serviço idempotente do webhook. Ausência de resultado não cancela o pedido; somente um estado terminal confirmado pelo Mercado Pago o encerra. A tarefa verifica até 100 pedidos por execução e não é agendada automaticamente: configure um scheduler confiável no host para executá-la periodicamente. Falhas do provedor ficam nos logs e fazem a tarefa terminar com erro.
+
 Para fazer um backup consistente de um banco SQLite já configurado, use a ferramenta `sqlite3` no host com um destino protegido fora do checkout:
 
 ```sh

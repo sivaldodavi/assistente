@@ -69,6 +69,23 @@ class MercadoPagoGateway
     raise GatewayError.new("provider_unavailable", "Não foi possível confirmar o pagamento no Mercado Pago.")
   end
 
+  def search_payments(external_reference:)
+    response = @sdk.payment.search(
+      filters: { external_reference:, limit: 100 },
+      request_options: request_options
+    )
+    response.raise_for_status!
+    body = response[:response] || response["response"]
+    results = fetch(body, "results")
+    unless results.is_a?(Array) && results.all? { |payment| payment.is_a?(Hash) }
+      raise GatewayError.new("invalid_provider_response", "O Mercado Pago retornou uma lista de pagamentos inválida.")
+    end
+
+    results
+  rescue Mercadopago::MercadoPagoError, Faraday::Error
+    raise GatewayError.new("provider_unavailable", "Não foi possível pesquisar o pagamento no Mercado Pago.")
+  end
+
   private
 
   def request_options(idempotency_key = nil)
