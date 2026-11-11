@@ -56,7 +56,7 @@ Foram excluídos definitivamente desta reconstrução: lembretes automáticos, c
 
 As páginas públicas estão em `/planos` (também `/plans`), `/termos`, `/privacidade` e `/ajuda-ia`. Os avisos legais são um rascunho funcional e precisam ser revisados pelo responsável antes de qualquer publicação.
 
-As integrações ainda requerem validação externa com credenciais de teste e ambiente sandbox. Os testes automatizados usam doubles locais; nenhuma cobrança real será feita sem autorização explícita. A matriz de paridade e o plano atualizado ficam em `~/.copilot/session-state/53a3ecdd-600f-43d3-bb11-56ba8aa7b51b/plan.md`, fora do repositório.
+As integrações ainda requerem validação externa com credenciais de teste e ambiente sandbox. Os testes automatizados usam doubles locais; nenhuma cobrança real será feita sem autorização explícita. A [matriz de paridade](docs/parity-matrix.md) registra os comportamentos cobertos, as exclusões e os bloqueios externos; o plano de execução atualizado fica em `~/.copilot/session-state/53a3ecdd-600f-43d3-bb11-56ba8aa7b51b/plan.md`.
 
 ## Testes
 
