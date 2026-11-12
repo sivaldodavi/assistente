@@ -30,41 +30,29 @@
     <%= hidden_field_tag "project[lock_version]", @project.lock_version %>
     <%= hidden_field_tag "project[current_stage]", @stage["id"] %>
 
-    <% schedule_dates = @project.schedule.except("tasks").values.count(&:present?) + @project.schedule.fetch("tasks", []).count { |task| task["date"].present? } %>
-    <% schedule_date_summary = schedule_dates.zero? ? "sem datas definidas" : "#{schedule_dates} #{schedule_dates == 1 ? "data definida" : "datas definidas"}" %>
-    <section class="planning-launcher" data-schedule-editor data-project-type="<%= @project.project_type %>" data-schedule-templates="<%= json_escape(AcademicSchedule.templates(@project.project_type).to_json) %>">
+    <section class="planning-launcher" data-schedule-editor>
       <button class="planning-launcher-button" type="button" data-planning-open aria-haspopup="dialog" aria-controls="project-planning">
         <span>Planejar este trabalho</span>
-        <span class="disclosure-meta" data-schedule-meta><%= @schedule_summary["task_done"] %>/<%= @schedule_summary["task_total"] %> tarefas · <%= schedule_date_summary %></span>
+        <span class="disclosure-meta" data-schedule-meta><%= @schedule_summary["task_done"] %>/<%= @schedule_summary["task_total"] %> tarefas</span>
         <span class="planning-launcher-icon" aria-hidden="true">+</span>
       </button>
       <dialog class="planning-dialog" id="project-planning" aria-labelledby="project-planning-title" data-planning-dialog>
         <header class="planning-dialog-header">
-          <div><h2 id="project-planning-title">Planejar este trabalho</h2><p>Organize as datas de entrega e suas tarefas.</p></div>
+          <div><h2 id="project-planning-title">Planejar este trabalho</h2><p>Adicione tarefas e, se necessário, defina o prazo de entrega de cada uma.</p></div>
           <button class="text-button" type="button" data-planning-close aria-label="Fechar planejamento">&times;</button>
         </header>
         <div class="planning-dialog-body">
-          <div class="schedule-deadlines">
-            <% if @project.project_type == "case" %>
-              <label>Entrega do relatório<%= date_field_tag "project[schedule][report_date]", @project.schedule["report_date"], class: "text-control", data: { schedule_field: "report_date" } %></label>
-              <label>Debate<%= date_field_tag "project[schedule][debate_date]", @project.schedule["debate_date"], class: "text-control", data: { schedule_field: "debate_date" } %></label>
-              <label>Dissertação<%= date_field_tag "project[schedule][dissertation_date]", @project.schedule["dissertation_date"], class: "text-control", data: { schedule_field: "dissertation_date" } %></label>
-            <% else %>
-              <label>Entrega do Projeto de Paper<%= date_field_tag "project[schedule][report_date]", @project.schedule["report_date"], class: "text-control", data: { schedule_field: "report_date" } %></label>
-              <label>Entrega do Paper Final<%= date_field_tag "project[schedule][final_date]", @project.schedule["final_date"], class: "text-control", data: { schedule_field: "final_date" } %></label>
-            <% end %>
-          </div>
           <div class="schedule-actions">
-            <button type="button" class="button button-secondary" data-add-suggested-tasks>Usar roteiro sugerido</button>
             <button type="button" class="button button-secondary" data-add-task>Adicionar tarefa</button>
             <span class="field-hint" data-schedule-status role="status" aria-live="polite"></span>
           </div>
+          <%= hidden_field_tag "project[schedule][tasks][clear]", "" %>
           <div class="schedule-list" data-task-list data-next-index="<%= @project.schedule["tasks"].length %>">
             <% @project.schedule["tasks"].each_with_index do |task, index| %>
               <%= render "schedule_task", task:, index: %>
             <% end %>
             <% if @project.schedule["tasks"].empty? %>
-              <p class="field-hint" data-empty-task-list>Ainda não há tarefas. Use o roteiro sugerido ou adicione uma tarefa própria.</p>
+              <p class="field-hint" data-empty-task-list>Ainda não há tarefas. Adicione uma tarefa e, se quiser, informe o prazo.</p>
             <% end %>
           </div>
           <template data-task-template><%= render "schedule_task", task: {}, index: "INDEX_PLACEHOLDER" %></template>
@@ -104,6 +92,7 @@
             </div>
             <% name = "project[fields][#{field["id"]}]" %>
             <% value = @project.fields[field["id"]] %>
+            <% value = Date.current.year.to_s if field["id"] == "year" && value.blank? %>
             <% value = current_account.profile[field["id"]] if value.blank? && %w[period shift].include?(field["id"]) %>
             <% if field["type"] == "textarea" %>
               <%= text_area_tag name, value, id: "project_fields_#{field["id"]}", rows: field["size"] == "large" ? 8 : 4, maxlength: field["limit"], placeholder: field["placeholder"], class: "text-control", aria: { required: field["required"] } %>
@@ -128,6 +117,18 @@
       </div>
 
       <% case @stage["custom"] %>
+      <% when "reuse_decisions" %>
+        <section class="reused-decisions" aria-label="Alternativas reaproveitadas da etapa anterior">
+          <p class="field-hint">O texto das decisões possíveis abaixo será reaproveitado, sem pedir que você o escreva novamente.</p>
+          <div class="reused-decision">
+            <h3>Alternativa A</h3>
+            <%= simple_format(@project.fields["decision_a"].presence || @project.fields["thesis_a"].presence || "Preencha esta alternativa na etapa 2.1.") %>
+          </div>
+          <div class="reused-decision">
+            <h3>Alternativa B</h3>
+            <%= simple_format(@project.fields["decision_b"].presence || @project.fields["thesis_b"].presence || "Preencha esta alternativa na etapa 2.1.") %>
+          </div>
+        </section>
       <% when "criteria" %>
         <%= render "collection", kind: "criteria", items: @project.criteria, title: "Critérios e valores" %>
       <% when "development" %>
@@ -200,7 +201,7 @@
         <div class="assist-actions">
           <button class="button button-secondary" type="button" data-ai-action="proposal_chat">Conversar sobre esta etapa</button>
           <button class="button button-secondary" type="button" data-ai-action="suggest_problem">Revisar problema</button>
-          <button class="button button-secondary" type="button" data-ai-action="suggest_theses">Analisar teses/hipótese</button>
+          <button class="button button-secondary" type="button" data-ai-action="suggest_theses"><%= @project.project_type == "case" ? "Analisar decisões possíveis" : "Analisar hipótese e objetivos" %></button>
         </div>
         <p class="field-hint" data-ai-status role="status" aria-live="polite"></p>
         <div class="assist-response" data-ai-response aria-live="polite"></div>
@@ -214,8 +215,8 @@
                 <%= select_tag "jev_section", options_for_select([
                   ["Descrição do caso", "case_description"],
                   ["Decisões possíveis", "case_decisions"],
-                  ["Argumentação da tese A", "thesis_a"],
-                  ["Argumentação da tese B", "thesis_b"],
+                  ["Alternativa A", "thesis_a"],
+                  ["Alternativa B", "thesis_b"],
                   ["Critérios e valores", "criteria_and_values"]
                 ]), class: "text-control", data: { jev_section_select: true } %>
               </label>

@@ -30,7 +30,7 @@ class JevRubric
     "legal_writing_foundation" => {
       "title" => "Redação jurídica e fundamentação",
       "max_points" => 2.5,
-      "instructions" => "Avalie este critério de 2,5 pontos pela rubrica oficial do relatório. Desempenho insuficiente inclui ausência de fundamentação jurídica, doutrina ou decisões possíveis. Desempenho parcial inclui fontes superficiais, citações sem relação clara com o caso ou jurisprudência sem explicar sua conexão. Desempenho adequado requer narrativa e problema claros, pelo menos três obras relevantes identificáveis e usadas no texto, dispositivos aplicáveis identificados diretamente e argumentos coerentes com o caso. Conte apenas obras distintas identificáveis no texto fornecido; a lista de referências e o catálogo da biblioteca não são enviados, portanto não afirme que uma obra pertence à Biblioteca Virtual FACSUR nem verifique existência, atualidade ou precisão jurídica. Não avalie debate ou escolha final da dissertação. Não desconte por sugestões opcionais do guia, como quatro obras ou duas por tese, número sugerido de páginas, terceira pessoa exclusiva, estrutura fixa de tese, integração de todas as fontes em cada parágrafo ou comentário após cada citação, salvo exigência expressa do professor. Se útil, indique-as apenas como sugestões separadas da pontuação. Não infira extensão ou formatação a partir de texto simples."
+      "instructions" => "Avalie este critério de 2,5 pontos pela rubrica oficial do relatório. Desempenho insuficiente inclui ausência de fundamentação jurídica, doutrina ou decisões possíveis. Desempenho parcial inclui fontes superficiais, citações sem relação clara com o caso ou jurisprudência sem explicar sua conexão. Desempenho adequado requer narrativa e problema claros, pelo menos três obras relevantes identificáveis e usadas no texto, dispositivos aplicáveis identificados diretamente e argumentos coerentes com o caso. Conte apenas obras distintas identificáveis no texto fornecido; a lista de referências e o catálogo da biblioteca não são enviados, portanto não afirme que uma obra está no catálogo nem verifique existência, atualidade ou precisão jurídica. Não avalie debate ou escolha final da dissertação. Não desconte por sugestões opcionais do guia, como quatro obras ou duas por alternativa, número sugerido de páginas, terceira pessoa exclusiva, estrutura fixa de tese, integração de todas as fontes em cada parágrafo ou comentário após cada citação, salvo exigência expressa do professor. Se útil, indique-as apenas como sugestões separadas da pontuação. Não infira extensão ou formatação a partir de texto simples."
     },
     "criteria_and_values" => {
       "title" => "Critérios e valores",
@@ -58,17 +58,17 @@ class JevRubric
       ]
     },
     "thesis_a" => {
-      "title" => "Argumentação da tese A",
+      "title" => "Alternativa A",
       "checks" => [
-        [ "thesis-a-integrated", "Entrelacei legislação, doutrina e jurisprudência na argumentação.", "Como sugestão formativa, avalie se legislação, doutrina e jurisprudência apoiam o argumento e se relacionam ao caso. O requisito oficial de três ou mais obras vale para o relatório inteiro e não pode ser verificado neste trecho de uma tese; não exija quantidade fixa nesta seção nem duas obras por tese. Integrar todas as fontes em cada parágrafo é opcional. Não afirme que obras pertencem à Biblioteca Virtual FACSUR nem verifique existência, atualidade ou precisão jurídica." ],
+        [ "thesis-a-integrated", "Relacionei fundamentos jurídicos à alternativa A.", "Avalie se os fundamentos mencionados apoiam a alternativa A e se relacionam ao caso. O requisito de três ou mais obras vale para o relatório inteiro; não exija quantidade fixa nesta alternativa." ],
         [ "thesis-a-comment", "Expliquei com palavras próprias a relevância das citações para o caso.", "Como sugestão formativa, avalie se o estudante explica como legislação, doutrina e decisões citadas se relacionam ao caso. Comentário após cada citação direta não é requisito oficial separado, salvo exigência expressa do professor." ],
         [ "thesis-a-neutral", "Mantive a análise equilibrada e redigida em terceira pessoa.", "Como sugestão formativa, observe o uso da primeira pessoa ou oportunidades de apresentar o argumento de forma justa. Terceira pessoa exclusiva não é requisito oficial separado, salvo exigência expressa do professor. Não penalize a atribuição comum de argumentos às partes nem exija que o relatório escolha a posição vencedora quando isso pertence à dissertação posterior." ]
       ]
     },
     "thesis_b" => {
-      "title" => "Argumentação da tese B",
+      "title" => "Alternativa B",
       "checks" => [
-        [ "thesis-b-integrated", "Entrelacei legislação, doutrina e jurisprudência na argumentação.", "Como sugestão formativa, avalie se legislação, doutrina e jurisprudência apoiam o argumento e se relacionam ao caso. O requisito oficial de três ou mais obras vale para o relatório inteiro e não pode ser verificado neste trecho de uma tese; não exija quantidade fixa nesta seção nem duas obras por tese. Integrar todas as fontes em cada parágrafo é opcional. Não afirme que obras pertencem à Biblioteca Virtual FACSUR nem verifique existência, atualidade ou precisão jurídica." ],
+        [ "thesis-b-integrated", "Relacionei fundamentos jurídicos à alternativa B.", "Avalie se os fundamentos mencionados apoiam a alternativa B e se relacionam ao caso. O requisito de três ou mais obras vale para o relatório inteiro; não exija quantidade fixa nesta alternativa." ],
         [ "thesis-b-comment", "Expliquei com palavras próprias a relevância das citações para o caso.", "Como sugestão formativa, avalie se o estudante explica como legislação, doutrina e decisões citadas se relacionam ao caso. Comentário após cada citação direta não é requisito oficial separado, salvo exigência expressa do professor." ],
         [ "thesis-b-neutral", "Mantive a análise equilibrada e redigida em terceira pessoa.", "Como sugestão formativa, observe o uso da primeira pessoa ou oportunidades de apresentar o argumento de forma justa. Terceira pessoa exclusiva não é requisito oficial separado, salvo exigência expressa do professor. Não penalize a atribuição comum de argumentos às partes nem exija que o relatório escolha a posição vencedora quando isso pertence à dissertação posterior." ]
       ]
@@ -85,8 +85,8 @@ class JevRubric
   UNASSESSABLE_CHECKS = {
     "case_description" => [ "facts-original" ],
     "case_decisions" => [],
-    "thesis_a" => [ "thesis-a-length" ],
-    "thesis_b" => [ "thesis-b-length" ],
+    "thesis_a" => [],
+    "thesis_b" => [],
     "criteria_and_values" => []
   }.freeze
 
@@ -102,7 +102,7 @@ class JevRubric
       end
       questions["grade_range"] = {
         "type" => "score",
-        "instructions" => "Estime a faixa mais provável para os 3,5 pontos de conteúdo do relatório FACSUR usando somente os três critérios avaliáveis: descrição/decisões possíveis (0,5), redação/fundamentação (2,5) e critérios/valores (0,5). Selecione 0 para 0,00–0,87, 1 para 0,88–1,75, 2 para 1,76–2,62 ou 3 para 2,63–3,50. São faixas técnicas indicativas, não cortes definidos pelo manual; a escala probabilística 0–3 por critério também é uma estimativa interna. Siga apenas a rubrica oficial, sem pontuar melhorias opcionais do guia. Exclua o critério formal/ABNT de 0,5, o debate e a dissertação final. Não redija nem reescreva o trabalho, não invente autoridades e não apresente a estimativa como nota oficial. Use apenas o conteúdo enviado.",
+        "instructions" => "Estime a faixa mais provável para os 3,5 pontos de conteúdo do relatório usando somente os três critérios avaliáveis: descrição/decisões possíveis (0,5), redação/fundamentação (2,5) e critérios/valores (0,5). Selecione 0 para 0,00–0,87, 1 para 0,88–1,75, 2 para 1,76–2,62 ou 3 para 2,63–3,50. São faixas técnicas indicativas, não cortes definidos pelo manual; a escala probabilística 0–3 por critério também é uma estimativa interna. Siga apenas a rubrica oficial, sem pontuar melhorias opcionais do guia. Exclua o critério formal/ABNT de 0,5, o debate e a dissertação final. Não redija nem reescreva o trabalho, não invente autoridades e não apresente a estimativa como nota oficial. Use apenas o conteúdo enviado.",
         "criteria" => GRADE_RANGES
       }
       questions

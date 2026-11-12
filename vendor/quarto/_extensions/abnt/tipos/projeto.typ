@@ -6,7 +6,7 @@
 #import "../typst-template.typ": *
 
 #let pagina-identificacao-projeto(
-  instituicao: "",
+  curso: "",
   titulo: "PROJETO DE PAPER",
   periodo: "",
   disciplina: "",
@@ -16,7 +16,7 @@
   set par(first-line-indent: (amount: 0pt, all: true), leading: abnt-entrelinha-1-5, spacing: 0.5em, justify: false)
   v(2cm)
   align(center)[
-    #text(weight: "bold")[#upper(instituicao)]
+    #text(weight: "bold")[#upper(curso)]
     #v(3cm)
     #text(weight: "bold", size: 14pt)[#upper(titulo)]
     #v(1.5em)

@@ -19,22 +19,6 @@
           "limit": 12000
         },
         {
-          "id": "profile",
-          "label": "Modelo de formatação",
-          "type": "select",
-          "options": [
-            [
-              "facsure",
-              "Referência FACSUR"
-            ],
-            [
-              "livre",
-              "Formato livre"
-            ]
-          ],
-          "limit": 240
-        },
-        {
           "id": "discipline",
           "label": "Disciplina",
           "type": "select",
@@ -234,67 +218,13 @@
       "custom": ""
     },
     {
-      "title": "2.2 · Argumentação das teses",
-      "intro": "Desenvolva as duas linhas argumentativas (A e B) com o mesmo cuidado e extensão. Integre legislação, doutrina e jurisprudência; após cada citação, explique sua relevância. Não transforme uma das posições em argumento artificialmente fraco.",
-      "fields": [
-        {
-          "id": "thesis_a_title",
-          "label": "Título da linha argumentativa A",
-          "placeholder": "Síntese da primeira posição",
-          "required": true,
-          "limit": 240
-        },
-        {
-          "id": "thesis_a",
-          "label": "Argumentação da alternativa A",
-          "type": "textarea",
-          "size": "large",
-          "hint": "Construa o raciocínio com norma, interpretação doutrinária, decisão judicial e análise própria. Após cada citação, explique sua relevância.",
-          "required": true,
-          "limit": 30000
-        },
-        {
-          "id": "thesis_b_title",
-          "label": "Título da linha argumentativa B",
-          "placeholder": "Síntese da segunda posição",
-          "required": true,
-          "limit": 240
-        },
-        {
-          "id": "thesis_b",
-          "label": "Argumentação da alternativa B",
-          "type": "textarea",
-          "size": "large",
-          "hint": "Integre lei, doutrina e decisões judiciais; depois de cada citação, explique a conexão com o problema.",
-          "required": true,
-          "limit": 30000
-        }
-      ],
-      "checks": [
-        [
-          "thesis-integrated",
-          "Entrelacei legislação, doutrina e jurisprudência em ambas as argumentações."
-        ],
-        [
-          "thesis-comment",
-          "Expliquei com palavras próprias a relevância das citações para o caso."
-        ],
-        [
-          "thesis-neutral",
-          "Mantive a análise equilibrada e redigida em terceira pessoa nas duas alternativas."
-        ],
-        [
-          "thesis-balanced",
-          "As duas alternativas têm peso jurídico comparável e extensão similar."
-        ],
-        [
-          "thesis-length",
-          "Revisei a extensão de cada argumentação conforme a orientação de aproximadamente duas laudas."
-        ]
-      ],
+      "title": "2.2 · Argumentação das alternativas",
+      "intro": "As alternativas A e B da etapa anterior também são as linhas argumentativas do trabalho. O conteúdo é reaproveitado; não é necessário preenchê-lo novamente.",
+      "fields": [],
+      "checks": [],
       "id": "thesis_argumentation",
       "phase": "report",
-      "custom": ""
+      "custom": "reuse_decisions"
     },
     {
       "title": "2.3 · Critérios e valores",
@@ -511,24 +441,8 @@
   "paper_project": [
     {
       "title": "Identificação e delimitação",
-      "intro": "Delimite o tema antes de formular o problema. Use o funil do tema e confirme interesse, viabilidade, relevância e competência. As datas de entrega ficam em \"Planejar este trabalho\", no topo da página.",
+      "intro": "Delimite o tema antes de formular o problema. Use o funil do tema e confirme interesse, viabilidade, relevância e competência. As tarefas e seus prazos ficam no planejamento do trabalho.",
       "fields": [
-        {
-          "id": "profile",
-          "label": "Modelo de formatação",
-          "type": "select",
-          "options": [
-            [
-              "facsure",
-              "Referência FACSUR"
-            ],
-            [
-              "livre",
-              "Formato livre"
-            ]
-          ],
-          "limit": 240
-        },
         {
           "id": "title",
           "label": "Título provisório",
@@ -809,7 +723,7 @@
     },
     {
       "title": "Referencial teórico",
-      "intro": "Registre os tópicos e autores previstos e conecte cada tópico aos objetivos específicos. Priorize obras consultadas na Biblioteca Virtual FACSUR.",
+      "intro": "Registre os tópicos e autores previstos e conecte cada tópico aos objetivos específicos. Priorize fontes acadêmicas confiáveis.",
       "fields": [
         {
           "id": "theory",
@@ -890,7 +804,7 @@
     },
     {
       "title": "Referências do projeto",
-      "intro": "Cadastre as fontes citadas no projeto, priorizando a Biblioteca Virtual FACSUR. A lista final sai em ordem alfabética.",
+      "intro": "Cadastre as fontes citadas no projeto. A lista final sai em ordem alfabética.",
       "custom": "sources",
       "id": "sources",
       "phase": "paper_project",
@@ -910,22 +824,6 @@
       "title": "Identificação, resumo e palavras-chave",
       "intro": "Defina o título final e apresente um resumo informativo do trabalho, seguido pelas palavras-chave. Os dados de identificação vêm do Projeto de Paper e podem ser ajustados aqui.",
       "fields": [
-        {
-          "id": "profile",
-          "label": "Modelo de formatação",
-          "type": "select",
-          "options": [
-            [
-              "facsure",
-              "Referência FACSUR"
-            ],
-            [
-              "livre",
-              "Formato livre"
-            ]
-          ],
-          "limit": 240
-        },
         {
           "id": "title",
           "label": "Título definitivo",

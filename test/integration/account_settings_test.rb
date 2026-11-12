@@ -9,7 +9,7 @@ class AccountSettingsTest < ActionDispatch::IntegrationTest
   test "profile details are saved separately from account identity" do
     post account_update_profile_path, params: {
       name: "Nome Atualizado",
-      institution: "Universidade",
+      institution: "Nome da instituição",
       course: "Direito",
       period: "10",
       shift: "noturno",
@@ -20,7 +20,7 @@ class AccountSettingsTest < ActionDispatch::IntegrationTest
     assert_redirected_to account_settings_path(saved: "profile")
     @account.reload
     assert_equal "Nome Atualizado", @account.name
-    assert_equal "Universidade", @account.profile["institution"]
+    assert_not_includes @account.profile, "institution"
     assert_equal "10", @account.profile["period"]
     assert_equal "noturno", @account.profile["shift"]
     assert_equal %w[Pesquisa Ética], @account.profile["disciplines"]
@@ -37,6 +37,8 @@ class AccountSettingsTest < ActionDispatch::IntegrationTest
     assert_select "select[name='shift'] option", count: 3
     assert_select "input[name='discipline']", count: 0
     assert_select "input[name='professor']", count: 0
+    assert_select "input[name='institution']", count: 0
+    assert_select "input[name='course']"
   end
 
   test "terms and AI consent are recorded independently" do

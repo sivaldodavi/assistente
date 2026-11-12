@@ -1,7 +1,7 @@
 // ============================================================
 // FORMATO ABNT PARA QUARTO (TYPST)
 // Baseado na NBR 14724, NBR 6022, NBR 10520, NBR 6023
-// e no Manual de Normatização FACSUR (2025)
+// e no manual de normatização acadêmica.
 // ============================================================
 
 #let abnt-recuo = 1.25cm
@@ -13,7 +13,7 @@
 
 // ---- Capa e folha de rosto ---------------------------------------
 // Layout medido no PDF do TGPC (Relatório de case):
-//   - instituição e curso no topo, centralizados
+//   - curso no topo, centralizado
 //   - título em caixa alta e negrito no terço central
 //   - autores logo abaixo do título, alinhados à direita
 //   - bloco de dados (disciplina, professor, turma, data) à direita
@@ -37,7 +37,6 @@
 
   let topo = [
     #align(center)[
-      #text(weight: "bold")[#upper(instituicao)] \
       #upper(curso)
     ]
   ]
@@ -226,7 +225,7 @@
 ]
 
 // ============================================================
-// REFERÊNCIAS POR TIPO (NBR 6023 / Manual FACSUR)
+// REFERÊNCIAS POR TIPO (NBR 6023)
 // ============================================================
 
 #let _ref(chave, texto) = (chave: chave, texto: texto)

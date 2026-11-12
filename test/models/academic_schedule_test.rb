@@ -1,82 +1,68 @@
 require "test_helper"
 
 class AcademicScheduleTest < ActiveSupport::TestCase
-  test "provides the original suggested task sets for each workflow" do
-    assert_equal 12, AcademicSchedule.templates("case").length
-    assert_equal 11, AcademicSchedule.templates("paper_project").length
-    assert_equal [ "case-theme", "Escolher e delimitar o tema" ], AcademicSchedule.templates("case").first
-    assert_equal [ "paper-delivery", "Preparar a entrega" ], AcademicSchedule.templates("paper_final").last
-  end
-
-  test "normalizes schedule dates and discards tasks with invalid dates" do
+  test "keeps only task due dates and discards invalid task dates" do
     result = AcademicSchedule.normalize_schedule(
       {
         "report_date" => "30/10/2026",
         "debate_date" => "invalid",
         "tasks" => [
-          { "title" => " Ler ", "date" => "2026-11-01" },
+          { "title" => " Ler ", "date" => "2026-11-01", "done" => "1", "stage" => 2, "template_key" => "old" },
           { "title" => "Inválida", "date" => "not-a-date" }
         ]
-      },
-      project_type: "case"
+      }
     )
 
-    assert_equal "2026-10-30", result["report_date"]
-    assert_equal "", result["debate_date"]
+    assert_equal [ "tasks" ], result.keys
     assert_equal 1, result["tasks"].length
     assert_equal "Ler", result["tasks"].first["title"]
+    assert_equal "2026-11-01", result["tasks"].first["date"]
+    assert_equal true, result["tasks"].first["done"]
+    assert_not_includes result["tasks"].first, "stage"
+    assert_not_includes result["tasks"].first, "template_key"
   end
 
-  test "preserves paper deadlines and task state" do
+  test "counts tasks without calculating project deadlines" do
     result = AcademicSchedule.normalize_schedule(
       {
         "deliveryDate" => "30/10/2026",
         "finalDate" => "2026-11-30",
-        "tasks" => [ { "id" => "t1", "title" => "Revisar", "date" => "2026-10-29", "done" => "1", "stage" => 4, "templateKey" => "paper-review" } ]
-      },
-      project_type: "paper_project"
+        "tasks" => [ { "id" => "t1", "title" => "Revisar", "date" => "2026-10-29", "done" => "1" } ]
+      }
     )
-    deadlines = AcademicSchedule.deadlines(result, "paper_project", project_id: "p1", title: "Paper")
-
-    assert_equal "2026-10-30", result["report_date"]
-    assert_equal "2026-11-30", result["final_date"]
     assert_equal true, result["tasks"].first["done"]
-    assert_equal 4, result["tasks"].first["stage"]
-    assert_equal "paper-review", result["tasks"].first["template_key"]
-    assert_equal [ "Projeto de Paper", "Paper Final" ], deadlines.map { |item| item["label"] }
-    assert_equal "29/10/2026", AcademicSchedule.entries(result, "paper_project", project_id: "p1", title: "Paper").last["date_label"]
+    assert_equal({ "task_total" => 1, "task_done" => 1 }, AcademicSchedule.summary(result))
   end
 
-  test "summarizes tasks and sorts upcoming dated items" do
+  test "shows only task due dates in the upcoming list" do
     schedule = {
       "report_date" => "2026-10-20",
       "final_date" => "2026-11-30",
       "tasks" => [
+        { "id" => "overdue", "title" => "Entregar rascunho", "date" => "2026-10-20" },
         { "id" => "t1", "title" => "Tarefa futura", "date" => "2026-10-28" },
         { "id" => "t2", "title" => "Tarefa concluída", "date" => "2026-10-27", "done" => true }
       ]
     }
 
-    summary = AcademicSchedule.summary(schedule, "paper_project")
     upcoming = AcademicSchedule.upcoming(
-      [ { "deadlines" => AcademicSchedule.entries(schedule, "paper_project", project_id: "p1", title: "Pesquisa") } ],
+      [ { "id" => "p1", "title" => "Pesquisa", "schedule" => schedule } ],
       today: Date.new(2026, 10, 26)
     )
 
-    assert_equal 2, summary["task_total"]
-    assert_equal 1, summary["task_done"]
-    assert_equal [ "Projeto de Paper", "Tarefa futura", "Paper Final" ], upcoming["entries"].map { |item| item["label"] }
-    assert_equal [ true, false, false ], upcoming["entries"].map { |item| item["overdue"] }
+    assert_equal [ "Entregar rascunho", "Tarefa futura" ], upcoming["entries"].map { |item| item["label"] }
+    assert_equal [ true, false ], upcoming["entries"].map { |item| item["overdue"] }
     assert_equal "2026-10-26", upcoming["today"]
   end
 
   test "persists schedule in a project revision" do
     project = Project.create!(
       project_type: "case",
-      schedule: { "report_date" => "2026-10-30", "tasks" => [ { "title" => "Revisar", "done" => true } ] }
+      schedule: { "report_date" => "2026-10-30", "tasks" => [ { "title" => "Revisar", "date" => "2026-10-31", "done" => true } ] }
     )
 
-    assert_equal "2026-10-30", project.reload.schedule["report_date"]
+    assert_equal [ "tasks" ], project.reload.schedule.keys
     assert_equal "Revisar", project.revisions.sole.snapshot.dig("schedule", "tasks", 0, "title")
+    assert_equal "2026-10-31", project.schedule.dig("tasks", 0, "date")
   end
 end

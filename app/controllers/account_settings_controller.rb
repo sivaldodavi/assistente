@@ -12,7 +12,6 @@ class AccountSettingsController < ApplicationController
         "city" => params[:city],
         "disciplines" => params[:disciplines].to_s.lines,
         "teachers" => params[:teachers].to_s.lines,
-        "institution" => params[:institution],
         "course" => params[:course],
         "period" => params[:period],
         "shift" => params[:shift]

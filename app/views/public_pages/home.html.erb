@@ -7,7 +7,7 @@
     <% if current_account.present? %>
       <%= link_to "Meus projetos", projects_path, class: "header-link" %>
     <% elsif login_available %>
-      <%= link_to "Entrar", login_path, class: "header-link" %>
+      <%= button_to "Entrar", "/auth/google_oauth2", method: :post, class: "header-link", form: { class: "header-login-form" } %>
     <% else %>
       <span class="header-link">Acesso em preparação</span>
     <% end %>
@@ -25,7 +25,7 @@
       <% if current_account.present? %>
         <%= link_to "Acessar meus projetos", projects_path, class: "button button-primary" %>
       <% elsif login_available %>
-        <%= link_to "Entrar com Google", login_path, class: "button button-primary" %>
+        <%= button_to "Entrar com Google", "/auth/google_oauth2", method: :post, class: "button button-primary" %>
       <% else %>
         <span class="preview-label">Acesso em preparação</span>
       <% end %>

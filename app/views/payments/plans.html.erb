@@ -8,6 +8,8 @@
     <% elsif current_account %>
       <%= link_to "Meus projetos", projects_path, class: "header-link" %>
       <%= link_to "Minha conta", account_settings_path, class: "header-link" %>
+    <% elsif google_oauth_configured? %>
+      <%= button_to "Entrar", "/auth/google_oauth2", method: :post, class: "header-link", form: { class: "header-login-form" } %>
     <% else %>
       <%= link_to "Entrar", login_path, class: "header-link" %>
     <% end %>
@@ -50,7 +52,11 @@
           <p class="field-hint" data-payment-status role="status" aria-live="polite"></p>
           <div class="payment-result" data-payment-result aria-live="polite"></div>
         <% else %>
-          <%= link_to "Entrar para comprar", login_path, class: "button button-primary" %>
+          <% if google_oauth_configured? %>
+            <%= button_to "Entrar para comprar", "/auth/google_oauth2", method: :post, class: "button button-primary" %>
+          <% else %>
+            <%= link_to "Entrar para comprar", login_path, class: "button button-primary" %>
+          <% end %>
         <% end %>
       </article>
     <% end %>

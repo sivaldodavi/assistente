@@ -2,7 +2,16 @@
 
 <header class="site-header">
   <%= link_to "Assistente Acadêmico", root_path, class: "brand" %>
-  <div class="header-actions"><%= link_to "Pacotes", plans_path, class: "header-link" %><% if public_shell_only? %><span class="header-link">Acesso em preparação</span><% else %><%= link_to "Entrar", login_path, class: "header-link" %><% end %></div>
+  <div class="header-actions">
+    <%= link_to "Pacotes", plans_path, class: "header-link" %>
+    <% if public_shell_only? %>
+      <span class="header-link">Acesso em preparação</span>
+    <% elsif google_oauth_configured? %>
+      <%= button_to "Entrar", "/auth/google_oauth2", method: :post, class: "header-link", form: { class: "header-login-form" } %>
+    <% else %>
+      <%= link_to "Entrar", login_path, class: "header-link" %>
+    <% end %>
+  </div>
 </header>
 
 <main class="page-shell narrow-shell">

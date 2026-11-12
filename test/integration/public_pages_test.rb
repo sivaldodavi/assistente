@@ -18,8 +18,9 @@ class PublicPagesTest < ActionDispatch::IntegrationTest
     get root_path
 
     assert_response :success
-    assert_select "a[href='#{login_path}']", text: "Entrar"
-    assert_select "a[href='#{login_path}']", text: "Entrar com Google"
+    assert_select "form[action='/auth/google_oauth2'][method='post'] button.header-link", text: "Entrar"
+    assert_select "form[action='/auth/google_oauth2'][method='post'] button.button-primary", text: "Entrar com Google"
+    assert_select "a[href='#{login_path}']", count: 0
     assert_select "body", text: /O acesso a contas está em preparação/, count: 0
   ensure
     Rails.application.config.x.google_oauth_client_id = previous_client_id
@@ -35,6 +36,34 @@ class PublicPagesTest < ActionDispatch::IntegrationTest
     assert_select "a[href='#{login_path}']", text: "Entrar para comprar", count: 3
     assert_select "a[href='#{terms_path}']"
     assert_select "a[href='#{privacy_path}']"
+  end
+
+  test "public sign-in actions start Google OAuth directly when configured" do
+    previous_client_id = Rails.application.config.x.google_oauth_client_id
+    previous_client_secret = Rails.application.config.x.google_oauth_client_secret
+    Rails.application.config.x.google_oauth_client_id = "client-id"
+    Rails.application.config.x.google_oauth_client_secret = "client-secret"
+
+    get pricing_path
+    assert_response :success
+    assert_select "form[action='/auth/google_oauth2'][method='post'] button", text: "Entrar para comprar", count: 3
+    assert_select "a[href='#{login_path}']", count: 0
+
+    get projects_path
+    assert_response :success
+    assert_select "form[action='/auth/google_oauth2'][method='post'] button", text: "Entrar", count: 1
+    assert_select "form[action='/auth/google_oauth2'][method='post'] button", text: "Entrar para começar", count: 1
+    assert_select "a[href='#{login_path}']", count: 0
+
+    [ terms_path, privacy_path ].each do |path|
+      get path
+      assert_response :success
+      assert_select "form[action='/auth/google_oauth2'][method='post'] button.header-link", text: "Entrar"
+      assert_select "a[href='#{login_path}']", count: 0
+    end
+  ensure
+    Rails.application.config.x.google_oauth_client_id = previous_client_id
+    Rails.application.config.x.google_oauth_client_secret = previous_client_secret
   end
 
   test "public information pages explain privacy, consent, and AI providers" do
@@ -58,6 +87,8 @@ class PublicPagesTest < ActionDispatch::IntegrationTest
     assert_select "h2", "Roteiros e exportação"
     assert_select "body", text: /do 1º ao 10º/
     assert_select "body", text: /modelo acadêmico ABNT/
+    assert_select "body", text: /sem datas gerais do projeto/
+    assert_select "body", text: /ano da capa vem preenchido com o ano atual/
     assert_select "h2", "Como a assistência de IA funciona"
     assert_select "body", text: /DeepSeek/
     assert_select "body", text: /TypeSafe/

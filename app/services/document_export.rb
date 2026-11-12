@@ -97,8 +97,9 @@ class DocumentExport
     def legacy_project(project, sources)
       fields = project["fields"].is_a?(Hash) ? project["fields"] : {}
       project_type = project["project_type"]
-      schedule = project["schedule"].is_a?(Hash) ? project["schedule"] : {}
       account_name = project.respond_to?(:account) ? project.account&.name : project["account_name"]
+      account_profile = project.respond_to?(:account) ? project.account&.profile : {}
+      account_profile = account_profile.is_a?(Hash) ? account_profile : {}
       authors = fields["authors"].presence || fields["author"].presence || account_name
       period_shift = [ fields["period"], fields["shift"] ].select(&:present?).join(" · ")
       mapped = {
@@ -106,10 +107,10 @@ class DocumentExport
         "author" => authors,
         "partner" => fields["partner"].to_s,
         "account_name" => account_name.to_s,
-        "institution" => fields["institution"].to_s,
-        "course" => fields["course"].to_s,
-        "city" => fields["city"].to_s,
-        "year" => fields["year"].to_s,
+        "institution" => "",
+        "course" => (fields["course"].presence || account_profile["course"]).to_s,
+        "city" => (fields["city"].presence || account_profile["city"]).to_s,
+        "year" => (fields["year"].presence || Date.current.year.to_s).to_s,
         "profile" => fields["profile"].to_s,
         "discipline" => fields["discipline"].to_s,
         "teacher" => fields["teacher"].to_s,
@@ -126,10 +127,6 @@ class DocumentExport
         "decision_basis" => "decisionBasis",
         "decision_a" => "decisionA",
         "decision_b" => "decisionB",
-        "thesis_a_title" => "thesisATitle",
-        "thesis_a" => "thesisA",
-        "thesis_b_title" => "thesisBTitle",
-        "thesis_b" => "thesisB",
         "area" => "area",
         "delimitation" => "delimitation",
         "research_context" => "researchContext",
@@ -153,15 +150,12 @@ class DocumentExport
         "ai_note" => "aiNote"
       }
       field_map.each { |source, target| mapped[target] = fields[source].to_s }
+      mapped["decisionA"] = fields["decision_a"].presence || fields["thesis_a"].to_s
+      mapped["decisionB"] = fields["decision_b"].presence || fields["thesis_b"].to_s
       mapped["developmentSections"] = Array(project["development_sections"]).filter_map do |item|
         next unless item.is_a?(Hash)
 
         { "title" => item["title"].to_s, "content" => item["body"].to_s }
-      end
-      mapped["deliveryDate"] = if project_type == "paper_final"
-        schedule["final_date"].presence || fields["deliveryDate"].presence || schedule["deliveryDate"]
-      else
-        fields["deliveryDate"].presence || schedule["deliveryDate"]
       end
       criteria = Array(project["criteria"]).filter_map do |item|
         next unless item.is_a?(Hash)
@@ -169,7 +163,7 @@ class DocumentExport
         { "term" => (item["title"].presence || item["term"]).to_s, "definition" => item["definition"].to_s, "basis" => item["basis"].to_s }
       end
       mapped_type = project_type == "case" ? "case" : "paper"
-      { "projectType" => mapped_type, "project_type" => project_type, "fields" => mapped, "criteria" => criteria, "sources" => sources, "schedule" => schedule }
+      { "projectType" => mapped_type, "project_type" => project_type, "fields" => mapped, "criteria" => criteria, "sources" => sources }
     end
 
     def default_document_kind(project_type)
@@ -240,26 +234,12 @@ class DocumentExport
       names.uniq { |name| name.downcase }
     end
 
-    def brazilian_date(value)
-      value = text(value).strip
-      match = /\A(\d{4})-(\d{2})-(\d{2})\z/.match(value)
-      match ? "#{match[3]}/#{match[2]}/#{match[1]}" : value
-    end
-
     def metadata(project)
       fields = project.fetch("fields")
-      facsure = fields["profile"] == "facsure"
-      schedule = project["schedule"].is_a?(Hash) ? project["schedule"] : {}
-      delivery = if project["projectType"] == "paper" && fields["paperKind"] == "final"
-        schedule["final_date"].presence || fields["deliveryDate"].presence || schedule["deliveryDate"]
-      else
-        fields["deliveryDate"].presence || schedule["deliveryDate"]
-      end
       details = [
         ("Disciplina: #{text(fields["discipline"])}" if text(fields["discipline"]).present?),
         ("Professor(a): #{text(fields["teacher"])}" if text(fields["teacher"]).present?),
-        ("Turma: #{text(fields["classInfo"])}" if text(fields["classInfo"]).present?),
-        ("Data de entrega: #{brazilian_date(delivery)}" if text(delivery).present?)
+        ("Turma: #{text(fields["classInfo"])}" if text(fields["classInfo"]).present?)
       ].compact
       title = text(fields["title"]).strip
       [
@@ -268,13 +248,13 @@ class DocumentExport
         "lang: pt-BR",
         "abnt-capa: true",
         "abnt-folha-rosto: false",
-        "abnt-instituicao: #{yaml_typst_scalar(facsure ? text(fields["institution"]) : "")}",
-        "abnt-curso: #{yaml_typst_scalar(facsure ? text(fields["course"]) : "")}",
+        'abnt-instituicao: ""',
+        "abnt-curso: #{yaml_typst_scalar(fields["course"])}",
         "abnt-subtitulo: #{yaml_typst_scalar(fields["subtitle"] || fields["subTitle"])}",
         yaml_list("abnt-autores", authors(project)),
         yaml_list("abnt-dados", details),
         "abnt-local: #{yaml_typst_scalar(fields["city"])}",
-        "abnt-ano: #{yaml_typst_scalar(fields["year"])}",
+        "abnt-ano: #{yaml_typst_scalar(fields["year"].presence || Date.current.year.to_s)}",
         'abnt-numeracao: "1"',
         'abnt-numeracao-secoes: "1.1"',
         "abnt-sem-quebra-secoes: true",
@@ -286,9 +266,8 @@ class DocumentExport
 
     def author_notes(project)
       fields = project.fetch("fields")
-      course = text(fields["course"]).presence || "Direito"
-      institution = text(fields["institution"]).presence || "instituição de ensino"
-      note = "Discente do curso de #{course} da #{institution}."
+      course = text(fields["course"]).presence
+      note = course.present? ? "Discente do curso de #{course}." : "Discente."
       notes = authors(project).map { |author| [ author, note ] }
       teacher = text(fields["teacher"]).strip
       notes << [ teacher, "Docente da disciplina." ] if teacher.present?
@@ -305,7 +284,11 @@ class DocumentExport
     def case_header(project)
       fields = project.fetch("fields")
       title = text(fields["title"]).strip.upcase
-      note = "Relatório de case apresentado à disciplina #{text(fields["discipline"])} da #{text(fields["institution"])}."
+      details = [
+        ("na disciplina #{text(fields["discipline"])}" if text(fields["discipline"]).present?),
+        ("no curso de #{text(fields["course"])}" if text(fields["course"]).present?)
+      ].compact
+      note = details.any? ? "Relatório de Case apresentado em #{details.join(" · ")}." : "Relatório de Case acadêmico."
       [
         '#import "_extensions/abnt/tipos/caso.typ": *',
         "#caso-cabecalho(",
@@ -346,7 +329,7 @@ class DocumentExport
       [
         '#import "_extensions/abnt/tipos/projeto.typ": *',
         "#pagina-identificacao-projeto(",
-        "  instituicao: #{typst_literal(fields["profile"] == "facsure" ? fields["institution"] : "")},",
+        "  curso: #{typst_literal(fields["course"])},",
         "  titulo: #{typst_literal(text(fields["title"]).strip.upcase)},",
         "  periodo: #{typst_literal(fields["classInfo"])},",
         "  disciplina: #{typst_literal(fields["discipline"])},",
@@ -406,9 +389,6 @@ class DocumentExport
         section("DESCRIÇÃO DO CASO", [ text(fields["facts"]), text(fields["problem"]) ].reject(&:empty?).join("\n\n")),
         "# IDENTIFICAÇÃO E ANÁLISE DO CASO",
         case_possible_solutions(fields),
-        "## Descrição dos argumentos",
-        section(text(fields["thesisATitle"]).strip.presence || "Argumento favorável à tese A", fields["thesisA"], 3),
-        section(text(fields["thesisBTitle"]).strip.presence || "Argumento favorável à tese B", fields["thesisB"], 3),
         section("Descrição dos critérios e valores", criteria.join("\n\n"), 2)
       ]
       body = parts.reject(&:empty?).join("\n\n")
@@ -471,7 +451,7 @@ class DocumentExport
       end
       stages.filter_map do |stage|
         custom = stage["custom"]
-        next if custom == "review"
+        next if %w[review reuse_decisions].include?(custom)
 
         content = stage.fetch("fields", []).filter_map do |field|
           next if NON_DOCUMENT_FIELDS.include?(field["id"])

@@ -11,7 +11,11 @@
       <%= button_to "Sair", logout_path, method: :delete, class: "text-button" %>
     </div>
   <% else %>
-    <%= link_to "Entrar", login_path, class: "button button-primary" %>
+    <% if google_oauth_configured? %>
+      <%= button_to "Entrar", "/auth/google_oauth2", method: :post, class: "button button-primary" %>
+    <% else %>
+      <%= link_to "Entrar", login_path, class: "button button-primary" %>
+    <% end %>
   <% end %>
 </header>
 
@@ -24,7 +28,11 @@
       <%= link_to "Começar um trabalho", new_project_path, class: "button button-primary" %>
       <p class="field-hint"><%= current_account.project_credits_remaining %> créditos de projeto disponíveis · <%= link_to "Ver pacotes", plans_path %></p>
     <% else %>
-      <%= link_to "Entrar para começar", login_path, class: "button button-primary" %>
+      <% if google_oauth_configured? %>
+        <%= button_to "Entrar para começar", "/auth/google_oauth2", method: :post, class: "button button-primary" %>
+      <% else %>
+        <%= link_to "Entrar para começar", login_path, class: "button button-primary" %>
+      <% end %>
     <% end %>
   </section>
 
@@ -33,7 +41,7 @@
       <div class="section-heading">
         <div>
           <p class="eyebrow">Agenda</p>
-          <h2 id="agenda-title">Próximas datas</h2>
+          <h2 id="agenda-title">Próximos prazos de tarefas</h2>
         </div>
       </div>
       <ol class="agenda-list">

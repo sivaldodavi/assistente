@@ -4,7 +4,7 @@
   <section class="panel">
     <p class="eyebrow">Acesse seu espaço de trabalho</p>
     <h1>Entrar no Assistente Acadêmico</h1>
-    <p class="muted">Entre com sua conta Google para acessar seus projetos e sua Biblioteca Pessoal.</p>
+    <p class="muted">Você será direcionado ao Google para autorizar o acesso e retornará ao Assistente Acadêmico em seguida.</p>
     <% if google_oauth_configured? %>
       <%= button_to "Continuar com Google", "/auth/google_oauth2", method: :post, class: "button button-primary" %>
     <% else %>

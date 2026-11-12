@@ -10,28 +10,30 @@ class ProjectsTest < ActionDispatch::IntegrationTest
     @account.projects.create!(attributes)
   end
 
-  test "root presents the project entry point" do
-    get root_path
+  test "projects page presents the project entry point" do
+    get projects_path
 
     assert_response :success
     assert_select "h1", "Transforme uma ideia em um trabalho bem estruturado."
     assert_select "a[href='#{new_project_path}']", "Começar um trabalho"
   end
 
-  test "root shows the user's upcoming and overdue schedule entries" do
+  test "projects page shows upcoming and overdue task deadlines" do
     create_project!(
       project_type: "case",
       title: "Case de teste",
       schedule: {
-        "report_date" => "2020-01-01",
-        "tasks" => [ { "id" => "future", "title" => "Revisar argumentos", "date" => "2099-12-31" } ]
+        "tasks" => [
+          { "id" => "overdue", "title" => "Entregar rascunho", "date" => "2020-01-01" },
+          { "id" => "future", "title" => "Revisar argumentos", "date" => "2099-12-31" }
+        ]
       }
     )
 
-    get root_path
+    get projects_path
 
     assert_response :success
-    assert_select "h2#agenda-title", "Próximas datas"
+    assert_select "h2#agenda-title", "Próximos prazos de tarefas"
     assert_select ".agenda-item", count: 2
     assert_select ".agenda-item.is-overdue", text: /Atrasada/
     assert_select ".agenda-item", text: /Revisar argumentos/
@@ -54,6 +56,7 @@ class ProjectsTest < ActionDispatch::IntegrationTest
 
     project = Project.order(:id).last
     assert_equal "Ana Estudante", project.fields["author"]
+    assert_equal Date.current.year.to_s, project.fields["year"]
     assert_equal "7", project.fields["period"]
     assert_equal "noturno", project.fields["shift"]
     assert_redirected_to project_path(project, stage: "identification")
@@ -65,6 +68,24 @@ class ProjectsTest < ActionDispatch::IntegrationTest
     assert_select "select[name='project[fields][teacher]'] option", text: "Professora Exemplo"
     assert_select "select[name='project[fields][period]'] option[selected][value='7']"
     assert_select "select[name='project[fields][shift]'] option[selected][value='noturno']"
+    assert_select "input[name='project[fields][year]'][value='#{Date.current.year}']"
+  end
+
+  test "reuses the decision alternatives in step 2.2 without duplicate input fields" do
+    project = create_project!(
+      project_type: "case",
+      fields: { decision_a: "Texto da alternativa A", decision_b: "Texto da alternativa B" }
+    )
+
+    get project_path(project, stage: "thesis_argumentation")
+
+    assert_response :success
+    assert_select "h2#stage-title", "2.2 · Argumentação das alternativas"
+    assert_select "textarea[name='project[fields][thesis_a]']", count: 0
+    assert_select "textarea[name='project[fields][thesis_b]']", count: 0
+    assert_select ".reused-decision", count: 2
+    assert_includes response.body, "Texto da alternativa A"
+    assert_includes response.body, "Texto da alternativa B"
   end
 
   test "consumes one project credit atomically and blocks creation without credits" do
@@ -118,7 +139,7 @@ class ProjectsTest < ActionDispatch::IntegrationTest
     assert_select "[data-jev-report]", count: 0
   end
 
-  test "renders the planning dialog with guided tasks and the correct deadlines" do
+  test "renders the planning dialog with task-specific deadlines" do
     project = create_project!(project_type: "case")
 
     get project_path(project, stage: "description")
@@ -126,10 +147,10 @@ class ProjectsTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "button[data-planning-open] span:first-child", "Planejar este trabalho"
     assert_select "dialog#project-planning"
-    assert_select "input[name='project[schedule][report_date]']"
-    assert_select "input[name='project[schedule][debate_date]']"
-    assert_select "input[name='project[schedule][dissertation_date]']"
-    assert_select "[data-schedule-templates]"
+    assert_select "input[name='project[schedule][tasks][INDEX_PLACEHOLDER][date]']"
+    assert_select "[data-add-task]", text: "Adicionar tarefa"
+    assert_select "[data-add-suggested-tasks]", count: 0
+    assert_select "input[name^='project[schedule][report_date]']", count: 0
   end
 
   test "exposes saved document previews and PDF export for every Case phase" do
@@ -154,7 +175,7 @@ class ProjectsTest < ActionDispatch::IntegrationTest
     assert_select "a[href='#{export_project_path(project, format: :pdf)}']", text: "Baixar PDF"
   end
 
-  test "saves schedule deadlines and checklist task state with the project" do
+  test "saves only task delivery dates and completion state" do
     project = create_project!(project_type: "paper_project")
 
     patch project_path(project, stage: "paper_project_identity"), params: {
@@ -162,10 +183,8 @@ class ProjectsTest < ActionDispatch::IntegrationTest
         lock_version: project.lock_version,
         current_stage: "paper_identification",
         schedule: {
-          report_date: "2026-10-30",
-          final_date: "2026-11-30",
           tasks: {
-            "0" => { id: "task-1", title: "Revisar o projeto", date: "2026-10-29", done: "1", stage: "5", template_key: "paper-project-review" }
+            "0" => { id: "task-1", title: "Revisar o projeto", date: "2026-10-29", done: "1" }
           }
         }
       }
@@ -173,11 +192,27 @@ class ProjectsTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to project_path(project, stage: "paper_identification")
     project.reload
-    assert_equal "2026-10-30", project.schedule["report_date"]
-    assert_equal "2026-11-30", project.schedule["final_date"]
+    assert_equal [ "tasks" ], project.schedule.keys
     assert_equal true, project.schedule["tasks"].first["done"]
-    assert_equal 5, project.schedule["tasks"].first["stage"]
-    assert_equal "paper-project-review", project.schedule["tasks"].first["template_key"]
+    assert_equal "2026-10-29", project.schedule["tasks"].first["date"]
+  end
+
+  test "allows removing every task from the schedule" do
+    project = create_project!(
+      project_type: "case",
+      schedule: { tasks: [ { id: "task-1", title: "Revisar", date: "2026-10-29" } ] }
+    )
+
+    patch project_path(project), params: {
+      project: {
+        lock_version: project.lock_version,
+        current_stage: project.current_stage,
+        schedule: { tasks: { clear: "" } }
+      }
+    }
+
+    assert_redirected_to project_path(project, stage: project.current_stage)
+    assert_empty project.reload.schedule["tasks"]
   end
 
   test "saves answers and checklist state with a revision snapshot" do

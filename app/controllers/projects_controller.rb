@@ -24,7 +24,8 @@ class ProjectsController < ApplicationController
       fields: {
         "author" => current_account.name,
         "period" => current_account.profile["period"],
-        "shift" => current_account.profile["shift"]
+        "shift" => current_account.profile["shift"],
+        "year" => Date.current.year.to_s
       }
     )
     current_account.with_lock do
@@ -105,11 +106,7 @@ class ProjectsController < ApplicationController
       requested_ids = AcademicWorkflow.normalize_source_ids(input[:source_ids])
       @project.source_ids = current_account.sources.where(public_id: requested_ids).pluck(:public_id)
     end
-    @project.schedule = AcademicSchedule.normalize_schedule(
-      hash_parameter(input[:schedule]),
-      project_type: @project.project_type,
-      fallback_date: @project.fields["deliveryDate"]
-    ) if input.key?(:schedule)
+    @project.schedule = AcademicSchedule.normalize_schedule(hash_parameter(input[:schedule])) if input.key?(:schedule)
     update_delivery(active_section) if params[:mark_delivered] == "1"
 
     target_type = convert_to_final ? "paper_final" : @project.project_type

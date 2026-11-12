@@ -40,9 +40,9 @@
           <%= form.label :name, "Nome" %>
           <%= form.text_field :name, value: @account.name, maxlength: 160, class: "text-control" %>
         </div>
-        <% %w[institution course city].each do |key| %>
+        <% %w[course city].each do |key| %>
           <div class="field">
-            <%= form.label key, { "institution" => "Instituição", "course" => "Curso", "city" => "Cidade" }.fetch(key) %>
+            <%= form.label key, { "course" => "Curso", "city" => "Cidade" }.fetch(key) %>
             <%= form.text_field key, value: @account.profile[key], maxlength: 160, class: "text-control" %>
           </div>
         <% end %>

@@ -8,13 +8,17 @@ class AcademicWorkflowTest < ActiveSupport::TestCase
     field_count = AcademicWorkflow.types.sum do |type|
       AcademicWorkflow.sections(type).sum { |section| section.fetch("fields", []).length }
     end
-    assert_equal 68, field_count
+    assert_equal 61, field_count
     fields = AcademicWorkflow.types.flat_map do |type|
       AcademicWorkflow.sections(type).flat_map { |section| section.fetch("fields", []) }
     end
     field_ids = fields.map { |field| field["id"] }
     assert_not_includes field_ids, "authors"
     assert_not_includes field_ids, "dissertation_author"
+    assert_not_includes field_ids, "profile"
+    assert_not_includes field_ids, "institution"
+    assert_not_includes field_ids, "thesis_a"
+    assert_not_includes field_ids, "thesis_b"
     assert_equal "select", fields.find { |field| field["id"] == "discipline" }["type"]
     assert_equal "disciplines", fields.find { |field| field["id"] == "discipline" }["source"]
     assert_equal "select", fields.find { |field| field["id"] == "teacher" }["type"]
@@ -22,6 +26,7 @@ class AcademicWorkflowTest < ActiveSupport::TestCase
     assert_equal %w[identification description decisions thesis_argumentation criteria sources review_report debate dissertation review_dissertation],
       AcademicWorkflow.sections("case").map { |section| section["id"] }
     assert_equal "Pergunta-problema", AcademicWorkflow.sections("case")[1]["fields"][1]["label"]
+    assert_equal "reuse_decisions", AcademicWorkflow.sections("case").find { |section| section["id"] == "thesis_argumentation" }["custom"]
   end
 
   test "normalizes fields, limits, and select values using the source contract" do
@@ -33,7 +38,7 @@ class AcademicWorkflowTest < ActiveSupport::TestCase
     })
 
     assert_equal "Meu Case", fields["title"]
-    assert_equal "", fields["profile"]
+    assert_not_includes fields, "profile"
     assert_equal 12_000, fields["assignment_prompt"].length
     assert_not_includes fields, "unlisted_field"
   end
@@ -42,7 +47,7 @@ class AcademicWorkflowTest < ActiveSupport::TestCase
     report = AcademicWorkflow.progress("case", {}, "report")
     dissertation = AcademicWorkflow.progress("case", {}, "dissertation")
 
-    assert_equal 12, report["total"]
+    assert_equal 8, report["total"]
     assert_equal 2, dissertation["total"]
     assert_equal 0, report["done"]
     assert_equal 100, AcademicWorkflow.progress("case", {}, "unknown")["percent"]
@@ -60,6 +65,19 @@ class AcademicWorkflowTest < ActiveSupport::TestCase
     assert_equal "Autora antiga", fields["authors"]
     assert_equal "Nome anterior", fields["dissertation_author"]
     assert_equal "Colega", fields["partner"]
+  end
+
+  test "moves legacy argumentation text into the corresponding decision when needed" do
+    fields = AcademicWorkflow.normalize_fields("case", {
+      "decision_b" => "Decisão nova",
+      "thesis_a" => "Alternativa A antiga",
+      "thesis_b" => "Alternativa B antiga"
+    })
+
+    assert_equal "Alternativa A antiga", fields["decision_a"]
+    assert_equal "Decisão nova", fields["decision_b"]
+    assert_not_includes fields, "thesis_a"
+    assert_not_includes fields, "thesis_b"
   end
 
   test "checklists discard unknown keys and normalize submitted checkboxes" do

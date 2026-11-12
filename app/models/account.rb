@@ -71,7 +71,7 @@ class Account < ApplicationRecord
 
   def normalize_profile(profile)
     source = profile.respond_to?(:to_h) ? profile.to_h : {}
-    text = %w[city institution course].index_with do |key|
+    text = %w[city course].index_with do |key|
       source[key].to_s.strip.first(PROFILE_TEXT_LIMIT)
     end
     text["period"] = PROFILE_PERIODS.include?(source["period"].to_s) ? source["period"].to_s : ""

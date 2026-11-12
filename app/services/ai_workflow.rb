@@ -8,9 +8,9 @@ class AIWorkflow
     review_references review_development
   ].freeze
   CASE_FIELDS = {
-    "proposal_chat" => %w[problem decision_basis decision_a decision_b thesis_a_title thesis_a thesis_b_title thesis_b],
+    "proposal_chat" => %w[problem decision_basis decision_a decision_b],
     "suggest_problem" => %w[problem],
-    "suggest_theses" => %w[thesis_a_title thesis_a thesis_b_title thesis_b],
+    "suggest_theses" => %w[decision_a decision_b],
     "case_structure" => %w[facts problem decision_basis decision_a decision_b],
     "review_criteria" => %w[criteria]
   }.freeze
@@ -23,6 +23,9 @@ class AIWorkflow
   }.freeze
   PRIVATE_FIELDS = %w[
     email account account_id project_id owner session csrf_token
+  ].freeze
+  DEPRECATED_FIELDS = %w[
+    institution profile thesis_a_title thesis_a thesis_b_title thesis_b
   ].freeze
 
   def self.action?(action)
@@ -44,12 +47,12 @@ class AIWorkflow
       "case_facts" => text(fields, "facts"),
       "legal_question" => text(fields, "problem", 5_000),
       "conceptual_basis" => text(fields, "decision_basis", 12_000),
-      "possible_decision_a" => text(fields, "decision_a", 6_000),
-      "possible_decision_b" => text(fields, "decision_b", 6_000),
-      "thesis_a_title" => text(fields, "thesis_a_title", 240),
-      "thesis_a_argument" => text(fields, "thesis_a"),
-      "thesis_b_title" => text(fields, "thesis_b_title", 240),
-      "thesis_b_argument" => text(fields, "thesis_b"),
+      "possible_decision_a" => (text(fields, "decision_a").presence || text(fields, "thesis_a")).first(6_000),
+      "possible_decision_b" => (text(fields, "decision_b").presence || text(fields, "thesis_b")).first(6_000),
+      "thesis_a_title" => "Alternativa A",
+      "thesis_a_argument" => (text(fields, "decision_a").presence || text(fields, "thesis_a")),
+      "thesis_b_title" => "Alternativa B",
+      "thesis_b_argument" => (text(fields, "decision_b").presence || text(fields, "thesis_b")),
       "criteria_and_values" => criteria_text(criteria),
       "research_object" => text(fields, "research_object", 5_000),
       "problem_context" => text(fields, "problem_context", 8_000),
@@ -60,7 +63,7 @@ class AIWorkflow
       "abstract" => text(fields, "abstract", 8_000),
       "keywords" => text(fields, "keywords", 1_000),
       "development" => development_text(development),
-      "fields" => fields.except(*PRIVATE_FIELDS).transform_values { |value| value.to_s.first(16_000) },
+      "fields" => fields.except(*PRIVATE_FIELDS, *DEPRECATED_FIELDS).transform_values { |value| value.to_s.first(16_000) },
       "sources" => sources.first(60).map do |source|
         source.slice("id", "title", "author", "kind", "reference", "notes")
       end
@@ -69,7 +72,7 @@ class AIWorkflow
 
   def self.action_context(project, action, body, sources: [])
     state = legacy_state(project, sources:)
-    fields = project.fields.is_a?(Hash) ? project.fields : {}
+    fields = project.fields.is_a?(Hash) ? project.fields.except(*DEPRECATED_FIELDS) : {}
     project_type = %w[paper_project paper_final].include?(project.project_type) ? "paper" : "case"
     requested_fields = body["context_fields"]
     selected = if requested_fields.is_a?(Array)

@@ -67,6 +67,72 @@ class DocumentExportTest < ActiveSupport::TestCase
     assert_not_includes source, "```{=typst}\n#import \"evil.typ\""
   end
 
+  test "cover uses account course, city, and current year without an institution name" do
+    account = Account.create!(
+      email: "cover@example.test",
+      name: "Autora",
+      profile: { "course" => "Direito", "city" => "Recife" }
+    )
+    project = account.projects.create!(
+      project_type: "case",
+      fields: {
+        "title" => "Relatório",
+        "institution" => "Nome da instituição",
+        "discipline" => "Direito Civil",
+        "teacher" => "Professora Exemplo",
+        "period" => "3",
+        "shift" => "noturno"
+      }
+    )
+
+    source = DocumentExport.build_quarto_source(project)
+
+    assert_includes source, 'abnt-instituicao: ""'
+    assert_includes source, 'abnt-curso: "Direito"'
+    assert_includes source, 'abnt-local: "Recife"'
+    assert_includes source, %(abnt-ano: "#{Date.current.year}")
+    assert_includes source, "Disciplina: Direito Civil"
+    assert_includes source, "Professor(a): Professora Exemplo"
+    assert_not_includes source, "Nome da instituição"
+    assert_not_includes source, "Data de entrega:"
+  end
+
+  test "reuses decision text without duplicating it in the document" do
+    alternative_a = "A alternativa A tem conteúdo próprio."
+    alternative_b = "A alternativa B tem conteúdo próprio."
+    project = Project.new(
+      project_type: "case",
+      fields: {
+        "title" => "Relatório",
+        "decision_a" => alternative_a,
+        "decision_b" => alternative_b,
+        "thesis_a" => "Texto antigo duplicado A",
+        "thesis_b" => "Texto antigo duplicado B"
+      }
+    )
+
+    html = DocumentExport.build_project_html(project)
+    source = DocumentExport.build_quarto_source(project)
+
+    [ html, source ].each do |document|
+      assert_equal 1, document.scan(alternative_a.delete_suffix(".")).length
+      assert_equal 1, document.scan(alternative_b.delete_suffix(".")).length
+      assert_not_includes document, "Texto antigo duplicado"
+    end
+    assert_not_includes source, "Descrição dos argumentos"
+  end
+
+  test "reuses legacy argumentation text when the decision alternative is empty" do
+    legacy_text = "Alternativa antiga preservada."
+    project = Project.new(project_type: "case", fields: { "thesis_a" => legacy_text })
+
+    source = DocumentExport.build_quarto_source(project)
+
+    legacy_text = legacy_text.delete_suffix(".")
+    assert_includes source, legacy_text
+    assert_equal 1, source.scan(legacy_text).length
+  end
+
   test "PDF is restricted to the Case report phase" do
     project = Project.create!(project_type: "case")
 

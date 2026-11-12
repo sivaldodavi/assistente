@@ -21,28 +21,6 @@ document.addEventListener("click", (event) => {
     return;
   }
 
-  const addSuggestedButton = event.target.closest("[data-add-suggested-tasks]");
-  if (addSuggestedButton) {
-    const editor = addSuggestedButton.closest("[data-schedule-editor]");
-    const list = editor.querySelector("[data-task-list]");
-    const rows = Array.from(list.querySelectorAll("[data-task]"));
-    const existingKeys = new Set(rows.map((row) => row.dataset.taskTemplateKey).filter(Boolean));
-    const existingTitles = new Set(rows.map((row) => row.querySelector("[data-task-field='title']").value.trim()).filter(Boolean));
-    const templates = JSON.parse(editor.dataset.scheduleTemplates);
-    let added = 0;
-    templates.forEach(([key, title], stage) => {
-      if (existingKeys.has(key) || existingTitles.has(title)) return;
-      addScheduleTask(editor, { template_key: key, title, stage });
-      existingKeys.add(key);
-      existingTitles.add(title);
-      added += 1;
-    });
-    const status = editor.querySelector("[data-schedule-status]");
-    status.textContent = added ? `${added} tarefas do roteiro foram adicionadas. Salve o roteiro para registrar.` : "O roteiro já está adicionado.";
-    updateScheduleMeta(editor);
-    return;
-  }
-
   const removeTaskButton = event.target.closest("[data-remove-task]");
   if (removeTaskButton) {
     const editor = removeTaskButton.closest("[data-schedule-editor]");
@@ -340,12 +318,7 @@ function addScheduleTask(editor, task = {}) {
   });
   const row = fragment.querySelector("[data-task]");
   const taskId = task.id || (globalThis.crypto?.randomUUID ? globalThis.crypto.randomUUID() : `task-${Date.now()}-${index}`);
-  row.dataset.taskTemplateKey = task.template_key || "";
-  row.dataset.taskId = taskId;
-  row.dataset.taskStage = Number.isInteger(task.stage) ? String(task.stage) : "";
   row.querySelector("[name$='[id]']").value = taskId;
-  row.querySelector("[name$='[template_key]']").value = task.template_key || "";
-  row.querySelector("[name$='[stage]']").value = Number.isInteger(task.stage) ? String(task.stage) : "";
   row.querySelector("[name$='[title]']").value = task.title || "";
   row.querySelector("[name$='[date]']").value = task.date || "";
   row.querySelector("[type='checkbox']").checked = task.done === true;
@@ -357,15 +330,13 @@ function addScheduleTask(editor, task = {}) {
 
 function updateScheduleMetaFromEvent(event) {
   const editor = event.target.closest("[data-schedule-editor]");
-  if (editor && event.target.matches("[data-schedule-field], [data-task-field]")) updateScheduleMeta(editor);
+  if (editor && event.target.matches("[data-task-field]")) updateScheduleMeta(editor);
 }
 
 function updateScheduleMeta(editor) {
   const rows = Array.from(editor.querySelectorAll("[data-task]"));
   const done = rows.filter((row) => row.querySelector("[data-task-field='done']").checked).length;
-  const dates = Array.from(editor.querySelectorAll("[data-schedule-field]")).filter((field) => field.value).length;
-  const dateLabel = dates === 1 ? "data definida" : "datas definidas";
-  editor.querySelector("[data-schedule-meta]").textContent = `${done}/${rows.length} tarefas · ${dates ? `${dates} ${dateLabel}` : "sem datas definidas"}`;
+  editor.querySelector("[data-schedule-meta]").textContent = `${done}/${rows.length} tarefas`;
 }
 
 function updateScheduleEmptyState(editor) {
@@ -374,6 +345,6 @@ function updateScheduleEmptyState(editor) {
   const empty = document.createElement("p");
   empty.className = "field-hint";
   empty.dataset.emptyTaskList = "";
-  empty.textContent = "Ainda não há tarefas. Use o roteiro sugerido ou adicione uma tarefa própria.";
+  empty.textContent = "Ainda não há tarefas. Adicione uma tarefa e, se quiser, informe o prazo.";
   list.append(empty);
 }

@@ -33,7 +33,7 @@ class Project < ApplicationRecord
   end
 
   def schedule_summary
-    AcademicSchedule.summary(schedule, project_type)
+    AcademicSchedule.summary(schedule)
   end
 
   def delivery_key(section = section_for)
@@ -75,7 +75,7 @@ class Project < ApplicationRecord
     self.development_sections = AcademicWorkflow.normalize_development_sections(development_sections)
     self.source_ids = AcademicWorkflow.normalize_source_ids(source_ids)
     self.deliveries = AcademicWorkflow.normalize_deliveries(deliveries)
-    self.schedule = AcademicSchedule.normalize_schedule(schedule, project_type:, fallback_date: fields["deliveryDate"])
+    self.schedule = AcademicSchedule.normalize_schedule(schedule)
     self.current_stage = AcademicWorkflow.first_stage_id(project_type) unless sections.any? { |section| section["id"] == current_stage }
     self.title = fields["title"].presence || default_title
   end
