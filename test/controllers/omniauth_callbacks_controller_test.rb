@@ -83,9 +83,7 @@ class OmniauthCallbacksControllerTest < ActionController::TestCase
   end
 
   test "OAuth state failure explains how to retry safely" do
-    @request.env["omniauth.error.type"] = "csrf_detected"
-
-    get :failure
+    get :failure, params: { message: "csrf_detected" }
 
     assert_redirected_to login_path
     assert_equal(

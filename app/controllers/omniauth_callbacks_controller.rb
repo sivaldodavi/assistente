@@ -37,7 +37,8 @@ class OmniauthCallbacksController < ApplicationController
   end
 
   def failure
-    if request.env["omniauth.error.type"].to_s == "csrf_detected"
+    if params[:message].to_s == "csrf_detected" ||
+        request.env["omniauth.error.type"].to_s == "csrf_detected"
       return redirect_to login_path,
         alert: "O navegador não preservou a sessão segura do login. " \
           "Inicie novamente pela página de login e permita cookies para este site."
