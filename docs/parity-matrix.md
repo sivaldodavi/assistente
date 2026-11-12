@@ -1,10 +1,10 @@
 # Matriz de paridade
 
-A fonte é o conjunto de 134 testes Python em `recovery/original-zip`, não o snapshot Stagit. Os testes Rails consolidam comportamentos em cenários de integração e modelo; portanto, a diferença entre 134 e 84 não mede, por si só, funcionalidade ausente. As funcionalidades definitivamente excluídas pelo usuário estão listadas separadamente.
+A fonte é o conjunto de 134 testes Python em `recovery/original-zip`, não o snapshot Stagit. Os testes Rails consolidam comportamentos em cenários de integração e modelo; portanto, a diferença entre 134 testes de referência e 99 testes Rails não mede, por si só, funcionalidade ausente. As funcionalidades definitivamente excluídas pelo usuário estão listadas separadamente.
 
 | Comportamento mantido | Testes de referência originais | Cobertura Rails atual | Estado |
 | --- | --- | --- | --- |
-| Roteiros Case, Projeto de Paper e Paper Final, campos, opções, limites, progresso e checklists | `test_academic_workflows.py`, `test_paper_workflows.py` | `test/models/academic_workflow_test.rb`, `test/models/project_test.rb`, `test/integration/projects_test.rb` | Coberto; a especificação JSON é comparada byte a byte com a fonte preservada. |
+| Roteiros Case, Projeto de Paper e Paper Final, campos, opções, limites, progresso e checklists | `test_academic_workflows.py`, `test_paper_workflows.py` | `test/models/academic_workflow_test.rb`, `test/models/project_test.rb`, `test/integration/projects_test.rb` | Coberto pela especificação JSON atual e por testes de modelo e integração. |
 | Salvamento, validação, revisão concorrente, conversão Paper Final e isolamento de projetos | `test_projects.py` | `test/integration/projects_test.rb`, `test/models/project_test.rb` | Coberto por testes Rails; agenda manual removida por decisão atual. |
 | Prévia HTML escapada, geração QMD/Typst/ABNT e disponibilidade de exportação por documento/fase | `test_export.py` | `test/services/document_export_test.rb`, `test/integration/exports_test.rb`, `test/integration/projects_test.rb` | Coberto com fakes nos testes; PDF real validado no container de produção em 12/11/2026 com Quarto 1.11.9 e Typst 0.15.1. |
 | Sugestões contextuais DeepSeek, consentimento, contrato estruturado e avaliação JEV separada | `test_ai_workflows.py` | `test/integration/project_assist_test.rb`, `test/integration/projects_test.rb` | Coberto com doubles locais; respostas externas continuam dependentes de credenciais e validação no provedor. |

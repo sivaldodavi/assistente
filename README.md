@@ -46,7 +46,7 @@ O modo público informativo pode ser reativado com `AUTHENTICATION_READY=false`:
 
 ## Roteiros
 
-`config/academic_workflows.json` define os roteiros de Case, Projeto de Paper e Paper Final, com 10, 9 e 6 etapas, respectivamente. Projetos são associados à conta, com salvamento, controle de revisão concorrente e conversão de Projeto de Paper em Paper Final. O Case permite registrar apenas as datas de entrega do relatório, do debate e da dissertação; a dissertação é escrita em um único campo. A Biblioteca Pessoal mantém fontes e fichamentos privados e permite vinculá-los aos projetos. A exportação acadêmica oferece prévias HTML e PDFs via Quarto/Typst com o modelo ABNT de referência.
+`config/academic_workflows.json` define os roteiros de Case, Projeto de Paper e Paper Final, com 10, 9 e 6 etapas, respectivamente. Projetos são associados à conta, com salvamento, controle de revisão concorrente e conversão de Projeto de Paper em Paper Final. O Case permite registrar apenas as datas de entrega do relatório, do debate e da dissertação; a dissertação é escrita em um único campo, sem combinar estruturas antigas. A Biblioteca Pessoal mantém fontes e fichamentos privados e permite vinculá-los aos projetos. A exportação acadêmica oferece prévias HTML e PDFs via Quarto/Typst com o modelo ABNT de referência.
 
 Contas, Google OAuth, isolamento por proprietário, perfil, termos e consentimentos estão implementados. A exclusão confirmada da conta remove também projetos, revisões, fontes e dados associados; não há recurso de exportação dos dados da conta.
 
@@ -68,7 +68,7 @@ bin/rubocop
 bin/rails zeitwerk:check
 ```
 
-O port da matriz de testes da fonte original ainda está em andamento. O OAuth iniciou o fluxo real até o Google, mas o callback precisa de validação pelo usuário no navegador. Mercado Pago de produção respondeu à verificação de credenciais; nenhuma cobrança foi criada. Use sandbox para testes financeiros.
+Em 12/11/2026, a suíte Rails completa passou: 99 testes e 766 assertions. O RuboCop inspecionou 98 arquivos sem offenses, e `zeitwerk:check` passou. Os testes de integrações externas usam doubles locais; eles não comprovam a entrega real de webhooks nem um pagamento. O login Google real já foi concluído e confirmado. Ainda falta validar uma notificação nativa e uma compra no sandbox; nenhuma cobrança real foi criada para teste.
 
 ## Staging e banco
 
