@@ -1,8 +1,16 @@
 <% content_for :title, "Assistente Acadêmico — organização para trabalhos acadêmicos" %>
+<% login_available = google_oauth_configured? && !public_shell_only? %>
 
 <header class="site-header">
   <%= link_to "Assistente Acadêmico", root_path, class: "brand" %>
   <nav class="header-actions" aria-label="Navegação principal">
+    <% if current_account.present? %>
+      <%= link_to "Meus projetos", projects_path, class: "header-link" %>
+    <% elsif login_available %>
+      <%= link_to "Entrar", login_path, class: "header-link" %>
+    <% else %>
+      <span class="header-link">Acesso em preparação</span>
+    <% end %>
     <%= link_to "Pacotes", plans_path, class: "header-link" %>
     <%= link_to "Termos", terms_path, class: "header-link" %>
   </nav>
@@ -13,7 +21,16 @@
     <p class="eyebrow">Assistente Acadêmico</p>
     <h1>Organize seu trabalho acadêmico, etapa por etapa.</h1>
     <p>Roteiros guiados ajudam a estruturar estudos de caso e projetos de paper, com espaço para referências, planejamento e exportação.</p>
-    <%= link_to "Conheça os pacotes", plans_path, class: "button button-primary" %>
+    <div class="hero-actions">
+      <% if current_account.present? %>
+        <%= link_to "Acessar meus projetos", projects_path, class: "button button-primary" %>
+      <% elsif login_available %>
+        <%= link_to "Entrar com Google", login_path, class: "button button-primary" %>
+      <% else %>
+        <span class="preview-label">Acesso em preparação</span>
+      <% end %>
+      <%= link_to "Conheça os pacotes", plans_path, class: "button button-secondary" %>
+    </div>
   </section>
 
   <section class="project-list">
@@ -36,5 +53,14 @@
     </div>
   </section>
 
-  <p class="field-hint">O acesso a contas e compras está temporariamente indisponível enquanto o serviço é preparado. Leia também a <%= link_to "política de privacidade", privacy_path %> e <%= link_to "como funciona a assistência de IA", ai_help_path %>.</p>
+  <p class="field-hint">
+    <% if current_account.present? %>
+      Você está conectado. Leia também a
+    <% elsif login_available %>
+      Entre com sua conta Google para acessar seus trabalhos. Leia também a
+    <% else %>
+      O acesso a contas está em preparação. Leia também a
+    <% end %>
+    <%= link_to "política de privacidade", privacy_path %> e <%= link_to "como funciona a assistência de IA", ai_help_path %>.
+  </p>
 </main>

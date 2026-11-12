@@ -9,6 +9,23 @@ class PublicPagesTest < ActionDispatch::IntegrationTest
     assert_select "a[href='#{plans_path}']", text: "Conheça os pacotes"
   end
 
+  test "root offers Google login when production credentials are configured" do
+    previous_client_id = Rails.application.config.x.google_oauth_client_id
+    previous_client_secret = Rails.application.config.x.google_oauth_client_secret
+    Rails.application.config.x.google_oauth_client_id = "client-id"
+    Rails.application.config.x.google_oauth_client_secret = "client-secret"
+
+    get root_path
+
+    assert_response :success
+    assert_select "a[href='#{login_path}']", text: "Entrar"
+    assert_select "a[href='#{login_path}']", text: "Entrar com Google"
+    assert_select "body", text: /O acesso a contas está em preparação/, count: 0
+  ensure
+    Rails.application.config.x.google_oauth_client_id = previous_client_id
+    Rails.application.config.x.google_oauth_client_secret = previous_client_secret
+  end
+
   test "public pricing page shows package details without purchase controls" do
     get pricing_path
 

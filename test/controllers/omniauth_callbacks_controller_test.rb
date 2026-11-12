@@ -82,6 +82,19 @@ class OmniauthCallbacksControllerTest < ActionController::TestCase
     assert_redirected_to login_path
   end
 
+  test "OAuth state failure explains how to retry safely" do
+    @request.env["omniauth.error.type"] = "csrf_detected"
+
+    get :failure
+
+    assert_redirected_to login_path
+    assert_equal(
+      "O navegador não preservou a sessão segura do login. " \
+        "Inicie novamente pela página de login e permita cookies para este site.",
+      flash[:alert]
+    )
+  end
+
   private
 
   def google_auth(email_verified: true, nonce: @nonce)
