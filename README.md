@@ -99,4 +99,4 @@ Verifique cada cópia com `PRAGMA integrity_check` e teste restaurações em arq
 
 ## Git e publicação
 
-Desenvolvimento em branches `feat/...`, `fix/...` ou `refactor/...`, com Conventional Commits em português. `main` só recebe mudanças validadas por fast-forward. Nenhum deploy ocorre sem autorização explícita.
+O repositório mantém somente a branch compartilhada `main`, com commits Conventional Commits em português. O snapshot original não integrado permanece preservado como tag `recovery/original-zip` (não é uma branch). Valide mudanças antes de publicar; nenhum deploy ocorre sem autorização explícita.
