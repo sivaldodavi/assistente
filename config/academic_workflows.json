@@ -264,7 +264,14 @@
       "custom": "review",
       "id": "review_report",
       "phase": "report",
-      "fields": []
+      "fields": [
+        {
+          "id": "report_delivery_date",
+          "label": "Data de entrega do relatório",
+          "type": "date",
+          "limit": 10
+        }
+      ]
     },
     {
       "phase": "debate",
@@ -358,6 +365,12 @@
           "type": "textarea",
           "hint": "Opcional.",
           "limit": 8000
+        },
+        {
+          "id": "debate_delivery_date",
+          "label": "Data do debate",
+          "type": "date",
+          "limit": 10
         }
       ],
       "checks": [
@@ -383,31 +396,22 @@
     {
       "phase": "dissertation",
       "title": "Dissertação",
-      "intro": "Escreva a dissertação em três partes: introdução, desenvolvimento e conclusão.",
+      "intro": "Escreva a dissertação em um único texto, incorporando a tese, os argumentos e os aprendizados do debate.",
       "fields": [
         {
-          "id": "dissertation_intro",
-          "label": "Introdução",
+          "id": "dissertation",
+          "label": "Dissertação",
           "type": "textarea",
           "size": "large",
-          "hint": "Apresente o caso e a tese que você defende.",
+          "hint": "Redija o texto completo sem dividir o preenchimento em partes.",
           "required": true,
-          "limit": 12000
-        },
-        {
-          "id": "dissertation_conclusion",
-          "label": "Conclusão",
-          "type": "textarea",
-          "size": "large",
-          "hint": "Feche com a solução do caso, sem argumentos novos.",
-          "required": true,
-          "limit": 12000
+          "limit": 30000
         }
       ],
       "checks": [
         [
-          "dissertation-intro-thesis",
-          "A introdução expõe a tese diante do caso apresentado."
+          "dissertation-thesis-solution",
+          "A dissertação apresenta a tese defendida e a solução para o caso."
         ],
         [
           "dissertation-own-words",
@@ -420,10 +424,6 @@
         [
           "dissertation-organization",
           "O texto tem estrutura lógica e linguagem técnica."
-        ],
-        [
-          "dissertation-conclusion",
-          "A conclusão apresenta a solução do caso."
         ]
       ],
       "id": "dissertation",
@@ -435,13 +435,20 @@
       "intro": "Confira o texto e marque a entrega.",
       "custom": "review",
       "id": "review_dissertation",
-      "fields": []
+      "fields": [
+        {
+          "id": "dissertation_delivery_date",
+          "label": "Data de entrega da dissertação",
+          "type": "date",
+          "limit": 10
+        }
+      ]
     }
   ],
   "paper_project": [
     {
       "title": "Identificação e delimitação",
-      "intro": "Delimite o tema antes de formular o problema. Use o funil do tema e confirme interesse, viabilidade, relevância e competência. As tarefas e seus prazos ficam no planejamento do trabalho.",
+      "intro": "Delimite o tema antes de formular o problema. Use o funil do tema e confirme interesse, viabilidade, relevância e competência.",
       "fields": [
         {
           "id": "title",

@@ -26,6 +26,7 @@ class AIWorkflow
   ].freeze
   DEPRECATED_FIELDS = %w[
     institution profile thesis_a_title thesis_a thesis_b_title thesis_b
+    dissertation_intro dissertation_conclusion
   ].freeze
 
   def self.action?(action)
@@ -38,8 +39,15 @@ class AIWorkflow
 
   def self.legacy_state(project, sources: [])
     fields = project.fields.is_a?(Hash) ? project.fields : {}
+    fields = fields.merge("dissertation" => project.dissertation_text) if project.project_type == "case"
     criteria = project.criteria.is_a?(Array) ? project.criteria : []
-    development = project.development_sections.is_a?(Array) ? project.development_sections : []
+    development = if project.project_type == "case"
+      []
+    elsif project.development_sections.is_a?(Array)
+      project.development_sections
+    else
+      []
+    end
     {
       "project_type" => project.project_type,
       "assignment_prompt" => text(fields, "assignment_prompt", 12_000),
@@ -73,6 +81,7 @@ class AIWorkflow
   def self.action_context(project, action, body, sources: [])
     state = legacy_state(project, sources:)
     fields = project.fields.is_a?(Hash) ? project.fields.except(*DEPRECATED_FIELDS) : {}
+    fields = fields.merge("dissertation" => project.dissertation_text) if project.project_type == "case"
     project_type = %w[paper_project paper_final].include?(project.project_type) ? "paper" : "case"
     requested_fields = body["context_fields"]
     selected = if requested_fields.is_a?(Array)
@@ -90,7 +99,7 @@ class AIWorkflow
       "project_type" => project_type,
       "project_context" => fields.slice(*selected),
       "source_ids" => project.source_ids.is_a?(Array) ? project.source_ids : [],
-      "development_ids" => project.development_sections.filter_map { |item| item["id"] if item.is_a?(Hash) },
+      "development_ids" => project.project_type == "case" ? [] : project.development_sections.filter_map { |item| item["id"] if item.is_a?(Hash) },
       "criterion_ids" => project.criteria.filter_map { |item| item["id"] if item.is_a?(Hash) },
       "checklist" => body["checklist"].is_a?(Array) ? body["checklist"].first(30) : [],
       "evidence_fields" => selected

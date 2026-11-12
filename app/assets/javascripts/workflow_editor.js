@@ -1,36 +1,4 @@
 document.addEventListener("click", (event) => {
-  const planningOpen = event.target.closest("[data-planning-open]");
-  if (planningOpen) {
-    planningOpen.closest("[data-schedule-editor]").querySelector("[data-planning-dialog]").showModal();
-    return;
-  }
-
-  const planningClose = event.target.closest("[data-planning-close]");
-  if (planningClose) {
-    planningClose.closest("[data-planning-dialog]").close();
-    return;
-  }
-
-  const addTaskButton = event.target.closest("[data-add-task]");
-  if (addTaskButton) {
-    const editor = addTaskButton.closest("[data-schedule-editor]");
-    const row = addScheduleTask(editor);
-    editor.querySelector("[data-schedule-status]").textContent = "Tarefa adicionada. Salve o roteiro para registrar.";
-    updateScheduleMeta(editor);
-    row.querySelector("[data-task-field='title']").focus();
-    return;
-  }
-
-  const removeTaskButton = event.target.closest("[data-remove-task]");
-  if (removeTaskButton) {
-    const editor = removeTaskButton.closest("[data-schedule-editor]");
-    removeTaskButton.closest("[data-task]").remove();
-    updateScheduleEmptyState(editor);
-    editor.querySelector("[data-schedule-status]").textContent = "Tarefa removida. Salve o roteiro para registrar.";
-    updateScheduleMeta(editor);
-    return;
-  }
-
   const addButton = event.target.closest("[data-collection-add]");
   if (addButton) {
     const section = addButton.closest(".collection-section");
@@ -62,9 +30,6 @@ document.addEventListener("click", (event) => {
     add.disabled = list.children.length < Number(list.dataset.collectionLimit) ? false : true;
   }
 });
-
-document.addEventListener("input", updateScheduleMetaFromEvent);
-document.addEventListener("change", updateScheduleMetaFromEvent);
 
 document.addEventListener("click", async (event) => {
   const purchaseButton = event.target.closest("[data-buy-package]");
@@ -306,45 +271,4 @@ function renderJevAnalysis(output, analysis) {
     grade.textContent = `Faixa provável: ${analysis.grade_range.score}/3 · conteúdo estimado em ${analysis.expected_points}/${analysis.assessable_points} pontos`;
     output.append(grade);
   }
-}
-
-function addScheduleTask(editor, task = {}) {
-  const list = editor.querySelector("[data-task-list]");
-  const template = editor.querySelector("[data-task-template]");
-  const index = Number(list.dataset.nextIndex);
-  const fragment = template.content.cloneNode(true);
-  fragment.querySelectorAll("[name]").forEach((input) => {
-    input.name = input.name.replaceAll("INDEX_PLACEHOLDER", String(index));
-  });
-  const row = fragment.querySelector("[data-task]");
-  const taskId = task.id || (globalThis.crypto?.randomUUID ? globalThis.crypto.randomUUID() : `task-${Date.now()}-${index}`);
-  row.querySelector("[name$='[id]']").value = taskId;
-  row.querySelector("[name$='[title]']").value = task.title || "";
-  row.querySelector("[name$='[date]']").value = task.date || "";
-  row.querySelector("[type='checkbox']").checked = task.done === true;
-  list.querySelector("[data-empty-task-list]")?.remove();
-  list.append(fragment);
-  list.dataset.nextIndex = String(index + 1);
-  return row;
-}
-
-function updateScheduleMetaFromEvent(event) {
-  const editor = event.target.closest("[data-schedule-editor]");
-  if (editor && event.target.matches("[data-task-field]")) updateScheduleMeta(editor);
-}
-
-function updateScheduleMeta(editor) {
-  const rows = Array.from(editor.querySelectorAll("[data-task]"));
-  const done = rows.filter((row) => row.querySelector("[data-task-field='done']").checked).length;
-  editor.querySelector("[data-schedule-meta]").textContent = `${done}/${rows.length} tarefas`;
-}
-
-function updateScheduleEmptyState(editor) {
-  const list = editor.querySelector("[data-task-list]");
-  if (list.querySelector("[data-task]")) return;
-  const empty = document.createElement("p");
-  empty.className = "field-hint";
-  empty.dataset.emptyTaskList = "";
-  empty.textContent = "Ainda não há tarefas. Adicione uma tarefa e, se quiser, informe o prazo.";
-  list.append(empty);
 }

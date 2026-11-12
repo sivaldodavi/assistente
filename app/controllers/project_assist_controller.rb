@@ -55,7 +55,7 @@ class ProjectAssistController < ApplicationController
 
   def jev_section
     section = body_parameters["section"].to_s
-    return render_error("invalid_section", "Etapa JEV inválida.", :bad_request) unless JevRubric::CHECKLISTS.key?(section)
+    return render_error("invalid_section", "Etapa de avaliação inválida.", :bad_request) unless JevRubric::CHECKLISTS.key?(section)
 
     analyze_jev(section:)
   end
@@ -75,7 +75,7 @@ class ProjectAssistController < ApplicationController
   end
 
   def analyze_jev(section: nil)
-    return render_error("jev_case_only", "A avaliação JEV está disponível apenas para Cases.", :bad_request) unless @project.project_type == "case"
+    return render_error("assessment_case_only", "A avaliação formativa está disponível apenas para Cases.", :bad_request) unless @project.project_type == "case"
 
     request_id = SecureRandom.uuid
     reserved = false
@@ -104,7 +104,7 @@ class ProjectAssistController < ApplicationController
   rescue AIProviderError => error
     render_error(error.code, error.message, error.status)
   rescue ArgumentError, TypeError
-    render_error("invalid_ai_request", "A solicitação JEV é inválida.", :bad_request)
+    render_error("invalid_ai_request", "A solicitação de avaliação é inválida.", :bad_request)
   ensure
     AIUsageService.refund!(request_id) if reserved && !completed
   end

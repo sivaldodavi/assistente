@@ -18,8 +18,8 @@ class AIUsageService
         raise UsageError.new("duplicate_usage_request", "Esta solicitação já foi processada.", :conflict)
       end
       if !account.admin? && account.public_send(fields[:used]) >= account.public_send(fields[:limit])
-        code = credit_type == "deepseek" ? "deepseek_quota_exhausted" : "ai_quota_exhausted"
-        message = credit_type == "deepseek" ? "Os créditos de assistência DeepSeek desta conta foram esgotados." : "Os créditos de avaliação JEV desta conta foram esgotados."
+        code = credit_type == "deepseek" ? "writing_credits_exhausted" : "assessment_credits_exhausted"
+        message = credit_type == "deepseek" ? "Os créditos de orientação de escrita desta conta foram esgotados." : "Os créditos de avaliação formativa desta conta foram esgotados."
         raise UsageError.new(code, message, :too_many_requests)
       end
 

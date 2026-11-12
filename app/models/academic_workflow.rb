@@ -7,8 +7,7 @@ class AcademicWorkflow
     "city" => 160,
     "author" => 1_200,
     "authors" => 1_200,
-    "dissertation_author" => 160,
-    "dissertation_foundation" => 30_000
+    "dissertation_author" => 160
   }.freeze
   LEGACY_FIELD_ALIASES = {
     "decision_a" => "thesis_a",
@@ -49,6 +48,7 @@ class AcademicWorkflow
         value = value.nil? ? "" : value.to_s.strip
         limit = Integer(rule["limit"] || 16_000)
         value = value[0, limit]
+        value = normalize_date(value) if rule["type"] == "date"
 
         options = rule["options"]
         if options.is_a?(Array) && !options.empty?
@@ -151,6 +151,14 @@ class AcademicWorkflow
 
     def bounded(value, limit)
       value.to_s.strip[0, limit]
+    end
+
+    def normalize_date(value)
+      return "" unless value.match?(/\A\d{4}-\d{2}-\d{2}\z/)
+
+      Date.iso8601(value).iso8601
+    rescue Date::Error
+      ""
     end
 
     def truthy?(value)

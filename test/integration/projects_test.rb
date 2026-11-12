@@ -18,25 +18,14 @@ class ProjectsTest < ActionDispatch::IntegrationTest
     assert_select "a[href='#{new_project_path}']", "Começar um trabalho"
   end
 
-  test "projects page shows upcoming and overdue task deadlines" do
-    create_project!(
-      project_type: "case",
-      title: "Case de teste",
-      schedule: {
-        "tasks" => [
-          { "id" => "overdue", "title" => "Entregar rascunho", "date" => "2020-01-01" },
-          { "id" => "future", "title" => "Revisar argumentos", "date" => "2099-12-31" }
-        ]
-      }
-    )
+  test "projects page does not show a task agenda" do
+    create_project!(project_type: "case", title: "Case de teste")
 
     get projects_path
 
     assert_response :success
-    assert_select "h2#agenda-title", "Próximos prazos de tarefas"
-    assert_select ".agenda-item", count: 2
-    assert_select ".agenda-item.is-overdue", text: /Atrasada/
-    assert_select ".agenda-item", text: /Revisar argumentos/
+    assert_select ".agenda-panel", count: 0
+    assert_select "body", text: /Agenda|tarefas com prazo/i, count: 0
   end
 
   test "creates a case and opens the first original stage" do
@@ -114,7 +103,7 @@ class ProjectsTest < ActionDispatch::IntegrationTest
     assert_select "textarea[name='project[fields][dissertation_intro]']", count: 0
   end
 
-  test "renders contextual AI controls and the separate JEV assessment for Cases" do
+  test "renders contextual AI controls and an unnamed formative assessment for Cases" do
     project = create_project!(project_type: "case")
 
     get project_path(project, stage: "description")
@@ -126,6 +115,9 @@ class ProjectsTest < ActionDispatch::IntegrationTest
     assert_select "button[data-jev-section-action]"
     assert_select "button[data-jev-report]"
     assert_select "select[data-jev-section-select] option", count: 5
+    assert_not_includes response.body, "JEV"
+    assert_not_includes response.body, "DeepSeek"
+    assert_not_includes response.body, "TypeSafe"
   end
 
   test "does not render Case-only JEV controls for a Paper" do
@@ -139,18 +131,53 @@ class ProjectsTest < ActionDispatch::IntegrationTest
     assert_select "[data-jev-report]", count: 0
   end
 
-  test "renders the planning dialog with task-specific deadlines" do
+  test "renders only fixed delivery date fields for Case phases" do
     project = create_project!(project_type: "case")
 
-    get project_path(project, stage: "description")
+    {
+      "review_report" => "report_delivery_date",
+      "debate" => "debate_delivery_date",
+      "review_dissertation" => "dissertation_delivery_date"
+    }.each do |stage, field|
+      get project_path(project, stage:)
+
+      assert_response :success
+      assert_select "input[type='date'][name='project[fields][#{field}]']"
+      assert_select "[data-planning-open]", count: 0
+      assert_select "[data-add-task]", count: 0
+    end
+  end
+
+  test "renders one dissertation field and migrates legacy text into it" do
+    project = create_project!(project_type: "case")
+    project.update_columns(
+      fields: { "title" => "Case antigo", "dissertation_intro" => "Parte inicial antiga", "dissertation_conclusion" => "Parte final antiga" },
+      development_sections: [ { "title" => "Fundamentação", "body" => "Desenvolvimento antigo" } ]
+    )
+    project.reload
+
+    get project_path(project, stage: "dissertation")
 
     assert_response :success
-    assert_select "button[data-planning-open] span:first-child", "Planejar este trabalho"
-    assert_select "dialog#project-planning"
-    assert_select "input[name='project[schedule][tasks][INDEX_PLACEHOLDER][date]']"
-    assert_select "[data-add-task]", text: "Adicionar tarefa"
-    assert_select "[data-add-suggested-tasks]", count: 0
-    assert_select "input[name^='project[schedule][report_date]']", count: 0
+    assert_select "textarea[name='project[fields][dissertation]']", count: 1
+    assert_select "textarea[name='project[fields][dissertation_intro]']", count: 0
+    assert_select "textarea[name='project[fields][dissertation_conclusion]']", count: 0
+    assert_select "[data-collection-add]", count: 0
+    assert_includes response.body, "Parte inicial antiga"
+    assert_includes response.body, "Desenvolvimento antigo"
+    assert_includes response.body, "Parte final antiga"
+
+    patch project_path(project, stage: "dissertation"), params: {
+      project: {
+        lock_version: project.lock_version,
+        current_stage: "dissertation",
+        fields: { dissertation: "Texto único da dissertação." }
+      }
+    }
+
+    assert_redirected_to project_path(project, stage: "dissertation")
+    assert_equal "Texto único da dissertação.", project.reload.fields["dissertation"]
+    assert_empty project.development_sections
   end
 
   test "exposes saved document previews and PDF export for every Case phase" do
@@ -175,44 +202,28 @@ class ProjectsTest < ActionDispatch::IntegrationTest
     assert_select "a[href='#{export_project_path(project, format: :pdf)}']", text: "Baixar PDF"
   end
 
-  test "saves only task delivery dates and completion state" do
-    project = create_project!(project_type: "paper_project")
+  test "saves only the three fixed Case delivery dates" do
+    project = create_project!(project_type: "case")
 
-    patch project_path(project, stage: "paper_project_identity"), params: {
+    patch project_path(project, stage: "review_report"), params: {
       project: {
         lock_version: project.lock_version,
-        current_stage: "paper_identification",
-        schedule: {
-          tasks: {
-            "0" => { id: "task-1", title: "Revisar o projeto", date: "2026-10-29", done: "1" }
-          }
+        current_stage: "review_report",
+        fields: {
+          report_delivery_date: "2026-11-28",
+          debate_delivery_date: "2026-12-01",
+          dissertation_delivery_date: "2026-02-30",
+          arbitrary_deadline: "2026-12-15"
         }
       }
     }
 
-    assert_redirected_to project_path(project, stage: "paper_identification")
+    assert_redirected_to project_path(project, stage: "review_report")
     project.reload
-    assert_equal [ "tasks" ], project.schedule.keys
-    assert_equal true, project.schedule["tasks"].first["done"]
-    assert_equal "2026-10-29", project.schedule["tasks"].first["date"]
-  end
-
-  test "allows removing every task from the schedule" do
-    project = create_project!(
-      project_type: "case",
-      schedule: { tasks: [ { id: "task-1", title: "Revisar", date: "2026-10-29" } ] }
-    )
-
-    patch project_path(project), params: {
-      project: {
-        lock_version: project.lock_version,
-        current_stage: project.current_stage,
-        schedule: { tasks: { clear: "" } }
-      }
-    }
-
-    assert_redirected_to project_path(project, stage: project.current_stage)
-    assert_empty project.reload.schedule["tasks"]
+    assert_equal "2026-11-28", project.fields["report_delivery_date"]
+    assert_equal "2026-12-01", project.fields["debate_delivery_date"]
+    assert_equal "", project.fields["dissertation_delivery_date"]
+    assert_not_includes project.fields, "arbitrary_deadline"
   end
 
   test "saves answers and checklist state with a revision snapshot" do

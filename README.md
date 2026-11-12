@@ -46,15 +46,15 @@ O modo público informativo pode ser reativado com `AUTHENTICATION_READY=false`:
 
 ## Roteiros
 
-`config/academic_workflows.json` é a cópia exata da especificação original `app/domain/academic-workflows.json`. Um teste verifica seu SHA-256 para impedir mudanças acidentais em perguntas, ordem, instruções e opções. Case, Projeto de Paper e Paper Final têm 10, 9 e 6 etapas, respectivamente. Projetos são associados à conta, com salvamento, controle de revisão concorrente, conversão de Projeto de Paper em Paper Final, agenda manual e tarefas por trabalho. A Biblioteca Pessoal mantém fontes e fichamentos privados e permite vinculá-los aos projetos. A exportação acadêmica oferece prévias HTML e PDFs via Quarto/Typst com o template ABNT preservado.
+`config/academic_workflows.json` define os roteiros de Case, Projeto de Paper e Paper Final, com 10, 9 e 6 etapas, respectivamente. Projetos são associados à conta, com salvamento, controle de revisão concorrente e conversão de Projeto de Paper em Paper Final. O Case permite registrar apenas as datas de entrega do relatório, do debate e da dissertação; a dissertação é escrita em um único campo. A Biblioteca Pessoal mantém fontes e fichamentos privados e permite vinculá-los aos projetos. A exportação acadêmica oferece prévias HTML e PDFs via Quarto/Typst com o modelo ABNT de referência.
 
 Contas, Google OAuth, isolamento por proprietário, perfil, termos e consentimentos estão implementados. A exclusão confirmada da conta remove também projetos, revisões, fontes e dados associados; não há recurso de exportação dos dados da conta.
 
 ## Escopo funcional acordado
 
-Implementados: assistência contextual com DeepSeek como único provedor generativo (sem fallback), serviço JEV TypeSafe separado para avaliação por rubrica, Mercado Pago via Pix com pacotes/créditos usando o SDK Ruby oficial (`mercadopago-sdk`), administração e páginas públicas de pacotes, termos, privacidade e explicação da IA. Pagamentos e IA usam adaptadores de serviço e testes com doubles locais.
+Implementados: assistência contextual de escrita, avaliação formativa separada, pagamentos por Pix com pacotes/créditos usando o SDK Ruby oficial (`mercadopago-sdk`), administração e páginas públicas de pacotes, termos, privacidade e explicação da IA. Pagamentos e IA usam adaptadores de serviço e testes com doubles locais.
 
-Foram excluídos definitivamente desta reconstrução: lembretes automáticos, compartilhamento e comentários administrativos, recomendações jurídicas, e-mails/outbox, Gemini e fallback de provedores, promoção/desconto e exportação dos dados da conta. A agenda manual e a exportação acadêmica HTML/PDF permanecem.
+Foram excluídos definitivamente desta reconstrução: agenda e tarefas com datas livres, lembretes automáticos, compartilhamento e comentários administrativos, recomendações jurídicas, e-mails/outbox, fallback de provedores, promoção/desconto e exportação dos dados da conta. Permanecem as três datas fixas do Case e a exportação acadêmica HTML/PDF.
 
 As páginas públicas estão em `/`, `/planos` (também `/plans`), `/termos`, `/privacidade` e `/ajuda-ia`. No modo funcional, o login Google e compras Pix ficam disponíveis a contas autenticadas. A política identifica Sivaldo Davi Pereira como responsável e informa `contato@sivaldodavi.com`, contato já publicado no site pessoal do responsável. Os avisos legais continuam sendo um rascunho funcional e devem ser revisados.
 

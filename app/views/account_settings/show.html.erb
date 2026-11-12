@@ -27,7 +27,7 @@
   <section class="panel">
     <h2>Pacote e créditos</h2>
     <p>Pacote atual: <strong><%= @account.plan_code.humanize %></strong></p>
-    <p><%= @account.project_credits_remaining %> créditos de projeto · <%= [@account.ai_limit - @account.ai_used, 0].max %> avaliações JEV · <%= @account.deepseek_credits_remaining %> usos DeepSeek</p>
+    <p><%= @account.project_credits_remaining %> créditos de projeto · <%= [@account.ai_limit - @account.ai_used, 0].max %> avaliações formativas · <%= @account.deepseek_credits_remaining %> orientações de escrita</p>
     <%= link_to "Comprar créditos por Pix", plans_path, class: "button button-primary" %>
   </section>
 

@@ -30,40 +30,6 @@
     <%= hidden_field_tag "project[lock_version]", @project.lock_version %>
     <%= hidden_field_tag "project[current_stage]", @stage["id"] %>
 
-    <section class="planning-launcher" data-schedule-editor>
-      <button class="planning-launcher-button" type="button" data-planning-open aria-haspopup="dialog" aria-controls="project-planning">
-        <span>Planejar este trabalho</span>
-        <span class="disclosure-meta" data-schedule-meta><%= @schedule_summary["task_done"] %>/<%= @schedule_summary["task_total"] %> tarefas</span>
-        <span class="planning-launcher-icon" aria-hidden="true">+</span>
-      </button>
-      <dialog class="planning-dialog" id="project-planning" aria-labelledby="project-planning-title" data-planning-dialog>
-        <header class="planning-dialog-header">
-          <div><h2 id="project-planning-title">Planejar este trabalho</h2><p>Adicione tarefas e, se necessário, defina o prazo de entrega de cada uma.</p></div>
-          <button class="text-button" type="button" data-planning-close aria-label="Fechar planejamento">&times;</button>
-        </header>
-        <div class="planning-dialog-body">
-          <div class="schedule-actions">
-            <button type="button" class="button button-secondary" data-add-task>Adicionar tarefa</button>
-            <span class="field-hint" data-schedule-status role="status" aria-live="polite"></span>
-          </div>
-          <%= hidden_field_tag "project[schedule][tasks][clear]", "" %>
-          <div class="schedule-list" data-task-list data-next-index="<%= @project.schedule["tasks"].length %>">
-            <% @project.schedule["tasks"].each_with_index do |task, index| %>
-              <%= render "schedule_task", task:, index: %>
-            <% end %>
-            <% if @project.schedule["tasks"].empty? %>
-              <p class="field-hint" data-empty-task-list>Ainda não há tarefas. Adicione uma tarefa e, se quiser, informe o prazo.</p>
-            <% end %>
-          </div>
-          <template data-task-template><%= render "schedule_task", task: {}, index: "INDEX_PLACEHOLDER" %></template>
-        </div>
-        <footer class="planning-dialog-footer">
-          <p class="field-hint">Feche o planejamento e salve o roteiro para registrar as alterações.</p>
-          <button class="button button-secondary" type="button" data-planning-close>Fechar</button>
-        </footer>
-      </dialog>
-    </section>
-
     <nav class="step-nav" aria-label="Etapas do roteiro">
       <% @stages.each_with_index do |stage, index| %>
         <%= button_tag "#{format('%02d', index + 1)} · #{stage['title']}",
@@ -82,9 +48,6 @@
 
       <div class="field-grid">
         <% @stage.fetch("fields", []).each do |field| %>
-          <% if @stage["custom"] == "dissertation" && field["id"] == "dissertation_conclusion" %>
-            <%= render "collection", kind: "development_sections", items: @project.development_sections, title: "Desenvolvimento e fundamentação" %>
-          <% end %>
           <div class="field" data-row="<%= field["row"] %>">
             <div class="field-label-row">
               <%= label_tag "project_fields_#{field["id"]}", field["label"] %>
@@ -92,9 +55,12 @@
             </div>
             <% name = "project[fields][#{field["id"]}]" %>
             <% value = @project.fields[field["id"]] %>
+            <% value = @project.dissertation_text if field["id"] == "dissertation" %>
             <% value = Date.current.year.to_s if field["id"] == "year" && value.blank? %>
             <% value = current_account.profile[field["id"]] if value.blank? && %w[period shift].include?(field["id"]) %>
-            <% if field["type"] == "textarea" %>
+            <% if field["type"] == "date" %>
+              <%= date_field_tag name, value, id: "project_fields_#{field["id"]}", class: "text-control", aria: { required: field["required"] } %>
+            <% elsif field["type"] == "textarea" %>
               <%= text_area_tag name, value, id: "project_fields_#{field["id"]}", rows: field["size"] == "large" ? 8 : 4, maxlength: field["limit"], placeholder: field["placeholder"], class: "text-control", aria: { required: field["required"] } %>
             <% elsif field["type"] == "select" %>
               <% if field["source"].present? %>
@@ -208,7 +174,7 @@
 
         <% if @project.project_type == "case" %>
           <div class="jev-tools">
-            <h4>Avaliação formativa JEV</h4>
+            <h4>Avaliação formativa</h4>
             <p class="field-hint">A avaliação usa uma rubrica própria e não representa nota oficial nem substitui a revisão docente.</p>
             <div class="assist-actions">
               <label class="jev-section-picker">Etapa para avaliar

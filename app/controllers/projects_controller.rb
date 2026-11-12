@@ -4,7 +4,6 @@ class ProjectsController < ApplicationController
 
   def index
     @projects = current_account ? current_account.projects.order(updated_at: :desc) : Project.none
-    @upcoming_schedule = AcademicSchedule.upcoming(@projects)
   end
 
   def new
@@ -106,7 +105,6 @@ class ProjectsController < ApplicationController
       requested_ids = AcademicWorkflow.normalize_source_ids(input[:source_ids])
       @project.source_ids = current_account.sources.where(public_id: requested_ids).pluck(:public_id)
     end
-    @project.schedule = AcademicSchedule.normalize_schedule(hash_parameter(input[:schedule])) if input.key?(:schedule)
     update_delivery(active_section) if params[:mark_delivered] == "1"
 
     target_type = convert_to_final ? "paper_final" : @project.project_type
@@ -163,7 +161,6 @@ class ProjectsController < ApplicationController
     @next_stage = @stages[@stage_index + 1]
     @progress = @project.progress(@stage["phase"])
     @review_summary = @project.review_summary(@stage["phase"])
-    @schedule_summary = @project.schedule_summary
     @sources = current_account.sources.order(:title)
   end
 end

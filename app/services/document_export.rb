@@ -5,6 +5,7 @@ require "tmpdir"
 require "timeout"
 
 class DocumentExport
+  INSTITUTION = "Faculdade Supremo Redentor - FACSUR"
   EXTENSION_DIR = Rails.root.join("vendor/quarto/_extensions/abnt")
   RENDER_TIMEOUT_SECONDS = 90
   MAX_PDF_BYTES = 25 * 1024 * 1024
@@ -17,6 +18,8 @@ class DocumentExport
   NON_DOCUMENT_FIELDS = %w[
     title authors author dissertation_author partner assignment_prompt profile
     institution course city year discipline teacher period shift
+    report_delivery_date debate_delivery_date dissertation_delivery_date
+    dissertation_intro dissertation_conclusion
   ].freeze
   RENDER_MUTEX = Mutex.new
   @render_count = 0
@@ -74,7 +77,7 @@ class DocumentExport
         raise ExportError, "O PDF do Case é gerado na fase Relatório; as demais fases podem ser consultadas na prévia."
       end
       document_kind = default_document_kind(data["project_type"])
-      source = build_quarto_source(data, sources:, document_kind:)
+      source = build_quarto_source(project, sources:, document_kind:)
       executable = quarto_executable
       raise QuartoUnavailable, "O renderizador Quarto não está disponível." unless executable && EXTENSION_DIR.directory?
       raise QuartoBusy, "Há muitas renderizações em andamento." unless acquire_render_slot
@@ -89,9 +92,15 @@ class DocumentExport
     private
 
     def project_payload(project, sources)
-      attributes = project.respond_to?(:attributes) ? project.attributes : project.to_h
-      account_name = project.respond_to?(:account) ? project.account&.name : attributes[:account_name]
-      attributes.stringify_keys.merge("account_name" => account_name, "sources" => sources)
+      attributes = (project.respond_to?(:attributes) ? project.attributes : project.to_h).stringify_keys
+      account_name = project.respond_to?(:account) ? project.account&.name : attributes["account_name"]
+      fields = attributes["fields"].is_a?(Hash) ? attributes["fields"].stringify_keys : {}
+      fields["dissertation"] = project.dissertation_text if project.respond_to?(:dissertation_text) && !fields.key?("dissertation")
+      if project.respond_to?(:account)
+        profile = project.account&.profile || {}
+        %w[course city].each { |key| fields[key] = profile[key] if fields[key].blank? }
+      end
+      attributes.merge("fields" => fields, "account_name" => account_name, "sources" => sources)
     end
 
     def legacy_project(project, sources)
@@ -101,20 +110,30 @@ class DocumentExport
       account_profile = project.respond_to?(:account) ? project.account&.profile : {}
       account_profile = account_profile.is_a?(Hash) ? account_profile : {}
       authors = fields["authors"].presence || fields["author"].presence || account_name
-      period_shift = [ fields["period"], fields["shift"] ].select(&:present?).join(" · ")
+      development = Array(project["development_sections"]).filter_map do |item|
+        item["body"].to_s if item.is_a?(Hash)
+      end
+      dissertation = if fields.key?("dissertation")
+        fields["dissertation"]
+      else
+        [ fields["dissertation_intro"], *development, fields["dissertation_conclusion"] ].filter_map(&:presence).join("\n\n")
+      end
       mapped = {
         "title" => fields["title"].to_s,
         "author" => authors,
         "partner" => fields["partner"].to_s,
         "account_name" => account_name.to_s,
         "institution" => "",
-        "course" => (fields["course"].presence || account_profile["course"]).to_s,
+        "course" => course_label(fields["course"].presence || account_profile["course"]),
         "city" => (fields["city"].presence || account_profile["city"]).to_s,
         "year" => (fields["year"].presence || Date.current.year.to_s).to_s,
+        "report_delivery_date" => fields["report_delivery_date"].to_s,
+        "dissertation" => dissertation,
         "profile" => fields["profile"].to_s,
         "discipline" => fields["discipline"].to_s,
         "teacher" => fields["teacher"].to_s,
-        "classInfo" => period_shift,
+        "classInfo" => class_info(fields),
+        "period" => fields["period"].to_s,
         "subtitle" => (fields["subtitle"].presence || fields["sub_title"]).to_s,
         "abstract" => fields["abstract"].to_s,
         "keywords" => fields["keywords"].to_s,
@@ -239,7 +258,8 @@ class DocumentExport
       details = [
         ("Disciplina: #{text(fields["discipline"])}" if text(fields["discipline"]).present?),
         ("Professor(a): #{text(fields["teacher"])}" if text(fields["teacher"]).present?),
-        ("Turma: #{text(fields["classInfo"])}" if text(fields["classInfo"]).present?)
+        ("Turma: #{text(fields["classInfo"])}" if text(fields["classInfo"]).present?),
+        ("Data de entrega: #{formatted_date(fields["report_delivery_date"])}" if formatted_date(fields["report_delivery_date"]).present?)
       ].compact
       title = text(fields["title"]).strip
       [
@@ -248,7 +268,7 @@ class DocumentExport
         "lang: pt-BR",
         "abnt-capa: true",
         "abnt-folha-rosto: false",
-        'abnt-instituicao: ""',
+        "abnt-instituicao: #{yaml_typst_scalar(INSTITUTION)}",
         "abnt-curso: #{yaml_typst_scalar(fields["course"])}",
         "abnt-subtitulo: #{yaml_typst_scalar(fields["subtitle"] || fields["subTitle"])}",
         yaml_list("abnt-autores", authors(project)),
@@ -267,11 +287,42 @@ class DocumentExport
     def author_notes(project)
       fields = project.fetch("fields")
       course = text(fields["course"]).presence
-      note = course.present? ? "Discente do curso de #{course}." : "Discente."
+      period = text(fields["period"]).presence
+      affiliations = [
+        ("do #{period}º período" if period.present?),
+        ("do #{course}" if course.present?)
+      ].compact
+      note = affiliations.any? ? "Discente #{affiliations.join(" ")} - FACSUR." : "Discente da #{INSTITUTION}."
       notes = authors(project).map { |author| [ author, note ] }
       teacher = text(fields["teacher"]).strip
-      notes << [ teacher, "Docente da disciplina." ] if teacher.present?
+      notes << [ teacher, "Docente da #{INSTITUTION}." ] if teacher.present?
       notes
+    end
+
+    def course_label(value)
+      course = text(value).strip
+      return "" if course.blank?
+      return course if course.match?(/\Acurso\b/i)
+
+      "Curso de #{course}"
+    end
+
+    def class_info(fields)
+      period = text(fields["period"]).strip
+      shift = text(fields["shift"]).strip
+      parts = []
+      parts << shift.capitalize if shift.present?
+      period_label = period.match?(/\A\d+\z/) ? "#{period}º período" : period
+      parts << period_label if period_label.present?
+      parts.join(", ")
+    end
+
+    def formatted_date(value)
+      return "" if value.blank?
+
+      Date.iso8601(value).strftime("%d/%m/%Y")
+    rescue Date::Error
+      ""
     end
 
     def typst_author_pairs(project)
@@ -284,11 +335,10 @@ class DocumentExport
     def case_header(project)
       fields = project.fetch("fields")
       title = text(fields["title"]).strip.upcase
-      details = [
-        ("na disciplina #{text(fields["discipline"])}" if text(fields["discipline"]).present?),
-        ("no curso de #{text(fields["course"])}" if text(fields["course"]).present?)
-      ].compact
-      note = details.any? ? "Relatório de Case apresentado em #{details.join(" · ")}." : "Relatório de Case acadêmico."
+      discipline = text(fields["discipline"]).strip
+      note = discipline.present? ?
+        "Case apresentado à disciplina de #{discipline} da #{INSTITUTION}." :
+        "Case acadêmico apresentado à #{INSTITUTION}."
       [
         '#import "_extensions/abnt/tipos/caso.typ": *',
         "#caso-cabecalho(",
@@ -462,8 +512,7 @@ class DocumentExport
         when "criteria"
           content = Array(project["criteria"]).map { |item| [ item["title"].presence || "Critério", [ item["definition"], ("Base: #{item["basis"]}" if item["basis"].present?) ].compact.join("\n\n") ] }
         when "dissertation"
-          development = Array(project["development_sections"]).map { |item| [ item["title"].presence || "Tópico", item["body"] ] }
-          content = [ [ "Introdução", fields["dissertation_intro"] ], *development, [ "Conclusão", fields["dissertation_conclusion"] ] ]
+          content = [ [ "Dissertação", fields["dissertation"] ] ]
         when "development"
           content = Array(project["development_sections"]).map { |item| [ item["title"].presence || "Tópico", item["body"] ] }
         when "sources"

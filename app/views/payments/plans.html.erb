@@ -30,7 +30,7 @@
   <% if public_shell_only? %>
     <p class="field-hint">Login e compras estarão disponíveis depois da validação das integrações.</p>
   <% elsif current_account %>
-    <p class="field-hint">Créditos disponíveis: <%= current_account.project_credits_remaining %> projetos, <%= [current_account.ai_limit - current_account.ai_used, 0].max %> avaliações JEV e <%= current_account.deepseek_credits_remaining %> usos DeepSeek.</p>
+    <p class="field-hint">Créditos disponíveis: <%= current_account.project_credits_remaining %> projetos, <%= [current_account.ai_limit - current_account.ai_used, 0].max %> avaliações formativas e <%= current_account.deepseek_credits_remaining %> orientações de escrita.</p>
   <% end %>
   <section class="package-grid" aria-label="Pacotes disponíveis">
     <% @packages.each do |code, package| %>
@@ -39,8 +39,8 @@
         <h2><%= number_to_currency(package[:price_cents] / 100.0, unit: "R$ ", separator: ",", delimiter: ".") %></h2>
         <ul>
           <li><%= package[:project_credits] %> projetos</li>
-          <li><%= package[:ai_credits] %> avaliações JEV</li>
-          <li><%= package[:deepseek_credits] %> usos DeepSeek</li>
+          <li><%= package[:ai_credits] %> avaliações formativas</li>
+          <li><%= package[:deepseek_credits] %> orientações de escrita</li>
         </ul>
         <% if public_shell_only? %>
           <p class="field-hint">Compra temporariamente indisponível.</p>

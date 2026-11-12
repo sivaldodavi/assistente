@@ -67,11 +67,11 @@ class DocumentExportTest < ActiveSupport::TestCase
     assert_not_includes source, "```{=typst}\n#import \"evil.typ\""
   end
 
-  test "cover uses account course, city, and current year without an institution name" do
+  test "cover follows the Typst reference institution and account academic data" do
     account = Account.create!(
       email: "cover@example.test",
       name: "Autora",
-      profile: { "course" => "Direito", "city" => "Recife" }
+      profile: { "course" => "Direito", "city" => "Recife", "period" => "3", "shift" => "noturno" }
     )
     project = account.projects.create!(
       project_type: "case",
@@ -81,20 +81,41 @@ class DocumentExportTest < ActiveSupport::TestCase
         "discipline" => "Direito Civil",
         "teacher" => "Professora Exemplo",
         "period" => "3",
-        "shift" => "noturno"
+        "shift" => "noturno",
+        "report_delivery_date" => "2026-11-30"
       }
     )
 
     source = DocumentExport.build_quarto_source(project)
 
-    assert_includes source, 'abnt-instituicao: ""'
-    assert_includes source, 'abnt-curso: "Direito"'
+    assert_includes source, %(abnt-instituicao: "#{DocumentExport::INSTITUTION}")
+    assert_includes source, 'abnt-curso: "Curso de Direito"'
     assert_includes source, 'abnt-local: "Recife"'
     assert_includes source, %(abnt-ano: "#{Date.current.year}")
     assert_includes source, "Disciplina: Direito Civil"
     assert_includes source, "Professor(a): Professora Exemplo"
+    assert_includes source, "Turma: Noturno, 3º período"
+    assert_includes source, "Data de entrega: 30/11/2026"
+    assert_includes source, "da #{DocumentExport::INSTITUTION}"
+    assert_includes source, "Discente do 3º período do Curso de Direito - FACSUR."
     assert_not_includes source, "Nome da instituição"
-    assert_not_includes source, "Data de entrega:"
+  end
+
+  test "dissertation preview uses one text field and preserves legacy writing" do
+    project = Project.new(
+      project_type: "case",
+      fields: { "dissertation_intro" => "Texto inicial", "dissertation_conclusion" => "Texto final" },
+      development_sections: [ { "title" => "Fundamentação", "body" => "Texto intermediário" } ]
+    )
+
+    html = DocumentExport.build_project_html(project, phase: "dissertation")
+
+    assert_includes html, "Dissertação"
+    assert_includes html, "Texto inicial"
+    assert_includes html, "Texto intermediário"
+    assert_includes html, "Texto final"
+    assert_not_includes html, "Introdução"
+    assert_not_includes html, "Conclusão"
   end
 
   test "reuses decision text without duplicating it in the document" do

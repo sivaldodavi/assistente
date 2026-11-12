@@ -13,7 +13,7 @@
 
 // ---- Capa e folha de rosto ---------------------------------------
 // Layout medido no PDF do TGPC (Relatório de case):
-//   - curso no topo, centralizado
+//   - instituição e curso no topo, centralizados
 //   - título em caixa alta e negrito no terço central
 //   - autores logo abaixo do título, alinhados à direita
 //   - bloco de dados (disciplina, professor, turma, data) à direita
@@ -37,6 +37,7 @@
 
   let topo = [
     #align(center)[
+      #text(weight: "bold")[#upper(instituicao)] \
       #upper(curso)
     ]
   ]

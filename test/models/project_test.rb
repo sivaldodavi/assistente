@@ -33,7 +33,7 @@ class ProjectTest < ActiveSupport::TestCase
 
   test "normalizes criteria and development sections within source limits" do
     project = Project.create!(
-      project_type: "case",
+      project_type: "paper_final",
       criteria: [ { "title" => "  Dignidade ", "definition" => "x" * 3_100, "unknown" => "drop" } ],
       development_sections: [ { "title" => "Fundamentação", "body" => "Texto" } ]
     )

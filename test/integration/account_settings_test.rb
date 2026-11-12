@@ -33,6 +33,10 @@ class AccountSettingsTest < ActionDispatch::IntegrationTest
     get account_settings_path
 
     assert_response :success
+    assert_includes response.body, "avaliações formativas"
+    assert_includes response.body, "orientações de escrita"
+    assert_not_includes response.body, "JEV"
+    assert_not_includes response.body, "DeepSeek"
     assert_select "select[name='period'] option", count: 11
     assert_select "select[name='shift'] option", count: 3
     assert_select "input[name='discipline']", count: 0

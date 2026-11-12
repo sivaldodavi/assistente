@@ -36,6 +36,7 @@ class PublicPagesTest < ActionDispatch::IntegrationTest
     assert_select "a[href='#{login_path}']", text: "Entrar para comprar", count: 3
     assert_select "a[href='#{terms_path}']"
     assert_select "a[href='#{privacy_path}']"
+    assert_no_provider_names
   end
 
   test "public sign-in actions start Google OAuth directly when configured" do
@@ -72,6 +73,7 @@ class PublicPagesTest < ActionDispatch::IntegrationTest
     assert_select "h1", "Uso responsável do Assistente Acadêmico"
     assert_select "a[href='#{privacy_path}']"
     assert_includes response.body, "Mercado Pago"
+    assert_no_provider_names
 
     get privacy_path
     assert_response :success
@@ -79,6 +81,7 @@ class PublicPagesTest < ActionDispatch::IntegrationTest
     assert_select "a[href='mailto:contato@sivaldodavi.com']", text: "contato@sivaldodavi.com"
     assert_includes response.body, "provedor responsável pelo processamento do pagamento"
     assert_not_includes response.body, "Mercado Pago"
+    assert_no_provider_names
 
     get ai_help_path
     assert_response :success
@@ -87,7 +90,7 @@ class PublicPagesTest < ActionDispatch::IntegrationTest
     assert_select "h2", "Roteiros e exportação"
     assert_select "body", text: /do 1º ao 10º/
     assert_select "body", text: /modelo acadêmico ABNT/
-    assert_select "body", text: /sem datas gerais do projeto/
+    assert_select "body", text: /somente as datas de entrega do relatório, do debate e da dissertação/
     assert_select "body", text: /ano da capa vem preenchido com o ano atual/
     assert_select "h2", "Como a assistência de IA funciona"
     assert_select "body", text: /DeepSeek/
@@ -152,6 +155,12 @@ class PublicPagesTest < ActionDispatch::IntegrationTest
   end
 
   private
+
+  def assert_no_provider_names
+    assert_not_includes response.body, "JEV"
+    assert_not_includes response.body, "DeepSeek"
+    assert_not_includes response.body, "TypeSafe"
+  end
 
   def with_stub(receiver, method_name, value)
     original = receiver.method(method_name)

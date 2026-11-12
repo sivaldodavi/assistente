@@ -32,8 +32,11 @@ class Project < ApplicationRecord
     AcademicWorkflow.review_summary(project_type, checks, phase)
   end
 
-  def schedule_summary
-    AcademicSchedule.summary(schedule)
+  def dissertation_text
+    source = fields.is_a?(Hash) ? fields.stringify_keys : {}
+    return source["dissertation"].to_s if source.key?("dissertation")
+
+    legacy_dissertation_text(source)
   end
 
   def delivery_key(section = section_for)
@@ -58,7 +61,6 @@ class Project < ApplicationRecord
         "criteria" => criteria,
         "development_sections" => development_sections,
         "source_ids" => source_ids,
-        "schedule" => schedule,
         "deliveries" => deliveries
       }
     )
@@ -69,15 +71,30 @@ class Project < ApplicationRecord
   def normalize_workflow_data
     return unless PROJECT_TYPES.include?(project_type)
 
-    self.fields = AcademicWorkflow.normalize_fields(project_type, fields)
+    if project_type == "case"
+      source = fields.is_a?(Hash) ? fields.stringify_keys : {}
+      source["dissertation"] = legacy_dissertation_text(source) unless source.key?("dissertation")
+      self.fields = AcademicWorkflow.normalize_fields(project_type, source)
+      self.development_sections = []
+    else
+      self.fields = AcademicWorkflow.normalize_fields(project_type, fields)
+      self.development_sections = AcademicWorkflow.normalize_development_sections(development_sections)
+    end
     self.checks = AcademicWorkflow.normalize_checks(project_type, checks)
     self.criteria = AcademicWorkflow.normalize_criteria(criteria)
-    self.development_sections = AcademicWorkflow.normalize_development_sections(development_sections)
     self.source_ids = AcademicWorkflow.normalize_source_ids(source_ids)
     self.deliveries = AcademicWorkflow.normalize_deliveries(deliveries)
-    self.schedule = AcademicSchedule.normalize_schedule(schedule)
     self.current_stage = AcademicWorkflow.first_stage_id(project_type) unless sections.any? { |section| section["id"] == current_stage }
     self.title = fields["title"].presence || default_title
+  end
+
+  def legacy_dissertation_text(source)
+    sections = AcademicWorkflow.normalize_development_sections(development_sections)
+    [
+      source["dissertation_intro"],
+      *sections.map { |section| section["body"] },
+      source["dissertation_conclusion"]
+    ].filter_map(&:presence).join("\n\n")
   end
 
   def current_stage_belongs_to_workflow

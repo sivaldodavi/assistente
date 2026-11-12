@@ -8,7 +8,7 @@ class AcademicWorkflowTest < ActiveSupport::TestCase
     field_count = AcademicWorkflow.types.sum do |type|
       AcademicWorkflow.sections(type).sum { |section| section.fetch("fields", []).length }
     end
-    assert_equal 61, field_count
+    assert_equal 63, field_count
     fields = AcademicWorkflow.types.flat_map do |type|
       AcademicWorkflow.sections(type).flat_map { |section| section.fetch("fields", []) }
     end
@@ -19,6 +19,9 @@ class AcademicWorkflowTest < ActiveSupport::TestCase
     assert_not_includes field_ids, "institution"
     assert_not_includes field_ids, "thesis_a"
     assert_not_includes field_ids, "thesis_b"
+    assert_not_includes field_ids, "dissertation_intro"
+    assert_not_includes field_ids, "dissertation_conclusion"
+    assert_equal 1, field_ids.count("dissertation")
     assert_equal "select", fields.find { |field| field["id"] == "discipline" }["type"]
     assert_equal "disciplines", fields.find { |field| field["id"] == "discipline" }["source"]
     assert_equal "select", fields.find { |field| field["id"] == "teacher" }["type"]
@@ -34,13 +37,22 @@ class AcademicWorkflowTest < ActiveSupport::TestCase
       "title" => "  Meu Case  ",
       "profile" => "unknown",
       "assignment_prompt" => "x" * 12_050,
+      "report_delivery_date" => "2026-02-30",
+      "debate_delivery_date" => "2026-11-30",
       "unlisted_field" => "discard"
     })
 
     assert_equal "Meu Case", fields["title"]
     assert_not_includes fields, "profile"
     assert_equal 12_000, fields["assignment_prompt"].length
+    assert_equal "", fields["report_delivery_date"]
+    assert_equal "2026-11-30", fields["debate_delivery_date"]
     assert_not_includes fields, "unlisted_field"
+
+    paper_fields = AcademicWorkflow.normalize_fields("paper_project", {
+      "report_delivery_date" => "2026-11-30"
+    })
+    assert_not_includes paper_fields, "report_delivery_date"
   end
 
   test "progress counts required fields only for the selected phase" do
@@ -48,7 +60,7 @@ class AcademicWorkflowTest < ActiveSupport::TestCase
     dissertation = AcademicWorkflow.progress("case", {}, "dissertation")
 
     assert_equal 8, report["total"]
-    assert_equal 2, dissertation["total"]
+    assert_equal 1, dissertation["total"]
     assert_equal 0, report["done"]
     assert_equal 100, AcademicWorkflow.progress("case", {}, "unknown")["percent"]
   end

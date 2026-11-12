@@ -35,33 +35,6 @@
       <% end %>
     <% end %>
   </section>
-
-  <% if @upcoming_schedule["has_entries"] %>
-    <section class="agenda-panel" aria-labelledby="agenda-title">
-      <div class="section-heading">
-        <div>
-          <p class="eyebrow">Agenda</p>
-          <h2 id="agenda-title">Próximos prazos de tarefas</h2>
-        </div>
-      </div>
-      <ol class="agenda-list">
-        <% @upcoming_schedule["entries"].each do |entry| %>
-          <li class="agenda-item <%= "is-overdue" if entry["overdue"] %>">
-            <time datetime="<%= entry["date"] %>"><%= entry["date_label"] %></time>
-            <div class="agenda-item-content">
-              <strong><%= entry["label"] %></strong>
-              <span><%= entry["title"] %></span>
-            </div>
-            <% if entry["overdue"] %>
-              <span class="agenda-status">Atrasada</span>
-            <% end %>
-            <%= link_to "Abrir", project_path(entry["project_id"]), class: "agenda-link" %>
-          </li>
-        <% end %>
-      </ol>
-    </section>
-  <% end %>
-
   <section class="project-list" aria-labelledby="projects-title">
     <div class="section-heading">
       <div>

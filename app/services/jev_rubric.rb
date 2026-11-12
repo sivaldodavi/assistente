@@ -92,7 +92,7 @@ class JevRubric
 
   def questions(section = nil)
     if section
-      definition = CHECKLISTS.fetch(section) { raise ArgumentError, "etapa JEV inválida" }
+      definition = CHECKLISTS.fetch(section) { raise ArgumentError, "etapa de avaliação inválida" }
       definition.fetch("checks").to_h do |id, _label, instructions|
         [ id, { "type" => "score", "instructions" => instructions, "criteria" => CHECKLIST_LEVELS } ]
       end
@@ -111,10 +111,10 @@ class JevRubric
 
   def normalize(raw, section: nil)
     answers = raw.is_a?(Hash) ? raw["answers"] : nil
-    raise ArgumentError, "respostas JEV ausentes" unless answers.is_a?(Hash)
+    raise ArgumentError, "respostas de avaliação ausentes" unless answers.is_a?(Hash)
 
     if section
-      definition = CHECKLISTS.fetch(section) { raise ArgumentError, "etapa JEV inválida" }
+      definition = CHECKLISTS.fetch(section) { raise ArgumentError, "etapa de avaliação inválida" }
       criteria = definition.fetch("checks").map do |id, label, _instructions|
         { "id" => id, "label" => label }.merge(read_score(answers[id]))
       end
@@ -151,7 +151,7 @@ class JevRubric
   def read_score(answer)
     score = answer.is_a?(Hash) ? answer["score"] : nil
     unless score.is_a?(Numeric) && !score.is_a?(TrueClass) && !score.is_a?(FalseClass) && score.finite? && score.between?(0, 3)
-      raise ArgumentError, "score JEV inválido"
+      raise ArgumentError, "pontuação de avaliação inválida"
     end
 
     confidence = answer["confidence"]
