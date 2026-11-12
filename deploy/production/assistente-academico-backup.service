@@ -1,0 +1,10 @@
+[Unit]
+Description=Create and verify a production SQLite backup
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+User=root
+ExecStart=/opt/servidor/apps/assistente-academico/deploy/production/backup-production-sqlite.sh
+TimeoutStartSec=300

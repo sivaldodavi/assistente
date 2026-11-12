@@ -78,7 +78,7 @@ O compose de produção (`deploy/production/docker-compose.yml`) é separado do 
 
 Para adicionar credenciais de produção do Mercado Pago sem tocar no staging, selecione **Produção** em Suas integrações > aplicação > Credenciais e obtenha o Access Token. O segredo de assinatura fica em Webhooks > Configurar notificações no ambiente de produção. Confira o seletor: tokens de teste e produção podem ter prefixos semelhantes. O instalador `ruby script/configure_production_mercadopago.rb` mostra os valores digitados, pede confirmação dupla e envia somente os dois segredos por SSH; ele não inicia serviços, não altera o Caddy e recusa sobrescrever arquivos existentes. A rota `https://trab.sivaldodavi.com.br/webhooks/mercadopago` já aponta para o container de produção; a entrega nativa pelo painel ainda precisa ser confirmada. Não cole credenciais no chat.
 
-Para produção, use o callback Google `https://trab.sivaldodavi.com.br/auth/google_oauth2/callback`, credenciais OAuth/MP específicas de produção e segredos fora do Git. O container de produção está saudável com `AUTHENTICATION_READY=false`; no modo informativo, somente as páginas públicas explícitas devem ser abertas. Antes de publicar, revise os textos legais, informe identificação e canal de contato do responsável e decida a retenção dos backups automáticos. Login real e webhook nativo do Google/Mercado Pago continuam adiados; somente após essas validações e autorização final devem-se abrir as demais rotas e habilitar `AUTHENTICATION_READY=true`.
+Para produção, use o callback Google `https://trab.sivaldodavi.com.br/auth/google_oauth2/callback`, credenciais OAuth/MP específicas de produção e segredos fora do Git. O container de produção está saudável com `AUTHENTICATION_READY=false`; no modo informativo, somente as páginas públicas explícitas devem ser abertas. Login real e webhook nativo do Google/Mercado Pago continuam adiados; somente após essas validações e autorização final devem-se abrir as demais rotas e habilitar `AUTHENTICATION_READY=true`.
 
 O arquivo do banco nunca deve ser commitado. Faça backups consistentes em destino protegido, confirme permissões e teste a restauração em ambiente isolado.
 
@@ -86,14 +86,14 @@ Pedidos Pix pendentes podem ser reconciliados com `bin/rails payments:reconcile`
 
 Para produção em systemd, os arquivos `deploy/production/assistente-academico-reconcile.service` e `.timer` executam a tarefa Rails a cada dez minutos no container de produção, sem criar pagamentos. Acompanhe a execução com `journalctl -u assistente-academico-reconcile.service`.
 
-Uma cópia do banco de produção já foi criada em `/opt/servidor/backups/assistente-academico-production/` e restaurada em arquivo isolado; ambas passaram `PRAGMA integrity_check`. No VPS, `sqlite3` está disponível dentro do container, não no host. Backups automáticos ainda não foram ativados: a retenção precisa ser escolhida.
+Backups diários de produção são criados por `deploy/production/assistente-academico-backup.timer`. O serviço usa o SQLite `.backup` pelo container, verifica `PRAGMA integrity_check`, grava arquivos `0600` em `/opt/servidor/backups/assistente-academico-production/daily/` (diretório `0700`) e mantém as sete cópias diárias mais recentes. Backups de pré-publicação e snapshots de infraestrutura ficam separados e não são removidos por essa rotação.
 
 ```sh
 docker exec assistente-academico-production sqlite3 /rails/storage/production.sqlite3 ".backup '/tmp/assistente-academico.sqlite3'"
 docker cp assistente-academico-production:/tmp/assistente-academico.sqlite3 /opt/servidor/backups/assistente-academico-production/
 ```
 
-Verifique a cópia com `PRAGMA integrity_check` dentro do container e teste uma restauração em arquivo isolado. Restrinja o diretório de backups a `root` e modo `700`, os arquivos a modo `600`, defina retenção/criptografia e não copie o banco ativo com `cp` comum.
+Verifique cada cópia com `PRAGMA integrity_check` e teste restaurações em arquivo isolado. O timer preserva sete cópias diárias e os backups anteriores fora do diretório `daily`; não copie o banco ativo com `cp` comum.
 
 ## Git e publicação
 

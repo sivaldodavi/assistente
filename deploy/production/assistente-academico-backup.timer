@@ -1,0 +1,11 @@
+[Unit]
+Description=Schedule daily production SQLite backups
+
+[Timer]
+OnCalendar=*-*-* 02:15:00
+Persistent=true
+AccuracySec=15min
+Unit=assistente-academico-backup.service
+
+[Install]
+WantedBy=timers.target
