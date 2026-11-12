@@ -40,7 +40,9 @@ class PublicPagesTest < ActionDispatch::IntegrationTest
 
   test "production gate allows only the public informational pages while authentication is disabled" do
     previous_authentication_ready = Rails.configuration.x.authentication_ready
+    previous_google_oauth_test_ready = Rails.configuration.x.google_oauth_test_ready
     Rails.configuration.x.authentication_ready = false
+    Rails.configuration.x.google_oauth_test_ready = false
 
     with_stub(Rails, :env, ActiveSupport::EnvironmentInquirer.new("production")) do
       get root_path
@@ -66,6 +68,31 @@ class PublicPagesTest < ActionDispatch::IntegrationTest
     end
   ensure
     Rails.configuration.x.authentication_ready = previous_authentication_ready
+    Rails.configuration.x.google_oauth_test_ready = previous_google_oauth_test_ready
+  end
+
+  test "production gate allows Google OAuth test endpoints without opening private routes" do
+    previous_authentication_ready = Rails.configuration.x.authentication_ready
+    previous_google_oauth_test_ready = Rails.configuration.x.google_oauth_test_ready
+    Rails.configuration.x.authentication_ready = false
+    Rails.configuration.x.google_oauth_test_ready = true
+
+    with_stub(Rails, :env, ActiveSupport::EnvironmentInquirer.new("production")) do
+      get login_path
+      assert_response :success
+
+      post "/auth/google_oauth2"
+      assert_response :redirect
+
+      get projects_path
+      assert_response :service_unavailable
+
+      post payments_path
+      assert_response :service_unavailable
+    end
+  ensure
+    Rails.configuration.x.authentication_ready = previous_authentication_ready
+    Rails.configuration.x.google_oauth_test_ready = previous_google_oauth_test_ready
   end
 
   private

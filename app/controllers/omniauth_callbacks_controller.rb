@@ -26,6 +26,10 @@ class OmniauthCallbacksController < ApplicationController
 
     reset_session
     session[:account_id] = account.id
+    if public_shell_only?
+      return redirect_to root_path, notice: "Login Google validado. O acesso às áreas privadas e aos pagamentos continua fechado."
+    end
+
     redirect_to projects_path, notice: "Sessão iniciada."
   rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique
     Rails.logger.warn("google_oauth_callback_failed")

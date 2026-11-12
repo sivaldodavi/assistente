@@ -15,6 +15,22 @@ trab.sivaldodavi.com.br {
 		reverse_proxy assistente-academico-production:80
 	}
 
+	@google_oauth_test_get {
+		method GET HEAD
+		path /login /auth/google_oauth2/callback /auth/failure
+	}
+	handle @google_oauth_test_get {
+		reverse_proxy assistente-academico-production:80
+	}
+
+	@google_oauth_test_post {
+		method POST
+		path /auth/google_oauth2
+	}
+	handle @google_oauth_test_post {
+		reverse_proxy assistente-academico-production:80
+	}
+
 	handle {
 		respond "Not Found" 404
 	}

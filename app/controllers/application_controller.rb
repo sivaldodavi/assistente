@@ -48,9 +48,17 @@ class ApplicationController < ActionController::Base
 
   def block_production_until_authentication
     return unless public_shell_only?
-    return if public_shell_request?
+    return if public_shell_request? || google_oauth_test_request?
 
     head :service_unavailable
+  end
+
+  def google_oauth_test_request?
+    return false unless Rails.configuration.x.google_oauth_test_ready
+    return false unless request.get? || request.head?
+
+    (controller_name == "sessions" && action_name == "new") ||
+      (controller_name == "omniauth_callbacks" && %w[google_oauth2 failure].include?(action_name))
   end
 
   def public_shell_request?

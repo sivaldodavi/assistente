@@ -26,6 +26,7 @@ module AssistenteAcademico
     config.i18n.available_locales = [ :"pt-BR", :en ]
     config.time_zone = "Brasilia"
     config.x.authentication_ready = ENV["AUTHENTICATION_READY"] == "true"
+    config.x.google_oauth_test_ready = ENV["GOOGLE_OAUTH_TEST_READY"] == "true"
     config.x.admin_emails = ENV.fetch("ADMIN_EMAILS", "").split(",").map { |email| email.strip.downcase }.reject(&:empty?)
 
     # Please, add to the `ignore` list any other `lib` subdirectories that do
