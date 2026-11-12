@@ -8,7 +8,7 @@ services:
     env_file:
       - ${ASSISTENTE_ACADEMICO_SECRET_DIR:-/opt/servidor/secrets/assistente-academico-production}/rails.env
     environment:
-      AUTHENTICATION_READY: "${AUTHENTICATION_READY:-false}"
+      AUTHENTICATION_READY: "${AUTHENTICATION_READY:-true}"
       GOOGLE_OAUTH_TEST_READY: "${GOOGLE_OAUTH_TEST_READY:-false}"
       DATABASE_PATH: /rails/storage/production.sqlite3
       GOOGLE_REDIRECT_URI: https://trab.sivaldodavi.com.br/auth/google_oauth2/callback
