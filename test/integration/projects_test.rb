@@ -38,16 +38,33 @@ class ProjectsTest < ActionDispatch::IntegrationTest
   end
 
   test "creates a case and opens the first original stage" do
+    @account.update_profile!(
+      name: "Ana Estudante",
+      profile: {
+        "disciplines" => [ "Direito Civil" ],
+        "teachers" => [ "Professora Exemplo" ],
+        "period" => "7",
+        "shift" => "noturno"
+      }
+    )
+
     assert_difference("Project.count", 1) do
       post projects_path, params: { project: { project_type: "case" } }
     end
 
     project = Project.order(:id).last
+    assert_equal "Ana Estudante", project.fields["author"]
+    assert_equal "7", project.fields["period"]
+    assert_equal "noturno", project.fields["shift"]
     assert_redirected_to project_path(project, stage: "identification")
     follow_redirect!
     assert_select "h2#stage-title", "Identificação"
-    assert_select "textarea[name='project[fields][authors]']"
-    assert_select "input[name='project[fields][teacher]'][aria-required='true']"
+    assert_select "textarea[name='project[fields][authors]']", count: 0
+    assert_select "input[name='project[fields][partner]']"
+    assert_select "select[name='project[fields][discipline]'] option", text: "Direito Civil"
+    assert_select "select[name='project[fields][teacher]'] option", text: "Professora Exemplo"
+    assert_select "select[name='project[fields][period]'] option[selected][value='7']"
+    assert_select "select[name='project[fields][shift]'] option[selected][value='noturno']"
   end
 
   test "consumes one project credit atomically and blocks creation without credits" do

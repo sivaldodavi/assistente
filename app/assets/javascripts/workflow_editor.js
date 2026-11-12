@@ -211,7 +211,7 @@ document.addEventListener("click", async (event) => {
     purchaseButton.textContent = "Pix gerado";
     status.textContent = "Use o QR Code ou o código Pix para concluir o pagamento.";
   } catch (error) {
-    status.textContent = error.message || "Não foi possível conectar ao Mercado Pago.";
+    status.textContent = error.message || "Não foi possível gerar o Pix. Tente novamente.";
     purchaseButton.disabled = false;
   }
 });

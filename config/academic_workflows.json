@@ -11,14 +11,6 @@
           "limit": 240
         },
         {
-          "id": "authors",
-          "label": "Autor(es)",
-          "type": "textarea",
-          "hint": "Escreva um nome por linha.",
-          "required": true,
-          "limit": 1200
-        },
-        {
           "id": "assignment_prompt",
           "label": "Proposta, enunciado ou instruções do professor",
           "type": "textarea",
@@ -45,7 +37,7 @@
         {
           "id": "discipline",
           "label": "Disciplina",
-          "type": "text",
+          "type": "select",
           "source": "disciplines",
           "required": true,
           "row": "docente",
@@ -54,7 +46,7 @@
         {
           "id": "teacher",
           "label": "Professor(a)",
-          "type": "text",
+          "type": "select",
           "source": "teachers",
           "required": true,
           "row": "docente",
@@ -137,7 +129,7 @@
         {
           "id": "partner",
           "label": "Colega de dupla (opcional)",
-          "hint": "Se preenchido, o nome entra em Autor(es).",
+          "hint": "Deixe em branco se o trabalho for individual; seu nome da conta será o autor principal.",
           "limit": 160
         },
         {
@@ -464,13 +456,6 @@
       "intro": "Escreva a dissertação em três partes: introdução, desenvolvimento e conclusão.",
       "fields": [
         {
-          "id": "dissertation_author",
-          "label": "Seu nome",
-          "hint": "Use somente o seu nome.",
-          "required": true,
-          "limit": 160
-        },
-        {
           "id": "dissertation_intro",
           "label": "Introdução",
           "type": "textarea",
@@ -551,14 +536,6 @@
           "limit": 240
         },
         {
-          "id": "authors",
-          "label": "Autor(es)",
-          "type": "textarea",
-          "hint": "Um nome por linha.",
-          "required": true,
-          "limit": 1200
-        },
-        {
           "id": "assignment_prompt",
           "label": "Proposta ou instruções do professor",
           "type": "textarea",
@@ -569,7 +546,7 @@
         {
           "id": "discipline",
           "label": "Disciplina",
-          "type": "text",
+          "type": "select",
           "source": "disciplines",
           "required": true,
           "row": "docente",
@@ -578,7 +555,7 @@
         {
           "id": "teacher",
           "label": "Professor(a) ou orientador(a)",
-          "type": "text",
+          "type": "select",
           "source": "teachers",
           "required": true,
           "row": "docente",
@@ -661,7 +638,7 @@
         {
           "id": "partner",
           "label": "Colega de dupla (opcional)",
-          "hint": "Se preenchido, o nome entra em Autor(es).",
+          "hint": "Deixe em branco se o trabalho for individual; seu nome da conta será o autor principal.",
           "limit": 160
         },
         {
@@ -956,14 +933,6 @@
           "limit": 240
         },
         {
-          "id": "authors",
-          "label": "Autor(es)",
-          "type": "textarea",
-          "hint": "Um nome por linha.",
-          "required": true,
-          "limit": 1200
-        },
-        {
           "id": "assignment_prompt",
           "label": "Proposta ou instruções do professor",
           "type": "textarea",
@@ -974,7 +943,7 @@
         {
           "id": "discipline",
           "label": "Disciplina",
-          "type": "text",
+          "type": "select",
           "source": "disciplines",
           "required": true,
           "row": "docente",
@@ -983,7 +952,7 @@
         {
           "id": "teacher",
           "label": "Professor(a) ou orientador(a)",
-          "type": "text",
+          "type": "select",
           "source": "teachers",
           "required": true,
           "row": "docente",
@@ -1062,12 +1031,6 @@
           ],
           "row": "turma",
           "limit": 80
-        },
-        {
-          "id": "partner",
-          "label": "Colega de dupla (opcional)",
-          "hint": "Se preenchido, o nome entra em Autor(es).",
-          "limit": 160
         },
         {
           "id": "year",

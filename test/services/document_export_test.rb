@@ -14,6 +14,23 @@ class DocumentExportTest < ActiveSupport::TestCase
     assert_includes html, "Fato do caso"
   end
 
+  test "uses the account name and optional duo partner as document authors" do
+    account = Account.create!(email: "authors@example.test", name: "Ana Estudante")
+    project = account.projects.create!(
+      project_type: "case",
+      fields: { "title" => "Relatório", "partner" => "Bruno Colega" }
+    )
+
+    html = DocumentExport.build_project_html(project)
+    source = DocumentExport.build_quarto_source(project)
+
+    assert_includes html, "Ana Estudante"
+    assert_includes html, "Bruno Colega"
+    assert_includes source, '  - "Ana Estudante"'
+    assert_includes source, '  - "Bruno Colega"'
+    assert_not_includes html, "Colega de dupla"
+  end
+
   test "Paper preview uses the original Paper stages and not Case sections" do
     project = Project.create!(
       project_type: "paper_final",

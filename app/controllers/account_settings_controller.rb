@@ -14,8 +14,8 @@ class AccountSettingsController < ApplicationController
         "teachers" => params[:teachers].to_s.lines,
         "institution" => params[:institution],
         "course" => params[:course],
-        "discipline" => params[:discipline],
-        "professor" => params[:professor]
+        "period" => params[:period],
+        "shift" => params[:shift]
       }
     )
     redirect_to account_settings_path(saved: "profile"), notice: "Perfil atualizado."

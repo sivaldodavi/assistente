@@ -33,26 +33,34 @@
 
   <section class="panel">
     <h2>Perfil</h2>
-    <p>Seu nome de identificação é independente das informações acadêmicas do perfil.</p>
+    <p>Seu nome da conta será o autor principal dos trabalhos. Cadastre aqui as opções acadêmicas que deseja selecionar nos roteiros.</p>
     <%= form_with url: account_update_profile_path, method: :post do |form| %>
       <div class="field-grid">
         <div class="field">
           <%= form.label :name, "Nome" %>
           <%= form.text_field :name, value: @account.name, maxlength: 160, class: "text-control" %>
         </div>
-        <% %w[institution course discipline professor city].each do |key| %>
+        <% %w[institution course city].each do |key| %>
           <div class="field">
-            <%= form.label key, { "institution" => "Instituição", "course" => "Curso", "discipline" => "Disciplina", "professor" => "Professor(a)", "city" => "Cidade" }.fetch(key) %>
+            <%= form.label key, { "institution" => "Instituição", "course" => "Curso", "city" => "Cidade" }.fetch(key) %>
             <%= form.text_field key, value: @account.profile[key], maxlength: 160, class: "text-control" %>
           </div>
         <% end %>
         <div class="field">
+          <%= form.label :period, "Período que você cursa" %>
+          <%= form.select :period, options_for_select([["Selecione…", ""]] + (1..10).map { |period| ["#{period}º período", period.to_s] }, @account.profile["period"]), {}, class: "text-control" %>
+        </div>
+        <div class="field">
+          <%= form.label :shift, "Turno" %>
+          <%= form.select :shift, options_for_select([["Selecione…", ""], ["Matutino", "matutino"], ["Noturno", "noturno"]], @account.profile["shift"]), {}, class: "text-control" %>
+        </div>
+        <div class="field">
           <%= form.label :disciplines, "Disciplinas frequentes (uma por linha)" %>
-          <%= form.text_area :disciplines, value: Array(@account.profile["disciplines"]).join("\n"), rows: 4, class: "text-control" %>
+          <%= form.text_area :disciplines, value: (Array(@account.profile["disciplines"]) + [@account.profile["discipline"]]).compact_blank.uniq.join("\n"), rows: 4, class: "text-control" %>
         </div>
         <div class="field">
           <%= form.label :teachers, "Orientadores/professores frequentes (um por linha)" %>
-          <%= form.text_area :teachers, value: Array(@account.profile["teachers"]).join("\n"), rows: 4, class: "text-control" %>
+          <%= form.text_area :teachers, value: (Array(@account.profile["teachers"]) + [@account.profile["professor"]]).compact_blank.uniq.join("\n"), rows: 4, class: "text-control" %>
         </div>
       </div>
       <%= form.submit "Salvar perfil", class: "button button-primary" %>

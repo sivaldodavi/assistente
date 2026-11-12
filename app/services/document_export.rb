@@ -14,6 +14,10 @@ class DocumentExport
     "paper_final" => "paper"
   }.freeze
   MARKDOWN_ESCAPABLE = "\\`*_{}[]<>()#+.!|~&+-".freeze
+  NON_DOCUMENT_FIELDS = %w[
+    title authors author dissertation_author partner assignment_prompt profile
+    institution course city year discipline teacher period shift
+  ].freeze
   RENDER_MUTEX = Mutex.new
   @render_count = 0
 
@@ -27,8 +31,7 @@ class DocumentExport
       data = project_payload(project, sources).merge("export_phase" => phase)
       fields = data.fetch("fields")
       title = fields["title"].presence || data["title"].presence || "Trabalho sem título"
-      authors = phase == "dissertation" ? fields["dissertation_author"] : fields["authors"]
-      authors = authors.presence || "Autor não informado"
+      authors = author_names(fields, account_name: data["account_name"], phase:).join("\n").presence || "Autor não informado"
       sections = document_sections(data, sources).map do |heading, content|
         body = content.map do |label, value|
           heading_html = label.present? ? "<h3>#{escape(label)}</h3>" : ""
@@ -87,18 +90,22 @@ class DocumentExport
 
     def project_payload(project, sources)
       attributes = project.respond_to?(:attributes) ? project.attributes : project.to_h
-      attributes.stringify_keys.merge("sources" => sources)
+      account_name = project.respond_to?(:account) ? project.account&.name : attributes[:account_name]
+      attributes.stringify_keys.merge("account_name" => account_name, "sources" => sources)
     end
 
     def legacy_project(project, sources)
       fields = project["fields"].is_a?(Hash) ? project["fields"] : {}
       project_type = project["project_type"]
       schedule = project["schedule"].is_a?(Hash) ? project["schedule"] : {}
-      authors = fields["authors"].presence || fields["author"].presence || ""
+      account_name = project.respond_to?(:account) ? project.account&.name : project["account_name"]
+      authors = fields["authors"].presence || fields["author"].presence || account_name
       period_shift = [ fields["period"], fields["shift"] ].select(&:present?).join(" · ")
       mapped = {
         "title" => fields["title"].to_s,
         "author" => authors,
+        "partner" => fields["partner"].to_s,
+        "account_name" => account_name.to_s,
         "institution" => fields["institution"].to_s,
         "course" => fields["course"].to_s,
         "city" => fields["city"].to_s,
@@ -221,7 +228,16 @@ class DocumentExport
     end
 
     def authors(project)
-      text(project.dig("fields", "author")).split("\n").map(&:strip).reject(&:empty?)
+      author_names(project.fetch("fields", {}), account_name: project["account_name"])
+    end
+
+    def author_names(fields, account_name:, phase: nil)
+      primary = fields["dissertation_author"].presence if phase == "dissertation"
+      primary ||= fields["authors"].presence || fields["author"].presence || account_name
+      names = primary.to_s.lines.map(&:strip).reject(&:empty?)
+      partner = text(fields["partner"]).strip
+      names << partner if partner.present?
+      names.uniq { |name| name.downcase }
     end
 
     def brazilian_date(value)
@@ -458,7 +474,7 @@ class DocumentExport
         next if custom == "review"
 
         content = stage.fetch("fields", []).filter_map do |field|
-          next if %w[title authors].include?(field["id"])
+          next if NON_DOCUMENT_FIELDS.include?(field["id"])
 
           [ field["label"], fields[field["id"]] ]
         end

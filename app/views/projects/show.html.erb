@@ -104,15 +104,25 @@
             </div>
             <% name = "project[fields][#{field["id"]}]" %>
             <% value = @project.fields[field["id"]] %>
+            <% value = current_account.profile[field["id"]] if value.blank? && %w[period shift].include?(field["id"]) %>
             <% if field["type"] == "textarea" %>
               <%= text_area_tag name, value, id: "project_fields_#{field["id"]}", rows: field["size"] == "large" ? 8 : 4, maxlength: field["limit"], placeholder: field["placeholder"], class: "text-control", aria: { required: field["required"] } %>
             <% elsif field["type"] == "select" %>
-              <% options = field.fetch("options", []).map { |option_value, label| [label, option_value] } %>
+              <% if field["source"].present? %>
+                <% source_values = Array(current_account.profile[field["source"]]) %>
+                <% source_values << value if value.present? && !source_values.include?(value) %>
+                <% options = [["Selecione…", ""]] + source_values.map { |option| [option, option] } %>
+              <% else %>
+                <% options = field.fetch("options", []).map { |option_value, label| [label, option_value] } %>
+              <% end %>
               <%= select_tag name, options_for_select(options, value), id: "project_fields_#{field["id"]}", class: "text-control", aria: { required: field["required"] } %>
             <% else %>
               <%= text_field_tag name, value, id: "project_fields_#{field["id"]}", maxlength: field["limit"], placeholder: field["placeholder"], class: "text-control", aria: { required: field["required"] } %>
             <% end %>
             <% if field["hint"].present? %><p class="field-hint"><%= field["hint"] %></p><% end %>
+            <% if field["source"].present? && Array(current_account.profile[field["source"]]).empty? %>
+              <p class="field-hint">Cadastre suas opções em <%= link_to "configurações da conta", account_settings_path %>.</p>
+            <% end %>
           </div>
         <% end %>
       </div>

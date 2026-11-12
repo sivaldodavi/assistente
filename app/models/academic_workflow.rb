@@ -6,6 +6,9 @@ class AcademicWorkflow
     "institution" => 160,
     "course" => 160,
     "city" => 160,
+    "author" => 1_200,
+    "authors" => 1_200,
+    "dissertation_author" => 160,
     "dissertation_foundation" => 30_000
   }.freeze
   DELIVERY_KEYS = %w[report dissertation paper_project paper_final].freeze

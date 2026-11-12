@@ -42,11 +42,14 @@ class PublicPagesTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "h1", "Uso responsável do Assistente Acadêmico"
     assert_select "a[href='#{privacy_path}']"
+    assert_includes response.body, "Mercado Pago"
 
     get privacy_path
     assert_response :success
     assert_select "h1", "Como seus dados são tratados"
     assert_select "a[href='mailto:contato@sivaldodavi.com']", text: "contato@sivaldodavi.com"
+    assert_includes response.body, "provedor responsável pelo processamento do pagamento"
+    assert_not_includes response.body, "Mercado Pago"
 
     get ai_help_path
     assert_response :success

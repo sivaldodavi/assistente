@@ -1,23 +1,24 @@
 require "test_helper"
-require "digest"
 
 class AcademicWorkflowTest < ActiveSupport::TestCase
-  WORKFLOW_SHA256 = "19ee277dc9bf9bd9686b7d98a91794deaf099aafe30ecb9e462e8c639233d777"
-
-  test "workflow specification remains byte-for-byte identical to the recovered source" do
-    path = Rails.root.join("config/academic_workflows.json")
-
-    assert_equal WORKFLOW_SHA256, Digest::SHA256.file(path).hexdigest
-  end
-
-  test "keeps all original route stages and fields" do
+  test "keeps workflow stages while using account defaults and duo-only author entry" do
     assert_equal 10, AcademicWorkflow.sections("case").length
     assert_equal 9, AcademicWorkflow.sections("paper_project").length
     assert_equal 6, AcademicWorkflow.sections("paper_final").length
     field_count = AcademicWorkflow.types.sum do |type|
       AcademicWorkflow.sections(type).sum { |section| section.fetch("fields", []).length }
     end
-    assert_equal 73, field_count
+    assert_equal 68, field_count
+    fields = AcademicWorkflow.types.flat_map do |type|
+      AcademicWorkflow.sections(type).flat_map { |section| section.fetch("fields", []) }
+    end
+    field_ids = fields.map { |field| field["id"] }
+    assert_not_includes field_ids, "authors"
+    assert_not_includes field_ids, "dissertation_author"
+    assert_equal "select", fields.find { |field| field["id"] == "discipline" }["type"]
+    assert_equal "disciplines", fields.find { |field| field["id"] == "discipline" }["source"]
+    assert_equal "select", fields.find { |field| field["id"] == "teacher" }["type"]
+    assert_equal "teachers", fields.find { |field| field["id"] == "teacher" }["source"]
     assert_equal %w[identification description decisions thesis_argumentation criteria sources review_report debate dissertation review_dissertation],
       AcademicWorkflow.sections("case").map { |section| section["id"] }
     assert_equal "Pergunta-problema", AcademicWorkflow.sections("case")[1]["fields"][1]["label"]
@@ -41,10 +42,24 @@ class AcademicWorkflowTest < ActiveSupport::TestCase
     report = AcademicWorkflow.progress("case", {}, "report")
     dissertation = AcademicWorkflow.progress("case", {}, "dissertation")
 
-    assert_equal 13, report["total"]
-    assert_equal 3, dissertation["total"]
+    assert_equal 12, report["total"]
+    assert_equal 2, dissertation["total"]
     assert_equal 0, report["done"]
     assert_equal 100, AcademicWorkflow.progress("case", {}, "unknown")["percent"]
+  end
+
+  test "preserves author data in existing projects after the author field is removed from the form" do
+    fields = AcademicWorkflow.normalize_fields("case", {
+      "author" => "Nome da conta",
+      "authors" => "Autora antiga",
+      "dissertation_author" => "Nome anterior",
+      "partner" => "Colega"
+    })
+
+    assert_equal "Nome da conta", fields["author"]
+    assert_equal "Autora antiga", fields["authors"]
+    assert_equal "Nome anterior", fields["dissertation_author"]
+    assert_equal "Colega", fields["partner"]
   end
 
   test "checklists discard unknown keys and normalize submitted checkboxes" do

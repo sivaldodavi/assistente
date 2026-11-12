@@ -15,6 +15,7 @@ class PaymentsTest < ActionDispatch::IntegrationTest
     assert_select "[data-package-card='sem_ia']"
     assert_select "[data-package-card='com_ia']"
     assert_select "h1", "Escolha o pacote para seu trabalho."
+    assert_not_includes response.body, "Mercado Pago"
   end
 
   test "Mercado Pago gateway uses the official SDK with a stable idempotency key" do

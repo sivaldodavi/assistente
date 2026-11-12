@@ -16,7 +16,16 @@ WORKDIR /rails
 
 # Install base packages
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y curl libjemalloc2 sqlite3 && \
+    apt-get install --no-install-recommends -y curl libjemalloc2 sqlite3 fonts-liberation xz-utils && \
+    curl -fsSL https://github.com/quarto-dev/quarto-cli/releases/download/v1.11.9/quarto-1.11.9-linux-amd64.deb -o /tmp/quarto.deb && \
+    echo "64078d1623d9ab89da766591f3410a0756f3737a37efb0897c7e84b863bf092a  /tmp/quarto.deb" | sha256sum -c - && \
+    apt-get install --no-install-recommends -y /tmp/quarto.deb && \
+    curl -fsSL https://github.com/typst/typst/releases/download/v0.15.1/typst-x86_64-unknown-linux-musl.tar.xz -o /tmp/typst.tar.xz && \
+    echo "a6d077d0a95eed5a2eba715b2dae06be954f624ccbf85758a03f389ded33118c  /tmp/typst.tar.xz" | sha256sum -c - && \
+    tar -xJf /tmp/typst.tar.xz -C /tmp && \
+    install -m 0755 /tmp/typst-x86_64-unknown-linux-musl/typst /usr/local/bin/typst && \
+    quarto --version && typst --version && \
+    rm -rf /tmp/quarto.deb /tmp/typst.tar.xz /tmp/typst-x86_64-unknown-linux-musl && \
     ln -s /usr/lib/$(uname -m)-linux-gnu/libjemalloc.so.2 /usr/local/lib/libjemalloc.so && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 

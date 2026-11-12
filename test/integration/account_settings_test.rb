@@ -11,8 +11,8 @@ class AccountSettingsTest < ActionDispatch::IntegrationTest
       name: "Nome Atualizado",
       institution: "Universidade",
       course: "Direito",
-      discipline: "Metodologia",
-      professor: "Orientação",
+      period: "10",
+      shift: "noturno",
       disciplines: "Pesquisa\nÉtica\n",
       teachers: "Docente A\nDocente B\n"
     }
@@ -21,8 +21,22 @@ class AccountSettingsTest < ActionDispatch::IntegrationTest
     @account.reload
     assert_equal "Nome Atualizado", @account.name
     assert_equal "Universidade", @account.profile["institution"]
+    assert_equal "10", @account.profile["period"]
+    assert_equal "noturno", @account.profile["shift"]
     assert_equal %w[Pesquisa Ética], @account.profile["disciplines"]
     assert_equal [ "Docente A", "Docente B" ], @account.profile["teachers"]
+    assert_not_includes @account.profile, "discipline"
+    assert_not_includes @account.profile, "professor"
+  end
+
+  test "profile offers all supported periods and both shifts without duplicate single-value fields" do
+    get account_settings_path
+
+    assert_response :success
+    assert_select "select[name='period'] option", count: 11
+    assert_select "select[name='shift'] option", count: 3
+    assert_select "input[name='discipline']", count: 0
+    assert_select "input[name='professor']", count: 0
   end
 
   test "terms and AI consent are recorded independently" do

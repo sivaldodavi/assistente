@@ -2,6 +2,8 @@ class Account < ApplicationRecord
   TERMS_VERSION = "2026-10"
   PROFILE_TEXT_LIMIT = 160
   PROFILE_LIST_LIMIT = 40
+  PROFILE_PERIODS = (1..10).map(&:to_s).freeze
+  PROFILE_SHIFTS = %w[matutino noturno].freeze
 
   has_many :projects, dependent: :destroy, inverse_of: :account
   has_many :sources, dependent: :destroy, inverse_of: :account
@@ -69,12 +71,21 @@ class Account < ApplicationRecord
 
   def normalize_profile(profile)
     source = profile.respond_to?(:to_h) ? profile.to_h : {}
-    text = %w[city institution course discipline professor].index_with do |key|
+    text = %w[city institution course].index_with do |key|
       source[key].to_s.strip.first(PROFILE_TEXT_LIMIT)
     end
-    lists = %w[disciplines teachers].index_with do |key|
-      Array(source[key]).filter_map { |value| value.to_s.strip.first(PROFILE_TEXT_LIMIT).presence }.uniq.first(PROFILE_LIST_LIMIT)
-    end
+    text["period"] = PROFILE_PERIODS.include?(source["period"].to_s) ? source["period"].to_s : ""
+    text["shift"] = PROFILE_SHIFTS.include?(source["shift"].to_s) ? source["shift"].to_s : ""
+    lists = {
+      "disciplines" => normalized_profile_list(source["disciplines"], source["discipline"]),
+      "teachers" => normalized_profile_list(source["teachers"], source["professor"])
+    }
     text.merge(lists)
+  end
+
+  def normalized_profile_list(values, legacy_value)
+    (Array(values) + [ legacy_value ]).filter_map do |value|
+      value.to_s.strip.first(PROFILE_TEXT_LIMIT).presence
+    end.uniq.first(PROFILE_LIST_LIMIT)
   end
 end

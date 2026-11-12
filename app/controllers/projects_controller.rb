@@ -19,7 +19,14 @@ class ProjectsController < ApplicationController
       return render :new, status: :unprocessable_entity
     end
 
-    @project = current_account.projects.new(project_type:)
+    @project = current_account.projects.new(
+      project_type:,
+      fields: {
+        "author" => current_account.name,
+        "period" => current_account.profile["period"],
+        "shift" => current_account.profile["shift"]
+      }
+    )
     current_account.with_lock do
       if !current_account.admin? && current_account.project_used >= current_account.project_limit
         @project.errors.add(:base, "Você não tem créditos de projeto disponíveis. Escolha um pacote para continuar.")
