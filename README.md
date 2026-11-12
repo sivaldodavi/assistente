@@ -1,6 +1,6 @@
 # Assistente Acadêmico
 
-Reconstrução Rails do Assistente Acadêmico a partir do código original preservado em `recovery/original-zip`. O `main` contém a configuração separada de staging e produção. O acesso às páginas continua fechado; apenas as rotas de webhook são públicas.
+Reconstrução Rails do Assistente Acadêmico a partir do código original preservado em `recovery/original-zip`. O `main` contém a configuração separada de staging e produção. A produção está publicada em `https://trab.sivaldodavi.com.br`: páginas informativas são públicas, o login Google está habilitado e as áreas de conta exigem sessão.
 
 ## Stack
 
@@ -8,6 +8,10 @@ Reconstrução Rails do Assistente Acadêmico a partir do código original prese
 - SQLite
 - ERB, CSS e JavaScript servidos pelo Propshaft
 - Quarto/Typst como ferramentas externas de geração acadêmica
+
+## Estado operacional
+
+Verificado em 12/11/2026: o container de produção está saudável; `/`, `/planos`, `/ajuda-ia`, `/termos` e `/privacidade` responderam HTTP 200. O login Google real já foi concluído em produção. A imagem contém Quarto 1.11.9 e Typst 0.15.1; uma exportação PDF real foi gerada e validada no container ativo. Os timers de reconciliação de pagamentos e de backup estão habilitados e ativos. Nenhuma cobrança real foi criada para teste.
 
 ## Desenvolvimento local
 
@@ -42,9 +46,7 @@ O modo público informativo pode ser reativado com `AUTHENTICATION_READY=false`:
 
 ## Roteiros
 
-`config/academic_workflows.json` é a cópia exata da especificação original `app/domain/academic-workflows.json`. Um teste verifica seu SHA-256 para impedir mudanças acidentais em perguntas, ordem, instruções e opções. Os roteiros Case, Projeto de Paper e Paper Final têm 10, 9 e 6 etapas, respectivamente.
-
-Os três roteiros originais mantêm perguntas, ordem, instruções e opções: Case (10 etapas), Projeto de Paper (9) e Paper Final (6). Projetos são associados à conta, com salvamento, controle de revisão concorrente, conversão de Projeto de Paper em Paper Final, agenda manual e tarefas por trabalho. A Biblioteca Pessoal mantém fontes e fichamentos privados e permite vinculá-los aos projetos. A exportação acadêmica oferece prévias HTML e PDFs via Quarto/Typst com o template ABNT preservado.
+`config/academic_workflows.json` é a cópia exata da especificação original `app/domain/academic-workflows.json`. Um teste verifica seu SHA-256 para impedir mudanças acidentais em perguntas, ordem, instruções e opções. Case, Projeto de Paper e Paper Final têm 10, 9 e 6 etapas, respectivamente. Projetos são associados à conta, com salvamento, controle de revisão concorrente, conversão de Projeto de Paper em Paper Final, agenda manual e tarefas por trabalho. A Biblioteca Pessoal mantém fontes e fichamentos privados e permite vinculá-los aos projetos. A exportação acadêmica oferece prévias HTML e PDFs via Quarto/Typst com o template ABNT preservado.
 
 Contas, Google OAuth, isolamento por proprietário, perfil, termos e consentimentos estão implementados. A exclusão confirmada da conta remove também projetos, revisões, fontes e dados associados; não há recurso de exportação dos dados da conta.
 
@@ -56,7 +58,7 @@ Foram excluídos definitivamente desta reconstrução: lembretes automáticos, c
 
 As páginas públicas estão em `/`, `/planos` (também `/plans`), `/termos`, `/privacidade` e `/ajuda-ia`. No modo funcional, o login Google e compras Pix ficam disponíveis a contas autenticadas. A política identifica Sivaldo Davi Pereira como responsável e informa `contato@sivaldodavi.com`, contato já publicado no site pessoal do responsável. Os avisos legais continuam sendo um rascunho funcional e devem ser revisados.
 
-As integrações externas foram habilitadas após autorização explícita. O início do OAuth real foi verificado até o redirecionamento para o Google; o usuário ainda precisa concluir o login no navegador. Credenciais Mercado Pago de produção foram verificadas por leitura; não foi criada cobrança de teste. Um pagamento Pix em produção movimenta dinheiro real. Os testes automatizados usam doubles locais; use o sandbox para testes de compra. A [matriz de paridade](docs/parity-matrix.md) registra os comportamentos cobertos e as exclusões.
+As integrações externas foram habilitadas após autorização explícita. O login Google real foi concluído em produção. Credenciais Mercado Pago de produção foram verificadas; a entrega de uma notificação nativa ainda precisa ser confirmada no painel. Nenhuma cobrança real foi criada para teste. Um pagamento Pix em produção movimenta dinheiro real. Os testes automatizados usam doubles locais; use o sandbox para testes de compra. A [matriz de paridade](docs/parity-matrix.md) registra os comportamentos cobertos, as exclusões e as validações externas pendentes.
 
 ## Testes
 
@@ -78,7 +80,7 @@ O compose de produção (`deploy/production/docker-compose.yml`) é separado do 
 
 Para adicionar credenciais de produção do Mercado Pago sem tocar no staging, selecione **Produção** em Suas integrações > aplicação > Credenciais e obtenha o Access Token. O segredo de assinatura fica em Webhooks > Configurar notificações no ambiente de produção. Confira o seletor: tokens de teste e produção podem ter prefixos semelhantes. O instalador `ruby script/configure_production_mercadopago.rb` mostra os valores digitados, pede confirmação dupla e envia somente os dois segredos por SSH; ele não inicia serviços, não altera o Caddy e recusa sobrescrever arquivos existentes. A rota `https://trab.sivaldodavi.com.br/webhooks/mercadopago` já aponta para o container de produção; a entrega nativa pelo painel ainda precisa ser confirmada. Não cole credenciais no chat.
 
-Para produção, use o callback Google `https://trab.sivaldodavi.com.br/auth/google_oauth2/callback`, credenciais OAuth/MP específicas de produção e segredos fora do Git. O container de produção está saudável e `AUTHENTICATION_READY=true`; contas privadas exigem sessão e o webhook exige assinatura válida. O início do OAuth real está configurado, mas o login completo e um pagamento sandbox ainda precisam de validação prática. Não crie pagamentos de produção para teste.
+Para produção, use o callback Google `https://trab.sivaldodavi.com.br/auth/google_oauth2/callback`, credenciais OAuth/MP específicas de produção e segredos fora do Git. O container está saudável e `AUTHENTICATION_READY=true`; contas privadas exigem sessão e o webhook exige assinatura válida. O login Google foi validado em navegador. Ainda falta confirmar uma notificação nativa do Mercado Pago e testar compras somente no sandbox. Não crie pagamentos de produção para teste. Os textos legais estão publicados e ainda precisam de revisão.
 
 O arquivo do banco nunca deve ser commitado. Faça backups consistentes em destino protegido, confirme permissões e teste a restauração em ambiente isolado.
 

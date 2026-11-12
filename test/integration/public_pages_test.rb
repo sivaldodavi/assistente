@@ -53,7 +53,12 @@ class PublicPagesTest < ActionDispatch::IntegrationTest
 
     get ai_help_path
     assert_response :success
-    assert_select "h1", "Como a assistência de IA funciona"
+    assert_select "h1", "Como usar o Assistente Acadêmico"
+    assert_select "h2", "Primeiros passos"
+    assert_select "h2", "Roteiros e exportação"
+    assert_select "body", text: /do 1º ao 10º/
+    assert_select "body", text: /modelo acadêmico ABNT/
+    assert_select "h2", "Como a assistência de IA funciona"
     assert_select "body", text: /DeepSeek/
     assert_select "body", text: /TypeSafe/
   end
