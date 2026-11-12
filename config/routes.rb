@@ -32,7 +32,6 @@ Rails.application.routes.draw do
   post "/payments", to: "payments#create", as: :payments
   get "/payments/:id", to: "payments#status", as: :payment_status
   post "/webhooks/mercadopago", to: "mercado_pago_webhooks#create", as: :mercadopago_webhook
-  post "/api/mercadopago/webhook", to: "mercado_pago_webhooks#create", as: :legacy_mercadopago_webhook
   post "/projects/:project_id/ai/action", to: "project_assist#action"
   post "/projects/:project_id/ai/jev-report", to: "project_assist#jev_report"
   post "/projects/:project_id/ai/jev-section", to: "project_assist#jev_section"

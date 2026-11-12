@@ -21,7 +21,6 @@ class ProjectsController < ApplicationController
     @project = current_account.projects.new(
       project_type:,
       fields: {
-        "author" => current_account.name,
         "period" => current_account.profile["period"],
         "shift" => current_account.profile["shift"],
         "year" => Date.current.year.to_s

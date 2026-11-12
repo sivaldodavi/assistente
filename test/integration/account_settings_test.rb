@@ -29,6 +29,14 @@ class AccountSettingsTest < ActionDispatch::IntegrationTest
     assert_not_includes @account.profile, "professor"
   end
 
+  test "does not import singular discipline and professor profile values" do
+    @account.update!(profile: { "discipline" => "Antiga", "professor" => "Antigo" })
+    @account.update_profile!(profile: @account.profile, name: @account.name)
+
+    assert_empty @account.profile["disciplines"]
+    assert_empty @account.profile["teachers"]
+  end
+
   test "profile offers all supported periods and both shifts without duplicate single-value fields" do
     get account_settings_path
 

@@ -87,11 +87,11 @@
           <p class="field-hint">O texto das decisões possíveis abaixo será reaproveitado, sem pedir que você o escreva novamente.</p>
           <div class="reused-decision">
             <h3>Alternativa A</h3>
-            <%= simple_format(@project.fields["decision_a"].presence || @project.fields["thesis_a"].presence || "Preencha esta alternativa na etapa 2.1.") %>
+            <%= simple_format(@project.fields["decision_a"].presence || "Preencha esta alternativa na etapa 2.1.") %>
           </div>
           <div class="reused-decision">
             <h3>Alternativa B</h3>
-            <%= simple_format(@project.fields["decision_b"].presence || @project.fields["thesis_b"].presence || "Preencha esta alternativa na etapa 2.1.") %>
+            <%= simple_format(@project.fields["decision_b"].presence || "Preencha esta alternativa na etapa 2.1.") %>
           </div>
         </section>
       <% when "criteria" %>

@@ -1,28 +1,15 @@
-# Matriz de paridade
+# Matriz de comportamento e testes
 
-A fonte é o conjunto de 134 testes Python em `recovery/original-zip`, não o snapshot Stagit. Os testes Rails consolidam comportamentos em cenários de integração e modelo; portanto, a diferença entre 134 testes de referência e 99 testes Rails não mede, por si só, funcionalidade ausente. As funcionalidades definitivamente excluídas pelo usuário estão listadas separadamente.
+| Comportamento | Implementação e cobertura |
+| --- | --- |
+| Roteiros Case, Projeto de Paper e Paper Final, campos, opções, limites, progresso e checklists | `config/academic_workflows.json`; `test/models/academic_workflow_test.rb`, `test/models/project_test.rb`, `test/integration/projects_test.rb` |
+| Salvamento, revisão concorrente, conversão Paper Final e isolamento de projetos | `app/controllers/projects_controller.rb`; `test/integration/projects_test.rb`, `test/models/project_test.rb` |
+| Prévia HTML e exportação Quarto/Typst/ABNT | `app/services/document_export.rb`; `test/services/document_export_test.rb`, `test/integration/exports_test.rb`; PDF real validado no container de produção |
+| Login Google, state, PKCE S256, nonce, validação do ID token e isolamento da conta | `app/lib` e controllers de autenticação; `test/integration/authentication_test.rb`, `test/controllers/omniauth_callbacks_controller_test.rb`, `test/lib/google_oauth2_strategy_test.rb` |
+| Perfil acadêmico, termos, consentimentos e configurações da conta | `app/models/account.rb`, `app/controllers/account_settings_controller.rb`; `test/integration/account_settings_test.rb` |
+| Biblioteca Pessoal, fichamentos e vínculo de fontes aos projetos | `app/controllers/sources_controller.rb`; `test/integration/sources_test.rb`, `test/integration/projects_test.rb` |
+| Assistência contextual e avaliação formativa | `app/services/ai_workflow.rb`, `app/services/jev_rubric.rb`; `test/integration/project_assist_test.rb`, `test/integration/projects_test.rb` |
+| Pacotes Pix, idempotência, webhook assinado, créditos e reconciliação de pedidos | `app/services/payment_service.rb`, `app/controllers/mercado_pago_webhooks_controller.rb`; `test/integration/payments_test.rb`, `test/services/payment_reconciliation_test.rb` |
+| Administração, auditoria, páginas e conteúdo público | controllers e views correspondentes; `test/integration/admin_test.rb`, `test/integration/public_pages_test.rb` |
 
-| Comportamento mantido | Testes de referência originais | Cobertura Rails atual | Estado |
-| --- | --- | --- | --- |
-| Roteiros Case, Projeto de Paper e Paper Final, campos, opções, limites, progresso e checklists | `test_academic_workflows.py`, `test_paper_workflows.py` | `test/models/academic_workflow_test.rb`, `test/models/project_test.rb`, `test/integration/projects_test.rb` | Coberto pela especificação JSON atual e por testes de modelo e integração. |
-| Salvamento, validação, revisão concorrente, conversão Paper Final e isolamento de projetos | `test_projects.py` | `test/integration/projects_test.rb`, `test/models/project_test.rb` | Coberto por testes Rails; agenda manual removida por decisão atual. |
-| Prévia HTML escapada, geração QMD/Typst/ABNT e disponibilidade de exportação por documento/fase | `test_export.py` | `test/services/document_export_test.rb`, `test/integration/exports_test.rb`, `test/integration/projects_test.rb` | Coberto com fakes nos testes; PDF real validado no container de produção em 12/11/2026 com Quarto 1.11.9 e Typst 0.15.1. |
-| Sugestões contextuais DeepSeek, consentimento, contrato estruturado e avaliação JEV separada | `test_ai_workflows.py` | `test/integration/project_assist_test.rb`, `test/integration/projects_test.rb` | Coberto com doubles locais; respostas externas continuam dependentes de credenciais e validação no provedor. |
-| Login Google, state, PKCE S256, nonce, verificação do ID token, CSRF, contas e isolamento | `test_oauth.py`, `test_account.py` | `test/integration/authentication_test.rb`, `test/controllers/omniauth_callbacks_controller_test.rb`, `test/integration/account_settings_test.rb`, `test/lib/google_oauth2_strategy_test.rb` | Coberto com fakes; login real concluído e confirmado em produção. |
-| Biblioteca Pessoal, fichamentos privados e vínculo de fontes pertencentes à conta | `test_library.py`, parte de `test_projects.py` | `test/integration/sources_test.rb`, `test/integration/projects_test.rb` | Coberto; buscas em catálogo externo não fazem parte do escopo. |
-| Datas fixas de entrega do relatório, do debate e da dissertação no Case | `test_schedule.py` | `test/models/academic_workflow_test.rb`, `test/integration/projects_test.rb` | Coberto; agenda, calendário e tarefas com datas livres foram removidos. |
-| Pacotes Pix, preço calculado no servidor, idempotência, webhook assinado, créditos e recuperação de pedidos ambíguos | `test_payment_orders.py`, `test_payment_security.py`, `test_payment_webhook.py`, recuperação sem promoções em `test_promotion_reconciliation.py` | `test/integration/payments_test.rb`, `test/services/payment_reconciliation_test.rb` | Coberto com doubles; o timer de reconciliação está habilitado e ativo em produção. Falta confirmar uma notificação nativa pelo painel do provedor; nenhuma cobrança real foi criada para teste. |
-| Administração de planos/créditos, auditoria, bloqueio, páginas e conteúdo público | `test_admin.py`, `test_public_web.py` | `test/integration/admin_test.rb`, `test/integration/public_pages_test.rb`, `test/integration/account_settings_test.rb` | Coberto por testes Rails; os textos legais ainda precisam de revisão antes da publicação. |
-
-## Exclusões definitivas
-
-Não portados: compartilhamento e comentários administrativos (`test_sharing.py` e testes de compartilhamento em `test_account.py`/`test_projects.py`); recomendações jurídicas e catálogo de fontes (`test_legal_recommendations.py`); e-mail/outbox e lembretes automáticos (`test_email_outbox.py`); Gemini e fallback (`test_ai_workflows.py`); promoções, descontos e reservas de estoque (`test_payment_orders.py`, `test_payment_webhook.py` e partes promocionais de `test_promotion_reconciliation.py`); exportação de dados da conta.
-
-## Validações externas ainda necessárias
-
-- O callback `https://trab.sivaldodavi.com.br/auth/google_oauth2/callback` e o login Google real já foram validados em produção; segredos permanecem fora do Git.
-- Confirmar uma notificação nativa de teste no painel Mercado Pago. Usar sandbox para compras de teste; nenhuma cobrança real foi criada.
-- Os timers de reconciliação e backup estão habilitados e ativos; continuar observando logs e testar uma restauração SQLite em ambiente isolado.
-- Revisar termos e privacidade, que já estão publicados.
-
-Em 12/11/2026, a produção estava publicada e saudável, com páginas públicas acessíveis e áreas privadas protegidas por sessão. O staging continua fechado por padrão. A revisão legal e a confirmação da notificação nativa do provedor permanecem pendentes.
+Os testes de integrações usam doubles locais para provedores externos. Para confirmar operações do Mercado Pago, use o ambiente sandbox e não crie cobranças reais de teste.

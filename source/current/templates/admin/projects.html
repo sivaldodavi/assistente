@@ -1,7 +1,0 @@
-{% extends "base.html" %}
-{% block title %}Projetos compartilhados — Assistente Acadêmico{% endblock %}
-{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">{% endblock %}
-{% block content %}
-<section class="page-heading"><p class="eyebrow">Administração</p><h1>Projetos compartilhados</h1><p class="lead">Apenas projetos cujo proprietário autorizou leitura aparecem aqui.</p><p><a class="button" href="{{ url_for('admin.accounts') }}">Contas e planos</a></p></section>
-<section class="project-list">{% for project in projects %}<a class="project-row" href="{{ url_for('admin.project', project_id=project['id']) }}"><span><strong>{{ project['title'] or 'Sem título' }}</strong><small>{{ project['project_type'] }} · {{ project['email'] }}</small></span><span>Visualizar</span></a>{% else %}<p class="empty-state">Nenhum projeto foi compartilhado.</p>{% endfor %}</section>
-{% endblock %}

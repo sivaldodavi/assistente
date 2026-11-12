@@ -44,7 +44,7 @@ class ProjectsTest < ActionDispatch::IntegrationTest
     end
 
     project = Project.order(:id).last
-    assert_equal "Ana Estudante", project.fields["author"]
+    assert_not_includes project.fields, "author"
     assert_equal Date.current.year.to_s, project.fields["year"]
     assert_equal "7", project.fields["period"]
     assert_equal "noturno", project.fields["shift"]

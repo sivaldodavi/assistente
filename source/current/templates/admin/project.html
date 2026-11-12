@@ -1,8 +1,0 @@
-{% extends "base.html" %}
-{% block title %}Projeto compartilhado — Assistente Acadêmico{% endblock %}
-{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">{% endblock %}
-{% block content %}
-<section class="page-heading"><a class="back-link" href="{{ url_for('admin.projects') }}">← Projetos compartilhados</a><p class="eyebrow">{{ owner_email }}</p><h1>{{ project['fields'].get('title') or project['title'] or 'Sem título' }}</h1><p class="lead">Visualização administrativa somente leitura. O texto do projeto não é editável nesta tela.</p></section>
-<section class="admin-readonly"><h2>Conteúdo</h2>{% for key, value in project['fields'].items() %}{% if value %}<article><h3>{{ key|replace('_', ' ')|title }}</h3><p>{{ value }}</p></article>{% endif %}{% endfor %}</section>
-<section class="settings-card"><h2>Comentários administrativos</h2>{% for comment in comments %}<article class="comment"><p>{{ comment['body'] }}</p><small>{{ comment['author_role'] }}</small></article>{% else %}<p class="empty-state">Nenhum comentário.</p>{% endfor %}{% if allow_comments %}<form method="post" action="{{ url_for('admin.comment', project_id=project['id']) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><label>Comentário<textarea name="body" maxlength="3000" required></textarea></label><button type="submit">Enviar comentário</button></form>{% else %}<p class="field-help">O proprietário não autorizou comentários.</p>{% endif %}</section>
-{% endblock %}

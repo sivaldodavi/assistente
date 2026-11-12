@@ -4,14 +4,7 @@ class AcademicWorkflow
   WORKFLOWS = JSON.parse(Rails.root.join("config/academic_workflows.json").read)
   COMMON_FIELD_LIMITS = {
     "course" => 160,
-    "city" => 160,
-    "author" => 1_200,
-    "authors" => 1_200,
-    "dissertation_author" => 160
-  }.freeze
-  LEGACY_FIELD_ALIASES = {
-    "decision_a" => "thesis_a",
-    "decision_b" => "thesis_b"
+    "city" => 160
   }.freeze
   DELIVERY_KEYS = %w[report dissertation paper_project paper_final].freeze
 
@@ -44,7 +37,6 @@ class AcademicWorkflow
       source = hash_value(raw)
       field_rules(project_type).each_with_object({}) do |(field_id, rule), fields|
         value = source[field_id]
-        value = source[LEGACY_FIELD_ALIASES[field_id]] if value.blank? && LEGACY_FIELD_ALIASES.key?(field_id)
         value = value.nil? ? "" : value.to_s.strip
         limit = Integer(rule["limit"] || 16_000)
         value = value[0, limit]

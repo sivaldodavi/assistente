@@ -3,9 +3,6 @@
 # Ignore git directory.
 /.git/
 /.gitignore
-/evidence/
-/source/
-/RECOVERY-NOTES.txt
 
 # Ignore bundler config.
 /.bundle

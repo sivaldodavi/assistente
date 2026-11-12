@@ -65,31 +65,23 @@ class AcademicWorkflowTest < ActiveSupport::TestCase
     assert_equal 100, AcademicWorkflow.progress("case", {}, "unknown")["percent"]
   end
 
-  test "preserves author data in existing projects after the author field is removed from the form" do
+  test "discards author and decision fields that are not part of the current workflow" do
     fields = AcademicWorkflow.normalize_fields("case", {
       "author" => "Nome da conta",
       "authors" => "Autora antiga",
       "dissertation_author" => "Nome anterior",
-      "partner" => "Colega"
+      "partner" => "Colega",
+      "decision_a" => "Decisão atual",
+      "thesis_a" => "Alternativa antiga"
     })
 
-    assert_equal "Nome da conta", fields["author"]
-    assert_equal "Autora antiga", fields["authors"]
-    assert_equal "Nome anterior", fields["dissertation_author"]
-    assert_equal "Colega", fields["partner"]
-  end
-
-  test "moves legacy argumentation text into the corresponding decision when needed" do
-    fields = AcademicWorkflow.normalize_fields("case", {
-      "decision_b" => "Decisão nova",
-      "thesis_a" => "Alternativa A antiga",
-      "thesis_b" => "Alternativa B antiga"
-    })
-
-    assert_equal "Alternativa A antiga", fields["decision_a"]
-    assert_equal "Decisão nova", fields["decision_b"]
+    assert_not_includes fields, "author"
+    assert_not_includes fields, "authors"
+    assert_not_includes fields, "dissertation_author"
+    assert_equal "Decisão atual", fields["decision_a"]
+    assert_equal "", fields["decision_b"]
     assert_not_includes fields, "thesis_a"
-    assert_not_includes fields, "thesis_b"
+    assert_equal "Colega", fields["partner"]
   end
 
   test "checklists discard unknown keys and normalize submitted checkboxes" do

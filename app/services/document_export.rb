@@ -16,8 +16,7 @@ class DocumentExport
   }.freeze
   MARKDOWN_ESCAPABLE = "\\`*_{}[]<>()#+.!|~&+-".freeze
   NON_DOCUMENT_FIELDS = %w[
-    title authors author dissertation_author partner assignment_prompt profile
-    institution course city year discipline teacher period shift
+    title partner assignment_prompt course city year discipline teacher period shift
     report_delivery_date debate_delivery_date dissertation_delivery_date
   ].freeze
   RENDER_MUTEX = Mutex.new
@@ -33,7 +32,7 @@ class DocumentExport
       data = project_payload(project, sources).merge("export_phase" => phase)
       fields = data.fetch("fields")
       title = fields["title"].presence || data["title"].presence || "Trabalho sem título"
-      authors = author_names(fields, account_name: data["account_name"], phase:).join("\n").presence || "Autor não informado"
+      authors = author_names(fields, account_name: data["account_name"]).join("\n").presence || "Autor não informado"
       sections = document_sections(data, sources).map do |heading, content|
         body = content.map do |label, value|
           heading_html = label.present? ? "<h3>#{escape(label)}</h3>" : ""
@@ -52,7 +51,7 @@ class DocumentExport
     end
 
     def build_quarto_source(project, sources: [], document_kind: nil)
-      data = legacy_project(project, sources)
+      data = template_project_data(project, sources)
       document_kind ||= default_document_kind(data["project_type"])
       expected_type = DOCUMENT_KINDS[document_kind]
       raise ExportError, "Tipo de documento inválido." unless expected_type
@@ -101,30 +100,26 @@ class DocumentExport
       attributes.merge("fields" => fields, "account_name" => account_name, "sources" => sources)
     end
 
-    def legacy_project(project, sources)
+    def template_project_data(project, sources)
       fields = project["fields"].is_a?(Hash) ? project["fields"] : {}
       project_type = project["project_type"]
       account_name = project.respond_to?(:account) ? project.account&.name : project["account_name"]
       account_profile = project.respond_to?(:account) ? project.account&.profile : {}
       account_profile = account_profile.is_a?(Hash) ? account_profile : {}
-      authors = fields["authors"].presence || fields["author"].presence || account_name
       mapped = {
         "title" => fields["title"].to_s,
-        "author" => authors,
         "partner" => fields["partner"].to_s,
         "account_name" => account_name.to_s,
-        "institution" => "",
         "course" => course_label(fields["course"].presence || account_profile["course"]),
         "city" => (fields["city"].presence || account_profile["city"]).to_s,
         "year" => (fields["year"].presence || Date.current.year.to_s).to_s,
         "report_delivery_date" => fields["report_delivery_date"].to_s,
         "dissertation" => fields["dissertation"].to_s,
-        "profile" => fields["profile"].to_s,
         "discipline" => fields["discipline"].to_s,
         "teacher" => fields["teacher"].to_s,
         "classInfo" => class_info(fields),
         "period" => fields["period"].to_s,
-        "subtitle" => (fields["subtitle"].presence || fields["sub_title"]).to_s,
+        "subtitle" => fields["subtitle"].to_s,
         "abstract" => fields["abstract"].to_s,
         "keywords" => fields["keywords"].to_s,
         "paperKind" => project_type == "paper_final" ? "final" : "project"
@@ -159,8 +154,8 @@ class DocumentExport
         "ai_note" => "aiNote"
       }
       field_map.each { |source, target| mapped[target] = fields[source].to_s }
-      mapped["decisionA"] = fields["decision_a"].presence || fields["thesis_a"].to_s
-      mapped["decisionB"] = fields["decision_b"].presence || fields["thesis_b"].to_s
+      mapped["decisionA"] = fields["decision_a"].to_s
+      mapped["decisionB"] = fields["decision_b"].to_s
       mapped["developmentSections"] = Array(project["development_sections"]).filter_map do |item|
         next unless item.is_a?(Hash)
 
@@ -169,10 +164,17 @@ class DocumentExport
       criteria = Array(project["criteria"]).filter_map do |item|
         next unless item.is_a?(Hash)
 
-        { "term" => (item["title"].presence || item["term"]).to_s, "definition" => item["definition"].to_s, "basis" => item["basis"].to_s }
+        { "term" => item["title"].to_s, "definition" => item["definition"].to_s, "basis" => item["basis"].to_s }
       end
       mapped_type = project_type == "case" ? "case" : "paper"
-      { "projectType" => mapped_type, "project_type" => project_type, "fields" => mapped, "criteria" => criteria, "sources" => sources }
+      {
+        "projectType" => mapped_type,
+        "project_type" => project_type,
+        "account_name" => account_name.to_s,
+        "fields" => mapped,
+        "criteria" => criteria,
+        "sources" => sources
+      }
     end
 
     def default_document_kind(project_type)
@@ -234,10 +236,8 @@ class DocumentExport
       author_names(project.fetch("fields", {}), account_name: project["account_name"])
     end
 
-    def author_names(fields, account_name:, phase: nil)
-      primary = fields["dissertation_author"].presence if phase == "dissertation"
-      primary ||= fields["authors"].presence || fields["author"].presence || account_name
-      names = primary.to_s.lines.map(&:strip).reject(&:empty?)
+    def author_names(fields, account_name:)
+      names = text(account_name).lines.map(&:strip).reject(&:empty?)
       partner = text(fields["partner"]).strip
       names << partner if partner.present?
       names.uniq { |name| name.downcase }
@@ -260,7 +260,7 @@ class DocumentExport
         "abnt-folha-rosto: false",
         "abnt-instituicao: #{yaml_typst_scalar(INSTITUTION)}",
         "abnt-curso: #{yaml_typst_scalar(fields["course"])}",
-        "abnt-subtitulo: #{yaml_typst_scalar(fields["subtitle"] || fields["subTitle"])}",
+        "abnt-subtitulo: #{yaml_typst_scalar(fields["subtitle"])}",
         yaml_list("abnt-autores", authors(project)),
         yaml_list("abnt-dados", details),
         "abnt-local: #{yaml_typst_scalar(fields["city"])}",
@@ -341,7 +341,7 @@ class DocumentExport
 
     def article_header(project)
       fields = project.fetch("fields")
-      subtitle = text(fields["subtitle"] || fields["subTitle"]).strip
+      subtitle = text(fields["subtitle"]).strip
       parts = [
         '#import "_extensions/abnt/tipos/artigo.typ": *',
         "#artigo-cabecalho(",

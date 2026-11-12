@@ -36,7 +36,7 @@ class AIWorkflow
     SUGGESTION_ACTIONS.include?(action.to_s)
   end
 
-  def self.legacy_state(project, sources: [])
+  def self.prompt_state(project, sources: [])
     fields = project.fields.is_a?(Hash) ? project.fields : {}
     criteria = project.criteria.is_a?(Array) ? project.criteria : []
     development = if project.project_type == "case"
@@ -53,12 +53,12 @@ class AIWorkflow
       "case_facts" => text(fields, "facts"),
       "legal_question" => text(fields, "problem", 5_000),
       "conceptual_basis" => text(fields, "decision_basis", 12_000),
-      "possible_decision_a" => (text(fields, "decision_a").presence || text(fields, "thesis_a")).first(6_000),
-      "possible_decision_b" => (text(fields, "decision_b").presence || text(fields, "thesis_b")).first(6_000),
+      "possible_decision_a" => text(fields, "decision_a").first(6_000),
+      "possible_decision_b" => text(fields, "decision_b").first(6_000),
       "thesis_a_title" => "Alternativa A",
-      "thesis_a_argument" => (text(fields, "decision_a").presence || text(fields, "thesis_a")),
+      "thesis_a_argument" => text(fields, "decision_a"),
       "thesis_b_title" => "Alternativa B",
-      "thesis_b_argument" => (text(fields, "decision_b").presence || text(fields, "thesis_b")),
+      "thesis_b_argument" => text(fields, "decision_b"),
       "criteria_and_values" => criteria_text(criteria),
       "research_object" => text(fields, "research_object", 5_000),
       "problem_context" => text(fields, "problem_context", 8_000),
@@ -77,7 +77,7 @@ class AIWorkflow
   end
 
   def self.action_context(project, action, body, sources: [])
-    state = legacy_state(project, sources:)
+    state = prompt_state(project, sources:)
     fields = project.fields.is_a?(Hash) ? project.fields.except(*DEPRECATED_FIELDS) : {}
     project_type = %w[paper_project paper_final].include?(project.project_type) ? "paper" : "case"
     requested_fields = body["context_fields"]

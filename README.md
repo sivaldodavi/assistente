@@ -20,7 +20,7 @@ bin/rails db:prepare
 bin/rails server
 ```
 
-O login Google usa OmniAuth com state, PKCE (S256), nonce OIDC descartável e verificação de ID token/email. Em produção, o host de retorno é fixado em `https://trab.sivaldodavi.com.br`; configure o cliente OAuth para o callback `https://trab.sivaldodavi.com.br/auth/google_oauth2/callback`. Login de desenvolvimento existe apenas nos ambientes `development` e `test`; não há Devise nem login por senha.
+O login Google usa OmniAuth com state, PKCE (S256), nonce OIDC descartável e verificação de ID token/email. Em produção, o host de retorno é fixado em `https://trab.sivaldodavi.com.br`; configure o cliente OAuth para o callback `https://trab.sivaldodavi.com.br/auth/google_oauth2/callback`. Login de desenvolvimento existe apenas nos ambientes `development` e `test`.
 
 ### Configuração de integrações
 
@@ -29,7 +29,7 @@ O login Google usa OmniAuth com state, PKCE (S256), nonce OIDC descartável e ve
 | Google OAuth | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REDIRECT_URI` ou credenciais Rails em `google.*`. |
 | DeepSeek | `DEEPSEEK_API_KEY` ou `DEEPSEEK_API_KEY_FILE` (padrão `/run/secrets/deepseek_api_key`); `DEEPSEEK_API_URL`, `DEEPSEEK_MODEL` e `DEEPSEEK_TIMEOUT` são opcionais. |
 | JEV TypeSafe | `TYPESAFE_API_KEY` ou `TYPESAFE_API_KEY_FILE` (padrão `/run/secrets/typesafe_api_key`); `TYPESAFE_API_URL`, `TYPESAFE_MODEL` e `JEV_TIMEOUT` são opcionais. |
-| Mercado Pago | `MERCADOPAGO_ACCESS_TOKEN` e `MERCADOPAGO_WEBHOOK_SECRET`, ou seus respectivos `*_FILE` (padrão em `/run/secrets/`). A URL HTTPS pode ser `mercadopago.webhook_url`, `MERCADOPAGO_WEBHOOK_URL` ou `BASE_URL`; os caminhos aceitos são `/webhooks/mercadopago` e `/api/mercadopago/webhook`. |
+| Mercado Pago | `MERCADOPAGO_ACCESS_TOKEN` e `MERCADOPAGO_WEBHOOK_SECRET`, ou seus respectivos `*_FILE` (padrão em `/run/secrets/`). A URL HTTPS pode ser `mercadopago.webhook_url`, `MERCADOPAGO_WEBHOOK_URL` ou `BASE_URL`; o endpoint é `/webhooks/mercadopago`. |
 | Administração | `ADMIN_EMAILS`: lista de e-mails separada por vírgula. |
 
 As chaves de IA também podem ser armazenadas nas credenciais Rails em `ai.deepseek_api_key` e `ai.typesafe_api_key`; as de pagamento em `mercadopago.access_token` e `mercadopago.webhook_secret`. Não coloque segredos em arquivos rastreados ou no banco de dados. A criação do Pix é iniciada pela conta autenticada e os pacotes, preços e créditos são definidos no servidor.
@@ -40,7 +40,7 @@ Para configurar a cópia local com um assistente que deixa os valores visíveis 
 bin/rails runner script/configure_credentials.rb
 ```
 
-O script preserva entradas existentes como `secret_key_base`, aceita valores em branco para manter ou pular campos e exige confirmação digitando `SIM`. A digitação aparece no terminal e no histórico visual da sessão; use apenas em uma máquina confiável e não compartilhe a tela. `config/master.key` existe neste checkout e é ignorado pelo Git; mantenha-o protegido. No servidor, forneça a chave mestra como `RAILS_MASTER_KEY` e injete os segredos por ambiente ou arquivos Docker em `/run/secrets`. Este projeto não carrega `.env` automaticamente.
+O script preserva entradas existentes como `secret_key_base`, aceita valores em branco para manter ou pular campos e exige confirmação digitando `SIM`. A digitação aparece no terminal e no histórico visual da sessão; use apenas em uma máquina confiável e não compartilhe a tela. `config/master.key` é ignorado pelo Git; mantenha-o protegido. No servidor, forneça a chave mestra como `RAILS_MASTER_KEY` e injete os segredos por ambiente ou arquivos Docker em `/run/secrets`. Este projeto não carrega `.env` automaticamente.
 
 O modo público informativo pode ser reativado com `AUTHENTICATION_READY=false`: o Caddy encaminha as rotas ao Rails, cujo `ProductionAccessGate` retorna `503` para login, callback, áreas autenticadas e Pix, mantendo páginas informativas e webhook disponíveis. Em modo funcional, `AUTHENTICATION_READY=true` libera o OmniAuth e os controllers; cada área privada exige sessão e o webhook de produção valida assinatura. O Caddyfile principal importa `/config/assistente-academico.Caddyfile`, sincronizado a partir do fragmento versionado em `deploy/production/Caddyfile`; o endpoint legado de staging não deve ser direcionado ao container de produção.
 
@@ -48,17 +48,15 @@ O modo público informativo pode ser reativado com `AUTHENTICATION_READY=false`:
 
 `config/academic_workflows.json` define os roteiros de Case, Projeto de Paper e Paper Final, com 10, 9 e 6 etapas, respectivamente. Projetos são associados à conta, com salvamento, controle de revisão concorrente e conversão de Projeto de Paper em Paper Final. O Case permite registrar apenas as datas de entrega do relatório, do debate e da dissertação; a dissertação é escrita em um único campo, sem combinar estruturas antigas. A Biblioteca Pessoal mantém fontes e fichamentos privados e permite vinculá-los aos projetos. A exportação acadêmica oferece prévias HTML e PDFs via Quarto/Typst com o modelo ABNT de referência.
 
-Contas, Google OAuth, isolamento por proprietário, perfil, termos e consentimentos estão implementados. A exclusão confirmada da conta remove também projetos, revisões, fontes e dados associados; não há recurso de exportação dos dados da conta.
+Contas, Google OAuth, isolamento por proprietário, perfil, termos e consentimentos estão implementados. A exclusão confirmada da conta remove também projetos, revisões, fontes e dados associados.
 
-## Escopo funcional acordado
+## Funcionalidades
 
 Implementados: assistência contextual de escrita, avaliação formativa separada, pagamentos por Pix com pacotes/créditos usando o SDK Ruby oficial (`mercadopago-sdk`), administração e páginas públicas de pacotes, termos, privacidade e explicação da IA. Pagamentos e IA usam adaptadores de serviço e testes com doubles locais.
 
-Foram excluídos definitivamente desta reconstrução: agenda e tarefas com datas livres, lembretes automáticos, compartilhamento e comentários administrativos, recomendações jurídicas, e-mails/outbox, fallback de provedores, promoção/desconto e exportação dos dados da conta. Permanecem as três datas fixas do Case e a exportação acadêmica HTML/PDF.
-
 As páginas públicas estão em `/`, `/planos` (também `/plans`), `/termos`, `/privacidade` e `/ajuda-ia`. No modo funcional, o login Google e compras Pix ficam disponíveis a contas autenticadas. A política identifica Sivaldo Davi Pereira como responsável e informa `contato@sivaldodavi.com`, contato já publicado no site pessoal do responsável. Os avisos legais continuam sendo um rascunho funcional e devem ser revisados.
 
-As integrações externas foram habilitadas após autorização explícita. O login Google real foi concluído em produção. Credenciais Mercado Pago de produção foram verificadas; a entrega de uma notificação nativa ainda precisa ser confirmada no painel. Nenhuma cobrança real foi criada para teste. Um pagamento Pix em produção movimenta dinheiro real. Os testes automatizados usam doubles locais; use o sandbox para testes de compra. A [matriz de paridade](docs/parity-matrix.md) registra os comportamentos cobertos, as exclusões e as validações externas pendentes.
+As integrações externas foram habilitadas após autorização explícita. O login Google real foi concluído em produção. Credenciais Mercado Pago de produção foram verificadas; a entrega de uma notificação nativa ainda precisa ser confirmada no painel. Nenhuma cobrança real foi criada para teste. Um pagamento Pix em produção movimenta dinheiro real. Os testes automatizados usam doubles locais; use o sandbox para testes de compra. A [matriz de paridade](docs/parity-matrix.md) registra a cobertura dos comportamentos atuais e as validações operacionais.
 
 ## Testes
 
@@ -68,7 +66,7 @@ bin/rubocop
 bin/rails zeitwerk:check
 ```
 
-Em 12/11/2026, a suíte Rails completa passou: 99 testes e 766 assertions. O RuboCop inspecionou 98 arquivos sem offenses, e `zeitwerk:check` passou. Os testes de integrações externas usam doubles locais; eles não comprovam a entrega real de webhooks nem um pagamento. O login Google real já foi concluído e confirmado. Ainda falta validar uma notificação nativa e uma compra no sandbox; nenhuma cobrança real foi criada para teste.
+Em 12/11/2026, a suíte Rails completa passou: 99 testes e 778 assertions. O RuboCop inspecionou 99 arquivos sem offenses, e `zeitwerk:check` passou. Os testes de integrações externas usam doubles locais; eles não comprovam a entrega real de webhooks nem um pagamento. O login Google real já foi concluído e confirmado. Ainda falta validar uma notificação nativa e uma compra no sandbox; nenhuma cobrança real foi criada para teste.
 
 ## Staging e banco
 

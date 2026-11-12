@@ -13,7 +13,7 @@ services:
       GOOGLE_CLIENT_ID: staging-disabled
       GOOGLE_CLIENT_SECRET: staging-disabled
       GOOGLE_REDIRECT_URI: https://trab.sivaldodavi.com.br/auth/google_oauth2/callback
-      MERCADOPAGO_WEBHOOK_URL: https://trab.sivaldodavi.com.br/api/mercadopago/webhook
+      MERCADOPAGO_WEBHOOK_URL: https://trab.sivaldodavi.com.br/webhooks/mercadopago
       MERCADOPAGO_ACCESS_TOKEN_FILE: /run/secrets/mercadopago_access_token
       MERCADOPAGO_WEBHOOK_SECRET_FILE: /run/secrets/mercadopago_webhook_secret
     volumes:

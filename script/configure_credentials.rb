@@ -66,12 +66,12 @@ module CredentialSetup
       (uri.scheme == "https" || uri.host == "localhost")
     valid_webhook = field[:kind] == :webhook &&
       uri.scheme == "https" &&
-      %w[/webhooks/mercadopago /api/mercadopago/webhook].include?(uri.path)
+      uri.path == "/webhooks/mercadopago"
     return if valid_uri && (valid_callback || valid_webhook)
 
     expected = field[:kind] == :callback ?
       "Use http://localhost ou HTTPS e termine em /auth/google_oauth2/callback." :
-      "Use HTTPS e termine em /webhooks/mercadopago ou /api/mercadopago/webhook."
+      "Use HTTPS e termine em /webhooks/mercadopago."
     raise "#{field[:label]} inválida. #{expected}"
   rescue URI::InvalidURIError
     raise "#{field[:label]} não é uma URL válida."

@@ -77,14 +77,14 @@ class Account < ApplicationRecord
     text["period"] = PROFILE_PERIODS.include?(source["period"].to_s) ? source["period"].to_s : ""
     text["shift"] = PROFILE_SHIFTS.include?(source["shift"].to_s) ? source["shift"].to_s : ""
     lists = {
-      "disciplines" => normalized_profile_list(source["disciplines"], source["discipline"]),
-      "teachers" => normalized_profile_list(source["teachers"], source["professor"])
+      "disciplines" => normalized_profile_list(source["disciplines"]),
+      "teachers" => normalized_profile_list(source["teachers"])
     }
     text.merge(lists)
   end
 
-  def normalized_profile_list(values, legacy_value)
-    (Array(values) + [ legacy_value ]).filter_map do |value|
+  def normalized_profile_list(values)
+    Array(values).filter_map do |value|
       value.to_s.strip.first(PROFILE_TEXT_LIMIT).presence
     end.uniq.first(PROFILE_LIST_LIMIT)
   end

@@ -84,7 +84,7 @@ class ProjectAssistController < ApplicationController
     AIUsageService.reserve!(account: current_account, project: @project, request_id:, action:)
     reserved = true
     raw = jev_client.score(
-      AIWorkflow.legacy_state(@project, sources: selected_sources),
+      AIWorkflow.prompt_state(@project, sources: selected_sources),
       AIWorkflow.jev_questions(section)
     )
     analysis = AIWorkflow.normalize_jev_result(raw, section:)

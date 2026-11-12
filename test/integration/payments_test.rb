@@ -185,21 +185,6 @@ class PaymentsTest < ActionDispatch::IntegrationTest
     assert_equal 110, @account.deepseek_limit
   end
 
-  test "legacy Mercado Pago webhook path processes signed events" do
-    order = create_order
-    payment = approved_payment(order)
-    gateway = fake_gateway(payment)
-    with_stub(PaymentSecrets, :webhook_secret, "test-webhook-secret") do
-      with_stub(MercadoPagoGateway, :new, gateway) do
-        post_webhook(payment.fetch("id"), path: "/api/mercadopago/webhook")
-      end
-    end
-
-    assert_response :ok
-    assert_equal 1, PaymentGrant.count
-    assert_equal "approved", order.reload.status
-  end
-
   test "webhook does not grant credits when provider amount differs" do
     order = create_order
     payment = approved_payment(order).merge("transaction_amount" => 1.0)

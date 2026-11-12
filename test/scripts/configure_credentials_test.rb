@@ -25,7 +25,7 @@ class ConfigureCredentialsTest < ActiveSupport::TestCase
       "typesafe-key",
       "TEST-access-token",
       "webhook-secret",
-      "https://trab.sivaldodavi.com.br/api/mercadopago/webhook",
+      "https://trab.sivaldodavi.com.br/webhooks/mercadopago",
       "SIM"
     ]
     output = StringIO.new
@@ -39,7 +39,7 @@ class ConfigureCredentialsTest < ActiveSupport::TestCase
     assert_equal "client-secret", saved.dig("google", "client_secret")
     assert_equal "deepseek-key", saved.dig("ai", "deepseek_api_key")
     assert_equal "TEST-access-token", saved.dig("mercadopago", "access_token")
-    assert_equal "https://trab.sivaldodavi.com.br/api/mercadopago/webhook", saved.dig("mercadopago", "webhook_url")
+    assert_equal "https://trab.sivaldodavi.com.br/webhooks/mercadopago", saved.dig("mercadopago", "webhook_url")
   end
 
   test "does not write credentials when confirmation is declined" do

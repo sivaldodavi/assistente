@@ -115,7 +115,7 @@ class DocumentExportTest < ActiveSupport::TestCase
     assert_not_includes html, "Conclusão"
   end
 
-  test "reuses decision text without duplicating it in the document" do
+  test "exports current decisions and ignores removed field aliases" do
     alternative_a = "A alternativa A tem conteúdo próprio."
     alternative_b = "A alternativa B tem conteúdo próprio."
     project = Project.new(
@@ -125,7 +125,11 @@ class DocumentExportTest < ActiveSupport::TestCase
         "decision_a" => alternative_a,
         "decision_b" => alternative_b,
         "thesis_a" => "Texto antigo duplicado A",
-        "thesis_b" => "Texto antigo duplicado B"
+        "thesis_b" => "Texto antigo duplicado B",
+        "author" => "Autoria antiga",
+        "authors" => "Autoria antiga plural",
+        "dissertation_author" => "Autoria antiga da dissertação",
+        "sub_title" => "Subtítulo antigo"
       }
     )
 
@@ -136,19 +140,19 @@ class DocumentExportTest < ActiveSupport::TestCase
       assert_equal 1, document.scan(alternative_a.delete_suffix(".")).length
       assert_equal 1, document.scan(alternative_b.delete_suffix(".")).length
       assert_not_includes document, "Texto antigo duplicado"
+      assert_not_includes document, "Autoria antiga"
+      assert_not_includes document, "Subtítulo antigo"
     end
     assert_not_includes source, "Descrição dos argumentos"
   end
 
-  test "reuses legacy argumentation text when the decision alternative is empty" do
+  test "does not export removed decision aliases" do
     legacy_text = "Alternativa antiga preservada."
     project = Project.new(project_type: "case", fields: { "thesis_a" => legacy_text })
 
     source = DocumentExport.build_quarto_source(project)
 
-    legacy_text = legacy_text.delete_suffix(".")
-    assert_includes source, legacy_text
-    assert_equal 1, source.scan(legacy_text).length
+    assert_not_includes source, legacy_text
   end
 
   test "PDF is restricted to the Case report phase" do

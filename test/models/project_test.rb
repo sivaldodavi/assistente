@@ -1,6 +1,10 @@
 require "test_helper"
 
 class ProjectTest < ActiveSupport::TestCase
+  test "does not persist the removed manual schedule" do
+    assert_not_includes Project.column_names, "schedule"
+  end
+
   test "new projects start at the first guided step and normalize title" do
     project = Project.create!(project_type: "case")
 
