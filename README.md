@@ -1,6 +1,6 @@
 # Assistente Acadêmico
 
-Reconstrução Rails do Assistente Acadêmico a partir do código original preservado em `recovery/original-zip`. O `main` contém a configuração separada de staging e produção. A produção está publicada em `https://trab.sivaldodavi.com.br`: páginas informativas são públicas, o login Google está habilitado e as áreas de conta exigem sessão.
+Reconstrução Rails do Assistente Acadêmico. O `main` contém a configuração separada de staging e produção. A produção está publicada em `https://trab.sivaldodavi.com.br`: páginas informativas são públicas, o login Google está habilitado e as áreas de conta exigem sessão.
 
 ## Stack
 
@@ -99,4 +99,4 @@ Verifique cada cópia com `PRAGMA integrity_check` e teste restaurações em arq
 
 ## Git e publicação
 
-O repositório mantém somente a branch compartilhada `main`, com commits Conventional Commits em português. O snapshot original não integrado permanece preservado como tag `recovery/original-zip` (não é uma branch). Valide mudanças antes de publicar; nenhum deploy ocorre sem autorização explícita.
+O repositório mantém somente a branch compartilhada `main`, com commits Conventional Commits em português. Valide mudanças antes de publicar; nenhum deploy ocorre sem autorização explícita.
