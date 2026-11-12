@@ -29,6 +29,7 @@ class PublicPagesTest < ActionDispatch::IntegrationTest
     get privacy_path
     assert_response :success
     assert_select "h1", "Como seus dados são tratados"
+    assert_select "a[href='mailto:contato@sivaldodavi.com']", text: "contato@sivaldodavi.com"
 
     get ai_help_path
     assert_response :success
@@ -49,6 +50,9 @@ class PublicPagesTest < ActionDispatch::IntegrationTest
       assert_response :success
 
       get login_path
+      assert_response :service_unavailable
+
+      get "/auth/google_oauth2/callback"
       assert_response :service_unavailable
 
       get projects_path

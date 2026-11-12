@@ -12,6 +12,7 @@ if Rails.env.production?
 end
 
 require Rails.root.join("lib/omni_auth/strategies/google_oauth2_with_nonce")
+require Rails.root.join("lib/production_access_gate")
 
 Rails.application.config.x.google_oauth_client_id = client_id
 Rails.application.config.x.google_oauth_client_secret = client_secret
@@ -31,3 +32,5 @@ Rails.application.config.middleware.use OmniAuth::Builder do
     redirect_uri:,
     pkce: true
 end
+
+Rails.application.config.middleware.insert_before OmniAuth::Builder, ProductionAccessGate
