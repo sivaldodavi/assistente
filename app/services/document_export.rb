@@ -19,7 +19,6 @@ class DocumentExport
     title authors author dissertation_author partner assignment_prompt profile
     institution course city year discipline teacher period shift
     report_delivery_date debate_delivery_date dissertation_delivery_date
-    dissertation_intro dissertation_conclusion
   ].freeze
   RENDER_MUTEX = Mutex.new
   @render_count = 0
@@ -95,7 +94,6 @@ class DocumentExport
       attributes = (project.respond_to?(:attributes) ? project.attributes : project.to_h).stringify_keys
       account_name = project.respond_to?(:account) ? project.account&.name : attributes["account_name"]
       fields = attributes["fields"].is_a?(Hash) ? attributes["fields"].stringify_keys : {}
-      fields["dissertation"] = project.dissertation_text if project.respond_to?(:dissertation_text) && !fields.key?("dissertation")
       if project.respond_to?(:account)
         profile = project.account&.profile || {}
         %w[course city].each { |key| fields[key] = profile[key] if fields[key].blank? }
@@ -110,14 +108,6 @@ class DocumentExport
       account_profile = project.respond_to?(:account) ? project.account&.profile : {}
       account_profile = account_profile.is_a?(Hash) ? account_profile : {}
       authors = fields["authors"].presence || fields["author"].presence || account_name
-      development = Array(project["development_sections"]).filter_map do |item|
-        item["body"].to_s if item.is_a?(Hash)
-      end
-      dissertation = if fields.key?("dissertation")
-        fields["dissertation"]
-      else
-        [ fields["dissertation_intro"], *development, fields["dissertation_conclusion"] ].filter_map(&:presence).join("\n\n")
-      end
       mapped = {
         "title" => fields["title"].to_s,
         "author" => authors,
@@ -128,7 +118,7 @@ class DocumentExport
         "city" => (fields["city"].presence || account_profile["city"]).to_s,
         "year" => (fields["year"].presence || Date.current.year.to_s).to_s,
         "report_delivery_date" => fields["report_delivery_date"].to_s,
-        "dissertation" => dissertation,
+        "dissertation" => fields["dissertation"].to_s,
         "profile" => fields["profile"].to_s,
         "discipline" => fields["discipline"].to_s,
         "teacher" => fields["teacher"].to_s,

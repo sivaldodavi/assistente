@@ -101,19 +101,16 @@ class DocumentExportTest < ActiveSupport::TestCase
     assert_not_includes source, "Nome da instituição"
   end
 
-  test "dissertation preview uses one text field and preserves legacy writing" do
+  test "dissertation preview uses one text field" do
     project = Project.new(
       project_type: "case",
-      fields: { "dissertation_intro" => "Texto inicial", "dissertation_conclusion" => "Texto final" },
-      development_sections: [ { "title" => "Fundamentação", "body" => "Texto intermediário" } ]
+      fields: { "dissertation" => "Texto único da dissertação." }
     )
 
     html = DocumentExport.build_project_html(project, phase: "dissertation")
 
     assert_includes html, "Dissertação"
-    assert_includes html, "Texto inicial"
-    assert_includes html, "Texto intermediário"
-    assert_includes html, "Texto final"
+    assert_includes html, "Texto único da dissertação."
     assert_not_includes html, "Introdução"
     assert_not_includes html, "Conclusão"
   end

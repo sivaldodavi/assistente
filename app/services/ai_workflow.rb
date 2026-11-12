@@ -26,7 +26,6 @@ class AIWorkflow
   ].freeze
   DEPRECATED_FIELDS = %w[
     institution profile thesis_a_title thesis_a thesis_b_title thesis_b
-    dissertation_intro dissertation_conclusion
   ].freeze
 
   def self.action?(action)
@@ -39,7 +38,6 @@ class AIWorkflow
 
   def self.legacy_state(project, sources: [])
     fields = project.fields.is_a?(Hash) ? project.fields : {}
-    fields = fields.merge("dissertation" => project.dissertation_text) if project.project_type == "case"
     criteria = project.criteria.is_a?(Array) ? project.criteria : []
     development = if project.project_type == "case"
       []
@@ -81,7 +79,6 @@ class AIWorkflow
   def self.action_context(project, action, body, sources: [])
     state = legacy_state(project, sources:)
     fields = project.fields.is_a?(Hash) ? project.fields.except(*DEPRECATED_FIELDS) : {}
-    fields = fields.merge("dissertation" => project.dissertation_text) if project.project_type == "case"
     project_type = %w[paper_project paper_final].include?(project.project_type) ? "paper" : "case"
     requested_fields = body["context_fields"]
     selected = if requested_fields.is_a?(Array)

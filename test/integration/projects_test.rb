@@ -148,13 +148,8 @@ class ProjectsTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test "renders one dissertation field and migrates legacy text into it" do
+  test "renders and saves the single dissertation field" do
     project = create_project!(project_type: "case")
-    project.update_columns(
-      fields: { "title" => "Case antigo", "dissertation_intro" => "Parte inicial antiga", "dissertation_conclusion" => "Parte final antiga" },
-      development_sections: [ { "title" => "Fundamentação", "body" => "Desenvolvimento antigo" } ]
-    )
-    project.reload
 
     get project_path(project, stage: "dissertation")
 
@@ -163,9 +158,6 @@ class ProjectsTest < ActionDispatch::IntegrationTest
     assert_select "textarea[name='project[fields][dissertation_intro]']", count: 0
     assert_select "textarea[name='project[fields][dissertation_conclusion]']", count: 0
     assert_select "[data-collection-add]", count: 0
-    assert_includes response.body, "Parte inicial antiga"
-    assert_includes response.body, "Desenvolvimento antigo"
-    assert_includes response.body, "Parte final antiga"
 
     patch project_path(project, stage: "dissertation"), params: {
       project: {

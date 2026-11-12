@@ -55,7 +55,6 @@
             </div>
             <% name = "project[fields][#{field["id"]}]" %>
             <% value = @project.fields[field["id"]] %>
-            <% value = @project.dissertation_text if field["id"] == "dissertation" %>
             <% value = Date.current.year.to_s if field["id"] == "year" && value.blank? %>
             <% value = current_account.profile[field["id"]] if value.blank? && %w[period shift].include?(field["id"]) %>
             <% if field["type"] == "date" %>
