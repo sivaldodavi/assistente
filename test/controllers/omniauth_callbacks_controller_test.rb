@@ -21,6 +21,23 @@ class OmniauthCallbacksControllerTest < ActionController::TestCase
     assert_redirected_to projects_path
   end
 
+  test "Google OAuth test mode leaves authenticated routes closed after callback" do
+    previous_authentication_ready = Rails.configuration.x.authentication_ready
+    previous_google_oauth_test_ready = Rails.configuration.x.google_oauth_test_ready
+    Rails.configuration.x.authentication_ready = false
+    Rails.configuration.x.google_oauth_test_ready = true
+
+    with_stub(Rails, :env, ActiveSupport::EnvironmentInquirer.new("production")) do
+      get :google_oauth2, params: { state: @state }
+
+      assert_redirected_to root_path
+      assert_equal Account.find_by!(google_sub: "google-1").id, session[:account_id]
+    end
+  ensure
+    Rails.configuration.x.authentication_ready = previous_authentication_ready
+    Rails.configuration.x.google_oauth_test_ready = previous_google_oauth_test_ready
+  end
+
   test "Google callback rejects an unverified email" do
     @request.env["omniauth.auth"] = google_auth(email_verified: false)
 
@@ -74,5 +91,13 @@ class OmniauthCallbacksControllerTest < ActionController::TestCase
       info: { email: "ana@example.test", name: "Ana" },
       extra: { id_info: { email_verified:, nonce: } }
     )
+  end
+
+  def with_stub(receiver, method_name, value)
+    original = receiver.method(method_name)
+    receiver.define_singleton_method(method_name) { |*args, **kwargs| value }
+    yield
+  ensure
+    receiver.define_singleton_method(method_name, original)
   end
 end
