@@ -7,6 +7,8 @@ class SourcesTest < ActionDispatch::IntegrationTest
     get library_path
     assert_response :success
     assert_select "h1", "Biblioteca Pessoal"
+    assert_select ".app-shell"
+    assert_select "header.site-header", count: 0
 
     assert_difference("Source.count", 1) do
       post sources_path, params: {
@@ -23,6 +25,7 @@ class SourcesTest < ActionDispatch::IntegrationTest
     assert_redirected_to library_path(saved: "source")
     get library_path
     assert_includes response.body, "Teoria do Direito"
+    assert_select ".library-card details summary", text: "Fichamento"
 
     patch source_path(source), params: {
       source: { title: "Teoria revisada", author: "Autoria revisada", kind: "article", reference: "Revista, 2026", notes: "Fichamento revisado." }

@@ -11,6 +11,8 @@ class PaymentsTest < ActionDispatch::IntegrationTest
     get plans_path
 
     assert_response :success
+    assert_select ".app-shell"
+    assert_select "header.site-header", count: 0
     assert_select "[data-package-card='avulso_ai']"
     assert_select "[data-package-card='sem_ia']"
     assert_select "[data-package-card='com_ia']"
@@ -23,7 +25,8 @@ class PaymentsTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "R$ 50,00"
     assert_includes response.body, "R$ 9,90"
     assert_includes response.body, "20 créditos de IA adicionais"
-    assert_includes response.body, "Avaliações formativas não descontam créditos"
+    assert_not_includes response.body, "Avaliações formativas não descontam créditos"
+    assert_select "[data-package-card='sem_ia'][data-price-cents='5000'] [data-buy-package]", text: /R\$ 50,00/
     assert_equal 1, PaymentPackages::DEFINITIONS.values.count { |package| package[:kind] == :topup }
     assert_not_includes response.body, "Mercado Pago"
   end

@@ -1,9 +1,11 @@
 <section class="credit-summary">
+  <% low_ai_balance = current_account.deepseek_credits_remaining <= 5 %>
   <%= link_to plans_path, class: "credit-summary-link", aria: { label: "Ver saldo e pacotes" } do %>
     <span>Saldo</span>
     <span class="credit-summary-values">
-      <span><%= current_account.project_credits_remaining %> projetos</span>
-      <span><%= current_account.deepseek_credits_remaining %> IA</span>
+      <span class="credit-projects"><%= current_account.project_credits_remaining %> créditos de projeto</span>
+      <span class="<%= ["credit-ai", ("is-low" if low_ai_balance)].compact.join(" ") %>"><%= current_account.deepseek_credits_remaining %> créditos de IA</span>
     </span>
+    <% if low_ai_balance %><span class="credit-summary-low">Saldo de IA baixo · Ver pacotes</span><% end %>
   <% end %>
 </section>

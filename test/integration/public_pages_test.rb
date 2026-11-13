@@ -92,7 +92,8 @@ class PublicPagesTest < ActionDispatch::IntegrationTest
     assert_select "h2", "Roteiros e documentos"
     assert_select "h2", "Ajuda com IA"
     assert_select "body", text: /Cada pedido de orientação usa um crédito de IA/
-    assert_select "body", text: /não consomem créditos/
+    assert_not_includes response.body, "não consomem créditos"
+    assert_not_includes response.body, "excesso de solicitações"
     assert_no_provider_names
   end
 

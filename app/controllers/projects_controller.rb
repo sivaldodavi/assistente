@@ -25,6 +25,12 @@ class ProjectsController < ApplicationController
       @project.errors.add(:project_type, "selecione Case ou Projeto de Paper")
       return render :new, status: :unprocessable_entity
     end
+    title = params.dig(:project, :title).to_s.strip
+    if title.length > Project::MAX_USER_TITLE_LENGTH
+      @project = current_account.projects.new
+      @project.errors.add(:title, "deve ter no máximo #{Project::MAX_USER_TITLE_LENGTH} caracteres")
+      return render :new, status: :unprocessable_entity
+    end
 
     fields = {
       "period" => current_account.profile["period"],
@@ -33,6 +39,7 @@ class ProjectsController < ApplicationController
     }
     permitted_fields = AcademicWorkflow.field_rules(project_type).keys
     fields.merge!(hash_parameter(params.dig(:project, :fields)).slice(*permitted_fields))
+    fields["title"] = title if title.present?
     delivery_field = {
       "case" => "report_delivery_date",
       "paper_project" => "paper_project_delivery_date"

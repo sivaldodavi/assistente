@@ -31,9 +31,14 @@
       <div class="app-shell">
         <%= render "shared/sidebar" %>
         <div class="app-main">
-          <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-controls="app-sidebar" aria-expanded="true">
-            <span aria-hidden="true">☰</span><span data-sidebar-toggle-label>Ocultar navegação</span>
-          </button>
+          <div class="app-main-toolbar">
+            <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-controls="app-sidebar" aria-expanded="true">
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                <path d="M3 5h14M3 10h14M3 15h14"/>
+              </svg>
+              <span data-sidebar-toggle-label>Ocultar navegação</span>
+            </button>
+          </div>
           <button class="sidebar-backdrop" type="button" data-sidebar-backdrop aria-label="Fechar menu" hidden></button>
           <%= yield %>
         </div>

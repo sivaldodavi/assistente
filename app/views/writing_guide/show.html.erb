@@ -4,7 +4,6 @@
   <header class="writing-guide-heading">
     <p class="eyebrow">Guia de escrita</p>
     <h1>O que você quer entender?</h1>
-    <p>Faça uma pergunta sobre estrutura, pesquisa ou formatação.</p>
   </header>
   <section class="studio-panel">
     <div class="prompt-suggestions" aria-label="Perguntas sugeridas">
@@ -14,13 +13,13 @@
     </div>
     <%= form_with url: writing_guide_questions_path, data: { guide_form: true } do %>
       <%= label_tag :question, "Sua pergunta" %>
-      <%= text_area_tag :question, @question, id: "question", rows: 4, maxlength: WritingGuide::MAX_QUESTION_LENGTH, class: "text-control", required: true, placeholder: "Escreva sua dúvida..." %>
+      <%= text_area_tag :question, @question, id: "question", rows: 4, maxlength: WritingGuide::MAX_QUESTION_LENGTH, class: "text-control", required: true, placeholder: "Ex.: Como delimitar meu tema?" %>
       <p class="privacy-note">A resposta pode conter erros. Confira as fontes e as regras da sua disciplina.</p>
       <%= submit_tag "Pedir orientação", class: "button button-primary", disabled: current_account.deepseek_credits_remaining.zero? %>
       <% if current_account.deepseek_credits_remaining.zero? %>
-        <p class="inline-notice">Sem créditos de IA. <%= link_to "Ver Pacotes", plans_path %></p>
+        <p class="inline-notice">Sem créditos de IA. <%= link_to "Ver pacotes", plans_path %></p>
       <% else %>
-        <p class="muted"><%= current_account.deepseek_credits_remaining %> créditos de IA disponíveis.</p>
+        <p class="muted">1 crédito de IA por orientação.</p>
       <% end %>
     <% end %>
 
@@ -31,5 +30,4 @@
       </section>
     <% end %>
   </section>
-  <p class="inline-support">Precisa de ajuda? <%= link_to "Fale com o suporte", "https://www.instagram.com/sivaldo.davi/", target: "_blank", rel: "noopener noreferrer" %>.</p>
 </main>

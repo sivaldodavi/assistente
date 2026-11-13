@@ -16,6 +16,7 @@ class ProjectsTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "h1", "Projetos"
     assert_select "[data-sidebar-toggle][aria-controls='app-sidebar']"
+    assert_select ".sidebar-nav svg[aria-hidden='true']", count: 5
     assert_select "[data-project-filter]", 3
     assert_select "[data-project-view-button]", 2
     assert_select "a[href='#{new_project_path}']", text: /Novo projeto/
@@ -63,7 +64,10 @@ class ProjectsTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "h1", "Início"
     assert_select "[data-project-view]", count: 0
-    assert_select "h2", "Começando os trabalhos"
+    assert_select "a[href='#{new_project_path}']", text: /Novo projeto/
+    assert_select "a[href='#{project_assistant_path}']", text: "Começar com IA"
+    assert_select "form.quick-create-form", count: 0
+    assert_select "h2", "Próximos passos"
   end
 
   test "dashboard lists upcoming deliveries from project workflow fields" do
@@ -81,7 +85,7 @@ class ProjectsTest < ActionDispatch::IntegrationTest
     assert_select ".delivery-item", text: /em 10 dias/
   end
 
-  test "quick creation saves the chosen first delivery date on the matching workflow field" do
+  test "project creation saves the chosen first delivery date on the matching workflow field" do
     date = 3.weeks.from_now.to_date.iso8601
 
     assert_difference("Project.count", 1) do
@@ -130,6 +134,9 @@ class ProjectsTest < ActionDispatch::IntegrationTest
     assert_equal "noturno", project.fields["shift"]
     assert_redirected_to project_path(project, stage: "identification")
     follow_redirect!
+    assert_select ".app-shell"
+    assert_select "header.site-header", count: 0
+    assert_select ".phase-label", count: 0
     assert_select "h2#stage-title", "Identificação"
     assert_select "textarea[name='project[fields][authors]']", count: 0
     assert_select "input[name='project[fields][partner]']"
@@ -138,6 +145,53 @@ class ProjectsTest < ActionDispatch::IntegrationTest
     assert_select "select[name='project[fields][period]'] option[selected][value='7']"
     assert_select "select[name='project[fields][shift]'] option[selected][value='noturno']"
     assert_select "input[name='project[fields][year]'][value='#{Date.current.year}']"
+  end
+
+  test "new project accepts an optional title and retains generated defaults when blank" do
+    @account.update_profile!(
+      name: "Ana Estudante",
+      profile: { "institution" => "Instituição de teste" }
+    )
+
+    get new_project_path
+    assert_response :success
+    assert_select "input[name='project[title]'][maxlength='#{Project::MAX_USER_TITLE_LENGTH}'][placeholder]"
+
+    assert_difference("Project.count", 1) do
+      post projects_path, params: { project: { project_type: "case", title: "Análise de mercado" } }
+    end
+    assert_equal "Análise de mercado", Project.order(:id).last.title
+
+    assert_difference("Project.count", 1) do
+      post projects_path, params: { project: { project_type: "case", title: "  " } }
+    end
+    assert_equal "Novo Case", Project.order(:id).last.title
+  end
+
+  test "new project rejects titles longer than the input limit" do
+    @account.update_profile!(
+      name: "Ana Estudante",
+      profile: { "institution" => "Instituição de teste" }
+    )
+
+    assert_no_difference("Project.count") do
+      post projects_path, params: { project: { project_type: "case", title: "a" * (Project::MAX_USER_TITLE_LENGTH + 1) } }
+    end
+
+    assert_response :unprocessable_entity
+    assert_select "[role='alert']", text: /no máximo #{Project::MAX_USER_TITLE_LENGTH} caracteres/
+    assert_not_includes response.body, "escolher um pacote de créditos"
+  end
+
+  test "project list rows are keyboard reachable and identify their project" do
+    project = create_project!(project_type: "case", fields: { title: "Case acessível" })
+
+    get projects_path
+
+    assert_response :success
+    assert_select "tr[data-project-row][tabindex='0'][aria-label]"
+    assert_includes response.body, "Abrir projeto: Case acessível"
+    assert_select "tr[data-project-row] a[href='#{project_path(project, stage: project.current_stage)}']", text: "Case acessível"
   end
 
   test "reuses the decision alternatives in step 2.2 without duplicate input fields" do

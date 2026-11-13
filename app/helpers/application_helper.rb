@@ -13,6 +13,14 @@ module ApplicationHelper
       [ "paper_final_delivery_date", "Paper final · 2º BI", "paper_final" ]
     ]
   }.freeze
+  NAVIGATION_ICONS = {
+    home: "M10 2 2 9h2v8h5v-5h2v5h5V9h2z",
+    projects: "M4 3h12v14H4z M7 6h6 M7 9h6 M7 12h4",
+    metrics: "M3 16h14 M5 13V9 M10 13V5 M15 13V7",
+    guide: "m10 2 1.8 5.2L17 9l-5.2 1.8L10 16l-1.8-5.2L3 9l5.2-1.8z M16 13l.8 2.2L19 16l-2.2.8L16 19l-.8-2.2L13 16l2.2-.8z",
+    library: "M4 3h12v14H4z M7 6h6 M7 9h6 M7 12h6",
+    settings: "M10 3v2 M10 15v2 M3 10h2 M15 10h2 M5.1 5.1l1.4 1.4m7 7 1.4 1.4m0-9.9-1.4 1.4m-7 7-1.4 1.4 M13.5 10a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
+  }.freeze
 
   def project_type_label(project_type)
     {
@@ -20,6 +28,22 @@ module ApplicationHelper
       "paper_project" => "Projeto de paper",
       "paper_final" => "Paper final"
     }.fetch(project_type.to_s, project_type.to_s.humanize)
+  end
+
+  def navigation_icon(name)
+    path = NAVIGATION_ICONS.fetch(name.to_sym)
+    tag.svg(
+      xmlns: "http://www.w3.org/2000/svg",
+      width: 18,
+      height: 18,
+      viewBox: "0 0 20 20",
+      fill: "none",
+      stroke: "currentColor",
+      "stroke-width": 1.7,
+      "stroke-linecap": "round",
+      "stroke-linejoin": "round",
+      "aria-hidden": true
+    ) { tag.path(d: path) }
   end
 
   def jev_stage_label(stage)

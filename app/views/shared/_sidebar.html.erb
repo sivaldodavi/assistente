@@ -6,23 +6,23 @@
 
   <nav class="sidebar-nav" aria-label="Navegação principal">
     <%= link_to root_path, class: ("is-active" if current_page?(root_path)), aria: { current: ("page" if current_page?(root_path)) } do %>
-      <span aria-hidden="true">⌂</span> Início
+      <%= navigation_icon(:home) %> Início
     <% end %>
     <%= link_to projects_path, class: ("is-active" if current_page?(projects_path)), aria: { current: ("page" if current_page?(projects_path)) } do %>
-      <span aria-hidden="true">▤</span> Projetos
+      <%= navigation_icon(:projects) %> Projetos
     <% end %>
     <%= link_to metrics_path, class: ("is-active" if current_page?(metrics_path)), aria: { current: ("page" if current_page?(metrics_path)) } do %>
-      <span aria-hidden="true">▥</span> Métricas
+      <%= navigation_icon(:metrics) %> Métricas
     <% end %>
     <%= link_to writing_guide_path, class: ("is-active" if current_page?(writing_guide_path)), aria: { current: ("page" if current_page?(writing_guide_path)) } do %>
-      <span aria-hidden="true">✦</span> Guia de escrita
+      <%= navigation_icon(:guide) %> Guia de escrita
     <% end %>
     <%= link_to library_path, class: ("is-active" if current_page?(library_path)), aria: { current: ("page" if current_page?(library_path)) } do %>
-      <span aria-hidden="true">▧</span> Biblioteca
+      <%= navigation_icon(:library) %> Biblioteca
     <% end %>
     <% if current_account.admin? %>
       <%= link_to admin_dashboard_path, class: ("is-active" if current_page?(admin_dashboard_path)) do %>
-        <span aria-hidden="true">⚙</span> Administração
+        <%= navigation_icon(:settings) %> Administração
       <% end %>
     <% end %>
   </nav>
@@ -36,7 +36,7 @@
       <summary>
         <span class="profile-avatar" aria-hidden="true"><%= current_account.name.to_s.split.map(&:first).first(2).join.upcase.presence || "AA" %></span>
         <span class="profile-name"><strong><%= current_account.name.presence || "Minha conta" %></strong><small><%= current_account.email %></small></span>
-        <span class="profile-chevron" aria-hidden="true">⌃</span>
+        <span class="profile-chevron" aria-hidden="true">⌄</span>
       </summary>
       <div class="profile-popover">
         <%= link_to "Minha conta", account_settings_path(anchor: "profile") %>

@@ -15,7 +15,10 @@ class ProjectStudioTest < ActionDispatch::IntegrationTest
     assert_select "[data-studio-mode] option[value='guided']"
     assert_select "[data-studio-mode] option[value='import']"
     assert_select "[data-studio-prompt-suggestion]", minimum: 3
-    assert_select "a[href='https://www.instagram.com/sivaldo.davi/']", text: "Fale com o suporte"
+    assert_select "[data-guided-only]:not([hidden])", count: 2
+    assert_select "[data-studio-source-field][hidden]"
+    assert_select "[data-studio-source][maxlength='24000']"
+    assert_select "a[href='https://www.instagram.com/sivaldo.davi/']", text: "Suporte"
   end
 
   test "guided proposal validates field IDs and returns editable provenance labels" do

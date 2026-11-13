@@ -1,4 +1,5 @@
 class Project < ApplicationRecord
+  MAX_USER_TITLE_LENGTH = 200
   PROJECT_TYPES = %w[case paper_project paper_final].freeze
   DELIVERY_DATE_LABELS = {
     "report_delivery_date" => "Data de entrega do relatório",

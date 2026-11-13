@@ -5,15 +5,22 @@
   <section class="panel">
     <p class="eyebrow">Novo roteiro</p>
     <h1>Crie seu próximo trabalho</h1>
-    <p class="muted">Escolha um roteiro e defina a data da primeira entrega, se já souber.</p>
+    <p class="muted">Escolha o tipo e personalize o título e a data de entrega, se quiser.</p>
     <p><%= link_to "Ou comece com orientação de IA", project_assistant_path, class: "button button-secondary" %></p>
 
     <% if @project.errors.any? %>
       <div class="alert" role="alert"><%= @project.errors.full_messages.to_sentence %></div>
-      <p>Você pode <%= link_to "escolher um pacote de créditos", plans_path %> para iniciar um roteiro.</p>
+      <% if !current_account.admin? && current_account.project_credits_remaining.zero? %>
+        <p>Você pode <%= link_to "escolher um pacote de créditos", plans_path %> para iniciar um roteiro.</p>
+      <% end %>
     <% end %>
 
     <%= form_with url: projects_path, scope: :project do |form| %>
+      <div class="field">
+        <%= form.label :title, "Título do trabalho (opcional)" %>
+        <%= form.text_field :title, value: params.dig(:project, :title), maxlength: Project::MAX_USER_TITLE_LENGTH, class: "text-control", placeholder: "Ex.: Estratégia de expansão da empresa" %>
+        <p class="field-hint">Sem título, criaremos um automaticamente.</p>
+      </div>
       <div class="field">
         <%= form.label :project_type, "Tipo de trabalho" %>
         <%= form.select :project_type, options_for_select([

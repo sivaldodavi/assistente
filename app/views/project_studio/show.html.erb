@@ -5,19 +5,14 @@
     <%= link_to "Projetos", projects_path, class: "back-link" %>
     <p class="eyebrow">Novo trabalho</p>
     <h1>Por onde quer começar?</h1>
-    <p>Conte sua ideia ou organize um texto que já tem.</p>
   </header>
   <section class="studio-panel">
-    <div class="studio-balance">
+    <p class="studio-cost">1 crédito de IA por pedido de orientação.</p>
     <% if current_account.deepseek_credits_remaining.zero? %>
-      <span>Sem créditos de IA.</span> <%= link_to "Ver Pacotes", plans_path %>
-    <% else %>
-      <span><%= current_account.deepseek_credits_remaining %> créditos de IA</span>
-      <span class="muted">· 1 por solicitação</span>
+      <p class="inline-notice">Sem créditos de IA. <%= link_to "Ver pacotes", plans_path %></p>
     <% end %>
-    </div>
     <% if !current_account.admin? && current_account.project_credits_remaining.zero? %>
-      <p class="inline-notice">Você precisa de um crédito de projeto para salvar. <%= link_to "Ver Pacotes", plans_path %></p>
+      <p class="inline-notice">É necessário um crédito de projeto para salvar. <%= link_to "Ver pacotes", plans_path %></p>
     <% end %>
 
     <form data-studio-request>
@@ -35,7 +30,7 @@
           <option value="import">Quero organizar um texto existente</option>
         </select>
       </div>
-      <div class="prompt-suggestions" aria-label="Sugestões para começar">
+      <div class="prompt-suggestions" aria-label="Sugestões para começar" data-guided-only>
         <% [
           "Ajude-me a escolher e delimitar um tema",
           "Quero transformar este assunto em uma pergunta de pesquisa",
@@ -44,15 +39,15 @@
           <button type="button" class="prompt-chip" data-studio-prompt-suggestion="<%= suggestion %>"><%= suggestion %></button>
         <% end %>
       </div>
-      <div class="field">
+      <div class="field" data-guided-only>
         <label for="studio-prompt">Sua ideia</label>
         <textarea id="studio-prompt" class="text-control" rows="4" maxlength="6000" data-studio-prompt placeholder="Escreva do seu jeito; não precisa estar pronto."></textarea>
       </div>
-      <div class="field">
+      <div class="field" data-studio-source-field hidden>
         <label for="studio-source-text">Texto existente <span class="muted">(opcional)</span></label>
         <textarea id="studio-source-text" class="text-control" rows="6" maxlength="24000" data-studio-source placeholder="Cole um trecho para receber uma proposta de organização."></textarea>
       </div>
-      <p class="privacy-note">O texto será enviado para um serviço de IA; só entra no trabalho quando você selecionar os campos.</p>
+      <p class="privacy-note">Seu texto será enviado à IA. <%= link_to "Saiba como funciona", ai_help_path, target: "_blank", rel: "noopener" %>.</p>
       <button class="button button-primary" type="submit" <%= "disabled" if current_account.deepseek_credits_remaining.zero? || (!current_account.admin? && current_account.project_credits_remaining.zero?) %>>Continuar</button>
     </form>
 
@@ -66,7 +61,7 @@
       </section>
       <section data-studio-suggestions-section hidden>
         <h2>Propostas editáveis para o roteiro</h2>
-        <p class="field-hint">Revise cada texto. Marque apenas os campos que deseja incluir; nada é aplicado sem sua seleção.</p>
+        <p class="field-hint">Revise e escolha os campos que deseja incluir.</p>
         <div class="studio-suggestions" data-studio-suggestions></div>
         <%= form_with url: projects_path, scope: :project, class: "studio-create-form", data: { studio_create_form: true } do |form| %>
           <%= form.hidden_field :project_type, data: { studio_create_type: true } %>
@@ -75,5 +70,4 @@
       </section>
     </section>
   </section>
-  <p class="inline-support">Precisa de ajuda? <%= link_to "Fale com o suporte", "https://www.instagram.com/sivaldo.davi/", target: "_blank", rel: "noopener noreferrer" %>.</p>
 </main>

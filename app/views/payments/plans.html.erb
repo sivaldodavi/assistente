@@ -1,20 +1,22 @@
 <% content_for :title, "Pacotes — Assistente Acadêmico" %>
 
-<header class="site-header">
-  <%= link_to "Assistente Acadêmico", root_path, class: "brand" %>
-  <div class="header-actions">
-    <% if public_shell_only? %>
-      <span class="header-link">Acesso em preparação</span>
-    <% elsif current_account %>
-      <%= link_to "Meus projetos", projects_path, class: "header-link" %>
-      <%= link_to "Minha conta", account_settings_path, class: "header-link" %>
-    <% elsif google_oauth_configured? %>
-      <%= button_to "Entrar", "/auth/google_oauth2", method: :post, class: "header-link", form: { class: "header-login-form" } %>
-    <% else %>
-      <%= link_to "Entrar", login_path, class: "header-link" %>
-    <% end %>
-  </div>
-</header>
+<% if current_account.blank? || public_shell_only? %>
+  <header class="site-header">
+    <%= link_to "Assistente Acadêmico", root_path, class: "brand" %>
+    <div class="header-actions">
+      <% if public_shell_only? %>
+        <span class="header-link">Acesso em preparação</span>
+      <% elsif current_account %>
+        <%= link_to "Meus projetos", projects_path, class: "header-link" %>
+        <%= link_to "Minha conta", account_settings_path, class: "header-link" %>
+      <% elsif google_oauth_configured? %>
+        <%= button_to "Entrar", "/auth/google_oauth2", method: :post, class: "header-link", form: { class: "header-login-form" } %>
+      <% else %>
+        <%= link_to "Entrar", login_path, class: "header-link" %>
+      <% end %>
+    </div>
+  </header>
+<% end %>
 
 <main class="page-shell">
   <section class="hero">
@@ -29,8 +31,6 @@
 
   <% if public_shell_only? %>
     <p class="field-hint">Login e compras estarão disponíveis depois da validação das integrações.</p>
-  <% elsif current_account %>
-    <p class="package-balance">Seu saldo: <strong><%= current_account.project_credits_remaining %></strong> projetos · <strong><%= current_account.deepseek_credits_remaining %></strong> créditos de IA</p>
   <% end %>
   <% project_packages, ai_packages = @packages.partition { |_code, package| package[:kind] != :topup } %>
   <section class="package-section" aria-labelledby="project-packages-title">
@@ -42,12 +42,11 @@
     </div>
     <div class="package-grid" aria-label="Pacotes para criar projetos">
       <% project_packages.each do |code, package| %>
-        <article class="package-card" id="package-<%= code %>"<% if current_account %> data-package-card="<%= code %>"<% end %>>
+        <article class="package-card" id="package-<%= code %>" data-price-cents="<%= package[:price_cents] %>"<% if current_account %> data-package-card="<%= code %>"<% end %>>
           <p class="eyebrow"><%= package[:label] %></p>
           <% if package[:regular_price_cents] %>
             <div class="package-pricing">
               <span class="discount-badge"><%= PaymentPackages.discount_percent(package) %>% de desconto</span>
-              <p>Preço promocional</p>
               <del><%= number_to_currency(package[:regular_price_cents] / 100.0, unit: "R$ ", separator: ",", delimiter: ".") %></del>
               <h3><%= number_to_currency(package[:price_cents] / 100.0, unit: "R$ ", separator: ",", delimiter: ".") %></h3>
             </div>
@@ -63,10 +62,10 @@
           <% if public_shell_only? %>
             <p class="field-hint">Compra temporariamente indisponível.</p>
           <% elsif current_account %>
-            <label>Quantidade
+            <label>Quantidade de pacotes
               <%= select_tag "quantity_#{code}", options_for_select((1..PaymentPackages::MAX_QUANTITY).map { |number| [number, number] }, 1), class: "text-control", data: { package_quantity: true } %>
             </label>
-            <button class="button button-primary" type="button" data-buy-package="<%= code %>">Gerar Pix</button>
+            <button class="button button-primary" type="button" data-buy-package="<%= code %>">Gerar Pix — <%= number_to_currency(package[:price_cents] / 100.0, unit: "R$ ", separator: ",", delimiter: ".") %></button>
             <p class="field-hint" data-payment-status role="status" aria-live="polite"></p>
             <div class="payment-result" data-payment-result aria-live="polite"></div>
           <% elsif google_oauth_configured? %>
@@ -85,22 +84,22 @@
         <div>
           <p class="eyebrow">IA</p>
           <h2 id="ai-packages-title">Créditos de IA</h2>
-          <p>Use para orientação, sugestões e organização dos seus trabalhos. Avaliações formativas não descontam créditos.</p>
+          <p>Use para orientação, sugestões e organização dos seus trabalhos.</p>
         </div>
       </div>
       <div class="package-grid package-grid-topups">
         <% ai_packages.each do |code, package| %>
-          <article class="package-card" id="package-<%= code %>"<% if current_account %> data-package-card="<%= code %>"<% end %>>
+          <article class="package-card" id="package-<%= code %>" data-price-cents="<%= package[:price_cents] %>"<% if current_account %> data-package-card="<%= code %>"<% end %>>
             <p class="eyebrow"><%= package[:label] %></p>
             <h3><%= number_to_currency(package[:price_cents] / 100.0, unit: "R$ ", separator: ",", delimiter: ".") %></h3>
             <p><%= package[:description] %></p>
             <% if public_shell_only? %>
               <p class="field-hint">Compra temporariamente indisponível.</p>
             <% elsif current_account %>
-              <label>Quantidade
+              <label>Quantidade de pacotes
                 <%= select_tag "quantity_#{code}", options_for_select((1..PaymentPackages::MAX_QUANTITY).map { |number| [number, number] }, 1), class: "text-control", data: { package_quantity: true } %>
               </label>
-              <button class="button button-primary" type="button" data-buy-package="<%= code %>">Gerar Pix</button>
+              <button class="button button-primary" type="button" data-buy-package="<%= code %>">Gerar Pix — <%= number_to_currency(package[:price_cents] / 100.0, unit: "R$ ", separator: ",", delimiter: ".") %></button>
               <p class="field-hint" data-payment-status role="status" aria-live="polite"></p>
               <div class="payment-result" data-payment-result aria-live="polite"></div>
             <% elsif google_oauth_configured? %>

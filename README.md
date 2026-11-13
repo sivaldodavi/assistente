@@ -60,7 +60,7 @@ Os valores de referência dos pacotes-base são o dobro do preço cobrado. Recar
 
 O nome da instituição de ensino é solicitado no perfil e utilizado nas exportações. O uso de IA pode contrariar regras específicas de uma disciplina; a aplicação identifica sugestões, solicita revisão e não afirma conformidade acadêmica.
 
-O projeto usa tags anotadas em SemVer; `v0.1.0` marca a linha de base, `v0.2.0` a evolução anterior e `v0.3.0` esta versão. Consulte [CHANGELOG.md](CHANGELOG.md) para o histórico.
+O projeto usa tags anotadas em SemVer; `v0.1.0` marca a linha de base, `v0.2.0` e `v0.3.0` as versões anteriores e `v0.4.0` esta versão. Consulte [CHANGELOG.md](CHANGELOG.md) para o histórico.
 
 As páginas públicas estão em `/`, `/planos` (também `/plans`), `/termos`, `/privacidade` e `/ajuda-ia`. No modo funcional, o login Google e compras Pix ficam disponíveis a contas autenticadas. A política identifica Sivaldo Davi Pereira como responsável e informa `contato@sivaldodavi.com`, contato já publicado no site pessoal do responsável. Os avisos legais continuam sendo um rascunho funcional e devem ser revisados.
 
@@ -74,7 +74,7 @@ bin/rubocop
 bin/rails zeitwerk:check
 ```
 
-Na validação desta entrega, a suíte Rails completa passou: 145 testes e 1.093 assertions. O RuboCop inspecionou 118 arquivos sem offenses e `zeitwerk:check` passou. Os testes de integrações externas usam doubles locais; eles não comprovam a entrega real de webhooks nem um pagamento. O login Google real já foi concluído e confirmado. Ainda falta validar uma notificação nativa e uma compra no sandbox; nenhuma cobrança real foi criada para teste.
+Na validação desta entrega, a suíte Rails completa passou: 148 testes e 1.147 assertions. O RuboCop inspecionou 118 arquivos sem offenses, `zeitwerk:check` passou e os assets de produção foram compilados. Os testes de integrações externas usam doubles locais; eles não comprovam a entrega real de webhooks nem um pagamento. O login Google real já foi concluído e confirmado. Ainda falta validar uma notificação nativa e uma compra no sandbox; nenhuma cobrança real foi criada para teste.
 
 ## Staging e banco
 

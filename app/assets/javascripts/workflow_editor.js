@@ -10,6 +10,9 @@
   const label = toggle.querySelector("[data-sidebar-toggle-label]");
   const setExpanded = (expanded) => {
     toggle.setAttribute("aria-expanded", String(expanded));
+    toggle.setAttribute("aria-label", mobile.matches
+      ? (expanded ? "Fechar menu" : "Abrir menu")
+      : (expanded ? "Ocultar navegação" : "Mostrar navegação"));
     if (label) label.textContent = mobile.matches
       ? (expanded ? "Fechar menu" : "Abrir menu")
       : (expanded ? "Ocultar navegação" : "Mostrar navegação");
@@ -62,6 +65,33 @@
   applyViewport();
 })();
 
+function updatePackageButton(card) {
+  const button = card.querySelector("[data-buy-package]");
+  const quantity = card.querySelector("[data-package-quantity]");
+  if (!button || !quantity) return;
+  const priceCents = Number(card.dataset.priceCents);
+  const count = Number(quantity.value);
+  if (!Number.isSafeInteger(priceCents) || !Number.isSafeInteger(count)) return;
+
+  const amount = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" })
+    .format((priceCents * count) / 100);
+  button.textContent = `Gerar Pix — ${amount}`;
+}
+
+document.addEventListener("click", (event) => {
+  document.querySelectorAll(".profile-menu[open]").forEach((menu) => {
+    if (!menu.contains(event.target)) menu.open = false;
+  });
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Escape") return;
+  const menu = document.querySelector(".profile-menu[open]");
+  if (!menu) return;
+  menu.open = false;
+  menu.querySelector("summary").focus();
+});
+
 document.addEventListener("click", (event) => {
   const addButton = event.target.closest("[data-collection-add]");
   if (addButton) {
@@ -103,9 +133,10 @@ document.addEventListener("click", async (event) => {
 
   if (newPurchaseButton) {
     const card = newPurchaseButton.closest("[data-package-card]");
+    card.querySelector("[data-package-quantity]").disabled = false;
     card.querySelector("[data-buy-package]").dataset.requestId = "";
     card.querySelector("[data-buy-package]").disabled = false;
-    card.querySelector("[data-buy-package]").textContent = "Gerar Pix";
+    updatePackageButton(card);
     card.querySelector("[data-payment-result]").replaceChildren();
     card.querySelector("[data-payment-status]").textContent = "";
     return;
@@ -133,56 +164,6 @@ document.addEventListener("click", async (event) => {
         headers: { Accept: "application/json" }
       });
 
-      document.addEventListener("click", (event) => {
-        const filterButton = event.target.closest("[data-project-filter]");
-        const viewButton = event.target.closest("[data-project-view-button]");
-        const page = document.querySelector(".projects-page[data-project-view]");
-        if (!page) return;
-
-        if (filterButton) {
-          const filter = filterButton.dataset.projectFilter;
-          page.querySelectorAll("[data-project-filter]").forEach((button) => {
-            button.setAttribute("aria-pressed", String(button === filterButton));
-          });
-          page.querySelectorAll("[data-project-card]").forEach((card) => {
-            card.hidden = filter !== "all" && card.dataset.projectKind !== filter;
-          });
-          page.querySelectorAll("[data-project-column]").forEach((column) => {
-            const visibleCards = column.querySelectorAll(".project-board-items > [data-project-card]:not([hidden])");
-            column.querySelector("[data-column-count]").textContent = String(visibleCards.length);
-            column.hidden = visibleCards.length === 0;
-          });
-          const emptyMessage = page.querySelector("[data-project-filter-empty]");
-          if (emptyMessage) {
-            emptyMessage.hidden = Boolean(page.querySelector("[data-project-card]:not([hidden])"));
-          }
-        }
-
-        if (viewButton) {
-          page.dataset.projectView = viewButton.dataset.projectViewButton;
-          page.querySelectorAll("[data-project-view-button]").forEach((button) => {
-            button.setAttribute("aria-pressed", String(button === viewButton));
-          });
-        }
-      });
-
-      document.querySelectorAll("dialog[data-settings-dialog][open]").forEach((dialog) => {
-        if (typeof dialog.showModal !== "function") return;
-        dialog.addEventListener("cancel", (event) => {
-          event.preventDefault();
-          window.location.assign(dialog.dataset.closeHref);
-        });
-        dialog.close();
-        dialog.showModal();
-      });
-
-      const projectsPage = document.querySelector(".projects-page[data-project-view]");
-      if (projectsPage && window.matchMedia("(max-width: 720px)").matches) {
-        projectsPage.dataset.projectView = "list";
-        projectsPage.querySelectorAll("[data-project-view-button]").forEach((button) => {
-          button.setAttribute("aria-pressed", String(button.dataset.projectViewButton === "list"));
-        });
-      }
       const result = await response.json();
       if (!response.ok) throw new Error(result.message || "Não foi possível consultar o pedido.");
       status.textContent = result.status === "approved" ? "Pagamento confirmado. Seus créditos foram liberados." : `Status do pagamento: ${result.status}.`;
@@ -266,12 +247,71 @@ document.addEventListener("click", async (event) => {
     reset.dataset.newPurchase = "";
     reset.textContent = "Iniciar outra compra";
     output.append(reset);
+    card.querySelector("[data-package-quantity]").disabled = true;
     purchaseButton.textContent = "Pix gerado";
     status.textContent = "Use o QR Code ou o código Pix para concluir o pagamento.";
   } catch (error) {
     status.textContent = error.message || "Não foi possível gerar o Pix. Tente novamente.";
     purchaseButton.disabled = false;
   }
+});
+
+document.addEventListener("change", (event) => {
+  const quantity = event.target.closest("[data-package-quantity]");
+  if (quantity) updatePackageButton(quantity.closest("[data-package-card]"));
+
+  const mode = event.target.closest("[data-studio-mode]");
+  if (!mode) return;
+  const root = mode.closest("[data-project-studio]");
+  const guided = mode.value === "guided";
+  root.querySelectorAll("[data-guided-only]").forEach((element) => {
+    element.hidden = !guided;
+  });
+  root.querySelector("[data-studio-source-field]").hidden = guided;
+});
+
+document.addEventListener("click", (event) => {
+  const filterButton = event.target.closest("[data-project-filter]");
+  const viewButton = event.target.closest("[data-project-view-button]");
+  const row = event.target.closest("[data-project-row]");
+  const page = document.querySelector(".projects-page[data-project-view]");
+
+  if (row && !event.target.closest("a, button, input, select")) {
+    row.querySelector("a[href]")?.click();
+    return;
+  }
+  if (!page) return;
+
+  if (filterButton) {
+    const filter = filterButton.dataset.projectFilter;
+    page.querySelectorAll("[data-project-filter]").forEach((button) => {
+      button.setAttribute("aria-pressed", String(button === filterButton));
+    });
+    page.querySelectorAll("[data-project-card]").forEach((card) => {
+      card.hidden = filter !== "all" && card.dataset.projectKind !== filter;
+    });
+    page.querySelectorAll("[data-project-column]").forEach((column) => {
+      const visibleCards = column.querySelectorAll(".project-board-items > [data-project-card]:not([hidden])");
+      column.querySelector("[data-column-count]").textContent = String(visibleCards.length);
+      column.hidden = visibleCards.length === 0;
+    });
+    const emptyMessage = page.querySelector("[data-project-filter-empty]");
+    if (emptyMessage) emptyMessage.hidden = Boolean(page.querySelector("[data-project-card]:not([hidden])"));
+  }
+
+  if (viewButton) {
+    page.dataset.projectView = viewButton.dataset.projectViewButton;
+    page.querySelectorAll("[data-project-view-button]").forEach((button) => {
+      button.setAttribute("aria-pressed", String(button === viewButton));
+    });
+  }
+});
+
+document.addEventListener("keydown", (event) => {
+  const row = event.target.closest?.("[data-project-row]");
+  if (!row || event.target.closest("a, button, input, select") || (event.key !== "Enter" && event.key !== " ")) return;
+  event.preventDefault();
+  row.querySelector("a[href]")?.click();
 });
 
 document.addEventListener("click", async (event) => {
@@ -482,14 +522,31 @@ document.addEventListener("submit", (event) => {
   root.querySelector("[data-studio-create-type]").value = root.querySelector("[data-studio-project-type]").value;
 });
 
+document.addEventListener("submit", (event) => {
+  const form = event.target.closest("#project-editor");
+  if (!form) return;
+
+  const button = event.submitter;
+  if (!button) return;
+  if (button.name) {
+    const submittedValue = document.createElement("input");
+    submittedValue.type = "hidden";
+    submittedValue.name = button.name;
+    submittedValue.value = button.value;
+    form.append(submittedValue);
+  }
+  button.disabled = true;
+  button.textContent = "Salvando…";
+});
+
 async function requestStudioSuggestions(root, form, continuation) {
   if (!root || !form) return;
   const status = root.querySelector("[data-studio-status]");
   const results = root.querySelector("[data-studio-results]");
-  const prompt = form.querySelector("[data-studio-prompt]").value.trim();
-  const sourceText = form.querySelector("[data-studio-source]").value.trim();
   const projectType = form.querySelector("[data-studio-project-type]").value;
   const mode = form.querySelector("[data-studio-mode]").value;
+  const prompt = mode === "guided" ? form.querySelector("[data-studio-prompt]").value.trim() : "";
+  const sourceText = mode === "import" ? form.querySelector("[data-studio-source]").value.trim() : "";
   let userMessage = prompt;
 
   if (continuation) {
@@ -633,3 +690,125 @@ function captureStudioFields(root) {
     suggestion.selected = card.querySelector("[data-studio-accept]").checked;
   });
 }
+
+function setupAssistPanel() {
+  const panel = document.querySelector(".assist-panel[data-ai-panel]");
+  const backdrop = document.querySelector("[data-assist-backdrop]");
+  if (!panel || !backdrop || panel.dataset.sheetReady) return;
+
+  panel.dataset.sheetReady = "true";
+  const summary = panel.querySelector("summary");
+  const closeButton = panel.querySelector("[data-assist-close]");
+  const mobile = window.matchMedia("(max-width: 720px)");
+  let wasMobileOpen = false;
+
+  const sync = (focusPanel = false) => {
+    const mobileOpen = mobile.matches && panel.open;
+    summary.setAttribute("aria-expanded", String(panel.open));
+    panel.classList.toggle("is-mobile-open", mobileOpen);
+    backdrop.hidden = !mobileOpen;
+    document.body.classList.toggle("assist-sheet-open", mobileOpen);
+    if (mobileOpen) {
+      panel.setAttribute("role", "dialog");
+      panel.setAttribute("aria-modal", "true");
+      panel.setAttribute("aria-labelledby", "assist-panel-title");
+      if (focusPanel) closeButton.focus();
+    } else {
+      panel.removeAttribute("role");
+      panel.removeAttribute("aria-modal");
+      panel.removeAttribute("aria-labelledby");
+      if (wasMobileOpen && !panel.open) summary.focus();
+    }
+    wasMobileOpen = mobileOpen;
+  };
+  const close = () => {
+    panel.open = false;
+    summary.focus();
+  };
+
+  panel.addEventListener("toggle", () => sync(panel.open));
+  mobile.addEventListener("change", () => sync());
+  closeButton.addEventListener("click", close);
+  backdrop.addEventListener("click", close);
+  panel.addEventListener("keydown", (event) => {
+    if (!mobile.matches || !panel.open) return;
+    if (event.key === "Escape") {
+      event.preventDefault();
+      close();
+      return;
+    }
+    if (event.key !== "Tab") return;
+    const focusable = [...panel.querySelectorAll(
+      'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    )].filter((element) => element.getClientRects().length > 0);
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  });
+  sync();
+}
+
+function initializePageInteractions() {
+  document.querySelectorAll(".flash:not([data-flash-ready])").forEach((flash) => {
+    flash.dataset.flashReady = "true";
+    const close = document.createElement("button");
+    close.type = "button";
+    close.className = "flash-close";
+    close.setAttribute("aria-label", "Fechar mensagem");
+    close.textContent = "×";
+    close.addEventListener("click", () => flash.remove());
+    flash.append(close);
+    if (flash.classList.contains("flash-notice")) {
+      window.setTimeout(() => flash.remove(), 6000);
+    }
+  });
+
+  document.querySelectorAll("dialog[data-settings-dialog]").forEach((dialog) => {
+    if (!dialog.dataset.settingsReady) {
+      dialog.dataset.settingsReady = "true";
+      dialog.addEventListener("cancel", (event) => {
+        event.preventDefault();
+        window.location.assign(dialog.dataset.closeHref);
+      });
+    }
+    if (!dialog.open) {
+      if (typeof dialog.showModal === "function") dialog.showModal();
+      else dialog.setAttribute("open", "");
+    }
+  });
+
+  const projectsPage = document.querySelector(".projects-page[data-project-view]");
+  if (projectsPage && window.matchMedia("(max-width: 720px)").matches) {
+    projectsPage.dataset.projectView = "list";
+    projectsPage.querySelectorAll("[data-project-view-button]").forEach((button) => {
+      button.setAttribute("aria-pressed", String(button.dataset.projectViewButton === "list"));
+    });
+  }
+  document.querySelectorAll("[data-package-card]").forEach(updatePackageButton);
+  document.querySelectorAll("[data-studio-mode]").forEach((mode) => {
+    const guided = mode.value === "guided";
+    const root = mode.closest("[data-project-studio]");
+    root.querySelectorAll("[data-guided-only]").forEach((element) => {
+      element.hidden = !guided;
+    });
+    root.querySelector("[data-studio-source-field]").hidden = guided;
+  });
+  setupAssistPanel();
+}
+
+document.addEventListener("click", (event) => {
+  const closeLink = event.target.closest("[data-settings-close]");
+  if (!closeLink) return;
+  event.preventDefault();
+  closeLink.closest("dialog").close();
+  window.location.assign(closeLink.href);
+});
+
+document.addEventListener("DOMContentLoaded", initializePageInteractions);
+document.addEventListener("turbo:load", initializePageInteractions);

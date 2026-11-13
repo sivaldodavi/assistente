@@ -1,7 +1,7 @@
 <% content_for :title, "Configurações — Assistente Acadêmico" %>
 
 <main class="settings-page">
-  <dialog class="settings-panel" open data-settings-dialog data-close-href="<%= root_path %>" aria-labelledby="settings-title">
+  <dialog class="settings-panel" data-settings-dialog data-close-href="<%= root_path %>" aria-labelledby="settings-title">
     <nav class="settings-nav" aria-label="Seções das configurações">
       <h2>Configurações</h2>
       <div class="settings-nav-links">
@@ -19,7 +19,7 @@
           <h1 id="settings-title">Configurações</h1>
           <p class="muted"><%= @account.email %> · identidade gerenciada pelo Google</p>
         </div>
-        <%= link_to "×", root_path, class: "settings-close", aria: { label: "Fechar configurações" } %>
+        <%= link_to "×", root_path, class: "settings-close", data: { settings_close: true }, aria: { label: "Fechar configurações" } %>
       </header>
 
       <section class="settings-section" id="credits" aria-labelledby="credits-title">
@@ -35,12 +35,7 @@
             <span>créditos de IA</span>
             <% if @account.deepseek_credits_remaining <= 5 %><p role="status">Seu saldo de IA está baixo.</p><% end %>
           </div>
-          <div class="settings-credit-card">
-            <strong>Sem cobrança por crédito</strong>
-            <span>avaliações formativas</span>
-          </div>
         </div>
-        <p>A orientação com IA usa créditos. As avaliações formativas não descontam esse saldo e continuam protegidas contra excesso de solicitações.</p>
         <%= link_to "Ver Pacotes", plans_path, class: "button button-secondary" %>
       </section>
 

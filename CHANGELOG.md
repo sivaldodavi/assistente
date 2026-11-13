@@ -2,6 +2,16 @@
 
 Este arquivo registra mudanças relevantes por release. Releases usam tags Git anotadas em SemVer; `v0.1.0` identifica a versão-base implantada (`07dfd91`).
 
+## [0.4.0] - 2026-11-13
+
+### Alterado
+
+- Unifica o shell autenticado entre projetos, biblioteca e pacotes; atualiza ícones, controle da navegação e menu de perfil.
+- Simplifica o Início e a orientação por IA, remove avisos e saldos repetidos e mantém informações de privacidade junto às ações.
+- Adiciona título opcional aos novos trabalhos, melhora o feedback ao salvar e torna as linhas da lista de projetos acessíveis por teclado.
+- Reorganiza o quadro em telas menores e apresenta o apoio acadêmico como uma folha móvel acessível.
+- Calcula o valor do Pix conforme a quantidade, transforma Configurações em diálogo modal e melhora alertas, fichamentos, foco e responsividade.
+
 ## [0.3.0] - 2026-11-13
 
 ### Adicionado

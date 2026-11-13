@@ -1,17 +1,5 @@
 <% content_for :title, "#{@project.title} — Assistente Acadêmico" %>
 
-<header class="site-header">
-  <%= link_to "Assistente Acadêmico", projects_path, class: "brand" %>
-  <div class="header-actions">
-    <%= link_to "Biblioteca Pessoal", library_path, class: "header-link" %>
-    <%= link_to "Pacotes", plans_path, class: "header-link" %>
-    <% if current_account.admin? %><%= link_to "Administração", admin_dashboard_path, class: "header-link" %><% end %>
-    <%= link_to "Minha conta", account_settings_path, class: "header-link" %>
-    <%= link_to "Todos os projetos", projects_path, class: "header-link" %>
-    <%= button_to "Sair", logout_path, method: :delete, class: "text-button" %>
-  </div>
-</header>
-
 <main class="page-shell editor-shell">
   <div class="editor-heading">
     <div>
@@ -27,22 +15,19 @@
   <section class="export-panel export-panel-top" aria-label="Prévia e exportação">
     <div class="export-controls">
       <% if @project.project_type == "case" %>
-        <label class="preview-picker">Prévia
+        <label class="preview-picker">
+          <span class="visually-hidden">Documento da prévia</span>
           <%= select_tag "preview_phase", options_for_select([
             ["Relatório", export_project_path(@project, format: :html, phase: :report)],
             ["Debate", export_project_path(@project, format: :html, phase: :debate)],
             ["Dissertação", export_project_path(@project, format: :html, phase: :dissertation)]
-          ]), class: "text-control", data: { preview_select: true } %>
+          ]), class: "text-control", aria: { label: "Documento da prévia" }, data: { preview_select: true } %>
         </label>
-      <% else %>
-        <span class="preview-document"><%= @project.project_type == "paper_final" ? "Paper Final" : "Projeto de Paper" %></span>
       <% end %>
       <%= link_to "Prévia", export_project_path(@project, format: :html, phase: (@project.project_type == "case" ? :report : nil)), target: "_blank", rel: "noopener", class: "button button-secondary", data: { preview_link: true } %>
       <%= link_to "PDF", export_project_path(@project, format: :pdf, phase: (@project.project_type == "case" ? :report : nil)), class: "button button-primary" %>
     </div>
   </section>
-
-  <div class="phase-label"><%= @stage["phase"].humanize %> · Etapa <%= @stage_index + 1 %> de <%= @stages.length %></div>
 
   <%= form_with model: @project, url: project_path(@project), method: :patch, id: "project-editor", class: "editor-form" do %>
     <%= hidden_field_tag "project[lock_version]", @project.lock_version %>
@@ -186,13 +171,14 @@
         </fieldset>
       <% end %>
 
-      <details class="assist-panel" data-ai-panel data-project-revision="<%= @project.lock_version %>" data-action-url="<%= "/projects/#{@project.id}/ai/action" %>" data-jev-report-url="<%= "/projects/#{@project.id}/ai/jev-report" %>" data-jev-section-url="<%= "/projects/#{@project.id}/ai/jev-section" %>" data-jev-assessment-url="<%= "/projects/#{@project.id}/ai/jev-assessment" %>">
-        <summary class="assist-panel-summary">
+      <details class="assist-panel" id="assist-panel" data-ai-panel data-project-revision="<%= @project.lock_version %>" data-action-url="<%= "/projects/#{@project.id}/ai/action" %>" data-jev-report-url="<%= "/projects/#{@project.id}/ai/jev-report" %>" data-jev-section-url="<%= "/projects/#{@project.id}/ai/jev-section" %>" data-jev-assessment-url="<%= "/projects/#{@project.id}/ai/jev-assessment" %>">
+        <summary class="assist-panel-summary" aria-controls="assist-panel-body" aria-expanded="false">
           <span class="eyebrow">Apoio acadêmico</span>
-          <strong>Ajuda para esta etapa</strong>
+          <strong id="assist-panel-title">Ajuda para esta etapa</strong>
           <span class="field-hint">Abra para conversar ou pedir uma avaliação.</span>
         </summary>
-        <div class="assist-panel-body">
+        <div class="assist-panel-body" id="assist-panel-body">
+        <button class="assist-panel-close" type="button" data-assist-close>Fechar</button>
         <p class="field-hint">Salve o roteiro antes de pedir ajuda. Você decide se usa cada sugestão.</p>
         <label class="assist-message-label" for="ai-assist-message">O que você quer analisar?</label>
         <textarea class="text-control" id="ai-assist-message" rows="3" maxlength="6000" data-ai-message placeholder="Descreva sua dúvida sobre esta etapa."></textarea>
@@ -257,6 +243,7 @@
         </div>
         </div>
       </details>
+      <button class="assist-sheet-backdrop" type="button" data-assist-backdrop aria-label="Fechar apoio acadêmico" hidden></button>
 
       <div class="editor-actions">
         <% if @previous_stage %>

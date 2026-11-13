@@ -42,12 +42,13 @@ class AccountSettingsTest < ActionDispatch::IntegrationTest
     get account_settings_path
 
     assert_response :success
-    assert_select "dialog[data-settings-dialog][open]"
+    assert_select "dialog[data-settings-dialog][open]", count: 0
+    assert_select "[data-settings-close]"
     assert_select ".settings-nav a", count: 4
     assert_select "a[href='#preferences']", count: 0
-    assert_includes response.body, "avaliações formativas"
     assert_includes response.body, "créditos de IA"
-    assert_includes response.body, "Sem cobrança por crédito"
+    assert_not_includes response.body, "Sem cobrança por crédito"
+    assert_not_includes response.body, "excesso de solicitações"
     assert_select ".settings-credit-card.is-low", text: /5/
     assert_not_includes response.body, "DeepSeek"
     assert_select "select[name='period'] option", count: 11
