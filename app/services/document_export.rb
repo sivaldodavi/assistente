@@ -6,28 +6,22 @@ require "timeout"
 
 class DocumentExport
   INSTITUTION = "Faculdade Supremo Redentor - FACSUR"
-  EXTENSION_DIR = Rails.root.join("vendor/quarto/_extensions/abnt")
-  RENDER_TIMEOUT_SECONDS = 90
-  MAX_PDF_BYTES = 25 * 1024 * 1024
   DOCUMENT_KINDS = {
     "case_report" => "case",
     "paper_project" => "paper",
     "paper_final" => "paper"
   }.freeze
-  MARKDOWN_ESCAPABLE = "\\`*_{}[]<>()#+.!|~&+-".freeze
   NON_DOCUMENT_FIELDS = %w[
     title partner assignment_prompt course city year discipline teacher period shift
-    report_delivery_date debate_delivery_date dissertation_delivery_date
   ].freeze
-  RENDER_MUTEX = Mutex.new
-  @render_count = 0
-
   class ExportError < StandardError; end
   class QuartoUnavailable < ExportError; end
   class QuartoBusy < ExportError; end
   class QuartoRenderError < ExportError; end
 
   class << self
+    include TextFormatting
+
     def build_project_html(project, sources: [], phase: "report")
       data = project_payload(project, sources).merge("export_phase" => phase)
       fields = data.fetch("fields")
@@ -76,15 +70,7 @@ class DocumentExport
       end
       document_kind = default_document_kind(data["project_type"])
       source = build_quarto_source(project, sources:, document_kind:)
-      executable = quarto_executable
-      raise QuartoUnavailable, "O renderizador Quarto não está disponível." unless executable && EXTENSION_DIR.directory?
-      raise QuartoBusy, "Há muitas renderizações em andamento." unless acquire_render_slot
-
-      begin
-        render_isolated(source, executable)
-      ensure
-        release_render_slot
-      end
+      QuartoRenderer.render(source)
     end
 
     private
@@ -114,6 +100,8 @@ class DocumentExport
         "city" => (fields["city"].presence || account_profile["city"]).to_s,
         "year" => (fields["year"].presence || Date.current.year.to_s).to_s,
         "report_delivery_date" => fields["report_delivery_date"].to_s,
+        "debate_delivery_date" => fields["debate_delivery_date"].to_s,
+        "dissertation_delivery_date" => fields["dissertation_delivery_date"].to_s,
         "dissertation" => fields["dissertation"].to_s,
         "discipline" => fields["discipline"].to_s,
         "teacher" => fields["teacher"].to_s,
@@ -185,53 +173,6 @@ class DocumentExport
       return "paper_project" if project_type == "paper_project"
 
       raise ExportError, "Tipo de projeto inválido."
-    end
-
-    def text(value)
-      return "" unless value.is_a?(String)
-
-      value.delete("\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F").gsub("\r\n", "\n").tr("\r", "\n")
-    end
-
-    def typst_literal(value)
-      JSON.generate(text(value))
-    end
-
-    def yaml_typst_scalar(value)
-      JSON.generate(typst_literal(value)[1...-1])
-    end
-
-    def markdown_text(value)
-      text(value).each_char.map { |character| MARKDOWN_ESCAPABLE.include?(character) ? "\\#{character}" : character }.join
-    end
-
-    def paragraphs(value)
-      text(value).strip.split(/\n[ \t]*\n+/).filter_map do |paragraph|
-        next if paragraph.strip.empty?
-
-        paragraph.split("\n").map { |line| markdown_text(line) }.join("  \n")
-      end.join("\n\n")
-    end
-
-    def html_paragraphs(value)
-      parts = text(value).strip.split(/\n[ \t]*\n+/).filter_map(&:presence)
-      return '<p class="empty">Não preenchido.</p>' if parts.empty?
-
-      parts.map { |part| "<p>#{escape(part.strip).gsub("\n", "<br>")}</p>" }.join
-    end
-
-    def escape(value)
-      ERB::Util.html_escape(value.to_s).to_s
-    end
-
-    def yaml_list(name, values)
-      return "#{name}: []" if values.empty?
-
-      "#{name}:\n" + values.map { |value| "  - #{yaml_typst_scalar(value)}" }.join("\n")
-    end
-
-    def raw_typst(code)
-      "```{=typst}\n#{code.strip}\n```\n"
     end
 
     def authors(project)
@@ -430,6 +371,17 @@ class DocumentExport
       "## Descrição dos argumentos\n\n#{titled.join("\n\n")}"
     end
 
+    def case_schedule(fields)
+      [
+        [ "Data de entrega do relatório", fields["report_delivery_date"] ],
+        [ "Data do debate", fields["debate_delivery_date"] ],
+        [ "Data de entrega da dissertação", fields["dissertation_delivery_date"] ]
+      ].filter_map do |label, value|
+        date = formatted_date(value)
+        "#{label}: #{date}" if date.present?
+      end.map { |line| markdown_text(line) }.join("\n\n")
+    end
+
     def case_report(project)
       fields = project.fetch("fields")
       criteria = Array(project["criteria"]).filter_map do |item|
@@ -445,6 +397,7 @@ class DocumentExport
         sentence.strip
       end
       parts = [
+        case_schedule(fields),
         section("DESCRIÇÃO DO CASO", [ text(fields["facts"]), text(fields["problem"]) ].reject(&:empty?).join("\n\n")),
         "# IDENTIFICAÇÃO E ANÁLISE DO CASO",
         case_decisions_section(fields),
@@ -531,102 +484,6 @@ class DocumentExport
           end
         end
         [ stage["title"], content ]
-      end
-    end
-
-    def quarto_executable
-      binary = ENV.fetch("QUARTO_BINARY", "quarto")
-      return binary if binary.include?(File::SEPARATOR) && File.executable?(binary)
-
-      ENV.fetch("PATH", "/usr/local/bin:/usr/bin:/bin").split(File::PATH_SEPARATOR).each do |directory|
-        candidate = File.join(directory, binary)
-        return candidate if File.executable?(candidate)
-      end
-      nil
-    end
-
-    def acquire_render_slot
-      RENDER_MUTEX.synchronize do
-        return false if @render_count >= 2
-
-        @render_count += 1
-      end
-      true
-    end
-
-    def release_render_slot
-      RENDER_MUTEX.synchronize { @render_count -= 1 }
-    end
-
-    def render_isolated(source, executable)
-      Dir.mktmpdir("assistente-quarto-") do |workspace|
-        extensions = File.join(workspace, "_extensions")
-        FileUtils.mkdir_p(extensions)
-        FileUtils.cp_r(EXTENSION_DIR, File.join(extensions, "abnt"))
-        source_path = File.join(workspace, "document.qmd")
-        output_path = File.join(workspace, "document.pdf")
-        File.write(source_path, source, mode: "w:UTF-8")
-        home = File.join(workspace, "home")
-        FileUtils.mkdir_p(home, mode: 0o700)
-        environment = {
-          "PATH" => ENV.fetch("PATH", "/usr/local/bin:/usr/bin:/bin"),
-          "HOME" => home,
-          "TMPDIR" => workspace,
-          "TMP" => workspace,
-          "TEMP" => workspace,
-          "LANG" => ENV.fetch("LANG", "C.UTF-8"),
-          "LC_ALL" => ENV.fetch("LC_ALL", "C.UTF-8")
-        }
-        pid = Process.spawn(
-          environment,
-          executable,
-          "render",
-          File.basename(source_path),
-          "--output",
-          File.basename(output_path),
-          chdir: workspace,
-          in: File::NULL,
-          out: File::NULL,
-          err: File::NULL,
-          pgroup: true,
-          unsetenv_others: true
-        )
-        status = wait_for_renderer(pid)
-        unless status.success? && File.file?(output_path)
-          raise QuartoRenderError, "O Quarto não conseguiu renderizar este documento."
-        end
-        raise QuartoRenderError, "O PDF gerado excedeu o limite de tamanho." if File.size(output_path) > MAX_PDF_BYTES
-
-        pdf = File.binread(output_path)
-        raise QuartoRenderError, "O renderizador não retornou um PDF válido." unless pdf.start_with?("%PDF-")
-
-        pdf
-      rescue Errno::ENOENT
-        raise QuartoUnavailable, "Não foi possível iniciar o Quarto."
-      end
-    end
-
-    def wait_for_renderer(pid)
-      Timeout.timeout(RENDER_TIMEOUT_SECONDS) do
-        Process.waitpid(pid)
-        $CHILD_STATUS || $?
-      end
-    rescue Timeout::Error
-      terminate_renderer(pid)
-      raise QuartoRenderError, "A renderização excedeu o tempo limite."
-    end
-
-    def terminate_renderer(pid)
-      Process.kill("TERM", -pid)
-      sleep 0.25
-      Process.kill("KILL", -pid)
-    rescue Errno::ESRCH
-      nil
-    ensure
-      begin
-        Process.waitpid(pid)
-      rescue Errno::ECHILD
-        nil
       end
     end
   end

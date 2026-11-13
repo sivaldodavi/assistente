@@ -5,6 +5,9 @@ class MercadoPagoWebhooksController < ActionController::Base
   wrap_parameters false
   skip_forgery_protection
 
+  # Só estes resultados indicam problema de conciliação; os demais são apenas registrados.
+  ERROR_RESULTS = %w[unknown_order mismatch].freeze
+
   def create
     event = request.request_parameters.deep_stringify_keys
     return head :ok unless event["type"] == "payment"
@@ -24,7 +27,7 @@ class MercadoPagoWebhooksController < ActionController::Base
 
     payment = MercadoPagoGateway.new.fetch_payment(payment_id)
     result = PaymentService.new.process_verified_payment(payment)
-    record_event(payment_id, event, result)
+    record_event(payment_id, event, payment, result)
     head :ok
   rescue PaymentSecrets::ConfigurationError
     head :service_unavailable
@@ -37,13 +40,18 @@ class MercadoPagoWebhooksController < ActionController::Base
 
   private
 
-  def record_event(payment_id, event, result)
-    key = [ "payment", payment_id, event.dig("data", "status").presence || "notification" ].join(":")
+  def record_event(payment_id, event, payment, result)
+    status = payment.to_h.deep_stringify_keys["status"].presence || "unknown"
+    key = [ "payment", payment_id, status ].join(":")
     record = PaymentWebhookEvent.create_or_find_by!(event_key: key) do |entry|
       entry.event_type = event["action"].presence || "payment"
       entry.payment_id = payment_id
       entry.received_at = Time.current
     end
-    record.update!(result: result.to_s, processed_at: Time.current, error_code: result.to_s == "approved" ? nil : result.to_s)
+    record.update!(
+      result: result.to_s,
+      processed_at: Time.current,
+      error_code: ERROR_RESULTS.include?(result.to_s) ? result.to_s : nil
+    )
   end
 end

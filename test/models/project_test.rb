@@ -47,4 +47,21 @@ class ProjectTest < ActiveSupport::TestCase
     assert_not_includes project.criteria.first, "unknown"
     assert_equal "Texto", project.development_sections.first["body"]
   end
+
+  test "rejects delivery dates that are not valid calendar dates" do
+    project = Project.new(project_type: "case", fields: { "report_delivery_date" => "2026-13-40" })
+
+    refute project.valid?
+    assert_includes project.errors.full_messages.join(" "), "Data de entrega do relatório inválida"
+  end
+
+  test "warns about delivery order without blocking the project" do
+    project = Project.new(project_type: "case", fields: {
+      "report_delivery_date" => "2026-10-20",
+      "debate_delivery_date" => "2026-10-10"
+    })
+
+    assert project.valid?
+    assert_includes project.schedule_warnings, "A entrega do relatório é depois da data do debate."
+  end
 end

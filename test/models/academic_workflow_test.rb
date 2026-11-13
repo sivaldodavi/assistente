@@ -85,6 +85,18 @@ class AcademicWorkflowTest < ActiveSupport::TestCase
     assert_equal "Alternativa b)", AcademicWorkflow.field_label(values, rules["argument_b"])
   end
 
+  test "delivery dates come first in the stage that uses them" do
+    stages = JSON.parse(File.read(Rails.root.join("config/academic_workflows.json")))["case"]
+    by_id = stages.index_by { |stage| stage["id"] }
+
+    assert_equal "report_delivery_date", by_id["identification"]["fields"].first["id"]
+    assert_equal "debate_delivery_date", by_id["debate"]["fields"].first["id"]
+    assert_equal "dissertation_delivery_date", by_id["dissertation"]["fields"].first["id"]
+    assert_empty by_id["review_report"]["fields"]
+    assert_empty by_id["review_dissertation"]["fields"]
+    refute_includes by_id["identification"]["intro"], "Planejar"
+  end
+
   test "discards author and decision fields that are not part of the current workflow" do
     fields = AcademicWorkflow.normalize_fields("case", {
       "author" => "Nome da conta",

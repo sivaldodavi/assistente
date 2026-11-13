@@ -88,7 +88,17 @@ class ProjectsTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "textarea[name='project[fields][argument_a]']", count: 1
     assert_select "textarea[name='project[fields][argument_b]']", count: 1
+    assert_select "textarea[name='project[fields][argument_a]'][aria-describedby='hint-argument_a']", count: 1
     assert_select "label.alternative-title", count: 2
+  end
+
+  test "debate step shows its before and after groups as headings" do
+    project = create_project!(project_type: "case")
+
+    get project_path(project, stage: "debate")
+
+    assert_response :success
+    assert_select "h3.field-group-title", count: 2
   end
 
   test "consumes one project credit atomically and blocks creation without credits" do
@@ -149,9 +159,9 @@ class ProjectsTest < ActionDispatch::IntegrationTest
     project = create_project!(project_type: "case")
 
     {
-      "review_report" => "report_delivery_date",
+      "identification" => "report_delivery_date",
       "debate" => "debate_delivery_date",
-      "review_dissertation" => "dissertation_delivery_date"
+      "dissertation" => "dissertation_delivery_date"
     }.each do |stage, field|
       get project_path(project, stage:)
 

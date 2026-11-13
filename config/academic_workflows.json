@@ -2,8 +2,14 @@
   "case": [
     {
       "title": "Identificação",
-      "intro": "Informe os dados do relatório e, se quiser usar assistência por IA, registre a proposta, o enunciado ou as instruções do professor. As datas de entrega ficam em \"Planejar este trabalho\", no topo da página.",
+      "intro": "Informe os dados do relatório e, se quiser usar assistência por IA, registre a proposta, o enunciado ou as instruções do professor. A data de entrega do relatório fica nesta etapa; as do debate e da dissertação ficam no início das etapas correspondentes.",
       "fields": [
+        {
+          "id": "report_delivery_date",
+          "label": "Data de entrega do relatório",
+          "type": "date",
+          "limit": 10
+        },
         {
           "id": "title",
           "label": "Título do relatório",
@@ -281,14 +287,7 @@
       "custom": "review",
       "id": "review_report",
       "phase": "report",
-      "fields": [
-        {
-          "id": "report_delivery_date",
-          "label": "Data de entrega do relatório",
-          "type": "date",
-          "limit": 10
-        }
-      ]
+      "fields": []
     },
     {
       "phase": "debate",
@@ -306,6 +305,12 @@
       ],
       "custom": "debate",
       "fields": [
+        {
+          "id": "debate_delivery_date",
+          "label": "Data do debate",
+          "type": "date",
+          "limit": 10
+        },
         {
           "id": "debate_thesis",
           "group": "before",
@@ -382,12 +387,6 @@
           "type": "textarea",
           "hint": "Opcional.",
           "limit": 8000
-        },
-        {
-          "id": "debate_delivery_date",
-          "label": "Data do debate",
-          "type": "date",
-          "limit": 10
         }
       ],
       "checks": [
@@ -415,6 +414,12 @@
       "title": "Dissertação",
       "intro": "Escreva a dissertação em um único texto, incorporando a tese, os argumentos e os aprendizados do debate.",
       "fields": [
+        {
+          "id": "dissertation_delivery_date",
+          "label": "Data de entrega da dissertação",
+          "type": "date",
+          "limit": 10
+        },
         {
           "id": "dissertation",
           "label": "Dissertação",
@@ -452,14 +457,7 @@
       "intro": "Confira o texto e marque a entrega.",
       "custom": "review",
       "id": "review_dissertation",
-      "fields": [
-        {
-          "id": "dissertation_delivery_date",
-          "label": "Data de entrega da dissertação",
-          "type": "date",
-          "limit": 10
-        }
-      ]
+      "fields": []
     }
   ],
   "paper_project": [

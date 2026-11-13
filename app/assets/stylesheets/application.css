@@ -111,6 +111,7 @@ h1, h2, h3, p { margin-top: 0; }
 .field-grid-paired .field > .field-label-row { grid-column: 1; grid-row: 1 / span 3; margin: 0; }
 .field-grid-paired .field > :not(.field-label-row) { grid-column: 2; }
 .field-grid-paired .alternative-title { font-size: 1rem; line-height: 1.5; }
+.field-group-title { font-size: 1rem; grid-column: 1 / -1; margin: 8px 0 -4px; }
 .field { min-width: 0; }
 .field[data-row="docente"], .field[data-row="turma"] { grid-column: span 1; }
 .field-label-row { align-items: baseline; display: flex; gap: 10px; justify-content: space-between; margin-bottom: 7px; }

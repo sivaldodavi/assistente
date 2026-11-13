@@ -11,5 +11,9 @@
 | Assistência contextual e avaliação formativa | `app/services/ai_workflow.rb`, `app/services/jev_rubric.rb`; `test/integration/project_assist_test.rb`, `test/integration/projects_test.rb` |
 | Pacotes Pix, idempotência, webhook assinado, créditos e reconciliação de pedidos | `app/services/payment_service.rb`, `app/controllers/mercado_pago_webhooks_controller.rb`; `test/integration/payments_test.rb`, `test/services/payment_reconciliation_test.rb` |
 | Administração, auditoria, páginas e conteúdo público | controllers e views correspondentes; `test/integration/admin_test.rb`, `test/integration/public_pages_test.rb` |
+| Datas de entrega do Case: início de cada etapa, cronograma no PDF, validação de formato e avisos de ordem | `config/academic_workflows.json`, `app/models/project.rb`, `app/services/document_export.rb`; `test/models/academic_workflow_test.rb`, `test/models/project_test.rb`, `test/services/document_export_test.rb` |
+| Grupos do debate, descrição acessível dos campos (`aria-describedby`) e vínculo das alternativas vazias à etapa 2.1 | `app/views/projects/show.html.erb`; `test/integration/projects_test.rb` |
+| Auditoria do webhook pelo status do pagamento consultado, com `error_code` apenas para divergências | `app/controllers/mercado_pago_webhooks_controller.rb`; sem teste dedicado novo, cobertura indireta por `test/integration/payments_test.rb` |
+| Renderização Quarto isolada e helpers de escape Typst/Markdown | `app/services/document_export/quarto_renderer.rb`, `app/services/document_export/text_formatting.rb`; `test/services/document_export_test.rb`, `test/integration/exports_test.rb` |
 
 Os testes de integrações usam doubles locais para provedores externos. Para confirmar operações do Mercado Pago, use o ambiente sandbox e não crie cobranças reais de teste.

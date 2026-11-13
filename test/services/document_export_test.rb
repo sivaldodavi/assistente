@@ -170,6 +170,27 @@ class DocumentExportTest < ActiveSupport::TestCase
     assert_equal 1, html.scan("Alternativa a de teste.").length
   end
 
+  test "puts the case schedule at the start of the Case report" do
+    project = Project.new(
+      project_type: "case",
+      fields: {
+        "title" => "Relatório",
+        "facts" => "Fatos do caso.",
+        "decision_a" => "Alternativa a de teste.",
+        "report_delivery_date" => "2026-09-23",
+        "debate_delivery_date" => "2026-10-14",
+        "dissertation_delivery_date" => "2026-11-30"
+      }
+    )
+
+    source = DocumentExport.build_quarto_source(project)
+
+    assert_includes source, "Data de entrega do relatório: 23/09/2026"
+    assert_includes source, "Data do debate: 14/10/2026"
+    assert_includes source, "Data de entrega da dissertação: 30/11/2026"
+    assert_operator source.index("Data do debate"), :<, source.index("DESCRIÇÃO DO CASO")
+  end
+
   test "does not export removed decision aliases" do
     legacy_text = "Alternativa antiga preservada."
     project = Project.new(project_type: "case", fields: { "thesis_a" => legacy_text })
