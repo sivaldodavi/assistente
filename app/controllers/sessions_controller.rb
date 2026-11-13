@@ -14,7 +14,7 @@ class SessionsController < ApplicationController
 
     reset_session
     session[:account_id] = account.id
-    redirect_to projects_path, notice: "Sessão local iniciada."
+    redirect_to root_path, notice: "Sessão local iniciada."
   end
 
   def destroy

@@ -33,7 +33,7 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
 
   test "development login creates an account and logout clears its session" do
     post dev_login_path, params: { email: "local@example.test", name: "Local" }
-    assert_redirected_to projects_path
+    assert_redirected_to root_path
     assert_response :redirect
     assert Account.exists?(email: "local@example.test")
 

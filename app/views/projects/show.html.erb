@@ -30,18 +30,22 @@
     <%= hidden_field_tag "project[lock_version]", @project.lock_version %>
     <%= hidden_field_tag "project[current_stage]", @stage["id"] %>
 
-    <nav class="step-nav" aria-label="Etapas do roteiro">
-      <% @stages.each_with_index do |stage, index| %>
-        <%= button_tag "#{format('%02d', index + 1)} · #{stage['title']}",
-          type: "submit",
-          name: "go_to_stage",
-          value: stage["id"],
-          class: ["step-nav-item", ("is-current" if stage["id"] == @stage["id"])].compact.join(" "),
-          aria: { current: stage["id"] == @stage["id"] ? "step" : nil } %>
-      <% end %>
-    </nav>
-
-    <section class="stage-card" aria-labelledby="stage-title">
+    <div class="editor-layout">
+      <aside class="editor-stage-sidebar" aria-label="Navegação do roteiro">
+        <p class="eyebrow">Etapas do roteiro</p>
+        <nav class="editor-stage-list" aria-label="Etapas do roteiro">
+          <% @stages.each_with_index do |stage, index| %>
+            <%= button_tag "#{format('%02d', index + 1)} · #{stage['title']}",
+              type: "submit",
+              name: "go_to_stage",
+              value: stage["id"],
+              class: ["step-nav-item", ("is-current" if stage["id"] == @stage["id"])].compact.join(" "),
+              aria: { current: stage["id"] == @stage["id"] ? "step" : nil } %>
+          <% end %>
+        </nav>
+      </aside>
+      <div class="editor-stage-content">
+      <section class="stage-card" aria-labelledby="stage-title">
       <p class="eyebrow"><%= @stage["phase"].humanize %> · Etapa <%= format("%02d", @stage_index + 1) %></p>
       <h2 id="stage-title"><%= @stage["title"] %></h2>
       <p class="stage-intro"><%= @stage["intro"] %></p>
@@ -142,7 +146,9 @@
           <% if @project.project_type == "paper_project" && @stage["id"] == "review_paper" %>
             <%= button_tag "Avançar para Paper Final", type: "submit", formaction: paper_mode_project_path(@project), class: "button button-primary" %>
           <% end %>
-        </section>
+          </section>
+          </div>
+        </div>
       <% end %>
 
       <% if @stage.fetch("checks", []).any? %>

@@ -1,66 +1,44 @@
-<% content_for :title, "Assistente Acadêmico — organização para trabalhos acadêmicos" %>
-<% login_available = google_oauth_configured? && !public_shell_only? %>
+<% content_for :title, current_account.present? && !public_shell_only? ? "Início — Assistente Acadêmico" : "Assistente Acadêmico" %>
 
-<header class="site-header">
-  <%= link_to "Assistente Acadêmico", root_path, class: "brand" %>
-  <nav class="header-actions" aria-label="Navegação principal">
-    <% if current_account.present? %>
-      <%= link_to "Meus projetos", projects_path, class: "header-link" %>
-    <% elsif login_available %>
-      <%= button_to "Entrar", "/auth/google_oauth2", method: :post, class: "header-link", form: { class: "header-login-form" } %>
-    <% else %>
-      <span class="header-link">Acesso em preparação</span>
-    <% end %>
-    <%= link_to "Pacotes", plans_path, class: "header-link" %>
-    <%= link_to "Termos", terms_path, class: "header-link" %>
-  </nav>
-</header>
-
-<main class="page-shell">
-  <section class="hero">
-    <p class="eyebrow">Assistente Acadêmico</p>
-    <h1>Organize seu trabalho acadêmico, etapa por etapa.</h1>
-    <p>Roteiros guiados ajudam a estruturar estudos de caso e projetos de paper, com espaço para referências, planejamento e exportação.</p>
-    <div class="hero-actions">
-      <% if current_account.present? %>
-        <%= link_to "Acessar meus projetos", projects_path, class: "button button-primary" %>
-      <% elsif login_available %>
-        <%= button_to "Entrar com Google", "/auth/google_oauth2", method: :post, class: "button button-primary" %>
-      <% else %>
-        <span class="preview-label">Acesso em preparação</span>
+<% if current_account.present? && !public_shell_only? %>
+  <%= render "dashboard" %>
+<% else %>
+  <% login_available = google_oauth_configured? && !public_shell_only? %>
+  <header class="site-header">
+    <%= link_to root_path, class: "brand" do %><span class="brand-mark" aria-hidden="true">AA</span> Assistente Acadêmico<% end %>
+    <nav class="header-actions" aria-label="Navegação principal">
+      <%= link_to "Pacotes", plans_path, class: "header-link" %>
+      <% unless login_available %>
+        <span class="header-link">Acesso em preparação</span>
       <% end %>
-      <%= link_to "Conheça os pacotes", plans_path, class: "button button-secondary" %>
-    </div>
-  </section>
+    </nav>
+  </header>
 
-  <section class="project-list">
-    <div class="section-heading">
-      <h2>Um espaço para desenvolver suas ideias</h2>
-    </div>
-    <div class="project-grid">
-      <article class="project-card">
-        <h3>Roteiros guiados</h3>
-        <p>Desenvolva seu trabalho por etapas, acompanhando perguntas e orientações de cada roteiro.</p>
-      </article>
-      <article class="project-card">
-        <h3>Referências organizadas</h3>
-        <p>Reúna fontes e fichamentos para apoiar a pesquisa e o desenvolvimento do projeto.</p>
-      </article>
-      <article class="project-card">
-        <h3>Revisão sob seu controle</h3>
-        <p>Recursos de assistência são opcionais. Confira fontes e orientações da sua instituição antes de usar qualquer sugestão.</p>
-      </article>
-    </div>
-  </section>
-
-  <p class="field-hint">
-    <% if current_account.present? %>
-      Você está conectado. Leia também a
-    <% elsif login_available %>
-      Entre com sua conta Google para acessar seus trabalhos. Leia também a
-    <% else %>
-      O acesso a contas está em preparação. Leia também a
-    <% end %>
-    <%= link_to "política de privacidade", privacy_path %> e <%= link_to "como funciona a assistência de IA", ai_help_path %>.
-  </p>
-</main>
+  <main class="page-shell public-home">
+    <section class="public-hero">
+      <div class="public-hero-copy">
+        <p class="eyebrow">Case e paper jurídicos</p>
+        <h1>Seu trabalho, com método.</h1>
+        <p>Roteiro por etapa, datas de entrega e formatação ABNT, num só lugar.</p>
+        <% if login_available %>
+          <%= button_to "Entrar com Google", "/auth/google_oauth2", method: :post, class: "button button-primary" %>
+          <p class="field-hint">Entrada somente com conta Google.</p>
+        <% else %>
+          <span class="preview-label">Acesso em preparação</span>
+        <% end %>
+        <div class="public-links">
+          <%= link_to "Termos", terms_path %>
+          <%= link_to "Privacidade", privacy_path %>
+        </div>
+      </div>
+      <aside class="public-preview" aria-label="Etapas do trabalho">
+        <p class="eyebrow">Seu próximo passo</p>
+        <ol>
+          <li><span>01</span><strong>Complete seu perfil</strong></li>
+          <li><span>02</span><strong>Crie seu primeiro projeto</strong></li>
+          <li><span>03</span><strong>Avance pelo roteiro</strong></li>
+        </ol>
+      </aside>
+    </section>
+  </main>
+<% end %>

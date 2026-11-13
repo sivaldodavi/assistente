@@ -1,0 +1,19 @@
+<section class="credit-summary" aria-labelledby="sidebar-credits-title">
+  <div class="credit-summary-heading">
+    <h2 id="sidebar-credits-title">Seus créditos</h2>
+    <%= link_to "Ver pacotes", plans_path, aria: { label: "Ver pacotes de créditos" } %>
+  </div>
+  <div class="credit-item">
+    <span>Projetos</span>
+    <strong><%= current_account.project_credits_remaining %></strong>
+  </div>
+  <div class="credit-item">
+    <span>Escrita</span>
+    <strong><%= current_account.deepseek_credits_remaining %></strong>
+  </div>
+  <% jev_remaining = [ current_account.ai_limit - current_account.ai_used, 0 ].max %>
+  <div class="credit-item<%= " credit-warning" if jev_remaining <= 5 %>">
+    <span>Avaliação (JEV)</span>
+    <strong><%= jev_remaining %></strong>
+  </div>
+</section>

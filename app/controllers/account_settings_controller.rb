@@ -27,7 +27,7 @@ class AccountSettingsController < ApplicationController
     accepted = %w[on 1 true].include?(params[:accept].to_s)
     ai_consent = %w[on 1 true].include?(params[:ai_consent].to_s)
     current_account.accept_terms!(accept: accepted, ai_consent:)
-    redirect_to account_settings_path(saved: "terms"), notice: "Preferências de consentimento salvas."
+    redirect_to account_settings_path(saved: "terms"), notice: "Consentimentos salvos."
   rescue ArgumentError => error
     redirect_to account_settings_path(error: "terms"), alert: error.message
   end

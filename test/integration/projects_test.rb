@@ -10,22 +10,69 @@ class ProjectsTest < ActionDispatch::IntegrationTest
     @account.projects.create!(attributes)
   end
 
-  test "projects page presents the project entry point" do
+  test "projects page presents filters, board and list views" do
     get projects_path
 
     assert_response :success
-    assert_select "h1", "Transforme uma ideia em um trabalho bem estruturado."
-    assert_select "a[href='#{new_project_path}']", "Começar um trabalho"
+    assert_select "h1", "Projetos"
+    assert_select "[data-project-filter]", 3
+    assert_select "[data-project-view-button]", 2
+    assert_select "a[href='#{new_project_path}']", text: /Novo projeto/
   end
 
-  test "projects page does not show a task agenda" do
-    create_project!(project_type: "case", title: "Case de teste")
+  test "projects page derives board status from its current stage and delivery" do
+    create_project!(project_type: "case", title: "Case em andamento")
+    create_project!(project_type: "case", title: "Case em revisão", current_stage: "review_report")
+    delivered = create_project!(project_type: "case", title: "Case entregue", current_stage: "review_report")
+    delivered.deliveries = { "report" => { "delivered" => true } }
+    delivered.save!
 
     get projects_path
 
     assert_response :success
+    assert_select "[data-project-column='in-progress'] [data-project-card]", count: 1
+    assert_select "[data-project-column='review'] [data-project-card]", count: 1
+    assert_select "[data-project-column='delivered'] [data-project-card]", count: 1
+    assert_select "[data-project-card][data-project-kind='case'][data-project-status='in-progress']", count: 2
     assert_select ".agenda-panel", count: 0
-    assert_select "body", text: /Agenda|tarefas com prazo/i, count: 0
+  end
+
+  test "shows the logged-in dashboard at the root" do
+    get root_path
+
+    assert_response :success
+    assert_select "h1", "Início"
+    assert_select "[data-project-view]", count: 0
+    assert_select "h2", "Começando os trabalhos"
+  end
+
+  test "dashboard lists upcoming deliveries from project workflow fields" do
+    date = 10.days.from_now.to_date
+    create_project!(
+      project_type: "case",
+      title: "Entrega próxima",
+      fields: { "report_delivery_date" => date.iso8601 }
+    )
+
+    get root_path
+
+    assert_response :success
+    assert_select ".delivery-item", text: /Relatório/
+    assert_select ".delivery-item", text: /em 10 dias/
+  end
+
+  test "quick creation saves the chosen first delivery date on the matching workflow field" do
+    date = 3.weeks.from_now.to_date.iso8601
+
+    assert_difference("Project.count", 1) do
+      post projects_path, params: { project: { project_type: "case", delivery_date: date } }
+    end
+    assert_equal date, Project.order(:id).last.fields["report_delivery_date"]
+
+    assert_difference("Project.count", 1) do
+      post projects_path, params: { project: { project_type: "paper_project", delivery_date: date } }
+    end
+    assert_equal date, Project.order(:id).last.fields["paper_project_delivery_date"]
   end
 
   test "creates a case and opens the first original stage" do
@@ -123,11 +170,11 @@ class ProjectsTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "h2#stage-title", "1 · Descrição do caso"
     assert_select "textarea[name='project[fields][facts]']"
-    assert_select "nav.step-nav button", count: 10
+    assert_select "nav.editor-stage-list button", count: 10
     assert_select "textarea[name='project[fields][dissertation_intro]']", count: 0
   end
 
-  test "renders contextual AI controls and an unnamed formative assessment for Cases" do
+  test "renders contextual AI controls without provider names in the panel" do
     project = create_project!(project_type: "case")
 
     get project_path(project, stage: "description")
@@ -139,9 +186,7 @@ class ProjectsTest < ActionDispatch::IntegrationTest
     assert_select "button[data-jev-section-action]"
     assert_select "button[data-jev-report]"
     assert_select "select[data-jev-section-select] option", count: 5
-    assert_not_includes response.body, "JEV"
-    assert_not_includes response.body, "DeepSeek"
-    assert_not_includes response.body, "TypeSafe"
+    assert_select "[data-ai-panel]", text: /JEV|DeepSeek|TypeSafe/, count: 0
   end
 
   test "does not render Case-only JEV controls for a Paper" do

@@ -1,65 +1,72 @@
-<% content_for :title, "Assistente Acadêmico" %>
+<% content_for :title, "Projetos — Assistente Acadêmico" %>
 
-<header class="site-header">
-  <%= link_to "Assistente Acadêmico", projects_path, class: "brand" %>
-  <% if current_account %>
-    <div class="header-actions">
-      <%= link_to "Biblioteca Pessoal", library_path, class: "header-link" %>
-      <%= link_to "Guia de escrita", writing_guide_path, class: "header-link" %>
-      <%= link_to "Pacotes", plans_path, class: "header-link" %>
-      <% if current_account.admin? %><%= link_to "Administração", admin_dashboard_path, class: "header-link" %><% end %>
-      <%= link_to "Minha conta", account_settings_path, class: "header-link" %>
-      <%= button_to "Sair", logout_path, method: :delete, class: "text-button" %>
+<main class="page-shell projects-page" data-project-view="board">
+  <header class="page-heading">
+    <div>
+      <p class="eyebrow">Seu espaço de trabalho</p>
+      <h1>Projetos</h1>
+      <p>Encontre seus trabalhos e acompanhe o próximo passo.</p>
     </div>
-  <% else %>
-    <% if google_oauth_configured? %>
-      <%= button_to "Entrar", "/auth/google_oauth2", method: :post, class: "button button-primary" %>
-    <% else %>
-      <%= link_to "Entrar", login_path, class: "button button-primary" %>
-    <% end %>
-  <% end %>
-</header>
+    <%= link_to "+ Novo projeto", new_project_path, class: "button button-primary" %>
+  </header>
 
-<main class="page-shell">
-  <section class="hero">
-    <p class="eyebrow">Planejamento acadêmico, etapa por etapa</p>
-    <h1>Transforme uma ideia em um trabalho bem estruturado.</h1>
-    <p>Preencha o roteiro no seu ritmo. Seus projetos e referências ficam associados à sua conta.</p>
-    <% if current_account %>
-      <%= link_to "Começar um trabalho", new_project_path, class: "button button-primary" %>
-      <p class="field-hint"><%= current_account.project_credits_remaining %> créditos de projeto disponíveis · <%= link_to "Ver pacotes", plans_path %></p>
-    <% else %>
-      <% if google_oauth_configured? %>
-        <%= button_to "Entrar para começar", "/auth/google_oauth2", method: :post, class: "button button-primary" %>
-      <% else %>
-        <%= link_to "Entrar para começar", login_path, class: "button button-primary" %>
+  <div class="project-toolbar">
+    <div class="project-filters" role="group" aria-label="Filtrar projetos">
+      <button class="filter-chip" type="button" data-project-filter="all" aria-pressed="true">Todos</button>
+      <button class="filter-chip" type="button" data-project-filter="case" aria-pressed="false">Cases</button>
+      <button class="filter-chip" type="button" data-project-filter="paper" aria-pressed="false">Papers</button>
+    </div>
+    <div class="view-switch" role="group" aria-label="Visualização dos projetos">
+      <button type="button" data-project-view-button="board" aria-pressed="true">Quadro</button>
+      <button type="button" data-project-view-button="list" aria-pressed="false">Lista</button>
+    </div>
+  </div>
+
+  <% if @projects.any? %>
+    <% groups = [
+      [ "in-progress", "Em andamento" ],
+      [ "review", "Em revisão" ],
+      [ "delivered", "Entregue" ]
+    ] %>
+    <div class="project-board" aria-label="Projetos por estado">
+      <% groups.each do |status, label| %>
+        <% projects = @projects.select { |project| project_status(project).last == status } %>
+        <section class="project-board-column" data-project-column="<%= status %>">
+          <h2><%= label %><span data-column-count><%= projects.size %></span></h2>
+          <div class="project-board-items">
+            <% projects.each do |project| %>
+              <%= render "project_card", project: %>
+            <% end %>
+          </div>
+        </section>
       <% end %>
-    <% end %>
-  </section>
-  <section class="project-list" aria-labelledby="projects-title">
-    <div class="section-heading">
-      <div>
-        <p class="eyebrow">Seu espaço de trabalho</p>
-        <h2 id="projects-title">Projetos</h2>
-      </div>
     </div>
 
-    <% if @projects.any? %>
-      <div class="project-grid">
-        <% @projects.each do |project| %>
-          <%= link_to project_path(project, stage: project.current_stage), class: "project-card" do %>
-            <span class="project-type"><%= project.project_type == "case" ? "Case" : project.project_type == "paper_final" ? "Paper Final" : "Projeto de Paper" %></span>
-            <h3><%= project.title %></h3>
-            <p><%= project.progress["done"] %> de <%= project.progress["total"] %> campos obrigatórios nesta etapa</p>
-            <span class="card-action">Continuar <span aria-hidden="true">→</span></span>
+    <div class="project-list-view">
+      <table class="project-table">
+        <thead><tr><th>Projeto</th><th>Estado</th><th>Progresso</th><th>Próxima entrega</th></tr></thead>
+        <tbody>
+          <% @projects.each do |project| %>
+            <% status_label, status_key = project_status(project) %>
+            <% delivery = next_project_delivery(project) %>
+            <% kind = project.project_type == "case" ? "case" : "paper" %>
+            <tr data-project-card data-project-kind="<%= kind %>" data-project-status="<%= status_key %>">
+              <td><%= link_to project.title, project_path(project, stage: project.current_stage) %><br><span class="project-type"><%= project_type_label(project.project_type) %></span></td>
+              <td><span class="status-pill" data-status="<%= status_key %>"><%= status_label %></span></td>
+              <td><%= project.progress["done"] %>/<%= project.progress["total"] %> campos</td>
+              <td><%= delivery ? "#{delivery[:date].strftime("%d/%m/%Y")} · #{delivery[:label]}" : "—" %></td>
+            </tr>
           <% end %>
-        <% end %>
-      </div>
-    <% else %>
-      <div class="empty-state">
-        <h3>Nenhum projeto por aqui ainda</h3>
-        <p>Comece por um Case ou por um Projeto de Paper.</p>
-      </div>
-    <% end %>
-  </section>
+        </tbody>
+      </table>
+    </div>
+    <p class="empty-state-copy" data-project-filter-empty hidden role="status">Nenhum projeto corresponde a este filtro.</p>
+  <% else %>
+    <section class="empty-state project-empty-state">
+      <p class="eyebrow">Seu próximo passo</p>
+      <h2>Nenhum projeto por aqui ainda</h2>
+      <p>Comece por um Case ou por um Projeto de Paper.</p>
+      <%= link_to "Criar primeiro projeto", new_project_path, class: "button button-primary" %>
+    </section>
+  <% end %>
 </main>

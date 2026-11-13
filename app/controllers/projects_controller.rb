@@ -8,7 +8,9 @@ class ProjectsController < ApplicationController
   before_action :limit_exports, only: :export
 
   def index
-    @projects = current_account ? current_account.projects.order(updated_at: :desc) : Project.none
+    return redirect_to root_path unless current_account
+
+    @projects = current_account.projects.order(updated_at: :desc).to_a
   end
 
   def new
@@ -23,14 +25,18 @@ class ProjectsController < ApplicationController
       return render :new, status: :unprocessable_entity
     end
 
-    @project = current_account.projects.new(
-      project_type:,
-      fields: {
-        "period" => current_account.profile["period"],
-        "shift" => current_account.profile["shift"],
-        "year" => Date.current.year.to_s
-      }
-    )
+    fields = {
+      "period" => current_account.profile["period"],
+      "shift" => current_account.profile["shift"],
+      "year" => Date.current.year.to_s
+    }
+    delivery_field = {
+      "case" => "report_delivery_date",
+      "paper_project" => "paper_project_delivery_date"
+    }.fetch(project_type)
+    delivery_date = params.dig(:project, :delivery_date)
+    fields[delivery_field] = delivery_date if delivery_date.present?
+    @project = current_account.projects.new(project_type:, fields:)
     current_account.with_lock do
       if !current_account.admin? && current_account.project_used >= current_account.project_limit
         @project.errors.add(:base, "Você não tem créditos de projeto disponíveis. Escolha um pacote para continuar.")

@@ -1,100 +1,126 @@
-<% content_for :title, "Configurações da conta — Assistente Acadêmico" %>
+<% content_for :title, "Configurações — Assistente Acadêmico" %>
 
-<header class="site-header">
-  <%= link_to "Assistente Acadêmico", projects_path, class: "brand" %>
-  <div class="header-actions">
-    <%= link_to "Meus projetos", projects_path, class: "header-link" %>
-    <%= link_to "Biblioteca Pessoal", library_path, class: "header-link" %>
-    <% if current_account.admin? %><%= link_to "Administração", admin_dashboard_path, class: "header-link" %><% end %>
-    <%= button_to "Sair", logout_path, method: :delete, class: "text-button" %>
-  </div>
-</header>
+<main class="settings-page">
+  <dialog class="settings-panel" open data-settings-dialog data-close-href="<%= root_path %>" aria-labelledby="settings-title">
+    <nav class="settings-nav" aria-label="Seções das configurações">
+      <h2>Configurações</h2>
+      <div class="settings-nav-links">
+        <a href="#credits">Créditos</a>
+        <a href="#profile">Perfil</a>
+        <a href="#terms">Consentimentos</a>
+        <a href="#delete-account">Excluir conta</a>
+      </div>
+    </nav>
 
-<main class="page-shell narrow-shell">
-  <div class="section-heading">
-    <div>
-      <p class="eyebrow">Preferências pessoais</p>
-      <h1>Configurações da conta</h1>
-    </div>
-  </div>
-
-  <% if params[:saved] == "profile" %>
-    <p class="notice" role="status">Perfil atualizado.</p>
-  <% elsif params[:saved] == "terms" %>
-    <p class="notice" role="status">Preferências de consentimento salvas.</p>
-  <% end %>
-
-  <section class="panel">
-    <h2>Pacote e créditos</h2>
-    <p>Pacote atual: <strong><%= @account.plan_code.humanize %></strong></p>
-    <p><%= @account.project_credits_remaining %> créditos de projeto · <%= [@account.ai_limit - @account.ai_used, 0].max %> avaliações formativas · <%= @account.deepseek_credits_remaining %> orientações de escrita</p>
-    <%= link_to "Comprar créditos por Pix", plans_path, class: "button button-primary" %>
-  </section>
-
-  <section class="panel">
-    <h2>Perfil</h2>
-    <p>Seu nome da conta será o autor principal dos trabalhos. Cadastre aqui as opções acadêmicas que deseja selecionar nos roteiros.</p>
-    <%= form_with url: account_update_profile_path, method: :post do |form| %>
-      <div class="field-grid">
-        <div class="field">
-          <%= form.label :name, "Nome" %>
-          <%= form.text_field :name, value: @account.name, maxlength: 160, class: "text-control" %>
+    <div class="settings-content">
+      <header class="settings-heading">
+        <div>
+          <p class="eyebrow">Sua conta</p>
+          <h1 id="settings-title">Configurações</h1>
+          <p class="muted"><%= @account.email %> · identidade gerenciada pelo Google</p>
         </div>
-        <% %w[course city].each do |key| %>
-          <div class="field">
-            <%= form.label key, { "course" => "Curso", "city" => "Cidade" }.fetch(key) %>
-            <%= form.text_field key, value: @account.profile[key], maxlength: 160, class: "text-control" %>
+        <%= link_to "×", root_path, class: "settings-close", aria: { label: "Fechar configurações" } %>
+      </header>
+
+      <section class="settings-section" id="credits" aria-labelledby="credits-title">
+        <h2 id="credits-title">Pacote e créditos</h2>
+        <p>Pacote atual: <strong><%= @account.plan_code.humanize %></strong></p>
+        <div class="settings-credit-grid">
+          <div class="settings-credit-card">
+            <strong><%= @account.project_credits_remaining %></strong>
+            <span>créditos de projeto</span>
           </div>
+          <div class="settings-credit-card <%= "is-low" if @account.ai_limit - @account.ai_used <= 5 %>">
+            <strong><%= [ @account.ai_limit - @account.ai_used, 0 ].max %></strong>
+            <span>avaliações formativas disponíveis</span>
+            <% if @account.ai_limit - @account.ai_used <= 5 %><p role="status">Seu saldo de avaliações formativas está baixo.</p><% end %>
+          </div>
+          <div class="settings-credit-card">
+            <strong><%= @account.deepseek_credits_remaining %></strong>
+            <span>orientações de escrita</span>
+          </div>
+        </div>
+        <h3 class="settings-packages-title">Pacotes disponíveis</h3>
+        <div class="settings-packages">
+          <% PaymentPackages::DEFINITIONS.each do |code, package| %>
+            <article class="settings-package">
+              <div class="settings-package-heading">
+                <strong><%= package[:label] %></strong>
+                <b><%= number_to_currency(package[:price_cents] / 100.0, unit: "R$ ", separator: ",", delimiter: ".") %></b>
+              </div>
+              <p><%= package[:project_credits] %> projetos · <%= package[:ai_credits] %> avaliações · <%= package[:deepseek_credits] %> orientações</p>
+              <%= link_to "Ver opção de compra", plans_path(anchor: "package-#{code}") %>
+            </article>
+          <% end %>
+        </div>
+      </section>
+
+      <section class="settings-section" id="profile" aria-labelledby="profile-title">
+        <h2 id="profile-title">Perfil acadêmico</h2>
+        <p>Essas informações podem preencher automaticamente campos dos seus roteiros.</p>
+        <%= form_with url: account_update_profile_path, method: :post do |form| %>
+          <div class="field-grid">
+            <div class="field">
+              <%= form.label :name, "Nome" %>
+              <%= form.text_field :name, value: @account.name, maxlength: 160, class: "text-control" %>
+            </div>
+            <% %w[course city].each do |key| %>
+              <div class="field">
+                <%= form.label key, { "course" => "Curso", "city" => "Cidade" }.fetch(key) %>
+                <%= form.text_field key, value: @account.profile[key], maxlength: 160, class: "text-control" %>
+              </div>
+            <% end %>
+            <div class="field">
+              <%= form.label :period, "Período que você cursa" %>
+              <%= form.select :period, options_for_select([ [ "Selecione…", "" ] ] + (1..10).map { |period| [ "#{period}º período", period.to_s ] }, @account.profile["period"]), {}, class: "text-control" %>
+            </div>
+            <div class="field">
+              <%= form.label :shift, "Turno" %>
+              <%= form.select :shift, options_for_select([ [ "Selecione…", "" ], [ "Matutino", "matutino" ], [ "Noturno", "noturno" ] ], @account.profile["shift"]), {}, class: "text-control" %>
+            </div>
+            <div class="field">
+              <%= form.label :disciplines, "Disciplinas frequentes (uma por linha)" %>
+              <%= form.text_area :disciplines, value: Array(@account.profile["disciplines"]).join("\n"), rows: 4, class: "text-control" %>
+            </div>
+            <div class="field">
+              <%= form.label :teachers, "Orientadores/professores frequentes (um por linha)" %>
+              <%= form.text_area :teachers, value: Array(@account.profile["teachers"]).join("\n"), rows: 4, class: "text-control" %>
+            </div>
+          </div>
+          <%= form.submit "Salvar perfil", class: "button button-primary" %>
         <% end %>
-        <div class="field">
-          <%= form.label :period, "Período que você cursa" %>
-          <%= form.select :period, options_for_select([["Selecione…", ""]] + (1..10).map { |period| ["#{period}º período", period.to_s] }, @account.profile["period"]), {}, class: "text-control" %>
-        </div>
-        <div class="field">
-          <%= form.label :shift, "Turno" %>
-          <%= form.select :shift, options_for_select([["Selecione…", ""], ["Matutino", "matutino"], ["Noturno", "noturno"]], @account.profile["shift"]), {}, class: "text-control" %>
-        </div>
-        <div class="field">
-          <%= form.label :disciplines, "Disciplinas frequentes (uma por linha)" %>
-          <%= form.text_area :disciplines, value: Array(@account.profile["disciplines"]).join("\n"), rows: 4, class: "text-control" %>
-        </div>
-        <div class="field">
-          <%= form.label :teachers, "Orientadores/professores frequentes (um por linha)" %>
-          <%= form.text_area :teachers, value: Array(@account.profile["teachers"]).join("\n"), rows: 4, class: "text-control" %>
-        </div>
-      </div>
-      <%= form.submit "Salvar perfil", class: "button button-primary" %>
-    <% end %>
-  </section>
+      </section>
 
-  <section class="panel" id="terms">
-    <h2>Termos de uso e privacidade</h2>
-    <% if @account.terms_accepted? %>
-      <p>Termos aceitos na versão <%= @account.terms_version %>.</p>
-    <% else %>
-      <p>Para continuar usando os recursos da conta, aceite os termos de uso e privacidade aplicáveis ao serviço.</p>
-    <% end %>
-    <%= form_with url: account_accept_terms_path, method: :post do |form| %>
-      <div class="field">
-        <label><%= check_box_tag :accept, "on", @account.terms_accepted? %> Li e aceito os <%= link_to "termos de uso", terms_path, target: "_blank", rel: "noopener" %> e a <%= link_to "política de privacidade", privacy_path, target: "_blank", rel: "noopener" %>.</label>
-      </div>
-      <div class="field">
-        <label><%= check_box_tag :ai_consent, "on", @account.ai_consent? %> Autorizo o uso da assistência de IA</label>
-        <p>Esta autorização é opcional e separada da aceitação dos termos. <%= link_to "Saiba como os serviços de IA funcionam", ai_help_path, target: "_blank", rel: "noopener" %>.</p>
-      </div>
-      <%= form.submit "Salvar consentimentos", class: "button button-primary" %>
-    <% end %>
-  </section>
+      <section class="settings-section" id="terms" aria-labelledby="terms-title">
+        <h2 id="terms-title">Termos e assistência de IA</h2>
+        <% if @account.terms_accepted? %>
+          <p>Termos aceitos na versão <%= @account.terms_version %>.</p>
+        <% else %>
+          <p>Para continuar usando os recursos da conta, aceite os termos de uso e privacidade.</p>
+        <% end %>
+        <%= form_with url: account_accept_terms_path, method: :post do |form| %>
+          <div class="field">
+            <label><%= check_box_tag :accept, "on", @account.terms_accepted? %> Li e aceito os <%= link_to "termos de uso", terms_path, target: "_blank", rel: "noopener" %> e a <%= link_to "política de privacidade", privacy_path, target: "_blank", rel: "noopener" %>.</label>
+          </div>
+          <div class="field">
+            <label><%= check_box_tag :ai_consent, "on", @account.ai_consent? %> Autorizo o uso da assistência de IA</label>
+            <p>Esta autorização é opcional e separada da aceitação dos termos. <%= link_to "Saiba como os serviços de IA funcionam", ai_help_path, target: "_blank", rel: "noopener" %>.</p>
+          </div>
+          <%= form.submit "Salvar consentimentos", class: "button button-primary" %>
+        <% end %>
+      </section>
 
-  <section class="panel" id="delete-account">
-    <h2>Excluir conta</h2>
-    <p>Todos os dados da sua conta serão excluídos permanentemente.</p>
-    <%= form_with url: account_delete_path, method: :post do |form| %>
-      <div class="field">
-        <%= form.label :confirmation, "Digite #{@account.email} para confirmar" %>
-        <%= form.email_field :confirmation, required: true, autocomplete: "off", class: "text-control" %>
-      </div>
-      <%= form.submit "Excluir minha conta e meus dados", class: "button button-danger" %>
-    <% end %>
-  </section>
+      <section class="settings-section" id="delete-account" aria-labelledby="delete-title">
+        <h2 id="delete-title">Excluir conta</h2>
+        <p>Todos os dados da sua conta serão excluídos permanentemente.</p>
+        <%= form_with url: account_delete_path, method: :post do |form| %>
+          <div class="field">
+            <%= form.label :confirmation, "Digite #{@account.email} para confirmar" %>
+            <%= form.email_field :confirmation, required: true, autocomplete: "off", class: "text-control" %>
+          </div>
+          <%= form.submit "Excluir minha conta e meus dados", class: "button button-danger" %>
+        <% end %>
+      </section>
+    </div>
+  </dialog>
 </main>

@@ -1,0 +1,82 @@
+<main class="page-shell dashboard-page">
+  <header class="page-heading">
+    <div>
+      <p class="eyebrow">Seu espaço de trabalho</p>
+      <h1>Início</h1>
+      <p>Continue seu trabalho ou comece um novo roteiro.</p>
+    </div>
+    <%= link_to "+ Novo projeto", new_project_path, class: "button button-primary" %>
+  </header>
+
+  <div class="dashboard-grid">
+    <section class="dashboard-card">
+      <p class="eyebrow">Continue de onde parou</p>
+      <% if @recent_project %>
+        <div class="dashboard-resume">
+          <div class="dashboard-resume-copy">
+            <span class="project-type"><%= project_type_label(@recent_project.project_type) %></span>
+            <h2><%= @recent_project.title %></h2>
+            <p class="dashboard-progress"><%= @recent_project.section_for["title"] %> · <%= @recent_project.progress["done"] %> de <%= @recent_project.progress["total"] %> campos obrigatórios</p>
+          </div>
+          <%= link_to "Continuar", project_path(@recent_project, stage: @recent_project.current_stage), class: "button button-primary" %>
+        </div>
+      <% else %>
+        <h2>Seu primeiro trabalho começa aqui</h2>
+        <p>Escolha um roteiro e avance no seu ritmo.</p>
+        <%= link_to "Criar projeto", new_project_path, class: "button button-primary" %>
+      <% end %>
+    </section>
+
+    <section class="dashboard-card" aria-labelledby="upcoming-title">
+      <h2 id="upcoming-title">Próximas entregas</h2>
+      <p>Datas que você cadastrou nos projetos.</p>
+      <% if @upcoming_deliveries.any? %>
+        <div class="delivery-list">
+          <% @upcoming_deliveries.each do |delivery| %>
+            <% days_left = (delivery[:date] - Date.current).to_i %>
+            <%= link_to project_path(delivery[:project], stage: delivery[:project].current_stage), class: "delivery-item" do %>
+              <span class="delivery-date"><strong><%= delivery[:date].strftime("%d/%m") %></strong></span>
+              <span class="delivery-copy"><strong><%= delivery[:project].title %></strong><span><%= project_type_label(delivery[:project].project_type) %> · <%= delivery[:label] %></span></span>
+              <span class="delivery-relative"><%= days_left.zero? ? "Hoje" : "em #{days_left} dias" %></span>
+            <% end %>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="empty-state-copy">Nenhuma entrega futura cadastrada.</p>
+      <% end %>
+    </section>
+
+    <section class="dashboard-card dashboard-wide">
+      <p class="eyebrow">Comece com o roteiro certo</p>
+      <h2>Criar um novo trabalho</h2>
+      <p>Escolha o tipo e, se quiser, informe a data da primeira entrega.</p>
+      <%= form_with url: projects_path, scope: :project, class: "quick-create-form" do |form| %>
+        <label>Tipo de trabalho
+          <%= form.select :project_type,
+            options_for_select([
+              [ "Case", "case" ],
+              [ "Projeto de Paper", "paper_project" ],
+              [ "Paper Final — após conversão", "paper_final", { disabled: true } ]
+            ], "case"),
+            {},
+            class: "text-control" %>
+        </label>
+        <label>Data de entrega
+          <%= form.date_field :delivery_date, class: "text-control" %>
+        </label>
+        <%= form.submit "Criar projeto", class: "button button-primary" %>
+        <p class="field-hint">A data será registrada no início do roteiro. O Paper Final é iniciado pela conversão de um Projeto de Paper.</p>
+      <% end %>
+    </section>
+
+    <section class="dashboard-card dashboard-wide" aria-labelledby="getting-started-title">
+      <p class="eyebrow">Primeiros passos</p>
+      <h2 id="getting-started-title">Começando os trabalhos</h2>
+      <ul class="onboarding-list">
+        <li class="<%= "is-complete" if @profile_complete %>"><span class="onboarding-check"><%= @profile_complete ? "✓" : "1" %></span><span>Complete seu perfil acadêmico</span><%= link_to "Configurar", account_settings_path(anchor: "profile") unless @profile_complete %></li>
+        <li class="<%= "is-complete" if @has_projects %>"><span class="onboarding-check"><%= @has_projects ? "✓" : "2" %></span><span>Crie seu primeiro projeto</span></li>
+        <li class="<%= "is-complete" if @has_delivery_dates %>"><span class="onboarding-check"><%= @has_delivery_dates ? "✓" : "3" %></span><span>Cadastre as datas de entrega</span></li>
+      </ul>
+    </section>
+  </div>
+</main>

@@ -34,7 +34,7 @@
   <% end %>
   <section class="package-grid" aria-label="Pacotes disponíveis">
     <% @packages.each do |code, package| %>
-      <article class="package-card"<% if current_account %> data-package-card="<%= code %>"<% end %>>
+      <article class="package-card" id="package-<%= code %>"<% if current_account %> data-package-card="<%= code %>"<% end %>>
         <p class="eyebrow"><%= package[:label] %></p>
         <h2><%= number_to_currency(package[:price_cents] / 100.0, unit: "R$ ", separator: ",", delimiter: ".") %></h2>
         <ul>

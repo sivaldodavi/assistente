@@ -68,6 +68,57 @@ document.addEventListener("click", async (event) => {
         credentials: "same-origin",
         headers: { Accept: "application/json" }
       });
+
+      document.addEventListener("click", (event) => {
+        const filterButton = event.target.closest("[data-project-filter]");
+        const viewButton = event.target.closest("[data-project-view-button]");
+        const page = document.querySelector(".projects-page[data-project-view]");
+        if (!page) return;
+
+        if (filterButton) {
+          const filter = filterButton.dataset.projectFilter;
+          page.querySelectorAll("[data-project-filter]").forEach((button) => {
+            button.setAttribute("aria-pressed", String(button === filterButton));
+          });
+          page.querySelectorAll("[data-project-card]").forEach((card) => {
+            card.hidden = filter !== "all" && card.dataset.projectKind !== filter;
+          });
+          page.querySelectorAll("[data-project-column]").forEach((column) => {
+            const visibleCards = column.querySelectorAll(".project-board-items > [data-project-card]:not([hidden])");
+            column.querySelector("[data-column-count]").textContent = String(visibleCards.length);
+            column.hidden = visibleCards.length === 0;
+          });
+          const emptyMessage = page.querySelector("[data-project-filter-empty]");
+          if (emptyMessage) {
+            emptyMessage.hidden = Boolean(page.querySelector("[data-project-card]:not([hidden])"));
+          }
+        }
+
+        if (viewButton) {
+          page.dataset.projectView = viewButton.dataset.projectViewButton;
+          page.querySelectorAll("[data-project-view-button]").forEach((button) => {
+            button.setAttribute("aria-pressed", String(button === viewButton));
+          });
+        }
+      });
+
+      document.querySelectorAll("dialog[data-settings-dialog][open]").forEach((dialog) => {
+        if (typeof dialog.showModal !== "function") return;
+        dialog.addEventListener("cancel", (event) => {
+          event.preventDefault();
+          window.location.assign(dialog.dataset.closeHref);
+        });
+        dialog.close();
+        dialog.showModal();
+      });
+
+      const projectsPage = document.querySelector(".projects-page[data-project-view]");
+      if (projectsPage && window.matchMedia("(max-width: 720px)").matches) {
+        projectsPage.dataset.projectView = "list";
+        projectsPage.querySelectorAll("[data-project-view-button]").forEach((button) => {
+          button.setAttribute("aria-pressed", String(button.dataset.projectViewButton === "list"));
+        });
+      }
       const result = await response.json();
       if (!response.ok) throw new Error(result.message || "Não foi possível consultar o pedido.");
       status.textContent = result.status === "approved" ? "Pagamento confirmado. Seus créditos foram liberados." : `Status do pagamento: ${result.status}.`;

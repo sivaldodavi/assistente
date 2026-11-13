@@ -23,10 +23,18 @@
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
   </head>
 
-  <body>
+  <% authenticated_shell = current_account.present? && !public_shell_only? %>
+  <body class="<%= "has-app-shell" if authenticated_shell %>">
     <% if flash[:notice] %><div class="flash flash-notice" role="status"><%= flash[:notice] %></div><% end %>
     <% if flash[:alert] %><div class="flash flash-alert" role="alert"><%= flash[:alert] %></div><% end %>
-    <%= yield %>
+    <% if authenticated_shell %>
+      <div class="app-shell">
+        <%= render "shared/sidebar" %>
+        <div class="app-main"><%= yield %></div>
+      </div>
+    <% else %>
+      <%= yield %>
+    <% end %>
     <%= javascript_include_tag "workflow_editor", defer: true %>
   </body>
 </html>

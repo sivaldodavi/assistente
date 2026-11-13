@@ -1,12 +1,13 @@
 require "test_helper"
 
 class PublicPagesTest < ActionDispatch::IntegrationTest
-  test "root is a public informational landing page" do
+  test "root is a focused public landing page" do
     get root_path
 
     assert_response :success
-    assert_select "h1", "Organize seu trabalho acadêmico, etapa por etapa."
-    assert_select "a[href='#{plans_path}']", text: "Conheça os pacotes"
+    assert_select "h1", "Seu trabalho, com método."
+    assert_select "a[href='#{plans_path}']", text: "Pacotes"
+    assert_select ".public-preview li", count: 3
   end
 
   test "root offers Google login when production credentials are configured" do
@@ -18,7 +19,7 @@ class PublicPagesTest < ActionDispatch::IntegrationTest
     get root_path
 
     assert_response :success
-    assert_select "form[action='/auth/google_oauth2'][method='post'] button.header-link", text: "Entrar"
+    assert_select "form[action='/auth/google_oauth2'][method='post'] button.header-link", count: 0
     assert_select "form[action='/auth/google_oauth2'][method='post'] button.button-primary", text: "Entrar com Google"
     assert_select "a[href='#{login_path}']", count: 0
     assert_select "body", text: /O acesso a contas está em preparação/, count: 0
@@ -51,9 +52,10 @@ class PublicPagesTest < ActionDispatch::IntegrationTest
     assert_select "a[href='#{login_path}']", count: 0
 
     get projects_path
+    assert_redirected_to root_path
+    follow_redirect!
     assert_response :success
-    assert_select "form[action='/auth/google_oauth2'][method='post'] button", text: "Entrar", count: 1
-    assert_select "form[action='/auth/google_oauth2'][method='post'] button", text: "Entrar para começar", count: 1
+    assert_select "form[action='/auth/google_oauth2'][method='post'] button", text: "Entrar com Google", count: 1
     assert_select "a[href='#{login_path}']", count: 0
 
     [ terms_path, privacy_path ].each do |path|

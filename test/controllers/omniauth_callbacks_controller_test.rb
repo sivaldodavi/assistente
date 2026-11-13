@@ -18,7 +18,7 @@ class OmniauthCallbacksControllerTest < ActionController::TestCase
     account = Account.find_by!(google_sub: "google-1")
     assert_equal "ana@example.test", account.email
     assert_equal "Ana", account.name
-    assert_redirected_to projects_path
+    assert_redirected_to root_path
   end
 
   test "Google OAuth test mode leaves authenticated routes closed after callback" do
@@ -76,7 +76,7 @@ class OmniauthCallbacksControllerTest < ActionController::TestCase
 
   test "Google callback consumes the nonce so it cannot be replayed" do
     get :google_oauth2, params: { state: @state }
-    assert_redirected_to projects_path
+    assert_redirected_to root_path
 
     get :google_oauth2, params: { state: @state }
     assert_redirected_to login_path

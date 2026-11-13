@@ -1,0 +1,44 @@
+<aside class="app-sidebar">
+  <%= link_to root_path, class: "sidebar-brand" do %>
+    <span class="brand-mark" aria-hidden="true">AA</span>
+    <span><strong>Assistente</strong><small>Acadêmico</small></span>
+  <% end %>
+
+  <nav class="sidebar-nav" aria-label="Navegação principal">
+    <%= link_to root_path, class: ("is-active" if current_page?(root_path)), aria: { current: ("page" if current_page?(root_path)) } do %>
+      <span aria-hidden="true">⌂</span> Início
+    <% end %>
+    <%= link_to projects_path, class: ("is-active" if current_page?(projects_path)), aria: { current: ("page" if current_page?(projects_path)) } do %>
+      <span aria-hidden="true">▤</span> Projetos
+    <% end %>
+    <%= link_to writing_guide_path, class: ("is-active" if current_page?(writing_guide_path)), aria: { current: ("page" if current_page?(writing_guide_path)) } do %>
+      <span aria-hidden="true">✦</span> Guia de escrita
+    <% end %>
+    <%= link_to library_path, class: ("is-active" if current_page?(library_path)), aria: { current: ("page" if current_page?(library_path)) } do %>
+      <span aria-hidden="true">▧</span> Biblioteca
+    <% end %>
+    <% if current_account.admin? %>
+      <%= link_to admin_dashboard_path, class: ("is-active" if current_page?(admin_dashboard_path)) do %>
+        <span aria-hidden="true">⚙</span> Administração
+      <% end %>
+    <% end %>
+  </nav>
+
+  <%= render "shared/credit_summary" %>
+
+  <div class="sidebar-bottom">
+    <%= link_to "Pacotes", plans_path, class: "sidebar-secondary-link" %>
+    <details class="profile-menu">
+      <summary>
+        <span class="profile-avatar" aria-hidden="true"><%= current_account.name.to_s.split.map(&:first).first(2).join.upcase.presence || "AA" %></span>
+        <span class="profile-name"><strong><%= current_account.name.presence || "Minha conta" %></strong><small><%= current_account.email %></small></span>
+        <span class="profile-chevron" aria-hidden="true">⌃</span>
+      </summary>
+      <div class="profile-popover">
+        <%= link_to "Minha conta", account_settings_path(anchor: "profile") %>
+        <%= link_to "Créditos e pacotes", account_settings_path(anchor: "credits") %>
+        <%= button_to "Sair", logout_path, method: :delete, class: "profile-signout" %>
+      </div>
+    </details>
+  </div>
+</aside>
