@@ -8,7 +8,8 @@
           "id": "report_delivery_date",
           "label": "Data de entrega do relatório",
           "type": "date",
-          "limit": 10
+          "limit": 10,
+          "required": true
         },
         {
           "id": "title",
@@ -309,7 +310,8 @@
           "id": "debate_delivery_date",
           "label": "Data do debate",
           "type": "date",
-          "limit": 10
+          "limit": 10,
+          "required": true
         },
         {
           "id": "debate_thesis",
@@ -418,7 +420,8 @@
           "id": "dissertation_delivery_date",
           "label": "Data de entrega da dissertação",
           "type": "date",
-          "limit": 10
+          "limit": 10,
+          "required": true
         },
         {
           "id": "dissertation",
@@ -465,6 +468,13 @@
       "title": "Identificação e delimitação",
       "intro": "Delimite o tema antes de formular o problema. Use o funil do tema e confirme interesse, viabilidade, relevância e competência.",
       "fields": [
+        {
+          "id": "paper_project_delivery_date",
+          "label": "Data de entrega do projeto de paper (1º BI)",
+          "type": "date",
+          "limit": 10,
+          "required": true
+        },
         {
           "id": "title",
           "label": "Título provisório",
@@ -846,6 +856,13 @@
       "title": "Identificação, resumo e palavras-chave",
       "intro": "Defina o título final e apresente um resumo informativo do trabalho, seguido pelas palavras-chave. Os dados de identificação vêm do Projeto de Paper e podem ser ajustados aqui.",
       "fields": [
+        {
+          "id": "paper_final_delivery_date",
+          "label": "Data de entrega do paper final (2º BI)",
+          "type": "date",
+          "limit": 10,
+          "required": true
+        },
         {
           "id": "title",
           "label": "Título definitivo",

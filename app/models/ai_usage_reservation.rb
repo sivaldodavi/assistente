@@ -1,6 +1,6 @@
 class AIUsageReservation < ApplicationRecord
   belongs_to :account
-  belongs_to :project
+  belongs_to :project, optional: true
 
   validates :request_id, presence: true, uniqueness: true
   validates :action, presence: true, length: { maximum: 120 }

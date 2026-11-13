@@ -56,9 +56,9 @@ class DocumentExport
       when "case_report"
         raw_typst(case_header(data)) + "\n" + case_report(data)
       when "paper_project"
-        raw_typst(project_identification(data)) + "\n" + paper_project(data)
+        raw_typst(project_identification(data)) + "\n" + paper_schedule_block(data["fields"], document_kind) + paper_project(data)
       else
-        raw_typst(article_header(data)) + "\n" + paper_final(data)
+        raw_typst(article_header(data)) + "\n" + paper_schedule_block(data["fields"], document_kind) + paper_final(data)
       end
       "#{front_matter}\n#{body.strip}\n"
     end
@@ -102,6 +102,8 @@ class DocumentExport
         "report_delivery_date" => fields["report_delivery_date"].to_s,
         "debate_delivery_date" => fields["debate_delivery_date"].to_s,
         "dissertation_delivery_date" => fields["dissertation_delivery_date"].to_s,
+        "paper_project_delivery_date" => fields["paper_project_delivery_date"].to_s,
+        "paper_final_delivery_date" => fields["paper_final_delivery_date"].to_s,
         "dissertation" => fields["dissertation"].to_s,
         "discipline" => fields["discipline"].to_s,
         "teacher" => fields["teacher"].to_s,
@@ -371,15 +373,29 @@ class DocumentExport
       "## Descrição dos argumentos\n\n#{titled.join("\n\n")}"
     end
 
-    def case_schedule(fields)
-      [
-        [ "Data de entrega do relatório", fields["report_delivery_date"] ],
-        [ "Data do debate", fields["debate_delivery_date"] ],
-        [ "Data de entrega da dissertação", fields["dissertation_delivery_date"] ]
-      ].filter_map do |label, value|
+    def schedule_block(pairs)
+      pairs.filter_map do |label, value|
         date = formatted_date(value)
         "#{label}: #{date}" if date.present?
       end.map { |line| markdown_text(line) }.join("\n\n")
+    end
+
+    def case_schedule(fields)
+      schedule_block([
+        [ "Data de entrega do relatório", fields["report_delivery_date"] ],
+        [ "Data do debate", fields["debate_delivery_date"] ],
+        [ "Data de entrega da dissertação", fields["dissertation_delivery_date"] ]
+      ])
+    end
+
+    def paper_schedule_block(fields, document_kind)
+      pair = if document_kind == "paper_project"
+        [ "Data de entrega do projeto de paper (1º BI)", fields["paper_project_delivery_date"] ]
+      else
+        [ "Data de entrega do paper final (2º BI)", fields["paper_final_delivery_date"] ]
+      end
+      block = schedule_block([ pair ])
+      block.empty? ? "" : block + "\n\n"
     end
 
     def case_report(project)

@@ -29,6 +29,8 @@ Rails.application.routes.draw do
   get "/termos", to: "public_pages#terms", as: :terms
   get "/privacidade", to: "public_pages#privacy", as: :privacy
   get "/ajuda-ia", to: "public_pages#ai_help", as: :ai_help
+  get "/guia-de-escrita", to: "writing_guide#show", as: :writing_guide
+  post "/guia-de-escrita/perguntas", to: "writing_guide#ask", as: :writing_guide_questions
   post "/payments", to: "payments#create", as: :payments
   get "/payments/:id", to: "payments#status", as: :payment_status
   post "/webhooks/mercadopago", to: "mercado_pago_webhooks#create", as: :mercadopago_webhook

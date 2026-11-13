@@ -3,7 +3,9 @@ class Project < ApplicationRecord
   DELIVERY_DATE_LABELS = {
     "report_delivery_date" => "Data de entrega do relatório",
     "debate_delivery_date" => "Data do debate",
-    "dissertation_delivery_date" => "Data de entrega da dissertação"
+    "dissertation_delivery_date" => "Data de entrega da dissertação",
+    "paper_project_delivery_date" => "Data de entrega do projeto de paper",
+    "paper_final_delivery_date" => "Data de entrega do paper final"
   }.freeze
 
   has_many :revisions, class_name: "ProjectRevision", dependent: :destroy, inverse_of: :project
@@ -47,6 +49,9 @@ class Project < ApplicationRecord
     warnings << "A entrega do relatório é depois da data do debate." if report && debate && report > debate
     warnings << "O debate é depois da entrega da dissertação." if debate && dissertation && debate > dissertation
     warnings << "A entrega do relatório é depois da entrega da dissertação." if report && dissertation && report > dissertation
+    paper_project = parse_iso_date(fields["paper_project_delivery_date"])
+    paper_final = parse_iso_date(fields["paper_final_delivery_date"])
+    warnings << "A entrega do paper final é antes do projeto de paper." if paper_project && paper_final && paper_final < paper_project
     warnings
   end
 

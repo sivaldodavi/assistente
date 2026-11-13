@@ -208,4 +208,16 @@ class DocumentExportTest < ActiveSupport::TestCase
     end
     assert_includes error.message, "fase Relatório"
   end
+
+  test "puts the paper delivery date at the start of the paper export" do
+    project = Project.new(project_type: "paper_project", fields: {
+      "title" => "Paper de teste",
+      "paper_project_delivery_date" => "2026-10-15"
+    })
+
+    source = DocumentExport.build_quarto_source(project)
+
+    assert_includes source, "Data de entrega do projeto de paper"
+    assert_includes source, "15/10/2026"
+  end
 end

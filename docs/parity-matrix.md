@@ -15,5 +15,10 @@
 | Grupos do debate, descrição acessível dos campos (`aria-describedby`) e vínculo das alternativas vazias à etapa 2.1 | `app/views/projects/show.html.erb`; `test/integration/projects_test.rb` |
 | Auditoria do webhook pelo status do pagamento consultado, com `error_code` apenas para divergências | `app/controllers/mercado_pago_webhooks_controller.rb`; sem teste dedicado novo, cobertura indireta por `test/integration/payments_test.rb` |
 | Renderização Quarto isolada e helpers de escape Typst/Markdown | `app/services/document_export/quarto_renderer.rb`, `app/services/document_export/text_formatting.rb`; `test/services/document_export_test.rb`, `test/integration/exports_test.rb` |
+| Datas de entrega do projeto de paper e do paper final, com cronograma no PDF, obrigatoriedade e aviso de ordem | `config/academic_workflows.json`, `app/models/project.rb`, `app/services/document_export.rb`; `test/models/academic_workflow_test.rb`, `test/models/project_test.rb`, `test/services/document_export_test.rb`, `test/integration/projects_test.rb` |
+| Chat geral de orientação sobre método, estrutura, formatação e normas, sem redigir nem avaliar o trabalho | `app/services/writing_guide.rb`, `app/controllers/writing_guide_controller.rb`, `app/views/writing_guide/show.html.erb`; `test/integration/writing_guide_test.rb` |
+| Limite de solicitações por conta nas rotas de IA, no chat e na exportação em PDF | `app/controllers/concerns/rate_limitable.rb`, `app/controllers/project_assist_controller.rb`, `app/controllers/projects_controller.rb`; `test/integration/writing_guide_test.rb` |
+| Testes do webhook (código de erro só para divergências) e dos caminhos de erro do renderer (Quarto indisponível e limite de renderizações) | `test/integration/payments_test.rb`, `test/services/document_export_renderer_test.rb` |
+| Smoke test do PDF no CI | `.github/workflows/ci.yml` (job `pdf-smoke`) |
 
 Os testes de integrações usam doubles locais para provedores externos. Para confirmar operações do Mercado Pago, use o ambiente sandbox e não crie cobranças reais de teste.

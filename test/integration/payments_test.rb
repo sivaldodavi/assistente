@@ -239,6 +239,36 @@ class PaymentsTest < ActionDispatch::IntegrationTest
     }
   end
 
+  test "webhook records an error code only for reconciliation mismatches" do
+    order = create_order
+    payment = approved_payment(order).merge("transaction_amount" => 1.0)
+    gateway = fake_gateway(payment)
+    with_stub(PaymentSecrets, :webhook_secret, "test-webhook-secret") do
+      with_stub(MercadoPagoGateway, :new, gateway) do
+        post_webhook(payment.fetch("id"))
+      end
+    end
+
+    event = PaymentWebhookEvent.last
+    assert_equal "mismatch", event.result
+    assert_equal "mismatch", event.error_code
+  end
+
+  test "pending payments are recorded without an error code" do
+    order = create_order
+    payment = approved_payment(order).merge("status" => "pending")
+    gateway = fake_gateway(payment)
+    with_stub(PaymentSecrets, :webhook_secret, "test-webhook-secret") do
+      with_stub(MercadoPagoGateway, :new, gateway) do
+        post_webhook(payment.fetch("id"))
+      end
+    end
+
+    event = PaymentWebhookEvent.last
+    assert_equal "not_approved", event.result
+    assert_nil event.error_code
+  end
+
   def post_webhook(payment_id, path: "/webhooks/mercadopago")
     request_id = SecureRandom.uuid
     timestamp = Time.current.to_i

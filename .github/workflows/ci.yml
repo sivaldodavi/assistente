@@ -122,3 +122,34 @@ jobs:
           name: screenshots
           path: ${{ github.workspace }}/tmp/screenshots
           if-no-files-found: ignore
+
+  pdf-smoke:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+
+      - name: Prepare test database
+        env:
+          RAILS_ENV: test
+        run: bin/rails db:test:prepare
+
+      - name: Render a sample Case PDF
+        env:
+          RAILS_ENV: test
+        run: |
+          bin/rails runner '
+            project = Project.new(project_type: "case", fields: { "title" => "Smoke", "decision_a" => "Alternativa A.", "decision_b" => "Alternativa B." })
+            pdf = DocumentExport.render_pdf(project)
+            raise "PDF inválido" unless pdf.start_with?("%PDF-")
+            puts "PDF gerado com #{pdf.bytesize} bytes"
+          '

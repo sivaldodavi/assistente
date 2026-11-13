@@ -1,0 +1,30 @@
+<% content_for :title, "Guia de escrita — Assistente Acadêmico" %>
+
+<header class="site-header">
+  <%= link_to "Assistente Acadêmico", projects_path, class: "brand" %>
+  <div class="header-actions">
+    <%= link_to "Meus projetos", projects_path, class: "header-link" %>
+    <%= link_to "Minha conta", account_settings_path, class: "header-link" %>
+  </div>
+</header>
+
+<main class="page-shell narrow-shell">
+  <section class="panel">
+    <p class="eyebrow">Guia de escrita</p>
+    <h1>Como elaborar case e paper</h1>
+    <p class="field-hint">Tire dúvidas sobre método, estrutura, formatação e normas ABNT, com base no Manual Acadêmico de Case e Paper e no Manual de Normatização. Este guia não escreve nem corrige o seu trabalho e não avalia notas.</p>
+
+    <%= form_with url: writing_guide_questions_path do %>
+      <%= label_tag :question, "Sua dúvida" %>
+      <%= text_area_tag :question, @question, id: "question", rows: 4, maxlength: WritingGuide::MAX_QUESTION_LENGTH, class: "text-control", required: true %>
+      <%= submit_tag "Enviar pergunta", class: "button button-primary" %>
+    <% end %>
+
+    <% if @answer %>
+      <section class="guide-answer" aria-live="polite">
+        <h2>Resposta</h2>
+        <%= simple_format(@answer) %>
+      </section>
+    <% end %>
+  </section>
+</main>

@@ -1,7 +1,14 @@
+require_relative "ai_assistance"
+require_relative "rate_limitable"
+
 class ProjectAssistController < ApplicationController
+  include AIAssistance
+  include RateLimitable
+
   before_action :authenticate_account!
   before_action :set_project
   before_action :require_ai_consent!
+  before_action :limit_ai_requests, only: %i[action jev_report jev_section]
 
   def action
     body = body_parameters
@@ -62,16 +69,14 @@ class ProjectAssistController < ApplicationController
 
   private
 
-  def set_project
-    @project = current_account.projects.find(params[:project_id])
+  def limit_ai_requests
+    return unless rate_limited?("ai", limit: 30)
+
+    render_error("rate_limited", "Muitas solicitações de IA em pouco tempo. Aguarde alguns minutos.", :too_many_requests)
   end
 
-  def require_ai_consent!
-    return if current_account.terms_accepted? && current_account.ai_consent?
-
-    code = current_account.terms_accepted? ? "ai_consent_required" : "terms_required"
-    message = current_account.terms_accepted? ? "Autorize o uso de IA nas configurações da conta." : "Aceite os termos antes de usar a assistência."
-    render_error(code, message, :forbidden)
+  def set_project
+    @project = current_account.projects.find(params[:project_id])
   end
 
   def analyze_jev(section: nil)
@@ -117,20 +122,6 @@ class ProjectAssistController < ApplicationController
     current_account.sources.where(public_id: @project.source_ids).map do |source|
       source.attributes.merge("id" => source.public_id)
     end
-  end
-
-  def deepseek_client
-    DeepSeekClient.new(
-      api_key: AIProviderSecrets.load(
-        env_name: "DEEPSEEK_API_KEY",
-        file_env_name: "DEEPSEEK_API_KEY_FILE",
-        default_file: "/run/secrets/deepseek_api_key",
-        credential_key: :deepseek_api_key
-      ),
-      api_url: ENV.fetch("DEEPSEEK_API_URL", DeepSeekClient::API_URL),
-      model: ENV.fetch("DEEPSEEK_MODEL", "deepseek-chat"),
-      timeout: ENV.fetch("DEEPSEEK_TIMEOUT", 30)
-    )
   end
 
   def jev_client

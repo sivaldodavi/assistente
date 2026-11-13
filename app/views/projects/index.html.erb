@@ -5,6 +5,7 @@
   <% if current_account %>
     <div class="header-actions">
       <%= link_to "Biblioteca Pessoal", library_path, class: "header-link" %>
+      <%= link_to "Guia de escrita", writing_guide_path, class: "header-link" %>
       <%= link_to "Pacotes", plans_path, class: "header-link" %>
       <% if current_account.admin? %><%= link_to "Administração", admin_dashboard_path, class: "header-link" %><% end %>
       <%= link_to "Minha conta", account_settings_path, class: "header-link" %>

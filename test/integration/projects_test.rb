@@ -324,4 +324,34 @@ class ProjectsTest < ActionDispatch::IntegrationTest
     assert_redirected_to project_path(project, stage: "review_report")
     assert project.reload.delivered?(project.section_for("review_report"))
   end
+
+  test "saving paper dates in the wrong order warns without blocking the save" do
+    account = create_test_account(email: "paper-dates@example.test")
+    account.update!(terms_accepted: true, ai_consent: true)
+    sign_in_as(account)
+    project = account.projects.create!(project_type: "paper_project", fields: {})
+
+    patch paper_mode_project_path(project), params: {
+      project: {
+        lock_version: project.lock_version,
+        current_stage: "review_paper",
+        fields: { paper_project_delivery_date: "2026-11-20" }
+      }
+    }
+
+    assert_response :redirect
+    project.reload
+
+    patch project_path(project, stage: "paper_final_identity"), params: {
+      project: {
+        lock_version: project.lock_version,
+        current_stage: "paper_final_identity",
+        fields: { paper_final_delivery_date: "2026-10-01" }
+      }
+    }
+
+    assert_response :redirect
+    assert_equal "A entrega do paper final é antes do projeto de paper.", flash[:alert]
+    assert_equal "2026-10-01", project.reload.fields["paper_final_delivery_date"]
+  end
 end

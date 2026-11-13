@@ -1,6 +1,11 @@
+require_relative "rate_limitable"
+
 class ProjectsController < ApplicationController
+  include RateLimitable
+
   before_action :authenticate_account!, except: :index
   before_action :set_project, only: %i[show update destroy paper_mode export]
+  before_action :limit_exports, only: :export
 
   def index
     @projects = current_account ? current_account.projects.order(updated_at: :desc) : Project.none
@@ -113,6 +118,7 @@ class ProjectsController < ApplicationController
     @project.save!
     @project.record_revision!
 
+    flash[:alert] = @project.schedule_warnings.join(" ") if @project.schedule_warnings.any?
     notice = convert_to_final ? "Projeto convertido em Paper Final." : "Alterações salvas."
     redirect_to project_path(@project, stage: @project.current_stage), notice:
   rescue ActiveRecord::StaleObjectError
@@ -140,6 +146,12 @@ class ProjectsController < ApplicationController
     @project.deliveries = @project.deliveries.merge(
       key => { "delivered" => true, "at" => Time.current.to_i }
     )
+  end
+
+  def limit_exports
+    return unless rate_limited?("export", limit: 20)
+
+    redirect_to projects_path, alert: "Muitas exportações em pouco tempo. Aguarde alguns minutos."
   end
 
   def valid_stage_id?(project_type, stage_id)

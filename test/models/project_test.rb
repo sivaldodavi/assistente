@@ -64,4 +64,14 @@ class ProjectTest < ActiveSupport::TestCase
     assert project.valid?
     assert_includes project.schedule_warnings, "A entrega do relatório é depois da data do debate."
   end
+
+  test "warns when the paper final is due before the paper project" do
+    project = Project.new(project_type: "paper_final", fields: {
+      "paper_project_delivery_date" => "2026-11-20",
+      "paper_final_delivery_date" => "2026-10-01"
+    })
+
+    assert project.valid?
+    assert_includes project.schedule_warnings, "A entrega do paper final é antes do projeto de paper."
+  end
 end

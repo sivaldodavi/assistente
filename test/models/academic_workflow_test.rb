@@ -8,7 +8,7 @@ class AcademicWorkflowTest < ActiveSupport::TestCase
     field_count = AcademicWorkflow.types.sum do |type|
       AcademicWorkflow.sections(type).sum { |section| section.fetch("fields", []).length }
     end
-    assert_equal 65, field_count
+    assert_equal 67, field_count
     fields = AcademicWorkflow.types.flat_map do |type|
       AcademicWorkflow.sections(type).flat_map { |section| section.fetch("fields", []) }
     end
@@ -59,8 +59,8 @@ class AcademicWorkflowTest < ActiveSupport::TestCase
     report = AcademicWorkflow.progress("case", {}, "report")
     dissertation = AcademicWorkflow.progress("case", {}, "dissertation")
 
-    assert_equal 10, report["total"]
-    assert_equal 1, dissertation["total"]
+    assert_equal 11, report["total"]
+    assert_equal 2, dissertation["total"]
     assert_equal 0, report["done"]
     assert_equal 100, AcademicWorkflow.progress("case", {}, "unknown")["percent"]
   end
@@ -95,6 +95,12 @@ class AcademicWorkflowTest < ActiveSupport::TestCase
     assert_empty by_id["review_report"]["fields"]
     assert_empty by_id["review_dissertation"]["fields"]
     refute_includes by_id["identification"]["intro"], "Planejar"
+  end
+
+  test "paper stages start with their delivery dates" do
+    by_project = JSON.parse(File.read(Rails.root.join("config/academic_workflows.json")))
+    assert_equal "paper_project_delivery_date", by_project["paper_project"].find { |s| s["id"] == "paper_identification" }["fields"].first["id"]
+    assert_equal "paper_final_delivery_date", by_project["paper_final"].find { |s| s["id"] == "paper_final_identity" }["fields"].first["id"]
   end
 
   test "discards author and decision fields that are not part of the current workflow" do

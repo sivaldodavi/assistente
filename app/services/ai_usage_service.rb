@@ -10,7 +10,7 @@ class AIUsageService
   end
 
   def self.reserve!(account:, project:, request_id:, action:, credit_type: "ai")
-    raise UsageError.new("project_not_found", "Projeto não encontrado.", :not_found) unless project.account_id == account.id
+    raise UsageError.new("project_not_found", "Projeto não encontrado.", :not_found) unless project.nil? || project.account_id == account.id
     fields = credit_fields(credit_type)
 
     account.with_lock do

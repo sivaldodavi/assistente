@@ -110,7 +110,7 @@ h1, h2, h3, p { margin-top: 0; }
 .field-grid-paired .field { align-items: start; background: var(--surface-raised); border: 1px solid var(--line); border-radius: 10px; column-gap: 24px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); padding: 16px; }
 .field-grid-paired .field > .field-label-row { grid-column: 1; grid-row: 1 / span 3; margin: 0; }
 .field-grid-paired .field > :not(.field-label-row) { grid-column: 2; }
-.field-grid-paired .alternative-title { font-size: 1rem; line-height: 1.5; }
+.field-grid-paired .alternative-title { font-size: 1rem; line-height: 1.5; max-height: 6.5em; overflow-y: auto; }
 .field-group-title { font-size: 1rem; grid-column: 1 / -1; margin: 8px 0 -4px; }
 .field { min-width: 0; }
 .field[data-row="docente"], .field[data-row="turma"] { grid-column: span 1; }
