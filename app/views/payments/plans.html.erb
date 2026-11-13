@@ -18,16 +18,10 @@
   </header>
 <% end %>
 
-<main class="page-shell">
-  <section class="hero">
-    <p class="eyebrow">Pacotes</p>
-    <h1>Escolha como quer começar.</h1>
-    <% if public_shell_only? %>
-      <p>Conheça as opções previstas para criar projetos e usar Análise. Compras por Pix ainda não estão disponíveis.</p>
-    <% else %>
-      <p>Pagamento único por Pix. O saldo é liberado após a confirmação.</p>
-    <% end %>
-  </section>
+<main class="page-shell package-page">
+  <header class="package-page-heading">
+    <h1>Pacotes</h1>
+  </header>
 
   <% if public_shell_only? %>
     <p class="field-hint">Login e compras estarão disponíveis depois da validação das integrações.</p>
@@ -112,5 +106,5 @@
       </div>
     </section>
   <% end %>
-  <p class="field-hint">Ao continuar, você confirma que leu os <%= link_to "termos de uso", terms_path %> e a <%= link_to "política de privacidade", privacy_path %>. Saiba também <%= link_to "como funciona a IA", ai_help_path %>.</p>
+  <p class="field-hint">Ao comprar, você confirma que leu os <%= link_to "termos de uso", terms_path %> e a <%= link_to "política de privacidade", privacy_path %>. Saiba também <%= link_to "como funciona a IA", ai_help_path %>.</p>
 </main>

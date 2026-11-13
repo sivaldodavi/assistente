@@ -178,18 +178,15 @@
       <% end %>
 
       <details class="assist-panel" id="assist-panel">
-        <summary class="assist-panel-summary" aria-controls="assist-panel-body" aria-expanded="false">
-          <span class="eyebrow">Apoio acadêmico</span>
-          <strong id="assist-panel-title">Ajuda para esta etapa</strong>
-          <span class="field-hint">Abra para conversar ou pedir uma avaliação.</span>
+        <summary class="assist-panel-summary" aria-controls="assist-panel-body">
+          <strong id="assist-panel-title">Sugestões para o roteiro</strong>
         </summary>
         <div class="assist-panel-body" id="assist-panel-body">
         <button class="assist-panel-close" type="button" data-assist-close>Fechar</button>
-        <p class="field-hint">Salve o roteiro antes de pedir ajuda. Você decide se usa cada sugestão.</p>
+        <p class="field-hint">As sugestões não alteram o roteiro automaticamente.</p>
         <label class="assist-message-label" for="ai-assist-message">O que você quer analisar?</label>
-        <textarea class="text-control" id="ai-assist-message" rows="3" maxlength="6000" data-ai-message placeholder="Descreva sua dúvida sobre esta etapa."></textarea>
+        <textarea class="text-control" id="ai-assist-message" rows="3" maxlength="6000" data-ai-message placeholder="Descreva o que deseja revisar."></textarea>
         <div class="assist-actions">
-          <button class="button button-secondary" type="button" data-ai-action="proposal_chat">Conversar sobre esta etapa</button>
           <button class="button button-secondary" type="button" data-ai-action="suggest_problem">Revisar problema</button>
           <button class="button button-secondary" type="button" data-ai-action="suggest_theses"><%= @project.project_type == "case" ? "Analisar decisões possíveis" : "Analisar hipótese e objetivos" %></button>
         </div>

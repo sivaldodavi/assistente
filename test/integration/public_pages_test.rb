@@ -42,16 +42,21 @@ class PublicPagesTest < ActionDispatch::IntegrationTest
     assert_no_provider_names
   end
 
-  test "metrics activity chart uses saved project revisions" do
+  test "metrics activity chart includes saved revisions from the full project history" do
     account = create_test_account(email: "metrics@example.test")
     sign_in_as(account)
-    account.projects.create!(project_type: "case")
+    project = account.projects.create!(project_type: "case")
+    old_revision = 9.months.ago.beginning_of_month + 1.day
+    project.revisions.sole.update_column(:created_at, old_revision)
 
     get metrics_path
 
     assert_response :success
-    assert_select ".activity-month", count: 6
+    assert_select ".activity-month", minimum: 10
     assert_select ".activity-month[data-count='1']", count: 1
+    old_month_label = "#{PublicPagesController::MONTH_LABELS[old_revision.month - 1]}/#{old_revision.year}"
+    assert_select ".activity-month[data-activity-month='#{old_month_label}'][data-count='1']", count: 1
+    assert_includes response.body, "todo o histórico"
   end
 
   test "public sign-in actions start Google OAuth directly when configured" do

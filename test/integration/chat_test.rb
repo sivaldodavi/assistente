@@ -15,6 +15,17 @@ class ChatTest < ActionDispatch::IntegrationTest
     assert_redirected_to login_path
   end
 
+  test "chat is a focused single-column workspace and offers an optional refinement step" do
+    get chat_path(mode: "guided")
+
+    assert_response :success
+    assert_select ".chat-layout aside", count: 0
+    assert_select ".chat-workspace", count: 1
+    assert_select "button[type='submit']", text: "Gerar sugestões"
+    assert_select "[data-studio-refinement] summary", text: "Refinar proposta com respostas"
+    assert_not_includes response.body, "Continuar com minhas respostas"
+  end
+
   test "chat remembers the selected project and stage but does not save the transcript" do
     project = @account.projects.create!(project_type: "case", title: "Case de contexto")
 

@@ -270,7 +270,9 @@ class ProjectsTest < ActionDispatch::IntegrationTest
     assert_select "[data-ai-panel][data-action-url='/projects/#{project.id}/ai/action']"
     assert_select ".editor-heading-actions a[href='#{chat_path(project_id: project.id, scope: "description")}']", text: "Abrir Chat"
     assert_select ".editor-heading-actions button[data-jev-assessment][data-jev-assessment-stage='case_report']", text: "Avaliar etapa"
-    assert_select "button[data-ai-action='proposal_chat']"
+    assert_select ".assist-panel-summary", text: "Sugestões para o roteiro"
+    assert_select ".assist-panel-summary .field-hint", count: 0
+    assert_select "button[data-ai-action='proposal_chat']", count: 0
     assert_select "button[data-ai-action='suggest_problem']"
     assert_select "button[data-jev-section-action]"
     assert_select "button[data-jev-assessment]", count: 1

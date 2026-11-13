@@ -19,7 +19,8 @@ class PaymentsTest < ActionDispatch::IntegrationTest
     assert_select "[data-package-card='topup_ai']"
     assert_select "[data-package-card='topup_jev']", count: 0
     assert_select "[data-package-card='topup_writing']", count: 0
-    assert_select "h1", "Escolha como quer começar."
+    assert_select "h1", "Pacotes"
+    assert_not_includes response.body, "Pagamento único por Pix."
     assert_select ".discount-badge", text: "50% de desconto", count: 3
     assert_includes response.body, "R$ 100,00"
     assert_includes response.body, "R$ 50,00"

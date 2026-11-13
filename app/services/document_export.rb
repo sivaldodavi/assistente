@@ -12,6 +12,8 @@ class DocumentExport
   }.freeze
   NON_DOCUMENT_FIELDS = %w[
     title partner assignment_prompt institution course city year discipline teacher period shift
+    report_delivery_date debate_delivery_date dissertation_delivery_date paper_project_delivery_date
+    paper_final_delivery_date
   ].freeze
   class ExportError < StandardError; end
   class QuartoUnavailable < ExportError; end
@@ -55,9 +57,9 @@ class DocumentExport
       when "case_report"
         raw_typst(case_header(data)) + "\n" + case_report(data)
       when "paper_project"
-        raw_typst(project_identification(data)) + "\n" + paper_schedule_block(data["fields"], document_kind) + paper_project(data)
+        raw_typst(project_identification(data)) + "\n" + paper_project(data)
       else
-        raw_typst(article_header(data)) + "\n" + paper_schedule_block(data["fields"], document_kind) + paper_final(data)
+        raw_typst(article_header(data)) + "\n" + paper_final(data)
       end
       "#{front_matter}\n#{body.strip}\n"
     end
@@ -99,11 +101,6 @@ class DocumentExport
         "course" => course_label(fields["course"].presence || account_profile["course"]),
         "city" => (fields["city"].presence || account_profile["city"]).to_s,
         "year" => (fields["year"].presence || Date.current.year.to_s).to_s,
-        "report_delivery_date" => fields["report_delivery_date"].to_s,
-        "debate_delivery_date" => fields["debate_delivery_date"].to_s,
-        "dissertation_delivery_date" => fields["dissertation_delivery_date"].to_s,
-        "paper_project_delivery_date" => fields["paper_project_delivery_date"].to_s,
-        "paper_final_delivery_date" => fields["paper_final_delivery_date"].to_s,
         "dissertation" => fields["dissertation"].to_s,
         "discipline" => fields["discipline"].to_s,
         "teacher" => fields["teacher"].to_s,
@@ -193,8 +190,7 @@ class DocumentExport
       details = [
         ("Disciplina: #{text(fields["discipline"])}" if text(fields["discipline"]).present?),
         ("Professor(a): #{text(fields["teacher"])}" if text(fields["teacher"]).present?),
-        ("Turma: #{text(fields["classInfo"])}" if text(fields["classInfo"]).present?),
-        ("Data de entrega: #{formatted_date(fields["report_delivery_date"])}" if formatted_date(fields["report_delivery_date"]).present?)
+        ("Turma: #{text(fields["classInfo"])}" if text(fields["classInfo"]).present?)
       ].compact
       title = text(fields["title"]).strip
       [
@@ -258,14 +254,6 @@ class DocumentExport
       period_label = period.match?(/\A\d+\z/) ? "#{period}º período" : period
       parts << period_label if period_label.present?
       parts.join(", ")
-    end
-
-    def formatted_date(value)
-      return "" if value.blank?
-
-      Date.iso8601(value).strftime("%d/%m/%Y")
-    rescue Date::Error
-      ""
     end
 
     def typst_author_pairs(project)
@@ -386,31 +374,6 @@ class DocumentExport
       "## Descrição dos argumentos\n\n#{titled.join("\n\n")}"
     end
 
-    def schedule_block(pairs)
-      pairs.filter_map do |label, value|
-        date = formatted_date(value)
-        "#{label}: #{date}" if date.present?
-      end.map { |line| markdown_text(line) }.join("\n\n")
-    end
-
-    def case_schedule(fields)
-      schedule_block([
-        [ "Data de entrega do relatório", fields["report_delivery_date"] ],
-        [ "Data do debate", fields["debate_delivery_date"] ],
-        [ "Data de entrega da dissertação", fields["dissertation_delivery_date"] ]
-      ])
-    end
-
-    def paper_schedule_block(fields, document_kind)
-      pair = if document_kind == "paper_project"
-        [ "Data de entrega do projeto de paper (1º BI)", fields["paper_project_delivery_date"] ]
-      else
-        [ "Data de entrega do paper final (2º BI)", fields["paper_final_delivery_date"] ]
-      end
-      block = schedule_block([ pair ])
-      block.empty? ? "" : block + "\n\n"
-    end
-
     def case_report(project)
       fields = project.fetch("fields")
       criteria = Array(project["criteria"]).filter_map do |item|
@@ -426,7 +389,6 @@ class DocumentExport
         sentence.strip
       end
       parts = [
-        case_schedule(fields),
         section("DESCRIÇÃO DO CASO", [ text(fields["facts"]), text(fields["problem"]) ].reject(&:empty?).join("\n\n")),
         "# IDENTIFICAÇÃO E ANÁLISE DO CASO",
         case_decisions_section(fields),

@@ -2,6 +2,18 @@
 
 Este arquivo registra mudanças relevantes por release. Releases usam tags Git anotadas em SemVer; `v0.1.0` identifica a versão-base implantada (`07dfd91`).
 
+## [0.5.1] - 2026-11-13
+
+### Corrigido
+
+- Remove datas internas de entrega dos documentos acadêmicos exportados; elas continuam disponíveis para o planejamento do roteiro.
+
+### Alterado
+
+- Mantém as métricas no histórico completo, sem filtros por período, e exibe a atividade mensal desde a primeira revisão salva.
+- Simplifica o apoio no editor e deixa o refinamento por perguntas opcional, sem a etapa obrigatória de “Continuar”.
+- Centraliza o Chat em uma coluna e reduz o cabeçalho da página de Pacotes.
+
 ## [0.5.0] - 2026-11-13
 
 ### Adicionado

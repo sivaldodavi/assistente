@@ -24,9 +24,7 @@ class PublicPagesController < ApplicationController
     completed_fields = progress.sum { |item| item["done"] }
     required_fields = progress.sum { |item| item["total"] }
     @project_completion_percent = required_fields.positive? ? (completed_fields * 100.0 / required_fields).round : 0
-    @analytics_period = params[:period].to_s.in?(%w[30 90 all]) ? params[:period].to_s : "30"
     assessments = current_account.jev_assessments.includes(:project, :project_revision)
-    assessments = assessments.where("jev_assessments.created_at >= ?", @analytics_period.to_i.days.ago) unless @analytics_period == "all"
     @recent_jev_assessments = assessments.order(created_at: :desc).limit(5)
     @jev_assessment_count = assessments.count
     @monthly_activity = monthly_revision_activity
@@ -44,8 +42,14 @@ class PublicPagesController < ApplicationController
   private
 
   def monthly_revision_activity
-    months = 5.downto(0).map { |offset| Time.current.beginning_of_month - offset.months }
-    revisions = ProjectRevision.where(project_id: @projects.map(&:id), created_at: months.first.beginning_of_month..Time.current.end_of_month)
+    revisions = ProjectRevision.where(project_id: @projects.map(&:id), created_at: ..Time.current.end_of_month)
+    first_revision = revisions.minimum(:created_at)
+    return [] unless first_revision
+
+    first_month = first_revision.beginning_of_month
+    current_month = Time.current.beginning_of_month
+    month_count = (current_month.year - first_month.year) * 12 + current_month.month - first_month.month + 1
+    months = month_count.times.map { |offset| first_month + offset.months }
     counts = revisions.pluck(:created_at).group_by { |created_at| created_at.beginning_of_month.to_date }.transform_values(&:length)
     months.map do |month|
       { label: "#{MONTH_LABELS[month.month - 1]}/#{month.year}", count: counts.fetch(month.to_date, 0) }

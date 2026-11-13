@@ -18,6 +18,7 @@ class ProjectStudioTest < ActionDispatch::IntegrationTest
     assert_select "[data-guided-only]:not([hidden])", count: 2
     assert_select "[data-studio-source-field][hidden]"
     assert_select "[data-studio-source][maxlength='24000']"
+    assert_select "button[type='submit']", text: "Gerar sugestões"
     assert_select "a[href='https://www.instagram.com/sivaldo.davi/']", text: "Suporte"
   end
 

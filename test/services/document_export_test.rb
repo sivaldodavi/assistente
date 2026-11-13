@@ -94,7 +94,7 @@ class DocumentExportTest < ActiveSupport::TestCase
     assert_includes source, "Disciplina: Direito Civil"
     assert_includes source, "Professor(a): Professora Exemplo"
     assert_includes source, "Turma: Noturno, 3º período"
-    assert_includes source, "Data de entrega: 30/11/2026"
+    assert_not_includes source, "30/11/2026"
     assert_includes source, "da Instituição Exemplo"
     assert_includes source, "Discente do 3º período do Curso de Direito - Instituição Exemplo."
   end
@@ -168,7 +168,7 @@ class DocumentExportTest < ActiveSupport::TestCase
     assert_equal 1, html.scan("Alternativa a de teste.").length
   end
 
-  test "puts the case schedule at the start of the Case report" do
+  test "keeps internal Case delivery dates out of the exported report" do
     project = Project.new(
       project_type: "case",
       fields: {
@@ -182,11 +182,16 @@ class DocumentExportTest < ActiveSupport::TestCase
     )
 
     source = DocumentExport.build_quarto_source(project)
+    html = DocumentExport.build_project_html(project)
 
-    assert_includes source, "Data de entrega do relatório: 23/09/2026"
-    assert_includes source, "Data do debate: 14/10/2026"
-    assert_includes source, "Data de entrega da dissertação: 30/11/2026"
-    assert_operator source.index("Data do debate"), :<, source.index("DESCRIÇÃO DO CASO")
+    [ source, html ].each do |document|
+      assert_not_includes document, "Data de entrega do relatório"
+      assert_not_includes document, "Data do debate"
+      assert_not_includes document, "Data de entrega da dissertação"
+      assert_not_includes document, "23/09/2026"
+      assert_not_includes document, "14/10/2026"
+      assert_not_includes document, "30/11/2026"
+    end
   end
 
   test "does not export removed decision aliases" do
@@ -207,15 +212,20 @@ class DocumentExportTest < ActiveSupport::TestCase
     assert_includes error.message, "fase Relatório"
   end
 
-  test "puts the paper delivery date at the start of the paper export" do
-    project = Project.new(project_type: "paper_project", fields: {
-      "title" => "Paper de teste",
-      "paper_project_delivery_date" => "2026-10-15"
-    })
+  test "keeps internal Paper delivery dates out of both document exports" do
+    {
+      "paper_project" => [ "paper_project_delivery_date", "Data de entrega do projeto de paper", "2026-10-15", "15/10/2026" ],
+      "paper_final" => [ "paper_final_delivery_date", "Data de entrega do paper final", "2026-11-20", "20/11/2026" ]
+    }.each do |project_type, (date_field, label, iso_date, formatted_date)|
+      project = Project.new(project_type:, fields: { "title" => "Paper de teste", date_field => iso_date })
+      source = DocumentExport.build_quarto_source(project)
+      html = DocumentExport.build_project_html(project)
 
-    source = DocumentExport.build_quarto_source(project)
-
-    assert_includes source, "Data de entrega do projeto de paper"
-    assert_includes source, "15/10/2026"
+      [ source, html ].each do |document|
+        assert_not_includes document, label
+        assert_not_includes document, iso_date
+        assert_not_includes document, formatted_date
+      end
+    end
   end
 end

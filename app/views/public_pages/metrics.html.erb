@@ -5,11 +5,6 @@
       <h1>Métricas</h1>
       <p>Acompanhe o andamento dos projetos e suas avaliações.</p>
     </div>
-    <%= form_with url: metrics_path, method: :get, class: "period-filter" do |form| %>
-      <%= form.label :period, "Período" %>
-      <%= form.select :period, options_for_select([["30 dias", "30"], ["90 dias", "90"], ["Todo o histórico", "all"]], @analytics_period), {}, class: "text-control" %>
-      <%= form.submit "Aplicar", class: "button button-secondary" %>
-    <% end %>
   </header>
 
   <div class="dashboard-grid">
@@ -18,7 +13,7 @@
       <div class="dashboard-metrics">
         <div><strong><%= @active_project_count %></strong><span>projetos em andamento</span></div>
         <div><strong><%= @project_completion_percent %>%</strong><span>campos obrigatórios preenchidos</span></div>
-        <div><strong><%= @jev_assessment_count %></strong><span>avaliações no período</span></div>
+        <div><strong><%= @jev_assessment_count %></strong><span>avaliações realizadas</span></div>
       </div>
       <% if @recent_jev_assessments.any? %>
         <h3>Avaliações recentes</h3>
@@ -31,18 +26,18 @@
           <% end %>
         </ul>
       <% else %>
-        <p class="empty-state-copy">Ainda não há avaliações neste período.</p>
+        <p class="empty-state-copy">Ainda não há avaliações.</p>
       <% end %>
       <p class="field-hint">As avaliações são formativas; resultados de etapas diferentes não são somados nem comparados.</p>
     </section>
     <section class="dashboard-card dashboard-wide" aria-labelledby="activity-title">
       <div class="dashboard-card-heading">
         <h2 id="activity-title">Atividade por mês</h2>
-        <span class="muted">Edições salvas · últimos 6 meses</span>
+        <span class="muted">Edições salvas · todo o histórico</span>
       </div>
       <% if @monthly_activity.any? { |month| month[:count].positive? } %>
         <% max_activity = [@monthly_activity.map { |month| month[:count] }.max, 1].max %>
-        <div class="activity-chart" role="img" aria-label="Quantidade de edições salvas por mês nos últimos seis meses">
+        <div class="activity-chart" role="img" aria-label="Quantidade de edições salvas por mês em todo o histórico">
           <% @monthly_activity.each do |month| %>
             <div class="activity-month" data-activity-month="<%= month[:label] %>" data-count="<%= month[:count] %>">
               <span class="activity-count"><%= month[:count] %></span>
@@ -52,7 +47,7 @@
           <% end %>
         </div>
       <% else %>
-        <p class="empty-state-copy">Ainda não há edições salvas neste período.</p>
+        <p class="empty-state-copy">Ainda não há edições salvas.</p>
       <% end %>
     </section>
   </div>

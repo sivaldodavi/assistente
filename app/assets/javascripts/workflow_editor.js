@@ -634,8 +634,10 @@ function renderStudioThread(root, messages) {
 function renderStudioQuestions(root, questions) {
   const section = root.querySelector("[data-studio-questions-section]");
   const container = root.querySelector("[data-studio-questions]");
+  const refinement = root.querySelector("[data-studio-refinement]");
   container.replaceChildren();
   section.hidden = !questions.length;
+  refinement.open = questions.length > 0 && root._studioSuggestions.size === 0;
   questions.forEach((question) => {
     const item = document.createElement("div");
     item.className = "field studio-question";
