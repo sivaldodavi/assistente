@@ -2,6 +2,12 @@
 
 Este arquivo registra mudanças relevantes por release. Releases usam tags Git anotadas em SemVer; `v0.1.0` identifica a versão-base implantada (`07dfd91`).
 
+## [0.5.2] - 2026-11-13
+
+### Adicionado
+
+- Cria favicon e ícone de tela inicial com a marca do livro e configura prévias Open Graph/Twitter com imagem 1200×630.
+
 ## [0.5.1] - 2026-11-13
 
 ### Corrigido

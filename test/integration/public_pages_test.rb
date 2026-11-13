@@ -10,6 +10,16 @@ class PublicPagesTest < ActionDispatch::IntegrationTest
     assert_select "a[href='#{ai_help_path}']", text: "Como funciona a IA"
     assert_select "a[href='#{plans_path}']", text: "Pacotes"
     assert_select ".public-preview li", count: 3
+    assert_select "link[rel='icon'][href='/icon.svg']"
+    assert_select "meta[property='og:title'][content='Assistente Acadêmico']"
+    assert_select "meta[property='og:image'][content*='social-preview.png']"
+    assert_select "meta[property='og:image:type'][content='image/png']"
+    assert_select "meta[property='og:image:width'][content='1200']"
+    assert_select "meta[property='og:image:height'][content='630']"
+    assert_select "meta[name='twitter:card'][content='summary_large_image']"
+    assert File.exist?(Rails.root.join("public/icon.png"))
+    assert File.exist?(Rails.root.join("public/apple-touch-icon.png"))
+    assert File.exist?(Rails.root.join("public/social-preview.png"))
   end
 
   test "root offers Google login when production credentials are configured" do

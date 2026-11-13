@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title description">
+  <title id="title">Assistente Acadêmico — Seu trabalho, com método.</title>
+  <desc id="description">Roteiros por etapa para Cases e Papers jurídicos, com exportação em PDF e ABNT.</desc>
+  <rect width="1200" height="630" fill="#eef3f6"/>
+  <circle cx="1080" cy="54" r="210" fill="#d9eaf2" opacity=".55"/>
+  <circle cx="56" cy="604" r="170" fill="#e1efec" opacity=".75"/>
+  <rect x="54" y="46" width="1092" height="538" rx="36" fill="#fff" stroke="#d7e2e8" stroke-width="2"/>
+  <g transform="translate(112 163) scale(.56)">
+    <rect width="512" height="512" rx="112" fill="#102a43"/>
+    <path d="M78 164c52-20 112-14 165 17v179c-51-29-111-35-165-16V164Z" fill="#f7fafc"/>
+    <path d="M434 164c-52-20-112-14-165 17v179c51-29 111-35 165-16V164Z" fill="#d9eaf2"/>
+    <path d="M256 181v179" fill="none" stroke="#27b3a5" stroke-linecap="round" stroke-width="14"/>
+    <path d="m368 68 20 40 44 6-32 31 8 44-40-21-40 21 8-44-32-31 44-6 20-40Z" fill="#f2b84b"/>
+  </g>
+  <text x="458" y="176" fill="#287d83" font-family="Arial, sans-serif" font-size="22" font-weight="700" letter-spacing="3">ASSISTENTE ACADÊMICO</text>
+  <text x="454" y="270" fill="#102a43" font-family="Arial, sans-serif" font-size="62" font-weight="700">Seu trabalho,</text>
+  <text x="454" y="344" fill="#102a43" font-family="Arial, sans-serif" font-size="62" font-weight="700">com método.</text>
+  <text x="458" y="410" fill="#526779" font-family="Arial, sans-serif" font-size="26">Roteiros por etapa para Cases e Papers jurídicos.</text>
+  <text x="458" y="451" fill="#526779" font-family="Arial, sans-serif" font-size="26">Acompanhe o trabalho e exporte em PDF com ABNT.</text>
+  <rect x="458" y="492" width="376" height="44" rx="22" fill="#e1f3f0"/>
+  <text x="480" y="521" fill="#176c68" font-family="Arial, sans-serif" font-size="18" font-weight="700">CASES  ·  PAPERS  ·  ROTEIROS  ·  PDF</text>
+</svg>

@@ -1,9 +1,30 @@
+<% page_title = content_for(:title).presence || "Assistente Acadêmico" %>
+<% page_description = content_for(:description).presence || "Planeje e desenvolva Cases e Papers jurídicos com roteiros por etapa e exportação em PDF no padrão ABNT." %>
+<% social_image_url = "#{request.base_url}/social-preview.png" %>
 <!DOCTYPE html>
 <html lang="pt-BR">
   <head>
-    <title><%= content_for(:title) || "Assistente Acadêmico" %></title>
+    <title><%= page_title %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="description" content="Roteiros guiados para desenvolver trabalhos acadêmicos.">
+    <meta name="theme-color" content="#102a43">
+    <meta name="description" content="<%= page_description %>">
+    <link rel="canonical" href="<%= "#{request.base_url}#{request.path}" %>">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="pt_BR">
+    <meta property="og:site_name" content="Assistente Acadêmico">
+    <meta property="og:title" content="<%= page_title %>">
+    <meta property="og:description" content="<%= page_description %>">
+    <meta property="og:url" content="<%= "#{request.base_url}#{request.path}" %>">
+    <meta property="og:image" content="<%= social_image_url %>">
+    <meta property="og:image:secure_url" content="<%= social_image_url %>">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Assistente Acadêmico — Seu trabalho, com método.">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<%= page_title %>">
+    <meta name="twitter:description" content="<%= page_description %>">
+    <meta name="twitter:image" content="<%= social_image_url %>">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="application-name" content="Assistente Academico">
     <meta name="mobile-web-app-capable" content="yes">
@@ -15,9 +36,9 @@
     <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
     <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
 
-    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.png" type="image/png" sizes="512x512">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
