@@ -24,6 +24,24 @@
     </div>
   </div>
 
+  <section class="export-panel export-panel-top" aria-label="Prévia e exportação">
+    <div class="export-controls">
+      <% if @project.project_type == "case" %>
+        <label class="preview-picker">Prévia
+          <%= select_tag "preview_phase", options_for_select([
+            ["Relatório", export_project_path(@project, format: :html, phase: :report)],
+            ["Debate", export_project_path(@project, format: :html, phase: :debate)],
+            ["Dissertação", export_project_path(@project, format: :html, phase: :dissertation)]
+          ]), class: "text-control", data: { preview_select: true } %>
+        </label>
+      <% else %>
+        <span class="preview-document"><%= @project.project_type == "paper_final" ? "Paper Final" : "Projeto de Paper" %></span>
+      <% end %>
+      <%= link_to "Prévia", export_project_path(@project, format: :html, phase: (@project.project_type == "case" ? :report : nil)), target: "_blank", rel: "noopener", class: "button button-secondary", data: { preview_link: true } %>
+      <%= link_to "PDF", export_project_path(@project, format: :pdf, phase: (@project.project_type == "case" ? :report : nil)), class: "button button-primary" %>
+    </div>
+  </section>
+
   <div class="phase-label"><%= @stage["phase"].humanize %> · Etapa <%= @stage_index + 1 %> de <%= @stages.length %></div>
 
   <%= form_with model: @project, url: project_path(@project), method: :patch, id: "project-editor", class: "editor-form" do %>
@@ -32,17 +50,21 @@
 
     <div class="editor-layout">
       <aside class="editor-stage-sidebar" aria-label="Navegação do roteiro">
-        <p class="eyebrow">Etapas do roteiro</p>
-        <nav class="editor-stage-list" aria-label="Etapas do roteiro">
-          <% @stages.each_with_index do |stage, index| %>
-            <%= button_tag "#{format('%02d', index + 1)} · #{stage['title']}",
-              type: "submit",
-              name: "go_to_stage",
-              value: stage["id"],
-              class: ["step-nav-item", ("is-current" if stage["id"] == @stage["id"])].compact.join(" "),
-              aria: { current: stage["id"] == @stage["id"] ? "step" : nil } %>
+        <% @stages.each_with_index.group_by { |stage, _index| stage["phase"] }.each do |phase, phase_stages| %>
+          <section class="editor-phase-group" aria-label="<%= phase.humanize %>">
+            <p class="editor-phase-title"><%= phase.humanize %></p>
+            <nav class="editor-stage-list" aria-label="Etapas de <%= phase.humanize %>">
+              <% phase_stages.each do |stage, index| %>
+                <%= button_tag "#{format('%02d', index + 1)} · #{stage['title']}",
+                  type: "submit",
+                  name: "go_to_stage",
+                  value: stage["id"],
+                  class: ["step-nav-item", ("is-current" if stage["id"] == @stage["id"])].compact.join(" "),
+                  aria: { current: stage["id"] == @stage["id"] ? "step" : nil } %>
+              <% end %>
+            </nav>
+          </section>
           <% end %>
-        </nav>
       </aside>
       <div class="editor-stage-content">
       <section class="stage-card" aria-labelledby="stage-title">
@@ -164,10 +186,14 @@
         </fieldset>
       <% end %>
 
-      <section class="assist-panel" data-ai-panel data-project-revision="<%= @project.lock_version %>" data-action-url="<%= "/projects/#{@project.id}/ai/action" %>" data-jev-report-url="<%= "/projects/#{@project.id}/ai/jev-report" %>" data-jev-section-url="<%= "/projects/#{@project.id}/ai/jev-section" %>" data-jev-assessment-url="<%= "/projects/#{@project.id}/ai/jev-assessment" %>">
-        <p class="eyebrow">Apoio acadêmico</p>
-        <h3>Assistência com IA</h3>
-        <p class="field-hint">A IA usa as respostas salvas. Salve o roteiro antes de analisar. As sugestões só entram no campo quando você escolher usá-las.</p>
+      <details class="assist-panel" data-ai-panel data-project-revision="<%= @project.lock_version %>" data-action-url="<%= "/projects/#{@project.id}/ai/action" %>" data-jev-report-url="<%= "/projects/#{@project.id}/ai/jev-report" %>" data-jev-section-url="<%= "/projects/#{@project.id}/ai/jev-section" %>" data-jev-assessment-url="<%= "/projects/#{@project.id}/ai/jev-assessment" %>">
+        <summary class="assist-panel-summary">
+          <span class="eyebrow">Apoio acadêmico</span>
+          <strong>Ajuda para esta etapa</strong>
+          <span class="field-hint">Abra para conversar ou pedir uma avaliação.</span>
+        </summary>
+        <div class="assist-panel-body">
+        <p class="field-hint">Salve o roteiro antes de pedir ajuda. Você decide se usa cada sugestão.</p>
         <label class="assist-message-label" for="ai-assist-message">O que você quer analisar?</label>
         <textarea class="text-control" id="ai-assist-message" rows="3" maxlength="6000" data-ai-message placeholder="Descreva sua dúvida sobre esta etapa."></textarea>
         <div class="assist-actions">
@@ -229,7 +255,8 @@
             </details>
           <% end %>
         </div>
-      </section>
+        </div>
+      </details>
 
       <div class="editor-actions">
         <% if @previous_stage %>
@@ -245,25 +272,6 @@
       </div>
     </section>
   <% end %>
-
-  <section class="export-panel" aria-labelledby="export-title">
-    <div>
-      <p class="eyebrow">Documento acadêmico</p>
-      <h2 id="export-title">Prévia e exportação</h2>
-      <p class="field-hint">A exportação usa as respostas salvas. Salve as alterações antes de gerar o documento.</p>
-    </div>
-    <div class="export-links">
-      <% if @project.project_type == "case" %>
-        <%= link_to "Prévia do relatório", export_project_path(@project, format: :html, phase: :report), target: "_blank", rel: "noopener", class: "button button-secondary" %>
-        <%= link_to "Prévia do debate", export_project_path(@project, format: :html, phase: :debate), target: "_blank", rel: "noopener", class: "button button-secondary" %>
-        <%= link_to "Prévia da dissertação", export_project_path(@project, format: :html, phase: :dissertation), target: "_blank", rel: "noopener", class: "button button-secondary" %>
-        <%= link_to "Baixar PDF do relatório", export_project_path(@project, format: :pdf, phase: :report), class: "button button-primary" %>
-      <% else %>
-        <%= link_to "Prévia HTML", export_project_path(@project, format: :html), target: "_blank", rel: "noopener", class: "button button-secondary" %>
-        <%= link_to "Baixar PDF", export_project_path(@project, format: :pdf), class: "button button-primary" %>
-      <% end %>
-    </div>
-  </section>
 
   <div class="danger-zone">
     <%= button_to "Excluir este projeto", project_path(@project), method: :delete, form: { data: { turbo_confirm: "Excluir este projeto e suas revisões?" } }, class: "text-button danger-text" %>

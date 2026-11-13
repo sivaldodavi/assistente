@@ -26,25 +26,35 @@ class PaymentPackages
       ai_credits: 20,
       deepseek_credits: 10
     },
-    "topup_jev" => {
-      label: "Recarga de JEV",
-      description: "20 avaliações formativas adicionais",
-      price_cents: 990,
-      project_credits: 0,
-      ai_credits: 20,
-      deepseek_credits: 0,
-      kind: :topup
-    },
-    "topup_writing" => {
-      label: "Recarga de IA",
-      description: "20 orientações de escrita adicionais",
+    "topup_ai" => {
+      label: "Créditos de IA",
+      description: "20 créditos de IA adicionais",
       price_cents: 990,
       project_credits: 0,
       ai_credits: 0,
       deepseek_credits: 20,
       kind: :topup
+    },
+    "topup_jev" => {
+      label: "Recarga de avaliação",
+      description: "Recarga antiga de avaliação formativa",
+      price_cents: 990,
+      project_credits: 0,
+      ai_credits: 20,
+      deepseek_credits: 0,
+      kind: :legacy_topup
+    },
+    "topup_writing" => {
+      label: "Créditos de IA",
+      description: "20 créditos de IA adicionais",
+      price_cents: 990,
+      project_credits: 0,
+      ai_credits: 0,
+      deepseek_credits: 20,
+      kind: :legacy_topup
     }
   }.freeze
+  PUBLIC_DEFINITIONS = DEFINITIONS.except("topup_jev", "topup_writing").freeze
 
   def self.find(package_code)
     DEFINITIONS[package_code.to_s]
@@ -58,5 +68,9 @@ class PaymentPackages
     regular_price = definition.fetch(:regular_price_cents)
     price = definition.fetch(:price_cents)
     ((regular_price - price) * 100.0 / regular_price).round
+  end
+
+  def self.ai_credits(definition)
+    definition.fetch(:ai_credits) + definition.fetch(:deepseek_credits)
   end
 end

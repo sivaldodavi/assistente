@@ -11,6 +11,9 @@
     <%= link_to projects_path, class: ("is-active" if current_page?(projects_path)), aria: { current: ("page" if current_page?(projects_path)) } do %>
       <span aria-hidden="true">▤</span> Projetos
     <% end %>
+    <%= link_to metrics_path, class: ("is-active" if current_page?(metrics_path)), aria: { current: ("page" if current_page?(metrics_path)) } do %>
+      <span aria-hidden="true">▥</span> Métricas
+    <% end %>
     <%= link_to writing_guide_path, class: ("is-active" if current_page?(writing_guide_path)), aria: { current: ("page" if current_page?(writing_guide_path)) } do %>
       <span aria-hidden="true">✦</span> Guia de escrita
     <% end %>
@@ -28,6 +31,7 @@
 
   <div class="sidebar-bottom">
     <%= link_to "Pacotes", plans_path, class: "sidebar-secondary-link" %>
+    <%= link_to "Suporte", "https://www.instagram.com/sivaldo.davi/", class: "sidebar-secondary-link", target: "_blank", rel: "noopener noreferrer" %>
     <details class="profile-menu">
       <summary>
         <span class="profile-avatar" aria-hidden="true"><%= current_account.name.to_s.split.map(&:first).first(2).join.upcase.presence || "AA" %></span>

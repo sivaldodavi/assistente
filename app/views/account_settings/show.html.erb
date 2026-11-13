@@ -30,32 +30,18 @@
             <strong><%= @account.project_credits_remaining %></strong>
             <span>créditos de projeto</span>
           </div>
-          <div class="settings-credit-card <%= "is-low" if @account.ai_limit - @account.ai_used <= 5 %>">
-            <strong><%= [ @account.ai_limit - @account.ai_used, 0 ].max %></strong>
-            <span>avaliações formativas disponíveis</span>
-            <% if @account.ai_limit - @account.ai_used <= 5 %><p role="status">Seu saldo de avaliações formativas está baixo.</p><% end %>
+          <div class="settings-credit-card <%= "is-low" if @account.deepseek_credits_remaining <= 5 %>">
+            <strong><%= @account.deepseek_credits_remaining %></strong>
+            <span>créditos de IA</span>
+            <% if @account.deepseek_credits_remaining <= 5 %><p role="status">Seu saldo de IA está baixo.</p><% end %>
           </div>
           <div class="settings-credit-card">
-            <strong><%= @account.deepseek_credits_remaining %></strong>
-            <span>orientações de escrita</span>
+            <strong>Sem cobrança por crédito</strong>
+            <span>avaliações formativas</span>
           </div>
         </div>
-        <h3 class="settings-packages-title">Pacotes disponíveis</h3>
-        <div class="settings-packages">
-          <% PaymentPackages::DEFINITIONS.each do |code, package| %>
-            <article class="settings-package">
-              <div class="settings-package-heading">
-                <strong><%= package[:label] %></strong>
-                <b><%= number_to_currency(package[:price_cents] / 100.0, unit: "R$ ", separator: ",", delimiter: ".") %></b>
-              </div>
-              <% if package[:regular_price_cents].present? %>
-                <p><del><%= number_to_currency(package[:regular_price_cents] / 100.0, unit: "R$ ", separator: ",", delimiter: ".") %></del> · <%= PaymentPackages.discount_percent(package) %>% de desconto</p>
-              <% end %>
-              <p><%= package[:description] || "#{package[:project_credits]} projetos · #{package[:ai_credits]} avaliações · #{package[:deepseek_credits]} orientações" %></p>
-              <%= link_to "Ver opção de compra", plans_path(anchor: "package-#{code}") %>
-            </article>
-          <% end %>
-        </div>
+        <p>A orientação com IA usa créditos. As avaliações formativas não descontam esse saldo e continuam protegidas contra excesso de solicitações.</p>
+        <%= link_to "Ver Pacotes", plans_path, class: "button button-secondary" %>
       </section>
 
       <section class="settings-section" id="profile" aria-labelledby="profile-title">

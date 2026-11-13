@@ -38,21 +38,17 @@ class AccountSettingsTest < ActionDispatch::IntegrationTest
   end
 
   test "profile offers all supported periods and both shifts without duplicate single-value fields" do
-    @account.update!(ai_limit: 5, ai_used: 0)
+    @account.update!(deepseek_limit: 5, deepseek_used: 0)
     get account_settings_path
 
     assert_response :success
     assert_select "dialog[data-settings-dialog][open]"
     assert_select ".settings-nav a", count: 4
     assert_select "a[href='#preferences']", count: 0
-    assert_select ".settings-package", count: 5
-    assert_includes response.body, "R$ 12,00"
-    assert_includes response.body, "R$ 50,00"
-    assert_includes response.body, "R$ 69,90"
     assert_includes response.body, "avaliações formativas"
-    assert_includes response.body, "orientações de escrita"
+    assert_includes response.body, "créditos de IA"
+    assert_includes response.body, "Sem cobrança por crédito"
     assert_select ".settings-credit-card.is-low", text: /5/
-    assert_select ".credit-item.credit-warning", text: /Avaliação \(JEV\)/
     assert_not_includes response.body, "DeepSeek"
     assert_select "select[name='period'] option", count: 11
     assert_select "select[name='shift'] option", count: 3

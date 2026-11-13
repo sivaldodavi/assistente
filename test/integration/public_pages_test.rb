@@ -32,9 +32,9 @@ class PublicPagesTest < ActionDispatch::IntegrationTest
     get pricing_path
 
     assert_response :success
-    assert_select ".package-card", 5
+    assert_select ".package-card", 4
     assert_select "[data-buy-package]", 0
-    assert_select "a[href='#{login_path}']", text: "Entrar para comprar", count: 5
+    assert_select "a[href='#{login_path}']", text: "Entrar para comprar", count: 4
     assert_select "a[href='#{terms_path}']"
     assert_select "a[href='#{privacy_path}']"
     assert_no_provider_names
@@ -48,7 +48,7 @@ class PublicPagesTest < ActionDispatch::IntegrationTest
 
     get pricing_path
     assert_response :success
-    assert_select "form[action='/auth/google_oauth2'][method='post'] button", text: "Entrar para comprar", count: 5
+    assert_select "form[action='/auth/google_oauth2'][method='post'] button", text: "Entrar para comprar", count: 4
     assert_select "a[href='#{login_path}']", count: 0
 
     get projects_path
@@ -89,14 +89,11 @@ class PublicPagesTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "h1", "Como usar o Assistente Acadêmico"
     assert_select "h2", "Primeiros passos"
-    assert_select "h2", "Roteiros e exportação"
-    assert_select "body", text: /do 1º ao 10º/
-    assert_select "body", text: /modelo acadêmico ABNT/
-    assert_select "body", text: /somente as datas de entrega do relatório, do debate e da dissertação/
-    assert_select "body", text: /ano da capa vem preenchido com o ano atual/
-    assert_select "h2", "Como a assistência de IA funciona"
-    assert_select "body", text: /DeepSeek/
-    assert_select "body", text: /TypeSafe/
+    assert_select "h2", "Roteiros e documentos"
+    assert_select "h2", "Ajuda com IA"
+    assert_select "body", text: /Cada pedido de orientação usa um crédito de IA/
+    assert_select "body", text: /não consomem créditos/
+    assert_no_provider_names
   end
 
   test "production gate allows only the public informational pages while authentication is disabled" do

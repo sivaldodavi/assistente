@@ -437,6 +437,26 @@ document.addEventListener("click", async (event) => {
   await requestStudioSuggestions(root, form, true);
 });
 
+document.addEventListener("click", (event) => {
+  const guideSuggestion = event.target.closest("[data-guide-prompt]");
+  const studioSuggestion = event.target.closest("[data-studio-prompt-suggestion]");
+  const suggestion = guideSuggestion || studioSuggestion;
+  if (suggestion) {
+    const root = suggestion.closest("main");
+    const input = root.querySelector(guideSuggestion ? "#question" : "[data-studio-prompt]");
+    input.value = suggestion.dataset.guidePrompt || suggestion.dataset.studioPromptSuggestion;
+    input.focus();
+  }
+});
+
+document.addEventListener("change", (event) => {
+  const select = event.target.closest("[data-preview-select]");
+  if (!select) return;
+
+  const link = select.closest(".export-controls").querySelector("[data-preview-link]");
+  link.href = select.value;
+});
+
 document.addEventListener("submit", (event) => {
   const form = event.target.closest("[data-studio-create-form]");
   if (!form) return;

@@ -6,13 +6,11 @@ class WritingGuideController < ApplicationController
   include RateLimitable
 
   before_action :authenticate_account!
+  before_action :initialize_guide
   before_action :require_ai_consent!
   before_action :limit_questions, only: :ask
 
-  def show
-    @question = nil
-    @answer = nil
-  end
+  def show; end
 
   def ask
     question = params[:question].to_s.strip
@@ -26,11 +24,11 @@ class WritingGuideController < ApplicationController
     completed = false
     AIUsageService.reserve!(account: current_account, project: nil, request_id:, action: "writing_guide", credit_type: "deepseek")
     reserved = true
-    response = deepseek_client.complete_json(WritingGuide.messages(question))
+    response = ai_provider_router.complete_json(WritingGuide.messages(question))
     AIUsageService.record_provider_usage!(
       account: current_account,
       request_id:,
-      provider: "deepseek",
+      provider: response["provider"],
       operation: "writing_guide",
       model: response["model"],
       usage: response["usage"]
@@ -39,6 +37,7 @@ class WritingGuideController < ApplicationController
     completed = true
     @question = question
     @answer = WritingGuide.answer_from(response["result"])
+    @suggested_questions = []
     render :show
   rescue AIUsageService::UsageError, AIProviderError => error
     render_guide_error(error.message, status: error.status)
@@ -47,6 +46,17 @@ class WritingGuideController < ApplicationController
   end
 
   private
+
+  def initialize_guide
+    @question = nil
+    @answer = nil
+    @suggested_questions = [
+      "Como posso delimitar melhor meu tema?",
+      "Que elementos devem entrar na pergunta de pesquisa?",
+      "Como organizar argumentos e fontes?",
+      "O que revisar antes de entregar?"
+    ]
+  end
 
   def require_ai_consent!
     return if current_account.terms_accepted? && current_account.ai_consent?

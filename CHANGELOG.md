@@ -2,6 +2,21 @@
 
 Este arquivo registra mudanças relevantes por release. Releases usam tags Git anotadas em SemVer; `v0.1.0` identifica a versão-base implantada (`07dfd91`).
 
+## [0.3.0] - 2026-11-13
+
+### Adicionado
+
+- Roteamento de orientação com IA em DeepSeek → Gemini → Claude, com fallback apenas para falhas recuperáveis; cada pedido concluído consome um crédito.
+- Página própria de Métricas, pacotes separados por projetos e créditos de IA e acesso discreto ao suporte.
+- Sugestões clicáveis no guia e na criação assistida, além de etapas agrupadas e ações de PDF/Prévia mais simples nos editores.
+
+### Alterado
+
+- Avaliações formativas não consomem créditos; o limite de frequência e o registro de uso continuam ativos para controle de custo.
+- O pacote Essencial passa a custar R$ 50,00, com preço de referência de R$ 100,00; recargas antigas de avaliação deixam de ser oferecidas.
+- A vitrine apresenta apenas recargas de IA; pedidos legados já iniciados continuam preservados.
+- PDFs não são oferecidos para debate ou dissertação. A documentação de configuração inclui Gemini e Claude.
+
 ## [0.2.0] - 2026-11-13
 
 ### Adicionado

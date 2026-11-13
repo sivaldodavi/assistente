@@ -6,10 +6,12 @@ require "uri"
 class AIJsonProvider
   MAX_RESPONSE_BYTES = 4.megabytes
 
-  def initialize(api_key:, api_url:, timeout: 30)
+  def initialize(api_key:, api_url:, timeout: 30, api_key_header: "Authorization", api_key_prefix: "Bearer ")
     @api_key = api_key
     @api_url = URI.parse(api_url)
     @timeout = Integer(timeout).clamp(1, 60)
+    @api_key_header = api_key_header
+    @api_key_prefix = api_key_prefix
     raise AIProviderError.new("provider_config", "A configuração do serviço de IA é inválida.") unless valid_endpoint?
   rescue URI::InvalidURIError, ArgumentError, TypeError
     raise AIProviderError.new("provider_config", "A configuração do serviço de IA é inválida.")
@@ -20,7 +22,7 @@ class AIJsonProvider
   def post_json(payload, headers: {})
     request = Net::HTTP::Post.new(@api_url)
     request["Accept"] = "application/json"
-    request["Authorization"] = "Bearer #{@api_key}"
+    request[@api_key_header] = "#{@api_key_prefix}#{@api_key}"
     request["Content-Type"] = "application/json"
     headers.each { |key, value| request[key] = value }
     request.body = JSON.generate(payload)

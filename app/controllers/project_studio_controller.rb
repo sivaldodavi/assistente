@@ -37,19 +37,19 @@ class ProjectStudioController < ApplicationController
       credit_type: "deepseek"
     )
     reserved = true
-    response = deepseek_client.complete_json(workflow.request_messages)
+    response = ai_provider_router.complete_json(workflow.request_messages)
     result = workflow.validate_result(response["result"])
     AIUsageService.record_provider_usage!(
       account: current_account,
       request_id:,
-      provider: "deepseek",
+      provider: response["provider"],
       operation: "studio:#{workflow_mode(body)}",
       model: response["model"],
       usage: response["usage"]
     )
     AIUsageService.finish!(request_id)
     completed = true
-    render json: { ok: true, request_id:, model: response["model"], response: result }
+    render json: { ok: true, request_id:, model: response["model"], provider: response["provider"], response: result }
   rescue AIUsageService::UsageError => error
     render_error(error.code, error.message, error.status)
   rescue AIProviderError => error

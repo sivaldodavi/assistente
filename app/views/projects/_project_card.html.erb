@@ -10,7 +10,7 @@
   <p><%= project.section_for["title"] %></p>
   <p class="dashboard-progress"><%= project.progress["done"] %> de <%= project.progress["total"] %> campos obrigatórios</p>
   <% if (assessment = project.latest_jev_assessment) %>
-    <p class="project-jev-score"><strong>JEV · <%= jev_stage_label(assessment.stage) %>:</strong> <%= jev_assessment_score(assessment) %></p>
+    <p class="project-jev-score"><strong>Avaliação · <%= jev_stage_label(assessment.stage) %>:</strong> <%= jev_assessment_score(assessment) %></p>
     <p class="project-jev-date">Revisão <%= assessment.project_revision.revision %> · <%= assessment.created_at.strftime("%d/%m/%Y %H:%M") %> · avaliação formativa</p>
   <% end %>
   <% if delivery %><p class="project-delivery-hint">Próxima: <%= delivery[:date].strftime("%d/%m/%Y") %> · <%= delivery[:label] %></p><% end %>

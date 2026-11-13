@@ -14,7 +14,8 @@ class ProjectStudioTest < ActionDispatch::IntegrationTest
     assert_select "[data-project-studio]"
     assert_select "[data-studio-mode] option[value='guided']"
     assert_select "[data-studio-mode] option[value='import']"
-    assert_includes response.body, "selecione os campos que você quer incluir"
+    assert_select "[data-studio-prompt-suggestion]", minimum: 3
+    assert_select "a[href='https://www.instagram.com/sivaldo.davi/']", text: "Fale com o suporte"
   end
 
   test "guided proposal validates field IDs and returns editable provenance labels" do

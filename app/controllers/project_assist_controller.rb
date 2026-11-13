@@ -28,13 +28,12 @@ class ProjectAssistController < ApplicationController
 
     sources = selected_sources
     context = AIWorkflow.action_context(@project, action_name, body, sources:)
-    provider = deepseek_client
-    response = provider.complete_json(AIWorkflow.action_messages(context))
+    response = ai_provider_router.complete_json(AIWorkflow.action_messages(context))
     result = AIWorkflow.validate_action_result(response["result"], context)
     AIUsageService.record_provider_usage!(
       account: current_account,
       request_id:,
-      provider: "deepseek",
+      provider: response["provider"],
       operation: "assistant:#{action_name}",
       model: response["model"],
       usage: response["usage"]
@@ -44,7 +43,7 @@ class ProjectAssistController < ApplicationController
     render json: {
       ok: true,
       request_id:,
-      response: result.merge("action" => action_name, "model" => response["model"], "provider" => "deepseek")
+      response: result.merge("action" => action_name, "model" => response["model"], "provider" => response["provider"])
     }
   rescue AIUsageService::UsageError => error
     render_error(error.code, error.message, error.status)
@@ -96,11 +95,6 @@ class ProjectAssistController < ApplicationController
     return render_error("assessment_case_only", "Esta etapa de avaliação está disponível apenas para Cases.", :bad_request) if section && @project.project_type != "case"
 
     request_id = SecureRandom.uuid
-    reserved = false
-    completed = false
-    action = section ? "jev:#{section}" : "jev:#{stage}"
-    AIUsageService.reserve!(account: current_account, project: @project, request_id:, action:)
-    reserved = true
     raw = jev_client.score(
       AIWorkflow.prompt_state(@project, sources: selected_sources),
       AIWorkflow.jev_questions(section, stage:)
@@ -127,17 +121,11 @@ class ProjectAssistController < ApplicationController
       model: analysis["model"],
       result: analysis
     )
-    AIUsageService.finish!(request_id)
-    completed = true
     render json: { ok: true, request_id:, analysis: }
-  rescue AIUsageService::UsageError => error
-    render_error(error.code, error.message, error.status)
   rescue AIProviderError => error
     render_error(error.code, error.message, error.status)
   rescue ArgumentError, TypeError
     render_error("invalid_ai_request", "A solicitação de avaliação é inválida.", :bad_request)
-  ensure
-    AIUsageService.refund!(request_id) if reserved && !completed
   end
 
   def body_parameters

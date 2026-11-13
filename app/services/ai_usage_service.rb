@@ -19,7 +19,7 @@ class AIUsageService
       end
       if !account.admin? && account.public_send(fields[:used]) >= account.public_send(fields[:limit])
         code = credit_type == "deepseek" ? "writing_credits_exhausted" : "assessment_credits_exhausted"
-        message = credit_type == "deepseek" ? "Os créditos de orientação de escrita desta conta foram esgotados." : "Os créditos de avaliação formativa desta conta foram esgotados."
+        message = credit_type == "deepseek" ? "Seus créditos de IA acabaram. Consulte os pacotes disponíveis." : "Créditos de avaliação formativa indisponíveis."
         raise UsageError.new(code, message, :too_many_requests)
       end
 

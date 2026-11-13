@@ -14,16 +14,17 @@ class PaymentsTest < ActionDispatch::IntegrationTest
     assert_select "[data-package-card='avulso_ai']"
     assert_select "[data-package-card='sem_ia']"
     assert_select "[data-package-card='com_ia']"
-    assert_select "[data-package-card='topup_jev']"
-    assert_select "[data-package-card='topup_writing']"
-    assert_select "h1", "Escolha o pacote para seu trabalho."
+    assert_select "[data-package-card='topup_ai']"
+    assert_select "[data-package-card='topup_jev']", count: 0
+    assert_select "[data-package-card='topup_writing']", count: 0
+    assert_select "h1", "Escolha como quer começar."
     assert_select ".discount-badge", text: "50% de desconto", count: 3
     assert_includes response.body, "R$ 100,00"
     assert_includes response.body, "R$ 50,00"
     assert_includes response.body, "R$ 9,90"
-    assert_includes response.body, "20 avaliações formativas adicionais"
-    assert_includes response.body, "20 orientações de escrita adicionais"
-    assert_equal 2, PaymentPackages::DEFINITIONS.values.count { |package| package[:kind] == :topup }
+    assert_includes response.body, "20 créditos de IA adicionais"
+    assert_includes response.body, "Avaliações formativas não descontam créditos"
+    assert_equal 1, PaymentPackages::DEFINITIONS.values.count { |package| package[:kind] == :topup }
     assert_not_includes response.body, "Mercado Pago"
   end
 
@@ -43,7 +44,19 @@ class PaymentsTest < ActionDispatch::IntegrationTest
     assert_equal 0, PaymentOrder.sole.deepseek_credits
   end
 
-  test "JEV top-up adds only assessment credits and preserves the account plan" do
+  test "legacy evaluation top-up cannot be bought after evaluations stop consuming credits" do
+    post payments_path, params: {
+      package_code: "topup_jev",
+      quantity: 1,
+      request_id: "831deae8-6eaa-4ca6-9759-5dd2f1eabc95"
+    }, as: :json
+
+    assert_response :unprocessable_entity
+    assert_equal "invalid_package", response.parsed_body["error"]
+    assert_equal 0, PaymentOrder.count
+  end
+
+  test "legacy evaluation top-up preserves its paid value as AI credits" do
     @account.update!(
       plan_code: "sem_ia",
       project_limit: 14,
@@ -66,12 +79,12 @@ class PaymentsTest < ActionDispatch::IntegrationTest
     @account.reload
     assert_equal "sem_ia", @account.plan_code
     assert_equal 14, @account.project_limit
-    assert_equal 23, @account.ai_limit
-    assert_equal 6, @account.deepseek_limit
+    assert_equal 3, @account.ai_limit
+    assert_equal 26, @account.deepseek_limit
     assert_equal 20, PaymentGrant.sole.ai_credits
   end
 
-  test "writing AI top-up adds only writing credits and preserves the account plan" do
+  test "AI top-up adds only AI credits and preserves the account plan" do
     @account.update!(
       plan_code: "sem_ia",
       project_limit: 14,
@@ -80,7 +93,7 @@ class PaymentsTest < ActionDispatch::IntegrationTest
     )
     order = PaymentService.new(gateway: fake_gateway).create_order!(
       account: @account,
-      package_code: "topup_writing",
+      package_code: "topup_ai",
       quantity: 1,
       request_id: "3878de49-2b9f-45e8-9d6d-b0a87613d6a8"
     )
@@ -260,8 +273,8 @@ class PaymentsTest < ActionDispatch::IntegrationTest
     assert_equal "approved", order.reload.status
     @account.reload
     assert_equal 107, @account.project_limit
-    assert_equal 120, @account.ai_limit
-    assert_equal 110, @account.deepseek_limit
+    assert_equal 100, @account.ai_limit
+    assert_equal 130, @account.deepseek_limit
   end
 
   test "webhook does not grant credits when provider amount differs" do

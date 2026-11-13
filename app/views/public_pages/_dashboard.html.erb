@@ -12,39 +12,6 @@
   </header>
 
   <div class="dashboard-grid">
-    <section class="dashboard-card dashboard-wide" aria-labelledby="progress-summary-title">
-      <div class="dashboard-card-heading">
-        <div>
-          <p class="eyebrow">Acompanhe seu ritmo</p>
-          <h2 id="progress-summary-title">Resumo do progresso</h2>
-        </div>
-        <%= form_with url: root_path, method: :get, class: "period-filter" do |form| %>
-          <%= form.label :period, "Período das avaliações JEV" %>
-          <%= form.select :period, options_for_select([["30 dias", "30"], ["90 dias", "90"], ["Todo o histórico", "all"]], @analytics_period), {}, class: "text-control" %>
-          <%= form.submit "Aplicar", class: "button button-secondary" %>
-        <% end %>
-      </div>
-      <div class="dashboard-metrics">
-        <div><strong><%= @active_project_count %></strong><span>projetos em andamento</span></div>
-        <div><strong><%= @project_completion_percent %>%</strong><span>campos obrigatórios preenchidos nas etapas atuais</span></div>
-        <div><strong><%= @jev_assessment_count %></strong><span>avaliações JEV no período</span></div>
-      </div>
-      <% if @recent_jev_assessments.any? %>
-        <h3>Avaliações recentes</h3>
-        <ul class="dashboard-assessment-list">
-          <% @recent_jev_assessments.each do |assessment| %>
-            <li>
-              <%= link_to assessment.project.title, project_path(assessment.project, stage: assessment.project.current_stage) %>
-              <span><%= jev_stage_label(assessment.stage) %> · <%= jev_assessment_score(assessment) %> · <%= assessment.created_at.strftime("%d/%m/%Y %H:%M") %></span>
-            </li>
-          <% end %>
-        </ul>
-      <% else %>
-        <p class="empty-state-copy">Ainda não há avaliações JEV neste período.</p>
-      <% end %>
-      <p class="field-hint">As avaliações são formativas; subtotais de rubricas diferentes não são somados nem comparados entre si.</p>
-    </section>
-
     <section class="dashboard-card">
       <p class="eyebrow">Continue de onde parou</p>
       <% if @recent_project %>
@@ -54,7 +21,7 @@
             <h2><%= @recent_project.title %></h2>
             <p class="dashboard-progress"><%= @recent_project.section_for["title"] %> · <%= @recent_project.progress["done"] %> de <%= @recent_project.progress["total"] %> campos obrigatórios</p>
             <% if (assessment = @recent_project.latest_jev_assessment) %>
-              <p class="project-jev-score"><strong>JEV · <%= jev_stage_label(assessment.stage) %>:</strong> <%= jev_assessment_score(assessment) %></p>
+              <p class="project-jev-score"><strong>Avaliação · <%= jev_stage_label(assessment.stage) %>:</strong> <%= jev_assessment_score(assessment) %></p>
               <p class="project-jev-date">Revisão <%= assessment.project_revision.revision %> · avaliação formativa</p>
             <% end %>
           </div>
@@ -95,8 +62,7 @@
           <%= form.select :project_type,
             options_for_select([
               [ "Case", "case" ],
-              [ "Projeto de Paper", "paper_project" ],
-              [ "Paper Final — após conversão", "paper_final", { disabled: true } ]
+                [ "Projeto de Paper", "paper_project" ]
             ], "case"),
             {},
             class: "text-control" %>
@@ -105,7 +71,7 @@
           <%= form.date_field :delivery_date, class: "text-control" %>
         </label>
         <%= form.submit "Criar projeto", class: "button button-primary" %>
-        <p class="field-hint">A data será registrada no início do roteiro. O Paper Final é iniciado pela conversão de um Projeto de Paper.</p>
+        <p class="field-hint">O Paper Final poderá ser criado a partir do Projeto de Paper.</p>
       <% end %>
     </section>
 

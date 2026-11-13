@@ -28,6 +28,7 @@ Rails.application.routes.draw do
   get "/planos", to: "payments#plans", as: :pricing
   get "/termos", to: "public_pages#terms", as: :terms
   get "/privacidade", to: "public_pages#privacy", as: :privacy
+  get "/metricas", to: "public_pages#metrics", as: :metrics
   get "/ajuda-ia", to: "public_pages#ai_help", as: :ai_help
   get "/guia-de-escrita", to: "writing_guide#show", as: :writing_guide
   post "/guia-de-escrita/perguntas", to: "writing_guide#ask", as: :writing_guide_questions

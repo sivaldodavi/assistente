@@ -22,6 +22,8 @@ class ConfigureCredentialsTest < ActiveSupport::TestCase
       "client-secret",
       "http://localhost:3000/auth/google_oauth2/callback",
       "deepseek-key",
+      "gemini-key",
+      "claude-key",
       "typesafe-key",
       "TEST-access-token",
       "webhook-secret",
@@ -38,13 +40,15 @@ class ConfigureCredentialsTest < ActiveSupport::TestCase
     assert_equal "preserved", saved.fetch("secret_key_base")
     assert_equal "client-secret", saved.dig("google", "client_secret")
     assert_equal "deepseek-key", saved.dig("ai", "deepseek_api_key")
+    assert_equal "gemini-key", saved.dig("ai", "gemini_api_key")
+    assert_equal "claude-key", saved.dig("ai", "claude_api_key")
     assert_equal "TEST-access-token", saved.dig("mercadopago", "access_token")
     assert_equal "https://trab.sivaldodavi.com.br/webhooks/mercadopago", saved.dig("mercadopago", "webhook_url")
   end
 
   test "does not write credentials when confirmation is declined" do
     credentials = FakeCredentials.new({})
-    values = [ "client-id", *Array.new(7, ""), "NAO" ]
+    values = [ "client-id", *Array.new(9, ""), "NAO" ]
 
     result = CredentialSetup.run(input: StringIO.new(values.join("\n")), output: StringIO.new, credentials:)
 

@@ -53,19 +53,16 @@ class AdminController < ApplicationController
     account = Account.find(params[:id])
     remaining = {
       project_limit: parse_credits(params.dig(:credits, :projects)),
-      ai_limit: parse_credits(params.dig(:credits, :ai)),
-      deepseek_limit: parse_credits(params.dig(:credits, :deepseek))
+      deepseek_limit: parse_credits(params.dig(:credits, :ai))
     }
     exceeded_limit = false
     account.with_lock do
       before = {
         projects: account.project_credits_remaining,
-        ai: [ account.ai_limit - account.ai_used, 0 ].max,
-        deepseek: account.deepseek_credits_remaining
+        ai: account.deepseek_credits_remaining
       }
       limits = {
         project_limit: account.project_used + remaining[:project_limit],
-        ai_limit: account.ai_used + remaining[:ai_limit],
         deepseek_limit: account.deepseek_used + remaining[:deepseek_limit]
       }
       if limits.values.any? { |limit| limit > MAX_MANUAL_CREDITS }

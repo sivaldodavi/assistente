@@ -121,8 +121,7 @@ class PaymentService
         account = order.account
         account.update!(
           project_limit: account.project_limit + grant.project_credits,
-          ai_limit: account.ai_limit + grant.ai_credits,
-          deepseek_limit: account.deepseek_limit + grant.deepseek_credits,
+          deepseek_limit: account.deepseek_limit + grant.ai_credits + grant.deepseek_credits,
           plan_code: higher_plan(account.plan_code, order.package_code)
         )
         order.update!(provider_payment_id: payment_id, status: "approved")

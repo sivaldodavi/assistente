@@ -73,6 +73,9 @@ class ProjectsController < ApplicationController
     if @project.project_type == "case" && !%w[report debate dissertation].include?(phase)
       return head :bad_request
     end
+    if params[:format] == "pdf" && @project.project_type == "case" && phase != "report"
+      return head :bad_request
+    end
 
     sources = current_account.sources.where(public_id: @project.source_ids).map(&:attributes)
     case params[:format].presence || "html"

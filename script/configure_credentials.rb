@@ -7,6 +7,8 @@ module CredentialSetup
     { label: "Google OAuth — Client Secret", path: %w[google client_secret] },
     { label: "Google OAuth — Redirect URI", path: %w[google redirect_uri], kind: :callback },
     { label: "DeepSeek — API key", path: %w[ai deepseek_api_key] },
+    { label: "Gemini — API key de fallback", path: %w[ai gemini_api_key] },
+    { label: "Claude — API key de fallback", path: %w[ai claude_api_key] },
     { label: "TypeSafe JEV — API key", path: %w[ai typesafe_api_key] },
     { label: "Mercado Pago — Access Token de TESTE", path: %w[mercadopago access_token] },
     { label: "Mercado Pago — segredo de assinatura do webhook", path: %w[mercadopago webhook_secret] },

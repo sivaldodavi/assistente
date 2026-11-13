@@ -3,13 +3,16 @@ class PaymentsController < ApplicationController
   before_action :authenticate_payment_account!, only: %i[create status]
 
   def plans
-    @packages = PaymentPackages::DEFINITIONS
+    @packages = PaymentPackages::PUBLIC_DEFINITIONS
   end
 
   def create
     body = request.request_parameters.except("controller", "action", "format").deep_stringify_keys
     unless body.keys.sort == %w[package_code quantity request_id]
       return render json: { error: "invalid_payload", message: "Envie somente pacote, quantidade e identificador da solicitação." }, status: :bad_request
+    end
+    unless PaymentPackages::PUBLIC_DEFINITIONS.key?(body["package_code"])
+      return render json: { error: "invalid_package", message: "Este pacote não está disponível." }, status: :unprocessable_entity
     end
 
     @order = PaymentService.new.create_order!(

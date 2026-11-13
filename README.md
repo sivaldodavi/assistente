@@ -27,12 +27,14 @@ O login Google usa OmniAuth com state, PKCE (S256), nonce OIDC descartável e ve
 | Integração | Configuração |
 | --- | --- |
 | Google OAuth | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REDIRECT_URI` ou credenciais Rails em `google.*`. |
-| DeepSeek | `DEEPSEEK_API_KEY` ou `DEEPSEEK_API_KEY_FILE` (padrão `/run/secrets/deepseek_api_key`); `DEEPSEEK_API_URL`, `DEEPSEEK_MODEL` e `DEEPSEEK_TIMEOUT` são opcionais. |
+| DeepSeek | `DEEPSEEK_API_KEY` ou `DEEPSEEK_API_KEY_FILE` (padrão `/run/secrets/deepseek_api_key`); `DEEPSEEK_API_URL`, `DEEPSEEK_MODEL` e `DEEPSEEK_TIMEOUT` são opcionais. Primeiro provedor da orientação com IA. |
+| Gemini | Opcional: `GEMINI_API_KEY` em `rails.env` ou nas credenciais Rails; `GEMINI_API_URL`, `GEMINI_MODEL` e `GEMINI_TIMEOUT` são opcionais. Fallback após falha recuperável do DeepSeek. |
+| Claude | Opcional: `CLAUDE_API_KEY` em `rails.env` ou nas credenciais Rails; `CLAUDE_API_URL`, `CLAUDE_MODEL` e `CLAUDE_TIMEOUT` são opcionais. Fallback após falha recuperável do Gemini. |
 | JEV TypeSafe | `TYPESAFE_API_KEY` ou `TYPESAFE_API_KEY_FILE` (padrão `/run/secrets/typesafe_api_key`); `TYPESAFE_API_URL`, `TYPESAFE_MODEL` e `JEV_TIMEOUT` são opcionais. |
 | Mercado Pago | `MERCADOPAGO_ACCESS_TOKEN` e `MERCADOPAGO_WEBHOOK_SECRET`, ou seus respectivos `*_FILE` (padrão em `/run/secrets/`). A URL HTTPS pode ser `mercadopago.webhook_url`, `MERCADOPAGO_WEBHOOK_URL` ou `BASE_URL`; o endpoint é `/webhooks/mercadopago`. |
 | Administração | `ADMIN_EMAILS`: lista de e-mails separada por vírgula. |
 
-As chaves de IA também podem ser armazenadas nas credenciais Rails em `ai.deepseek_api_key` e `ai.typesafe_api_key`; as de pagamento em `mercadopago.access_token` e `mercadopago.webhook_secret`. Não coloque segredos em arquivos rastreados ou no banco de dados. A criação do Pix é iniciada pela conta autenticada e os pacotes, preços e créditos são definidos no servidor.
+As chaves dos provedores também podem ser armazenadas nas credenciais Rails em `ai.deepseek_api_key`, `ai.gemini_api_key`, `ai.claude_api_key` e `ai.typesafe_api_key`; as de pagamento em `mercadopago.access_token` e `mercadopago.webhook_secret`. Em produção, as variáveis opcionais de Gemini/Claude podem ficar no `rails.env` protegido. Não coloque segredos em arquivos rastreados ou no banco de dados. Uma solicitação de orientação consome um crédito, mesmo que o fallback conclua o pedido; avaliações formativas não consomem créditos, mas têm limite de frequência e uso registrado para controle de custos.
 
 Para configurar a cópia local com um assistente que deixa os valores visíveis para conferência e os salva criptografados, execute:
 
@@ -46,19 +48,19 @@ O modo público informativo pode ser reativado com `AUTHENTICATION_READY=false`:
 
 ## Roteiros
 
-`config/academic_workflows.json` define os roteiros de Case, Projeto de Paper e Paper Final, com 10, 9 e 6 etapas, respectivamente. Projetos são associados à conta, com salvamento, controle de revisão concorrente e conversão de Projeto de Paper em Paper Final. O Case permite registrar apenas as datas de entrega do relatório, do debate e da dissertação; a dissertação é escrita em um único campo, sem combinar estruturas antigas. A Biblioteca Pessoal mantém fontes e fichamentos privados e permite vinculá-los aos projetos. A exportação acadêmica oferece prévias HTML e PDFs via Quarto/Typst com o modelo ABNT de referência.
+`config/academic_workflows.json` define os roteiros de Case, Projeto de Paper e Paper Final, com 10, 9 e 6 etapas, respectivamente. Projetos são associados à conta, com salvamento, controle de revisão concorrente e conversão de Projeto de Paper em Paper Final. O Case permite registrar datas de entrega para relatório, debate e dissertação; a dissertação é escrita em um único campo, sem combinar estruturas antigas. A Biblioteca Pessoal mantém fontes e fichamentos privados e permite vinculá-los aos projetos. A prévia HTML permite escolher o documento; PDFs via Quarto/Typst não são oferecidos para debate ou dissertação.
 
 Contas, Google OAuth, isolamento por proprietário, perfil, termos e consentimentos estão implementados. A exclusão confirmada da conta remove também projetos, revisões, fontes e dados associados.
 
 ## Funcionalidades
 
-Implementados: assistência contextual e criação guiada de Case/Paper, organização de texto existente com confirmação campo a campo, rubricas JEV por etapa com histórico associado à revisão do projeto, resumo de progresso e notas recentes, pagamentos por Pix com pacotes e recargas separadas, administração e páginas públicas de pacotes, termos, privacidade e explicação da IA. Os rascunhos gerados são editáveis e só são gravados quando a pessoa seleciona os campos e cria o projeto.
+Implementados: assistência contextual e criação guiada de Case/Paper, organização de texto existente com confirmação campo a campo, avaliações formativas por etapa com histórico associado à revisão do projeto, métricas em página própria, pagamentos por Pix com pacotes de projetos e créditos de IA, administração e páginas públicas de pacotes, termos, privacidade e ajuda com IA. Os rascunhos gerados são editáveis e só são gravados quando a pessoa seleciona os campos e cria o projeto.
 
-Os valores de referência dos pacotes-base são o dobro do preço cobrado. Recargas avulsas de JEV e orientação de escrita adicionam cada saldo sem alterar o plano. As estimativas de custo e suas premissas estão registradas em [CHANGELOG.md](CHANGELOG.md).
+Os valores de referência dos pacotes-base são o dobro do preço cobrado. Recargas de IA adicionam créditos sem alterar o pacote; avaliações formativas não têm cobrança por crédito. As estimativas de custo e suas premissas estão registradas em [CHANGELOG.md](CHANGELOG.md).
 
 O nome da instituição de ensino é solicitado no perfil e utilizado nas exportações. O uso de IA pode contrariar regras específicas de uma disciplina; a aplicação identifica sugestões, solicita revisão e não afirma conformidade acadêmica.
 
-O projeto usa tags anotadas em SemVer; `v0.1.0` marca a linha de base implantada e `v0.2.0` identifica esta evolução. Consulte [CHANGELOG.md](CHANGELOG.md) para as mudanças desta versão.
+O projeto usa tags anotadas em SemVer; `v0.1.0` marca a linha de base, `v0.2.0` a evolução anterior e `v0.3.0` esta versão. Consulte [CHANGELOG.md](CHANGELOG.md) para o histórico.
 
 As páginas públicas estão em `/`, `/planos` (também `/plans`), `/termos`, `/privacidade` e `/ajuda-ia`. No modo funcional, o login Google e compras Pix ficam disponíveis a contas autenticadas. A política identifica Sivaldo Davi Pereira como responsável e informa `contato@sivaldodavi.com`, contato já publicado no site pessoal do responsável. Os avisos legais continuam sendo um rascunho funcional e devem ser revisados.
 
@@ -72,7 +74,7 @@ bin/rubocop
 bin/rails zeitwerk:check
 ```
 
-Na validação desta entrega, a suíte Rails completa passou: 139 testes e 1.042 assertions. O RuboCop inspecionou 114 arquivos sem offenses e `zeitwerk:check` passou. Os testes de integrações externas usam doubles locais; eles não comprovam a entrega real de webhooks nem um pagamento. O login Google real já foi concluído e confirmado. Ainda falta validar uma notificação nativa e uma compra no sandbox; nenhuma cobrança real foi criada para teste.
+Na validação desta entrega, a suíte Rails completa passou: 145 testes e 1.093 assertions. O RuboCop inspecionou 118 arquivos sem offenses e `zeitwerk:check` passou. Os testes de integrações externas usam doubles locais; eles não comprovam a entrega real de webhooks nem um pagamento. O login Google real já foi concluído e confirmado. Ainda falta validar uma notificação nativa e uma compra no sandbox; nenhuma cobrança real foi criada para teste.
 
 ## Staging e banco
 

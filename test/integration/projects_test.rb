@@ -36,7 +36,7 @@ class ProjectsTest < ActionDispatch::IntegrationTest
     get projects_path
 
     assert_response :success
-    assert_select ".project-jev-score", text: /JEV · Projeto de paper: 2.25\/3.0 pontos indicativos/
+    assert_select ".project-jev-score", text: /Avaliação · Projeto de paper: 2.25\/3.0 pontos indicativos/
     assert_select ".project-jev-date", text: /Revisão 0.*avaliação formativa/
   end
 
@@ -276,16 +276,21 @@ class ProjectsTest < ActionDispatch::IntegrationTest
     assert_empty project.development_sections
   end
 
-  test "exposes saved document previews and PDF export for every Case phase" do
+  test "offers one selectable preview and permits PDF only for the Case report" do
     project = create_project!(project_type: "case")
 
     get project_path(project, stage: "description")
 
     assert_response :success
-    assert_select "a[href='#{export_project_path(project, format: :html, phase: :report)}']", text: "Prévia do relatório"
-    assert_select "a[href='#{export_project_path(project, format: :html, phase: :debate)}']", text: "Prévia do debate"
-    assert_select "a[href='#{export_project_path(project, format: :html, phase: :dissertation)}']", text: "Prévia da dissertação"
-    assert_select "a[href='#{export_project_path(project, format: :pdf, phase: :report)}']", text: "Baixar PDF do relatório"
+    assert_select "select[data-preview-select] option", count: 3
+    assert_select "a[data-preview-link]", text: "Prévia", href: export_project_path(project, format: :html, phase: :report)
+    assert_select "a[href='#{export_project_path(project, format: :pdf, phase: :report)}']", text: "PDF"
+    assert_select "a[data-preview-link]", count: 1
+
+    [ "debate", "dissertation" ].each do |phase|
+      get export_project_path(project, format: :pdf, phase:)
+      assert_response :bad_request
+    end
   end
 
   test "exposes HTML preview and PDF export for Papers" do
@@ -294,8 +299,8 @@ class ProjectsTest < ActionDispatch::IntegrationTest
     get project_path(project, stage: "paper_final_identity")
 
     assert_response :success
-    assert_select "a[href='#{export_project_path(project, format: :html)}']", text: "Prévia HTML"
-    assert_select "a[href='#{export_project_path(project, format: :pdf)}']", text: "Baixar PDF"
+    assert_select "a[data-preview-link]", text: "Prévia", href: export_project_path(project, format: :html)
+    assert_select "a[href='#{export_project_path(project, format: :pdf)}']", text: "PDF"
   end
 
   test "saves only the three fixed Case delivery dates" do

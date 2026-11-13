@@ -1,4 +1,4 @@
-<% content_for :title, "Pacotes e créditos — Assistente Acadêmico" %>
+<% content_for :title, "Pacotes — Assistente Acadêmico" %>
 
 <header class="site-header">
   <%= link_to "Assistente Acadêmico", root_path, class: "brand" %>
@@ -18,61 +18,100 @@
 
 <main class="page-shell">
   <section class="hero">
-    <p class="eyebrow">Pacotes de créditos</p>
-    <h1>Escolha o pacote para seu trabalho.</h1>
+    <p class="eyebrow">Pacotes</p>
+    <h1>Escolha como quer começar.</h1>
     <% if public_shell_only? %>
-      <p>Conheça os pacotes previstos para o serviço. Compras por Pix ainda não estão disponíveis.</p>
+      <p>Conheça as opções previstas para criar projetos e usar Análise. Compras por Pix ainda não estão disponíveis.</p>
     <% else %>
-      <p>Pagamento único por Pix. Os créditos são liberados após a confirmação do pagamento.</p>
+      <p>Pagamento único por Pix. O saldo é liberado após a confirmação.</p>
     <% end %>
   </section>
 
   <% if public_shell_only? %>
     <p class="field-hint">Login e compras estarão disponíveis depois da validação das integrações.</p>
   <% elsif current_account %>
-    <p class="field-hint">Créditos disponíveis: <%= current_account.project_credits_remaining %> projetos, <%= [current_account.ai_limit - current_account.ai_used, 0].max %> avaliações formativas e <%= current_account.deepseek_credits_remaining %> orientações de escrita.</p>
+    <p class="package-balance">Seu saldo: <strong><%= current_account.project_credits_remaining %></strong> projetos · <strong><%= current_account.deepseek_credits_remaining %></strong> créditos de IA</p>
   <% end %>
-  <section class="package-grid" aria-label="Pacotes disponíveis">
-    <% @packages.each do |code, package| %>
-      <article class="package-card" id="package-<%= code %>"<% if current_account %> data-package-card="<%= code %>"<% end %>>
-        <p class="eyebrow"><%= package[:kind] == :topup ? "Recarga avulsa" : package[:label] %></p>
-        <% if package[:regular_price_cents] %>
-          <div class="package-pricing">
-            <span class="discount-badge"><%= PaymentPackages.discount_percent(package) %>% de desconto</span>
-            <p>Preço promocional</p>
-            <del><%= number_to_currency(package[:regular_price_cents] / 100.0, unit: "R$ ", separator: ",", delimiter: ".") %></del>
-            <h2><%= number_to_currency(package[:price_cents] / 100.0, unit: "R$ ", separator: ",", delimiter: ".") %></h2>
-          </div>
-        <% else %>
-          <h2><%= number_to_currency(package[:price_cents] / 100.0, unit: "R$ ", separator: ",", delimiter: ".") %></h2>
-        <% end %>
-        <% if package[:kind] == :topup %>
-          <p><%= package[:description] %>. O saldo é adicionado sem alterar seu pacote.</p>
-        <% else %>
+  <% project_packages, ai_packages = @packages.partition { |_code, package| package[:kind] != :topup } %>
+  <section class="package-section" aria-labelledby="project-packages-title">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Projetos</p>
+        <h2 id="project-packages-title">Pacotes para seus trabalhos</h2>
+      </div>
+    </div>
+    <div class="package-grid" aria-label="Pacotes para criar projetos">
+      <% project_packages.each do |code, package| %>
+        <article class="package-card" id="package-<%= code %>"<% if current_account %> data-package-card="<%= code %>"<% end %>>
+          <p class="eyebrow"><%= package[:label] %></p>
+          <% if package[:regular_price_cents] %>
+            <div class="package-pricing">
+              <span class="discount-badge"><%= PaymentPackages.discount_percent(package) %>% de desconto</span>
+              <p>Preço promocional</p>
+              <del><%= number_to_currency(package[:regular_price_cents] / 100.0, unit: "R$ ", separator: ",", delimiter: ".") %></del>
+              <h3><%= number_to_currency(package[:price_cents] / 100.0, unit: "R$ ", separator: ",", delimiter: ".") %></h3>
+            </div>
+          <% else %>
+            <h3><%= number_to_currency(package[:price_cents] / 100.0, unit: "R$ ", separator: ",", delimiter: ".") %></h3>
+          <% end %>
           <ul>
             <li><%= package[:project_credits] %> projetos</li>
-            <li><%= package[:ai_credits] %> avaliações formativas</li>
-            <li><%= package[:deepseek_credits] %> orientações de escrita</li>
+            <% if PaymentPackages.ai_credits(package).positive? %>
+              <li><%= PaymentPackages.ai_credits(package) %> créditos de IA</li>
+            <% end %>
           </ul>
-        <% end %>
-        <% if public_shell_only? %>
-          <p class="field-hint">Compra temporariamente indisponível.</p>
-        <% elsif current_account %>
-          <label>Quantidade
-            <%= select_tag "quantity_#{code}", options_for_select((1..PaymentPackages::MAX_QUANTITY).map { |number| [number, number] }, 1), class: "text-control", data: { package_quantity: true } %>
-          </label>
-          <button class="button button-primary" type="button" data-buy-package="<%= code %>">Gerar Pix</button>
-          <p class="field-hint" data-payment-status role="status" aria-live="polite"></p>
-          <div class="payment-result" data-payment-result aria-live="polite"></div>
-        <% else %>
-          <% if google_oauth_configured? %>
+          <% if public_shell_only? %>
+            <p class="field-hint">Compra temporariamente indisponível.</p>
+          <% elsif current_account %>
+            <label>Quantidade
+              <%= select_tag "quantity_#{code}", options_for_select((1..PaymentPackages::MAX_QUANTITY).map { |number| [number, number] }, 1), class: "text-control", data: { package_quantity: true } %>
+            </label>
+            <button class="button button-primary" type="button" data-buy-package="<%= code %>">Gerar Pix</button>
+            <p class="field-hint" data-payment-status role="status" aria-live="polite"></p>
+            <div class="payment-result" data-payment-result aria-live="polite"></div>
+          <% elsif google_oauth_configured? %>
             <%= button_to "Entrar para comprar", "/auth/google_oauth2", method: :post, class: "button button-primary" %>
           <% else %>
             <%= link_to "Entrar para comprar", login_path, class: "button button-primary" %>
           <% end %>
-        <% end %>
-      </article>
-    <% end %>
+        </article>
+      <% end %>
+    </div>
   </section>
+
+  <% if ai_packages.any? %>
+    <section class="package-section" aria-labelledby="ai-packages-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">IA</p>
+          <h2 id="ai-packages-title">Créditos de IA</h2>
+          <p>Use para orientação, sugestões e organização dos seus trabalhos. Avaliações formativas não descontam créditos.</p>
+        </div>
+      </div>
+      <div class="package-grid package-grid-topups">
+        <% ai_packages.each do |code, package| %>
+          <article class="package-card" id="package-<%= code %>"<% if current_account %> data-package-card="<%= code %>"<% end %>>
+            <p class="eyebrow"><%= package[:label] %></p>
+            <h3><%= number_to_currency(package[:price_cents] / 100.0, unit: "R$ ", separator: ",", delimiter: ".") %></h3>
+            <p><%= package[:description] %></p>
+            <% if public_shell_only? %>
+              <p class="field-hint">Compra temporariamente indisponível.</p>
+            <% elsif current_account %>
+              <label>Quantidade
+                <%= select_tag "quantity_#{code}", options_for_select((1..PaymentPackages::MAX_QUANTITY).map { |number| [number, number] }, 1), class: "text-control", data: { package_quantity: true } %>
+              </label>
+              <button class="button button-primary" type="button" data-buy-package="<%= code %>">Gerar Pix</button>
+              <p class="field-hint" data-payment-status role="status" aria-live="polite"></p>
+              <div class="payment-result" data-payment-result aria-live="polite"></div>
+            <% elsif google_oauth_configured? %>
+              <%= button_to "Entrar para comprar", "/auth/google_oauth2", method: :post, class: "button button-primary" %>
+            <% else %>
+              <%= link_to "Entrar para comprar", login_path, class: "button button-primary" %>
+            <% end %>
+          </article>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
   <p class="field-hint">Ao continuar, você confirma que leu os <%= link_to "termos de uso", terms_path %> e a <%= link_to "política de privacidade", privacy_path %>. Saiba também <%= link_to "como funciona a IA", ai_help_path %>.</p>
 </main>

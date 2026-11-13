@@ -6,7 +6,7 @@ class DashboardTest < ActionDispatch::IntegrationTest
     sign_in_as(@account)
   end
 
-  test "dashboard filters JEV history by period without combining different rubrics" do
+  test "metrics filters assessment history by period without combining different rubrics" do
     project = @account.projects.create!(project_type: "case")
     revision = project.revisions.sole
     assessment = @account.jev_assessments.create!(
@@ -19,19 +19,19 @@ class DashboardTest < ActionDispatch::IntegrationTest
     )
     assessment.update_column(:created_at, 120.days.ago)
 
-    get root_path, params: { period: "90" }
+    get metrics_path, params: { period: "90" }
 
     assert_response :success
     assert_select "select[name='period'] option[selected][value='90']"
     assert_select ".dashboard-metrics div:nth-child(3) strong", text: "0"
-    assert_select ".dashboard-metrics div:nth-child(3) span", text: "avaliações JEV no período"
+    assert_select ".dashboard-metrics div:nth-child(3) span", text: "avaliações no período"
     assert_select ".dashboard-assessment-list", count: 0
 
-    get root_path, params: { period: "all" }
+    get metrics_path, params: { period: "all" }
 
     assert_response :success
     assert_select ".dashboard-metrics div:nth-child(3) strong", text: "1"
-    assert_select ".dashboard-metrics div:nth-child(3) span", text: "avaliações JEV no período"
+    assert_select ".dashboard-metrics div:nth-child(3) span", text: "avaliações no período"
     assert_select ".dashboard-assessment-list", text: /2.4\/3.5 pontos indicativos/
     assert_includes response.body, "não são somados nem comparados"
   end

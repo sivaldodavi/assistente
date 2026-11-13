@@ -65,7 +65,42 @@ class ProjectAssistTest < ActionDispatch::IntegrationTest
     assert_equal "refunded", AIUsageReservation.sole.status
   end
 
+  test "AI fallback to Gemini charges one credit and records the successful provider" do
+    deepseek = Object.new
+    deepseek.define_singleton_method(:complete_json) do |_messages|
+      raise AIProviderError.new("provider_busy", "temporarily unavailable", 503)
+    end
+    gemini = Object.new
+    gemini.define_singleton_method(:complete_json) do |_messages|
+      {
+        "model" => "fake-gemini",
+        "result" => {
+          "answer" => "Sugestão de análise.",
+          "suggestions" => [],
+          "rewrite" => "",
+          "checklist" => []
+        },
+        "usage" => { "prompt_tokens" => 10, "completion_tokens" => 12 }
+      }
+    end
+
+    with_stub(AIProviderSecrets, :load, "fake-secret") do
+      with_stub(DeepSeekClient, :new, deepseek) do
+        with_stub(GeminiClient, :new, gemini) do
+          post "/projects/#{@project.id}/ai/action", params: { action: "suggest_problem" }, as: :json
+        end
+      end
+    end
+
+    assert_response :success
+    assert_equal "gemini", response.parsed_body.dig("response", "provider")
+    assert_equal 1, @account.reload.deepseek_used
+    assert_equal 1, AIUsageReservation.count
+    assert_equal "gemini", ProviderUsage.sole.provider
+  end
+
   test "JEV section analysis uses the separate TypeSafe service and fixed questions" do
+    @account.update!(ai_limit: 0, ai_used: 0)
     client = Object.new
     client.define_singleton_method(:score) do |state, questions|
       raise "missing project facts" unless state["legal_question"] == "Qual é a questão jurídica?"
@@ -91,8 +126,34 @@ class ProjectAssistTest < ActionDispatch::IntegrationTest
     assert_equal "facts-neutral", analysis.dig("criteria", 0, "id")
     assert_equal 4, analysis["criteria"].length
     assert_equal 1, ProviderUsage.where(account: @account, provider: "jev").count
+    assert_equal 0, @account.reload.ai_used
+    assert_equal 0, @account.deepseek_used
+    assert_equal 0, AIUsageReservation.count
     assert_equal "case_section:case_description", JevAssessment.sole.stage
     assert_equal @project.revisions.sole, JevAssessment.sole.project_revision
+  end
+
+  test "formative assessments remain free of credit limits but retain a request rate limit" do
+    @account.update!(ai_limit: 0, ai_used: 0)
+    original_cache = Rails.cache
+    Rails.cache = ActiveSupport::Cache::MemoryStore.new
+
+    with_stub(AIProviderSecrets, :load, "fake-secret") do
+      with_stub(JevClient, :new, fake_jev_client) do
+        30.times do
+          post "/projects/#{@project.id}/ai/jev-section", params: { section: "case_description" }, as: :json
+          assert_response :success
+        end
+        post "/projects/#{@project.id}/ai/jev-section", params: { section: "case_description" }, as: :json
+      end
+    end
+
+    assert_response :too_many_requests
+    assert_equal 0, @account.reload.ai_used
+    assert_equal 0, @account.deepseek_used
+    assert_equal 0, AIUsageReservation.count
+  ensure
+    Rails.cache = original_cache
   end
 
   test "Paper Project assessment persists a revision-bound /3 subtotal and flags the declared /4 discrepancy" do

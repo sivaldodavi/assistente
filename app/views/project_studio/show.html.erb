@@ -1,20 +1,23 @@
-<% content_for :title, "Criar com orientação de IA — Assistente Acadêmico" %>
+<% content_for :title, "Criar trabalho — Assistente Acadêmico" %>
 
 <main class="page-shell narrow-shell" data-project-studio data-draft-url="<%= project_assistant_draft_path %>">
-  <%= link_to "← Voltar aos projetos", projects_path, class: "back-link" %>
-  <section class="panel">
-    <p class="eyebrow">Comece com sua ideia</p>
-    <h1>Crie ou organize um trabalho</h1>
-    <p class="muted">Descreva uma ideia ou cole um texto anterior. A IA poderá fazer perguntas e sugerir campos do roteiro; revise e selecione os campos que você quer incluir antes de criar o projeto.</p>
-    <p class="field-hint">O uso de IA pode ser vedado pelas regras da sua disciplina, inclusive em etapas finais. Confira essas regras antes de usar qualquer sugestão.</p>
-
+  <header class="writing-guide-heading">
+    <%= link_to "Projetos", projects_path, class: "back-link" %>
+    <p class="eyebrow">Novo trabalho</p>
+    <h1>Por onde quer começar?</h1>
+    <p>Conte sua ideia ou organize um texto que já tem.</p>
+  </header>
+  <section class="studio-panel">
+    <div class="studio-balance">
     <% if current_account.deepseek_credits_remaining.zero? %>
-      <p class="field-hint">Você está sem créditos de orientação por IA. <%= link_to "Ver opções de recarga", plans_path(anchor: "package-topup_writing") %></p>
+      <span>Sem créditos de IA.</span> <%= link_to "Ver Pacotes", plans_path %>
     <% else %>
-      <p class="field-hint">Cada solicitação usa 1 crédito de orientação por IA. Você tem <%= current_account.deepseek_credits_remaining %> disponível.</p>
+      <span><%= current_account.deepseek_credits_remaining %> créditos de IA</span>
+      <span class="muted">· 1 por solicitação</span>
     <% end %>
+    </div>
     <% if !current_account.admin? && current_account.project_credits_remaining.zero? %>
-      <p class="field-hint">Você também precisa de um crédito de projeto para salvar o novo trabalho. <%= link_to "Ver pacotes", plans_path %></p>
+      <p class="inline-notice">Você precisa de um crédito de projeto para salvar. <%= link_to "Ver Pacotes", plans_path %></p>
     <% end %>
 
     <form data-studio-request>
@@ -32,16 +35,25 @@
           <option value="import">Quero organizar um texto existente</option>
         </select>
       </div>
-      <div class="field">
-        <label for="studio-prompt">Sua ideia ou orientação</label>
-        <textarea id="studio-prompt" class="text-control" rows="5" maxlength="6000" data-studio-prompt placeholder="Conte o tema, o problema ou o que você já decidiu. Se ainda não souber, diga por onde quer começar."></textarea>
+      <div class="prompt-suggestions" aria-label="Sugestões para começar">
+        <% [
+          "Ajude-me a escolher e delimitar um tema",
+          "Quero transformar este assunto em uma pergunta de pesquisa",
+          "Faça perguntas para eu estruturar meu trabalho"
+        ].each do |suggestion| %>
+          <button type="button" class="prompt-chip" data-studio-prompt-suggestion="<%= suggestion %>"><%= suggestion %></button>
+        <% end %>
       </div>
       <div class="field">
-        <label for="studio-source-text">Texto que você quer organizar (opcional)</label>
-        <textarea id="studio-source-text" class="text-control" rows="8" maxlength="24000" data-studio-source placeholder="Cole aqui um rascunho ou trabalho anterior para receber uma proposta de organização."></textarea>
-        <p class="field-hint">O texto é enviado ao provedor de IA para esta solicitação. O assistente não salva o rascunho recebido automaticamente.</p>
+        <label for="studio-prompt">Sua ideia</label>
+        <textarea id="studio-prompt" class="text-control" rows="4" maxlength="6000" data-studio-prompt placeholder="Escreva do seu jeito; não precisa estar pronto."></textarea>
       </div>
-      <button class="button button-primary" type="submit" <%= "disabled" if current_account.deepseek_credits_remaining.zero? || (!current_account.admin? && current_account.project_credits_remaining.zero?) %>>Pedir orientação</button>
+      <div class="field">
+        <label for="studio-source-text">Texto existente <span class="muted">(opcional)</span></label>
+        <textarea id="studio-source-text" class="text-control" rows="6" maxlength="24000" data-studio-source placeholder="Cole um trecho para receber uma proposta de organização."></textarea>
+      </div>
+      <p class="privacy-note">O texto será enviado para um serviço de IA; só entra no trabalho quando você selecionar os campos.</p>
+      <button class="button button-primary" type="submit" <%= "disabled" if current_account.deepseek_credits_remaining.zero? || (!current_account.admin? && current_account.project_credits_remaining.zero?) %>>Continuar</button>
     </form>
 
     <p class="field-hint" data-studio-status role="status" aria-live="polite"></p>
@@ -63,4 +75,5 @@
       </section>
     </section>
   </section>
+  <p class="inline-support">Precisa de ajuda? <%= link_to "Fale com o suporte", "https://www.instagram.com/sivaldo.davi/", target: "_blank", rel: "noopener noreferrer" %>.</p>
 </main>

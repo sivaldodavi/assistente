@@ -18,14 +18,13 @@
         <%= form.label :project_type, "Tipo de trabalho" %>
         <%= form.select :project_type, options_for_select([
           [ "Case", "case" ],
-          [ "Projeto de Paper", "paper_project" ],
-          [ "Paper Final — após conversão", "paper_final", { disabled: true } ]
+          [ "Projeto de Paper", "paper_project" ]
         ], params.dig(:project, :project_type).presence || "case"), {}, class: "text-control" %>
       </div>
       <div class="field">
         <%= form.label :delivery_date, "Data da primeira entrega (opcional)" %>
         <%= form.date_field :delivery_date, value: params.dig(:project, :delivery_date), class: "text-control" %>
-        <p class="field-hint">A data será salva no primeiro campo de entrega do roteiro.</p>
+        <p class="field-hint">Você poderá incluir ou alterar a data depois.</p>
       </div>
       <%= form.submit "Criar projeto", class: "button button-primary" %>
     <% end %>

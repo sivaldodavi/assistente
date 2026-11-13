@@ -29,13 +29,13 @@ class AdminTest < ActionDispatch::IntegrationTest
     assert_equal 12, @target.ai_limit
 
     patch admin_account_credits_path(@target), params: {
-      credits: { projects: "3", ai: "10", deepseek: "5" }
+      credits: { projects: "3", ai: "10" }
     }
     assert_redirected_to admin_accounts_path
     @target.reload
     assert_equal 4, @target.project_limit
     assert_equal 12, @target.ai_limit
-    assert_equal 8, @target.deepseek_limit
+    assert_equal 13, @target.deepseek_limit
 
     patch admin_account_block_path(@target), params: { blocked: "1" }
     assert_redirected_to admin_accounts_path
@@ -79,13 +79,13 @@ class AdminTest < ActionDispatch::IntegrationTest
 
   test "credit changes reject invalid and excessive balances" do
     patch admin_account_credits_path(@target), params: {
-      credits: { projects: "-1", ai: "0", deepseek: "0" }
+      credits: { projects: "-1", ai: "0" }
     }
     assert_redirected_to admin_accounts_path
     assert_equal 100, @target.reload.project_limit
 
     patch admin_account_credits_path(@target), params: {
-      credits: { projects: "1001", ai: "0", deepseek: "0" }
+      credits: { projects: "1001", ai: "0" }
     }
     assert_redirected_to admin_accounts_path
     assert_equal 100, @target.reload.project_limit
