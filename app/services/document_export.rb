@@ -131,6 +131,8 @@ class DocumentExport
         "decision_basis" => "decisionBasis",
         "decision_a" => "decisionA",
         "decision_b" => "decisionB",
+        "argument_a" => "argumentA",
+        "argument_b" => "argumentB",
         "area" => "area",
         "delimitation" => "delimitation",
         "research_context" => "researchContext",
@@ -411,6 +413,23 @@ class DocumentExport
       blocks.reject(&:empty?).join("\n\n")
     end
 
+    def case_decisions_section(fields)
+      solutions = case_possible_solutions(fields)
+      return "" if solutions.empty?
+
+      "## Descrição das decisões possíveis\n\n#{solutions}"
+    end
+
+    def case_argumentation(fields)
+      titled = [ [ "decisionA", "argumentA", "Alternativa a)" ], [ "decisionB", "argumentB", "Alternativa b)" ] ].map do |title_key, key, fallback|
+        title = AcademicWorkflow.alternative_title(fields[title_key]).presence || fallback
+        section(title, fields[key], 3)
+      end.reject(&:empty?)
+      return "" if titled.empty?
+
+      "## Descrição dos argumentos\n\n#{titled.join("\n\n")}"
+    end
+
     def case_report(project)
       fields = project.fetch("fields")
       criteria = Array(project["criteria"]).filter_map do |item|
@@ -428,7 +447,8 @@ class DocumentExport
       parts = [
         section("DESCRIÇÃO DO CASO", [ text(fields["facts"]), text(fields["problem"]) ].reject(&:empty?).join("\n\n")),
         "# IDENTIFICAÇÃO E ANÁLISE DO CASO",
-        case_possible_solutions(fields),
+        case_decisions_section(fields),
+        case_argumentation(fields),
         section("Descrição dos critérios e valores", criteria.join("\n\n"), 2)
       ]
       body = parts.reject(&:empty?).join("\n\n")
@@ -491,12 +511,12 @@ class DocumentExport
       end
       stages.filter_map do |stage|
         custom = stage["custom"]
-        next if %w[review reuse_decisions].include?(custom)
+        next if custom == "review"
 
         content = stage.fetch("fields", []).filter_map do |field|
           next if NON_DOCUMENT_FIELDS.include?(field["id"])
 
-          [ field["label"], fields[field["id"]] ]
+          [ AcademicWorkflow.field_label(fields, field), fields[field["id"]] ]
         end
         case custom
         when "criteria"

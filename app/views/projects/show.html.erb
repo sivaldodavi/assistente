@@ -46,11 +46,25 @@
       <h2 id="stage-title"><%= @stage["title"] %></h2>
       <p class="stage-intro"><%= @stage["intro"] %></p>
 
+      <% if @stage["custom"] == "reuse_decisions" %>
+        <section class="reused-decisions" aria-label="Alternativas reaproveitadas da etapa anterior">
+          <p class="field-hint">Estas são as alternativas da etapa 2.1, reaproveitadas sem precisar digitá-las de novo. Escreva a argumentação de cada uma nos campos abaixo.</p>
+          <div class="reused-decision">
+            <h3>Alternativa a)</h3>
+            <%= simple_format(@project.fields["decision_a"].presence || "Preencha esta alternativa na etapa 2.1.") %>
+          </div>
+          <div class="reused-decision">
+            <h3>Alternativa b)</h3>
+            <%= simple_format(@project.fields["decision_b"].presence || "Preencha esta alternativa na etapa 2.1.") %>
+          </div>
+        </section>
+      <% end %>
+
       <div class="field-grid">
         <% @stage.fetch("fields", []).each do |field| %>
           <div class="field" data-row="<%= field["row"] %>">
             <div class="field-label-row">
-              <%= label_tag "project_fields_#{field["id"]}", field["label"] %>
+              <%= label_tag "project_fields_#{field["id"]}", AcademicWorkflow.field_label(@project.fields, field) %>
               <% if field["required"] %><span class="required-label">Obrigatório</span><% end %>
             </div>
             <% name = "project[fields][#{field["id"]}]" %>
@@ -82,18 +96,6 @@
       </div>
 
       <% case @stage["custom"] %>
-      <% when "reuse_decisions" %>
-        <section class="reused-decisions" aria-label="Alternativas reaproveitadas da etapa anterior">
-          <p class="field-hint">O texto das decisões possíveis abaixo será reaproveitado, sem pedir que você o escreva novamente.</p>
-          <div class="reused-decision">
-            <h3>Alternativa A</h3>
-            <%= simple_format(@project.fields["decision_a"].presence || "Preencha esta alternativa na etapa 2.1.") %>
-          </div>
-          <div class="reused-decision">
-            <h3>Alternativa B</h3>
-            <%= simple_format(@project.fields["decision_b"].presence || "Preencha esta alternativa na etapa 2.1.") %>
-          </div>
-        </section>
       <% when "criteria" %>
         <%= render "collection", kind: "criteria", items: @project.criteria, title: "Critérios e valores" %>
       <% when "development" %>

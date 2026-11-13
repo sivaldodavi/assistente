@@ -7,6 +7,7 @@ class AcademicWorkflow
     "city" => 160
   }.freeze
   DELIVERY_KEYS = %w[report dissertation paper_project paper_final].freeze
+  ARGUMENT_TITLE_SOURCES = { "argument_a" => "decision_a", "argument_b" => "decision_b" }.freeze
 
   class << self
     def types
@@ -19,6 +20,17 @@ class AcademicWorkflow
 
     def sections(project_type)
       WORKFLOWS.fetch(project_type.to_s) { raise ArgumentError, "Roteiro acadêmico inválido" }
+    end
+
+    def alternative_title(value)
+      value.to_s.squish.sub(/[.;:!?]+\z/, "").strip
+    end
+
+    def field_label(fields, field)
+      source = ARGUMENT_TITLE_SOURCES[field["id"]]
+      return field["label"] unless source
+
+      alternative_title(fields[source]).presence || field["label"]
     end
 
     def first_stage_id(project_type)

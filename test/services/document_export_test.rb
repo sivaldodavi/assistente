@@ -137,13 +137,37 @@ class DocumentExportTest < ActiveSupport::TestCase
     source = DocumentExport.build_quarto_source(project)
 
     [ html, source ].each do |document|
-      assert_equal 1, document.scan(alternative_a.delete_suffix(".")).length
-      assert_equal 1, document.scan(alternative_b.delete_suffix(".")).length
+      assert_equal (document == source ? 1 : 2), document.scan(alternative_a.delete_suffix(".")).length
+      assert_equal (document == source ? 1 : 2), document.scan(alternative_b.delete_suffix(".")).length
       assert_not_includes document, "Texto antigo duplicado"
       assert_not_includes document, "Autoria antiga"
       assert_not_includes document, "Subtítulo antigo"
     end
     assert_not_includes source, "Descrição dos argumentos"
+  end
+
+  test "exports the argumentation of each alternative in the Case report" do
+    project = Project.new(
+      project_type: "case",
+      fields: {
+        "title" => "Relatório",
+        "decision_a" => "Alternativa a de teste.",
+        "decision_b" => "Alternativa b de teste.",
+        "argument_a" => "Argumento exclusivo de a.",
+        "argument_b" => "Argumento exclusivo de b."
+      }
+    )
+
+    source = DocumentExport.build_quarto_source(project)
+    html = DocumentExport.build_project_html(project)
+
+    assert_includes source, "## Descrição das decisões possíveis"
+    assert_includes source, "## Descrição dos argumentos"
+    assert_includes source, "### Alternativa a de teste\n\nArgumento exclusivo de a"
+    assert_includes source, "### Alternativa b de teste\n\nArgumento exclusivo de b"
+    assert_includes html, "<h3>Alternativa a de teste</h3>"
+    assert_includes html, "Argumento exclusivo de a."
+    assert_equal 1, html.scan("Alternativa a de teste.").length
   end
 
   test "does not export removed decision aliases" do

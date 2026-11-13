@@ -219,8 +219,25 @@
     },
     {
       "title": "2.2 · Argumentação das alternativas",
-      "intro": "As alternativas A e B da etapa anterior também são as linhas argumentativas do trabalho. O conteúdo é reaproveitado; não é necessário preenchê-lo novamente.",
-      "fields": [],
+      "intro": "As alternativas A e B da etapa anterior são as linhas argumentativas do trabalho. Elas aparecem abaixo já reaproveitadas; agora desenvolva a argumentação de cada uma.",
+      "fields": [
+        {
+          "id": "argument_a",
+          "label": "Alternativa a)",
+          "type": "textarea",
+          "hint": "Desenvolva os fundamentos jurídicos (legislação, doutrina e jurisprudência) que sustentam esta alternativa e explique como se aplicam ao caso. Escreva com suas palavras.",
+          "required": true,
+          "limit": 12000
+        },
+        {
+          "id": "argument_b",
+          "label": "Alternativa b)",
+          "type": "textarea",
+          "hint": "Desenvolva os fundamentos jurídicos (legislação, doutrina e jurisprudência) que sustentam esta alternativa e explique como se aplicam ao caso. Escreva com suas palavras.",
+          "required": true,
+          "limit": 12000
+        }
+      ],
       "checks": [],
       "id": "thesis_argumentation",
       "phase": "report",

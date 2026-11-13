@@ -10,7 +10,7 @@ class AIWorkflow
   CASE_FIELDS = {
     "proposal_chat" => %w[problem decision_basis decision_a decision_b],
     "suggest_problem" => %w[problem],
-    "suggest_theses" => %w[decision_a decision_b],
+    "suggest_theses" => %w[decision_a decision_b argument_a argument_b],
     "case_structure" => %w[facts problem decision_basis decision_a decision_b],
     "review_criteria" => %w[criteria]
   }.freeze
@@ -56,9 +56,9 @@ class AIWorkflow
       "possible_decision_a" => text(fields, "decision_a").first(6_000),
       "possible_decision_b" => text(fields, "decision_b").first(6_000),
       "thesis_a_title" => "Alternativa A",
-      "thesis_a_argument" => text(fields, "decision_a"),
+      "thesis_a_argument" => text(fields, "argument_a"),
       "thesis_b_title" => "Alternativa B",
-      "thesis_b_argument" => text(fields, "decision_b"),
+      "thesis_b_argument" => text(fields, "argument_b"),
       "criteria_and_values" => criteria_text(criteria),
       "research_object" => text(fields, "research_object", 5_000),
       "problem_context" => text(fields, "problem_context", 8_000),

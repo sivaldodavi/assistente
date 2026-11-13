@@ -8,7 +8,7 @@ class AcademicWorkflowTest < ActiveSupport::TestCase
     field_count = AcademicWorkflow.types.sum do |type|
       AcademicWorkflow.sections(type).sum { |section| section.fetch("fields", []).length }
     end
-    assert_equal 63, field_count
+    assert_equal 65, field_count
     fields = AcademicWorkflow.types.flat_map do |type|
       AcademicWorkflow.sections(type).flat_map { |section| section.fetch("fields", []) }
     end
@@ -59,10 +59,30 @@ class AcademicWorkflowTest < ActiveSupport::TestCase
     report = AcademicWorkflow.progress("case", {}, "report")
     dissertation = AcademicWorkflow.progress("case", {}, "dissertation")
 
-    assert_equal 8, report["total"]
+    assert_equal 10, report["total"]
     assert_equal 1, dissertation["total"]
     assert_equal 0, report["done"]
     assert_equal 100, AcademicWorkflow.progress("case", {}, "unknown")["percent"]
+  end
+
+  test "keeps the argumentation fields of step 2.2 for each alternative" do
+    fields = AcademicWorkflow.normalize_fields("case", {
+      "argument_a" => "Fundamentos da alternativa a).",
+      "argument_b" => "Fundamentos da alternativa b).",
+      "thesis_a" => "Campo antigo"
+    })
+
+    assert_equal "Fundamentos da alternativa a).", fields["argument_a"]
+    assert_equal "Fundamentos da alternativa b).", fields["argument_b"]
+    assert_not_includes fields, "thesis_a"
+  end
+
+  test "argument fields take the title of the alternative they argue for" do
+    values = { "decision_a" => "Reconhecimento do direito à eutanásia;", "decision_b" => "" }
+    rules = AcademicWorkflow.field_rules("case")
+
+    assert_equal "Reconhecimento do direito à eutanásia", AcademicWorkflow.field_label(values, rules["argument_a"])
+    assert_equal "Alternativa b)", AcademicWorkflow.field_label(values, rules["argument_b"])
   end
 
   test "discards author and decision fields that are not part of the current workflow" do

@@ -77,6 +77,20 @@ class ProjectsTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "Texto da alternativa B"
   end
 
+  test "step 2.2 offers a text area for the argumentation of each alternative" do
+    project = create_project!(
+      project_type: "case",
+      fields: { decision_a: "Texto da alternativa A", decision_b: "Texto da alternativa B" }
+    )
+
+    get project_path(project, stage: "thesis_argumentation")
+
+    assert_response :success
+    assert_select "textarea[name='project[fields][argument_a]']", count: 1
+    assert_select "textarea[name='project[fields][argument_b]']", count: 1
+    assert_select ".reused-decision", count: 2
+  end
+
   test "consumes one project credit atomically and blocks creation without credits" do
     @account.update!(project_limit: 1, project_used: 0)
     post projects_path, params: { project: { project_type: "case" } }
