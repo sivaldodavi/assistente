@@ -46,25 +46,12 @@
       <h2 id="stage-title"><%= @stage["title"] %></h2>
       <p class="stage-intro"><%= @stage["intro"] %></p>
 
-      <% if @stage["custom"] == "reuse_decisions" %>
-        <section class="reused-decisions" aria-label="Alternativas reaproveitadas da etapa anterior">
-          <p class="field-hint">Estas são as alternativas da etapa 2.1, reaproveitadas sem precisar digitá-las de novo. Escreva a argumentação de cada uma nos campos abaixo.</p>
-          <div class="reused-decision">
-            <h3>Alternativa a)</h3>
-            <%= simple_format(@project.fields["decision_a"].presence || "Preencha esta alternativa na etapa 2.1.") %>
-          </div>
-          <div class="reused-decision">
-            <h3>Alternativa b)</h3>
-            <%= simple_format(@project.fields["decision_b"].presence || "Preencha esta alternativa na etapa 2.1.") %>
-          </div>
-        </section>
-      <% end %>
-
-      <div class="field-grid">
+      <% paired = @stage["custom"] == "reuse_decisions" %>
+      <div class="field-grid<%= " field-grid-paired" if paired %>">
         <% @stage.fetch("fields", []).each do |field| %>
           <div class="field" data-row="<%= field["row"] %>">
             <div class="field-label-row">
-              <%= label_tag "project_fields_#{field["id"]}", AcademicWorkflow.field_label(@project.fields, field) %>
+              <%= label_tag "project_fields_#{field["id"]}", AcademicWorkflow.field_label(@project.fields, field), class: ("alternative-title" if paired) %>
               <% if field["required"] %><span class="required-label">Obrigatório</span><% end %>
             </div>
             <% name = "project[fields][#{field["id"]}]" %>
@@ -88,6 +75,8 @@
               <%= text_field_tag name, value, id: "project_fields_#{field["id"]}", maxlength: field["limit"], placeholder: field["placeholder"], class: "text-control", aria: { required: field["required"] } %>
             <% end %>
             <% if field["hint"].present? %><p class="field-hint"><%= field["hint"] %></p><% end %>
+            <% source = AcademicWorkflow::ARGUMENT_TITLE_SOURCES[field["id"]] %>
+            <% if paired && source && @project.fields[source].blank? %><p class="field-hint">Preencha esta alternativa na etapa 2.1.</p><% end %>
             <% if field["source"].present? && Array(current_account.profile[field["source"]]).empty? %>
               <p class="field-hint">Cadastre suas opções em <%= link_to "configurações da conta", account_settings_path %>.</p>
             <% end %>

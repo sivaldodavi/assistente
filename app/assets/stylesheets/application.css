@@ -106,10 +106,11 @@ h1, h2, h3, p { margin-top: 0; }
 .stage-card h2 { font-size: clamp(1.45rem, 3vw, 2rem); letter-spacing: -.025em; margin-bottom: 8px; }
 .stage-intro { color: var(--muted); margin-bottom: 28px; max-width: 860px; }
 .field-grid { display: grid; gap: 22px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.reused-decisions { display: grid; gap: 12px; }
-.reused-decision { background: var(--surface-raised); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
-.reused-decision h3 { margin: 0 0 8px; }
-.reused-decision p:last-child { margin-bottom: 0; }
+.field-grid-paired { grid-template-columns: minmax(0, 1fr); }
+.field-grid-paired .field { align-items: start; background: var(--surface-raised); border: 1px solid var(--line); border-radius: 10px; column-gap: 24px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); padding: 16px; }
+.field-grid-paired .field > .field-label-row { grid-column: 1; grid-row: 1 / span 3; margin: 0; }
+.field-grid-paired .field > :not(.field-label-row) { grid-column: 2; }
+.field-grid-paired .alternative-title { font-size: 1rem; line-height: 1.5; }
 .field { min-width: 0; }
 .field[data-row="docente"], .field[data-row="turma"] { grid-column: span 1; }
 .field-label-row { align-items: baseline; display: flex; gap: 10px; justify-content: space-between; margin-bottom: 7px; }
@@ -236,6 +237,8 @@ textarea.text-control { min-height: 116px; resize: vertical; }
   .site-header { min-height: 60px; padding: 0 16px; }
   .editor-heading { align-items: flex-start; flex-direction: column; }
   .field-grid { grid-template-columns: 1fr; }
+  .field-grid-paired .field { grid-template-columns: 1fr; }
+  .field-grid-paired .field > * { grid-column: 1 !important; grid-row: auto !important; }
   .field[data-row] { grid-column: auto; }
   .stage-card { padding: 22px 18px; }
   .editor-actions { gap: 10px; }

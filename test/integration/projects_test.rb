@@ -72,9 +72,9 @@ class ProjectsTest < ActionDispatch::IntegrationTest
     assert_select "h2#stage-title", "2.2 · Argumentação das alternativas"
     assert_select "textarea[name='project[fields][thesis_a]']", count: 0
     assert_select "textarea[name='project[fields][thesis_b]']", count: 0
-    assert_select ".reused-decision", count: 2
-    assert_includes response.body, "Texto da alternativa A"
-    assert_includes response.body, "Texto da alternativa B"
+    assert_select "label.alternative-title", count: 2
+    assert_equal 1, response.body.scan("Texto da alternativa A").length
+    assert_equal 1, response.body.scan("Texto da alternativa B").length
   end
 
   test "step 2.2 offers a text area for the argumentation of each alternative" do
@@ -88,7 +88,7 @@ class ProjectsTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "textarea[name='project[fields][argument_a]']", count: 1
     assert_select "textarea[name='project[fields][argument_b]']", count: 1
-    assert_select ".reused-decision", count: 2
+    assert_select "label.alternative-title", count: 2
   end
 
   test "consumes one project credit atomically and blocks creation without credits" do
