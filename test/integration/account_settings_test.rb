@@ -42,8 +42,10 @@ class AccountSettingsTest < ActionDispatch::IntegrationTest
     get account_settings_path
 
     assert_response :success
-    assert_select "dialog[data-settings-dialog][open]", count: 0
-    assert_select "[data-settings-close]"
+    assert_select "dialog[data-settings-dialog]", count: 0
+    assert_select "[data-settings-close]", count: 0
+    assert_select "main.settings-page .settings-panel"
+    assert_select "h1#settings-title", "Perfil e preferências"
     assert_select ".settings-nav a", count: 4
     assert_select "a[href='#preferences']", count: 0
     assert_includes response.body, "créditos de IA"

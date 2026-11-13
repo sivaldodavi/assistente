@@ -268,13 +268,25 @@ class ProjectsTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "[data-ai-panel][data-action-url='/projects/#{project.id}/ai/action']"
+    assert_select ".editor-heading-actions a[href='#{chat_path(project_id: project.id, scope: "description")}']", text: "Abrir Chat"
+    assert_select ".editor-heading-actions button[data-jev-assessment][data-jev-assessment-stage='case_report']", text: "Avaliar etapa"
     assert_select "button[data-ai-action='proposal_chat']"
     assert_select "button[data-ai-action='suggest_problem']"
     assert_select "button[data-jev-section-action]"
-    assert_select "button[data-jev-assessment]"
+    assert_select "button[data-jev-assessment]", count: 1
     assert_select "[data-jev-assessment-url='/projects/#{project.id}/ai/jev-assessment']"
     assert_select "select[data-jev-section-select] option", count: 5
     assert_select "[data-ai-panel]", text: /JEV|DeepSeek|TypeSafe/, count: 0
+  end
+
+  test "does not offer a text assessment for the Case debate" do
+    project = create_project!(project_type: "case")
+
+    get project_path(project, stage: "debate")
+
+    assert_response :success
+    assert_select ".editor-heading-actions a[href='#{chat_path(project_id: project.id, scope: "debate")}']", text: "Abrir Chat"
+    assert_select "button[data-jev-assessment]", count: 0
   end
 
   test "renders Paper JEV assessment without Case section controls" do
@@ -284,9 +296,8 @@ class ProjectsTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "[data-ai-panel]"
-    assert_select "button[data-jev-assessment]"
+    assert_select ".editor-heading-actions button[data-jev-assessment][data-jev-assessment-stage='paper_project']"
     assert_select "[data-jev-section-action]", count: 0
-    assert_select "select[data-jev-assessment-select] option", text: "Projeto de paper"
   end
 
   test "renders only fixed delivery date fields for Case phases" do

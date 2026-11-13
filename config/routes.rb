@@ -30,7 +30,9 @@ Rails.application.routes.draw do
   get "/privacidade", to: "public_pages#privacy", as: :privacy
   get "/metricas", to: "public_pages#metrics", as: :metrics
   get "/ajuda-ia", to: "public_pages#ai_help", as: :ai_help
-  get "/guia-de-escrita", to: "writing_guide#show", as: :writing_guide
+  get "/chat", to: "chat#show", as: :chat
+  post "/chat/ask", to: "chat#ask", as: :chat_ask
+  get "/guia-de-escrita", to: "chat#show", defaults: { mode: "chat" }, as: :writing_guide
   post "/guia-de-escrita/perguntas", to: "writing_guide#ask", as: :writing_guide_questions
   post "/payments", to: "payments#create", as: :payments
   get "/payments/:id", to: "payments#status", as: :payment_status
@@ -39,7 +41,7 @@ Rails.application.routes.draw do
   post "/projects/:project_id/ai/jev-report", to: "project_assist#jev_report"
   post "/projects/:project_id/ai/jev-section", to: "project_assist#jev_section"
   post "/projects/:project_id/ai/jev-assessment", to: "project_assist#jev_assessment"
-  get "/projects/assistant", to: "project_studio#show", as: :project_assistant
+  get "/projects/assistant", to: "chat#show", defaults: { mode: "guided" }, as: :project_assistant
   post "/projects/assistant/draft", to: "project_studio#draft", as: :project_assistant_draft
   resources :projects do
     get :export, on: :member

@@ -344,9 +344,16 @@ document.addEventListener("click", async (event) => {
       url = panel.dataset.jevReportUrl;
       payload = {};
     } else if (jevButton.matches("[data-jev-assessment]")) {
+      const assistPanel = panel.querySelector(".assist-panel");
+      if (assistPanel) {
+        assistPanel.open = true;
+        if (!window.matchMedia("(max-width: 720px)").matches) {
+          assistPanel.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      }
       url = panel.dataset.jevAssessmentUrl;
       payload = {
-        stage: panel.querySelector("[data-jev-assessment-select]").value,
+        stage: jevButton.dataset.jevAssessmentStage,
         project_revision: Number(panel.dataset.projectRevision)
       };
     } else {
@@ -564,7 +571,7 @@ async function requestStudioSuggestions(root, form, continuation) {
     return;
   }
 
-  const submitButton = form.querySelector('button[type="submit"]');
+  const submitButton = form.querySelector('button[type="submit"], input[type="submit"]');
   if (submitButton) submitButton.disabled = true;
   root.querySelector("[data-studio-continue]").disabled = true;
   status.textContent = "Preparando uma proposta...";
@@ -604,8 +611,7 @@ async function requestStudioSuggestions(root, form, continuation) {
       });
     });
     results.hidden = false;
-    const answer = root.querySelector("[data-studio-answer]");
-    answer.textContent = result.response.answer;
+    renderStudioThread(root, root._studioMessages);
     renderStudioQuestions(root, result.response.questions);
     renderStudioFields(root);
     form.querySelector("[data-studio-project-type]").disabled = true;
@@ -617,6 +623,12 @@ async function requestStudioSuggestions(root, form, continuation) {
     if (submitButton) submitButton.disabled = false;
     root.querySelector("[data-studio-continue]").disabled = false;
   }
+}
+
+function renderStudioThread(root, messages) {
+  const thread = root.querySelector("[data-studio-thread]");
+  thread.replaceChildren();
+  messages.forEach((message) => addChatMessage(thread, message.role, message.content));
 }
 
 function renderStudioQuestions(root, questions) {
@@ -692,7 +704,7 @@ function captureStudioFields(root) {
 }
 
 function setupAssistPanel() {
-  const panel = document.querySelector(".assist-panel[data-ai-panel]");
+  const panel = document.querySelector(".assist-panel");
   const backdrop = document.querySelector("[data-assist-backdrop]");
   if (!panel || !backdrop || panel.dataset.sheetReady) return;
 
@@ -754,6 +766,80 @@ function setupAssistPanel() {
   sync();
 }
 
+function setupChat() {
+  const root = document.querySelector("[data-chat]");
+  if (!root || root.dataset.chatReady) return;
+
+  root.dataset.chatReady = "true";
+  root._chatMessages = [];
+  const form = root.querySelector("[data-chat-form]");
+  const input = root.querySelector("[data-chat-input]");
+  const messages = root.querySelector("[data-chat-messages]");
+  const status = root.querySelector("[data-chat-status]");
+  const submit = form.querySelector('button[type="submit"]');
+
+  root.addEventListener("click", (event) => {
+    const suggestion = event.target.closest("[data-chat-suggestion]");
+    if (!suggestion) return;
+    input.value = suggestion.dataset.chatSuggestion;
+    input.focus();
+  });
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const message = input.value.trim();
+    if (!message) return;
+
+    messages.querySelector(".chat-empty")?.remove();
+    addChatMessage(messages, "user", message);
+    input.value = "";
+    submit.disabled = true;
+    status.textContent = "Pensando…";
+    try {
+      const response = await fetch(root.dataset.chatUrl, {
+        method: "POST",
+        credentials: "same-origin",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify({
+          project_id: root.dataset.projectId,
+          scope: root.dataset.scope,
+          message,
+          messages: root._chatMessages
+        })
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.message || "Não foi possível enviar a pergunta.");
+
+      root._chatMessages.push({ role: "user", content: message });
+      root._chatMessages.push({ role: "assistant", content: result.answer });
+      root._chatMessages = root._chatMessages.slice(-12);
+      addChatMessage(messages, "assistant", result.answer);
+      status.textContent = "Resposta recebida.";
+    } catch (error) {
+      input.value = message;
+      addChatMessage(messages, "assistant", error.message || "Não foi possível conectar ao serviço de IA.");
+      status.textContent = "A pergunta não foi enviada.";
+    } finally {
+      submit.disabled = false;
+      input.focus();
+    }
+  });
+}
+
+function addChatMessage(container, role, content) {
+  const message = document.createElement("article");
+  message.className = `chat-message chat-message-${role}`;
+  message.setAttribute("aria-label", role === "user" ? "Sua mensagem" : "Resposta");
+  const body = document.createElement("p");
+  body.textContent = content;
+  message.append(body);
+  container.append(message);
+  container.scrollTop = container.scrollHeight;
+}
+
 function initializePageInteractions() {
   document.querySelectorAll(".flash:not([data-flash-ready])").forEach((flash) => {
     flash.dataset.flashReady = "true";
@@ -766,20 +852,6 @@ function initializePageInteractions() {
     flash.append(close);
     if (flash.classList.contains("flash-notice")) {
       window.setTimeout(() => flash.remove(), 6000);
-    }
-  });
-
-  document.querySelectorAll("dialog[data-settings-dialog]").forEach((dialog) => {
-    if (!dialog.dataset.settingsReady) {
-      dialog.dataset.settingsReady = "true";
-      dialog.addEventListener("cancel", (event) => {
-        event.preventDefault();
-        window.location.assign(dialog.dataset.closeHref);
-      });
-    }
-    if (!dialog.open) {
-      if (typeof dialog.showModal === "function") dialog.showModal();
-      else dialog.setAttribute("open", "");
     }
   });
 
@@ -799,16 +871,9 @@ function initializePageInteractions() {
     });
     root.querySelector("[data-studio-source-field]").hidden = guided;
   });
+  setupChat();
   setupAssistPanel();
 }
-
-document.addEventListener("click", (event) => {
-  const closeLink = event.target.closest("[data-settings-close]");
-  if (!closeLink) return;
-  event.preventDefault();
-  closeLink.closest("dialog").close();
-  window.location.assign(closeLink.href);
-});
 
 document.addEventListener("DOMContentLoaded", initializePageInteractions);
 document.addEventListener("turbo:load", initializePageInteractions);

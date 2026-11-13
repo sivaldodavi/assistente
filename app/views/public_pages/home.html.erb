@@ -21,14 +21,21 @@
         <h1>Seu trabalho, com método.</h1>
         <p>Roteiro por etapa, datas de entrega e formatação ABNT, num só lugar.</p>
         <% if login_available %>
-          <%= button_to "Entrar com Google", "/auth/google_oauth2", method: :post, class: "button button-primary" %>
+          <div class="public-hero-actions">
+            <%= button_to "Entrar com Google", "/auth/google_oauth2", method: :post, class: "button button-primary" %>
+            <%= link_to "Ver pacotes", plans_path, class: "button button-secondary" %>
+          </div>
           <p class="field-hint">Entrada somente com conta Google.</p>
         <% else %>
-          <span class="preview-label">Acesso em preparação</span>
+          <div class="public-hero-actions">
+            <span class="preview-label">Acesso em preparação</span>
+            <%= link_to "Ver pacotes", plans_path, class: "button button-secondary" %>
+          </div>
         <% end %>
         <div class="public-links">
           <%= link_to "Termos", terms_path %>
           <%= link_to "Privacidade", privacy_path %>
+          <%= link_to "Como funciona a IA", ai_help_path %>
         </div>
       </div>
       <aside class="public-preview" aria-label="Etapas do trabalho">

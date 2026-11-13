@@ -18,7 +18,10 @@ class WritingGuideTest < ActionDispatch::IntegrationTest
 
     get writing_guide_path
 
-    assert_response :forbidden
+    assert_response :success
+    assert_select "[data-chat]"
+    assert_select "[data-chat-input][disabled]"
+    assert_select ".inline-notice", text: /autorize o uso de IA/
   end
 
   test "guide answers a question without creating or touching a project" do

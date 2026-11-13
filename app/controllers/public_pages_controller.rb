@@ -1,4 +1,6 @@
 class PublicPagesController < ApplicationController
+  MONTH_LABELS = %w[jan fev mar abr mai jun jul ago set out nov dez].freeze
+
   before_action :authenticate_account!, only: :metrics
 
   def home
@@ -27,6 +29,7 @@ class PublicPagesController < ApplicationController
     assessments = assessments.where("jev_assessments.created_at >= ?", @analytics_period.to_i.days.ago) unless @analytics_period == "all"
     @recent_jev_assessments = assessments.order(created_at: :desc).limit(5)
     @jev_assessment_count = assessments.count
+    @monthly_activity = monthly_revision_activity
   end
 
   def terms
@@ -36,5 +39,16 @@ class PublicPagesController < ApplicationController
   end
 
   def ai_help
+  end
+
+  private
+
+  def monthly_revision_activity
+    months = 5.downto(0).map { |offset| Time.current.beginning_of_month - offset.months }
+    revisions = ProjectRevision.where(project_id: @projects.map(&:id), created_at: months.first.beginning_of_month..Time.current.end_of_month)
+    counts = revisions.pluck(:created_at).group_by { |created_at| created_at.beginning_of_month.to_date }.transform_values(&:length)
+    months.map do |month|
+      { label: "#{MONTH_LABELS[month.month - 1]}/#{month.year}", count: counts.fetch(month.to_date, 0) }
+    end
   end
 end

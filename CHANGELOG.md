@@ -2,6 +2,15 @@
 
 Este arquivo registra mudanças relevantes por release. Releases usam tags Git anotadas em SemVer; `v0.1.0` identifica a versão-base implantada (`07dfd91`).
 
+## [0.5.0] - 2026-11-13
+
+### Adicionado
+
+- Adiciona Chat com IA contextualizado por projeto ou etapa, acessível pelo editor e pela navegação, sem persistir o histórico da conversa.
+- Integra o desenvolvimento de ideias e a organização de texto existente ao fluxo de criação assistida, com propostas editáveis e confirmação antes de criar.
+- Apresenta no cabeçalho do editor ações visíveis para abrir o Chat e avaliar a etapa; o debate não oferece avaliação textual.
+- Exibe métricas mensais calculadas a partir de revisões reais salvas.
+
 ## [0.4.0] - 2026-11-13
 
 ### Alterado

@@ -1,10 +1,16 @@
 <% content_for :title, "#{@project.title} — Assistente Acadêmico" %>
 
-<main class="page-shell editor-shell">
+<main class="page-shell editor-shell" data-ai-panel data-project-revision="<%= @project.lock_version %>" data-action-url="<%= "/projects/#{@project.id}/ai/action" %>" data-jev-report-url="<%= "/projects/#{@project.id}/ai/jev-report" %>" data-jev-section-url="<%= "/projects/#{@project.id}/ai/jev-section" %>" data-jev-assessment-url="<%= "/projects/#{@project.id}/ai/jev-assessment" %>">
   <div class="editor-heading">
     <div>
       <p class="eyebrow"><%= @project.project_type == "case" ? "Roteiro de Case" : @project.project_type == "paper_final" ? "Paper Final" : "Projeto de Paper" %></p>
       <h1><%= @project.title %></h1>
+    </div>
+    <div class="editor-heading-actions" aria-label="Ações do projeto">
+      <%= link_to "Abrir Chat", chat_path(project_id: @project.id, scope: @stage["id"]), class: "button button-secondary" %>
+      <% if @assessment_stage %>
+        <button class="button button-primary" type="button" data-jev-assessment data-jev-assessment-stage="<%= @assessment_stage %>">Avaliar etapa</button>
+      <% end %>
     </div>
     <div class="progress-chip" aria-label="Progresso dos campos obrigatórios nesta fase">
       <strong><%= @progress["percent"] %>%</strong>
@@ -171,7 +177,7 @@
         </fieldset>
       <% end %>
 
-      <details class="assist-panel" id="assist-panel" data-ai-panel data-project-revision="<%= @project.lock_version %>" data-action-url="<%= "/projects/#{@project.id}/ai/action" %>" data-jev-report-url="<%= "/projects/#{@project.id}/ai/jev-report" %>" data-jev-section-url="<%= "/projects/#{@project.id}/ai/jev-section" %>" data-jev-assessment-url="<%= "/projects/#{@project.id}/ai/jev-assessment" %>">
+      <details class="assist-panel" id="assist-panel">
         <summary class="assist-panel-summary" aria-controls="assist-panel-body" aria-expanded="false">
           <span class="eyebrow">Apoio acadêmico</span>
           <strong id="assist-panel-title">Ajuda para esta etapa</strong>
@@ -191,23 +197,7 @@
         <div class="assist-response" data-ai-response aria-live="polite"></div>
 
         <div class="jev-tools">
-          <h4>Avaliação formativa</h4>
-          <p class="field-hint">A avaliação usa rubricas indicativas, não representa nota oficial e considera somente o texto salvo nesta revisão. O debate do Case não é avaliado por texto.</p>
-          <div class="assist-actions">
-            <label class="jev-section-picker">Rubrica completa
-              <%= select_tag "jev_assessment_stage", options_for_select(
-                case @project.project_type
-                when "case"
-                  [["Relatório do Case", "case_report"], ["Dissertação do Case", "case_dissertation"]]
-                when "paper_project"
-                  [["Projeto de paper", "paper_project"]]
-                else
-                  [["Paper final", "paper_final"]]
-                end
-              ), class: "text-control", data: { jev_assessment_select: true } %>
-            </label>
-            <button class="button button-secondary" type="button" data-jev-assessment>Avaliar etapa</button>
-          </div>
+          <p class="field-hint">Avaliação indicativa, não é nota oficial.</p>
           <% if @project.project_type == "case" %>
             <div class="assist-actions">
               <label class="jev-section-picker">Checklist de uma seção
@@ -219,7 +209,7 @@
                   ["Critérios e valores", "criteria_and_values"]
                 ]), class: "text-control", data: { jev_section_select: true } %>
               </label>
-              <button class="button button-secondary" type="button" data-jev-section-action>Avaliar etapa</button>
+              <button class="button button-secondary" type="button" data-jev-section-action>Avaliar seção</button>
             </div>
           <% end %>
           <p class="field-hint" data-jev-status role="status" aria-live="polite"></p>

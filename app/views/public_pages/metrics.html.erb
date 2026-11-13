@@ -35,5 +35,25 @@
       <% end %>
       <p class="field-hint">As avaliações são formativas; resultados de etapas diferentes não são somados nem comparados.</p>
     </section>
+    <section class="dashboard-card dashboard-wide" aria-labelledby="activity-title">
+      <div class="dashboard-card-heading">
+        <h2 id="activity-title">Atividade por mês</h2>
+        <span class="muted">Edições salvas · últimos 6 meses</span>
+      </div>
+      <% if @monthly_activity.any? { |month| month[:count].positive? } %>
+        <% max_activity = [@monthly_activity.map { |month| month[:count] }.max, 1].max %>
+        <div class="activity-chart" role="img" aria-label="Quantidade de edições salvas por mês nos últimos seis meses">
+          <% @monthly_activity.each do |month| %>
+            <div class="activity-month" data-activity-month="<%= month[:label] %>" data-count="<%= month[:count] %>">
+              <span class="activity-count"><%= month[:count] %></span>
+              <span class="activity-bar"><span style="height: <%= [(month[:count].to_f / max_activity * 100).round, 4].max %>%"></span></span>
+              <span class="activity-label"><%= month[:label] %></span>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="empty-state-copy">Ainda não há edições salvas neste período.</p>
+      <% end %>
+    </section>
   </div>
 </main>

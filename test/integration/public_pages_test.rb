@@ -6,6 +6,8 @@ class PublicPagesTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "h1", "Seu trabalho, com método."
+    assert_select ".public-hero-actions a[href='#{plans_path}']", text: "Ver pacotes"
+    assert_select "a[href='#{ai_help_path}']", text: "Como funciona a IA"
     assert_select "a[href='#{plans_path}']", text: "Pacotes"
     assert_select ".public-preview li", count: 3
   end
@@ -38,6 +40,18 @@ class PublicPagesTest < ActionDispatch::IntegrationTest
     assert_select "a[href='#{terms_path}']"
     assert_select "a[href='#{privacy_path}']"
     assert_no_provider_names
+  end
+
+  test "metrics activity chart uses saved project revisions" do
+    account = create_test_account(email: "metrics@example.test")
+    sign_in_as(account)
+    account.projects.create!(project_type: "case")
+
+    get metrics_path
+
+    assert_response :success
+    assert_select ".activity-month", count: 6
+    assert_select ".activity-month[data-count='1']", count: 1
   end
 
   test "public sign-in actions start Google OAuth directly when configured" do

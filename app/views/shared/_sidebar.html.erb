@@ -11,19 +11,14 @@
     <%= link_to projects_path, class: ("is-active" if current_page?(projects_path)), aria: { current: ("page" if current_page?(projects_path)) } do %>
       <%= navigation_icon(:projects) %> Projetos
     <% end %>
-    <%= link_to metrics_path, class: ("is-active" if current_page?(metrics_path)), aria: { current: ("page" if current_page?(metrics_path)) } do %>
-      <%= navigation_icon(:metrics) %> Métricas
-    <% end %>
-    <%= link_to writing_guide_path, class: ("is-active" if current_page?(writing_guide_path)), aria: { current: ("page" if current_page?(writing_guide_path)) } do %>
-      <%= navigation_icon(:guide) %> Guia de escrita
+    <%= link_to chat_path, class: ("is-active" if current_page?(chat_path)), aria: { current: ("page" if current_page?(chat_path)) } do %>
+      <%= navigation_icon(:chat) %> Chat com IA
     <% end %>
     <%= link_to library_path, class: ("is-active" if current_page?(library_path)), aria: { current: ("page" if current_page?(library_path)) } do %>
       <%= navigation_icon(:library) %> Biblioteca
     <% end %>
-    <% if current_account.admin? %>
-      <%= link_to admin_dashboard_path, class: ("is-active" if current_page?(admin_dashboard_path)) do %>
-        <%= navigation_icon(:settings) %> Administração
-      <% end %>
+    <%= link_to metrics_path, class: ("is-active" if current_page?(metrics_path)), aria: { current: ("page" if current_page?(metrics_path)) } do %>
+      <%= navigation_icon(:metrics) %> Métricas
     <% end %>
   </nav>
 
@@ -31,6 +26,7 @@
 
   <div class="sidebar-bottom">
     <%= link_to "Pacotes", plans_path, class: "sidebar-secondary-link" %>
+    <% if current_account.admin? %><%= link_to "Administração", admin_dashboard_path, class: "sidebar-secondary-link" %><% end %>
     <%= link_to "Suporte", "https://www.instagram.com/sivaldo.davi/", class: "sidebar-secondary-link", target: "_blank", rel: "noopener noreferrer" %>
     <details class="profile-menu">
       <summary>

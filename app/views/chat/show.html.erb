@@ -1,0 +1,138 @@
+<% content_for :title, "Chat com IA — Assistente Acadêmico" %>
+
+<main class="page-shell chat-shell">
+  <header class="chat-heading">
+    <p class="eyebrow">Chat com IA</p>
+    <h1>Converse sobre seu trabalho</h1>
+    <p>Tire dúvidas, discuta uma etapa ou prepare um rascunho.</p>
+  </header>
+
+  <nav class="chat-mode-nav" aria-label="Tipo de conversa">
+    <%= link_to "Dúvida de escrita", chat_path(project_id: @project&.id, scope: @scope), class: ["chat-mode-chip", ("is-active" if @mode == "chat")].compact.join(" "), aria: { current: ("page" if @mode == "chat") } %>
+    <%= link_to "Desenvolver uma ideia", chat_path(mode: "guided"), class: ["chat-mode-chip", ("is-active" if @mode == "guided")].compact.join(" "), aria: { current: ("page" if @mode == "guided") } %>
+    <%= link_to "Organizar texto existente", chat_path(mode: "import"), class: ["chat-mode-chip", ("is-active" if @mode == "import")].compact.join(" "), aria: { current: ("page" if @mode == "import") } %>
+  </nav>
+
+  <% if @mode == "chat" %>
+    <div class="chat-layout">
+      <section class="chat-workspace" aria-label="Conversa com IA" data-chat data-chat-url="<%= chat_ask_path %>" data-project-id="<%= @project&.id %>" data-scope="<%= @scope %>">
+        <%= form_with url: chat_path, method: :get, class: "chat-context-form" do %>
+          <label for="chat-project">Projeto
+            <%= select_tag :project_id, options_for_select([["Dúvidas gerais", ""]] + @projects.map { |project| [project.title, project.id] }, @project&.id), id: "chat-project", class: "text-control" %>
+          </label>
+          <label for="chat-scope">Contexto
+            <%= select_tag :scope, options_for_select([["Projeto inteiro", "project"]] + @stages, @scope), id: "chat-scope", class: "text-control", disabled: @project.nil? %>
+          </label>
+          <%= submit_tag "Atualizar", class: "button button-secondary" %>
+        <% end %>
+
+        <div class="chat-messages" data-chat-messages role="log" aria-live="polite" aria-label="Mensagens da conversa">
+          <div class="chat-empty">
+            <% if @project %>
+              <p>Contexto: <strong><%= @project.title %></strong><%= " · #{@stages.find { |title, id| id == @scope }&.first}" if @scope != "project" %>.</p>
+            <% else %>
+              <p>Faça uma pergunta sobre escrita, estrutura ou metodologia acadêmica.</p>
+            <% end %>
+            <div class="prompt-suggestions chat-prompt-suggestions" aria-label="Sugestões de perguntas">
+              <% [
+                "Como posso delimitar melhor meu tema?",
+                "Que pontos devo desenvolver nesta etapa?",
+                "O que posso revisar antes de entregar?"
+              ].each do |suggestion| %>
+                <button type="button" class="prompt-chip" data-chat-suggestion="<%= suggestion %>"><%= suggestion %></button>
+              <% end %>
+            </div>
+          </div>
+        </div>
+
+        <% if !@ai_ready %>
+          <p class="inline-notice" role="status">Aceite os termos e autorize o uso de IA nas <%= link_to "configurações da conta", account_settings_path(anchor: "profile") %> para iniciar uma conversa.</p>
+        <% elsif !@has_credits %>
+          <p class="inline-notice" role="status">Seus créditos de IA acabaram. <%= link_to "Ver pacotes", plans_path %>.</p>
+        <% end %>
+        <form class="chat-compose" data-chat-form>
+          <label class="visually-hidden" for="chat-message">Sua mensagem</label>
+          <textarea class="text-control" id="chat-message" rows="2" maxlength="<%= ProjectChatWorkflow::MAX_MESSAGE_LENGTH %>" data-chat-input required placeholder="Escreva sua pergunta…"<%= " disabled" unless @ai_ready && @has_credits %>></textarea>
+          <button class="button button-primary" type="submit"<%= " disabled" unless @ai_ready && @has_credits %>>Enviar</button>
+        </form>
+        <p class="field-hint chat-status" data-chat-status role="status" aria-live="polite"></p>
+        <% if @ai_ready && @has_credits %><p class="field-hint">1 crédito de IA por pergunta. A conversa não é salva.</p><% end %>
+      </section>
+
+      <aside class="chat-context-card">
+        <h2><%= @project ? "Contexto do projeto" : "Começar um projeto" %></h2>
+        <% if @project %>
+          <p>O Chat considera as informações salvas. Nada é alterado por aqui.</p>
+          <%= link_to "Abrir projeto", project_path(@project, stage: @scope == "project" ? @project.current_stage : @scope), class: "button button-secondary" %>
+        <% else %>
+          <p>Desenvolva uma ideia ou organize um texto anterior.</p>
+          <%= link_to "Criar projeto com IA", project_assistant_path, class: "button button-secondary" %>
+        <% end %>
+      </aside>
+    </div>
+  <% else %>
+    <div class="chat-layout">
+      <section class="chat-workspace" data-project-studio data-draft-url="<%= project_assistant_draft_path %>">
+        <%= form_with url: "#", data: { studio_request: true } do %>
+          <div class="chat-context-form studio-context-form">
+            <label for="studio-project-type">Tipo de trabalho
+              <%= select_tag :project_type, options_for_select([["Case", "case"], ["Projeto de Paper", "paper_project"]], @project_type), id: "studio-project-type", class: "text-control", data: { studio_project_type: true } %>
+            </label>
+            <%= hidden_field_tag :mode, @mode, data: { studio_mode: true } %>
+          </div>
+          <% if @mode == "guided" %>
+            <div class="prompt-suggestions" aria-label="Sugestões para desenvolver sua ideia" data-guided-only>
+              <% [
+                "Ajude-me a escolher e delimitar um tema",
+                "Quero transformar este assunto em uma pergunta de pesquisa",
+                "Faça perguntas para eu estruturar meu trabalho"
+              ].each do |suggestion| %>
+                <button type="button" class="prompt-chip" data-studio-prompt-suggestion="<%= suggestion %>"><%= suggestion %></button>
+              <% end %>
+            </div>
+            <div class="field" data-guided-only>
+              <%= label_tag :studio_prompt, "Sua ideia" %>
+              <%= text_area_tag :prompt, nil, id: "studio-prompt", rows: 4, maxlength: 6_000, class: "text-control", data: { studio_prompt: true }, placeholder: "Escreva do seu jeito; não precisa estar pronto." %>
+            </div>
+          <% end %>
+          <div class="field" data-studio-source-field <%= "hidden" if @mode == "guided" %>>
+            <%= label_tag :studio_source_text, "Texto existente" %>
+            <%= text_area_tag :source_text, nil, id: "studio-source-text", rows: 6, maxlength: 24_000, class: "text-control", data: { studio_source: true }, placeholder: "Cole um trecho para receber uma proposta de organização." %>
+          </div>
+          <% if !@ai_ready %>
+            <p class="inline-notice" role="status">Aceite os termos e autorize o uso de IA nas <%= link_to "configurações da conta", account_settings_path(anchor: "profile") %>.</p>
+          <% elsif !@has_credits %>
+            <p class="inline-notice" role="status">Seus créditos de IA acabaram. <%= link_to "Ver pacotes", plans_path %>.</p>
+          <% elsif !@has_project_credit %>
+            <p class="inline-notice" role="status">É necessário um crédito de projeto para salvar. <%= link_to "Ver pacotes", plans_path %>.</p>
+          <% end %>
+          <p class="privacy-note">Revise as propostas; nada é incluído sem sua confirmação.</p>
+          <button class="button button-primary" type="submit" <%= "disabled" unless @ai_ready && @has_credits && @has_project_credit %>>Continuar</button>
+        <% end %>
+
+        <p class="field-hint chat-status" data-studio-status role="status" aria-live="polite"></p>
+        <section class="studio-results" data-studio-results hidden aria-live="polite">
+          <div class="chat-messages studio-thread" data-studio-thread role="log" aria-label="Conversa para desenvolver o projeto"></div>
+          <section data-studio-questions-section hidden>
+            <h2>Perguntas para desenvolver sua ideia</h2>
+            <div data-studio-questions></div>
+            <button class="button button-secondary" type="button" data-studio-continue>Continuar com minhas respostas</button>
+          </section>
+          <section data-studio-suggestions-section hidden>
+            <h2>Propostas editáveis</h2>
+            <div class="studio-suggestions" data-studio-suggestions></div>
+            <%= form_with url: projects_path, scope: :project, class: "studio-create-form", data: { studio_create_form: true } do |form| %>
+              <%= form.hidden_field :project_type, data: { studio_create_type: true } %>
+              <%= form.submit "Criar projeto com os campos selecionados", class: "button button-primary", data: { studio_create_button: true } %>
+            <% end %>
+          </section>
+        </section>
+      </section>
+
+      <aside class="chat-context-card">
+        <h2>Rascunho</h2>
+        <p>As sugestões são editáveis. Marque apenas os campos que deseja incluir no novo projeto.</p>
+      </aside>
+    </div>
+  <% end %>
+</main>

@@ -60,7 +60,7 @@ Os valores de referência dos pacotes-base são o dobro do preço cobrado. Recar
 
 O nome da instituição de ensino é solicitado no perfil e utilizado nas exportações. O uso de IA pode contrariar regras específicas de uma disciplina; a aplicação identifica sugestões, solicita revisão e não afirma conformidade acadêmica.
 
-O projeto usa tags anotadas em SemVer; `v0.1.0` marca a linha de base, `v0.2.0` e `v0.3.0` as versões anteriores e `v0.4.0` esta versão. Consulte [CHANGELOG.md](CHANGELOG.md) para o histórico.
+O projeto usa tags anotadas em SemVer; `v0.1.0` marca a linha de base e `v0.2.0` a `v0.4.0` são versões anteriores. `v0.5.0` é esta versão. Consulte [CHANGELOG.md](CHANGELOG.md) para o histórico.
 
 As páginas públicas estão em `/`, `/planos` (também `/plans`), `/termos`, `/privacidade` e `/ajuda-ia`. No modo funcional, o login Google e compras Pix ficam disponíveis a contas autenticadas. A política identifica Sivaldo Davi Pereira como responsável e informa `contato@sivaldodavi.com`, contato já publicado no site pessoal do responsável. Os avisos legais continuam sendo um rascunho funcional e devem ser revisados.
 

@@ -193,6 +193,14 @@ class ProjectsController < ApplicationController
     @stages = @project.sections
     @stage = @project.section_for(params[:stage].presence || @project.current_stage)
     @stage_index = @project.stage_index(@stage["id"])
+    @assessment_stage = case @project.project_type
+    when "case"
+      "case_#{@stage["phase"]}" if %w[report dissertation].include?(@stage["phase"])
+    when "paper_project"
+      "paper_project"
+    when "paper_final"
+      "paper_final"
+    end
     @previous_stage = @stages[@stage_index - 1] if @stage_index.positive?
     @next_stage = @stages[@stage_index + 1]
     @progress = @project.progress(@stage["phase"])
