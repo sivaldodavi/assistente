@@ -10,6 +10,10 @@ class Project < ApplicationRecord
 
   has_many :revisions, class_name: "ProjectRevision", dependent: :destroy, inverse_of: :project
   has_many :ai_usage_reservations, dependent: :destroy
+  has_many :jev_assessments, -> { order(created_at: :desc) }, dependent: :destroy
+  has_many :full_jev_assessments,
+    -> { where(stage: JevRubric::STAGES_BY_PROJECT.values.flatten).order(created_at: :desc) },
+    class_name: "JevAssessment"
   belongs_to :account, optional: true, inverse_of: :projects
 
   after_create :record_revision!
@@ -38,6 +42,10 @@ class Project < ApplicationRecord
 
   def review_summary(phase = section_for["phase"])
     AcademicWorkflow.review_summary(project_type, checks, phase)
+  end
+
+  def latest_jev_assessment
+    full_jev_assessments.first
   end
 
   # Avisos de ordem entre as datas do Case. Não impedem salvar, porque o calendário pode mudar.

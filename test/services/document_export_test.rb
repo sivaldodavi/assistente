@@ -71,13 +71,12 @@ class DocumentExportTest < ActiveSupport::TestCase
     account = Account.create!(
       email: "cover@example.test",
       name: "Autora",
-      profile: { "course" => "Direito", "city" => "Recife", "period" => "3", "shift" => "noturno" }
+      profile: { "institution" => "Instituição Exemplo", "course" => "Direito", "city" => "Recife", "period" => "3", "shift" => "noturno" }
     )
     project = account.projects.create!(
       project_type: "case",
       fields: {
         "title" => "Relatório",
-        "institution" => "Nome da instituição",
         "discipline" => "Direito Civil",
         "teacher" => "Professora Exemplo",
         "period" => "3",
@@ -88,7 +87,7 @@ class DocumentExportTest < ActiveSupport::TestCase
 
     source = DocumentExport.build_quarto_source(project)
 
-    assert_includes source, %(abnt-instituicao: "#{DocumentExport::INSTITUTION}")
+    assert_includes source, 'abnt-instituicao: "Instituição Exemplo"'
     assert_includes source, 'abnt-curso: "Curso de Direito"'
     assert_includes source, 'abnt-local: "Recife"'
     assert_includes source, %(abnt-ano: "#{Date.current.year}")
@@ -96,9 +95,8 @@ class DocumentExportTest < ActiveSupport::TestCase
     assert_includes source, "Professor(a): Professora Exemplo"
     assert_includes source, "Turma: Noturno, 3º período"
     assert_includes source, "Data de entrega: 30/11/2026"
-    assert_includes source, "da #{DocumentExport::INSTITUTION}"
-    assert_includes source, "Discente do 3º período do Curso de Direito - FACSUR."
-    assert_not_includes source, "Nome da instituição"
+    assert_includes source, "da Instituição Exemplo"
+    assert_includes source, "Discente do 3º período do Curso de Direito - Instituição Exemplo."
   end
 
   test "dissertation preview uses one text field" do

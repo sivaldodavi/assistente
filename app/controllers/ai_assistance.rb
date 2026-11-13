@@ -20,7 +20,7 @@ module AIAssistance
         credential_key: :deepseek_api_key
       ),
       api_url: ENV.fetch("DEEPSEEK_API_URL", DeepSeekClient::API_URL),
-      model: ENV.fetch("DEEPSEEK_MODEL", "deepseek-chat"),
+      model: ENV.fetch("DEEPSEEK_MODEL", "deepseek-flash"),
       timeout: ENV.fetch("DEEPSEEK_TIMEOUT", 30)
     )
   end

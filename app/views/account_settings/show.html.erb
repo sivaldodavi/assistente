@@ -48,7 +48,10 @@
                 <strong><%= package[:label] %></strong>
                 <b><%= number_to_currency(package[:price_cents] / 100.0, unit: "R$ ", separator: ",", delimiter: ".") %></b>
               </div>
-              <p><%= package[:project_credits] %> projetos · <%= package[:ai_credits] %> avaliações · <%= package[:deepseek_credits] %> orientações</p>
+              <% if package[:regular_price_cents].present? %>
+                <p><del><%= number_to_currency(package[:regular_price_cents] / 100.0, unit: "R$ ", separator: ",", delimiter: ".") %></del> · <%= PaymentPackages.discount_percent(package) %>% de desconto</p>
+              <% end %>
+              <p><%= package[:description] || "#{package[:project_credits]} projetos · #{package[:ai_credits]} avaliações · #{package[:deepseek_credits]} orientações" %></p>
               <%= link_to "Ver opção de compra", plans_path(anchor: "package-#{code}") %>
             </article>
           <% end %>
@@ -58,11 +61,16 @@
       <section class="settings-section" id="profile" aria-labelledby="profile-title">
         <h2 id="profile-title">Perfil acadêmico</h2>
         <p>Essas informações podem preencher automaticamente campos dos seus roteiros.</p>
+        <% if @account.errors.any? %><div class="alert" role="alert"><%= @account.errors.full_messages.to_sentence %></div><% end %>
         <%= form_with url: account_update_profile_path, method: :post do |form| %>
           <div class="field-grid">
             <div class="field">
               <%= form.label :name, "Nome" %>
               <%= form.text_field :name, value: @account.name, maxlength: 160, class: "text-control" %>
+            </div>
+            <div class="field">
+              <%= form.label :institution, "Faculdade ou instituição de ensino" %>
+              <%= form.text_field :institution, value: @account.profile["institution"], maxlength: Account::PROFILE_TEXT_LIMIT, required: true, autocomplete: "organization", class: "text-control" %>
             </div>
             <% %w[course city].each do |key| %>
               <div class="field">

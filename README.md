@@ -52,7 +52,13 @@ Contas, Google OAuth, isolamento por proprietário, perfil, termos e consentimen
 
 ## Funcionalidades
 
-Implementados: assistência contextual de escrita, avaliação formativa separada, pagamentos por Pix com pacotes/créditos usando o SDK Ruby oficial (`mercadopago-sdk`), administração e páginas públicas de pacotes, termos, privacidade e explicação da IA. Pagamentos e IA usam adaptadores de serviço e testes com doubles locais.
+Implementados: assistência contextual e criação guiada de Case/Paper, organização de texto existente com confirmação campo a campo, rubricas JEV por etapa com histórico associado à revisão do projeto, resumo de progresso e notas recentes, pagamentos por Pix com pacotes e recargas separadas, administração e páginas públicas de pacotes, termos, privacidade e explicação da IA. Os rascunhos gerados são editáveis e só são gravados quando a pessoa seleciona os campos e cria o projeto.
+
+Os valores de referência dos pacotes-base são o dobro do preço cobrado. Recargas avulsas de JEV e orientação de escrita adicionam cada saldo sem alterar o plano. As estimativas de custo e suas premissas estão registradas em [CHANGELOG.md](CHANGELOG.md).
+
+O nome da instituição de ensino é solicitado no perfil e utilizado nas exportações. O uso de IA pode contrariar regras específicas de uma disciplina; a aplicação identifica sugestões, solicita revisão e não afirma conformidade acadêmica.
+
+O projeto usa tags anotadas em SemVer; `v0.1.0` marca a linha de base implantada e `v0.2.0` identifica esta evolução. Consulte [CHANGELOG.md](CHANGELOG.md) para as mudanças desta versão.
 
 As páginas públicas estão em `/`, `/planos` (também `/plans`), `/termos`, `/privacidade` e `/ajuda-ia`. No modo funcional, o login Google e compras Pix ficam disponíveis a contas autenticadas. A política identifica Sivaldo Davi Pereira como responsável e informa `contato@sivaldodavi.com`, contato já publicado no site pessoal do responsável. Os avisos legais continuam sendo um rascunho funcional e devem ser revisados.
 
@@ -66,7 +72,7 @@ bin/rubocop
 bin/rails zeitwerk:check
 ```
 
-Em 12/11/2026, a suíte Rails completa passou: 99 testes e 778 assertions. O RuboCop inspecionou 99 arquivos sem offenses, e `zeitwerk:check` passou. Os testes de integrações externas usam doubles locais; eles não comprovam a entrega real de webhooks nem um pagamento. O login Google real já foi concluído e confirmado. Ainda falta validar uma notificação nativa e uma compra no sandbox; nenhuma cobrança real foi criada para teste.
+Na validação desta entrega, a suíte Rails completa passou: 139 testes e 1.042 assertions. O RuboCop inspecionou 114 arquivos sem offenses e `zeitwerk:check` passou. Os testes de integrações externas usam doubles locais; eles não comprovam a entrega real de webhooks nem um pagamento. O login Google real já foi concluído e confirmado. Ainda falta validar uma notificação nativa e uma compra no sandbox; nenhuma cobrança real foi criada para teste.
 
 ## Staging e banco
 

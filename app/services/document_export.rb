@@ -5,14 +5,13 @@ require "tmpdir"
 require "timeout"
 
 class DocumentExport
-  INSTITUTION = "Faculdade Supremo Redentor - FACSUR"
   DOCUMENT_KINDS = {
     "case_report" => "case",
     "paper_project" => "paper",
     "paper_final" => "paper"
   }.freeze
   NON_DOCUMENT_FIELDS = %w[
-    title partner assignment_prompt course city year discipline teacher period shift
+    title partner assignment_prompt institution course city year discipline teacher period shift
   ].freeze
   class ExportError < StandardError; end
   class QuartoUnavailable < ExportError; end
@@ -81,7 +80,7 @@ class DocumentExport
       fields = attributes["fields"].is_a?(Hash) ? attributes["fields"].stringify_keys : {}
       if project.respond_to?(:account)
         profile = project.account&.profile || {}
-        %w[course city].each { |key| fields[key] = profile[key] if fields[key].blank? }
+        %w[institution course city].each { |key| fields[key] = profile[key] if fields[key].blank? }
       end
       attributes.merge("fields" => fields, "account_name" => account_name, "sources" => sources)
     end
@@ -96,6 +95,7 @@ class DocumentExport
         "title" => fields["title"].to_s,
         "partner" => fields["partner"].to_s,
         "account_name" => account_name.to_s,
+        "institution" => (fields["institution"].presence || account_profile["institution"]).to_s,
         "course" => course_label(fields["course"].presence || account_profile["course"]),
         "city" => (fields["city"].presence || account_profile["city"]).to_s,
         "year" => (fields["year"].presence || Date.current.year.to_s).to_s,
@@ -203,7 +203,7 @@ class DocumentExport
         "lang: pt-BR",
         "abnt-capa: true",
         "abnt-folha-rosto: false",
-        "abnt-instituicao: #{yaml_typst_scalar(INSTITUTION)}",
+        "abnt-instituicao: #{yaml_typst_scalar(fields["institution"])}",
         "abnt-curso: #{yaml_typst_scalar(fields["course"])}",
         "abnt-subtitulo: #{yaml_typst_scalar(fields["subtitle"])}",
         yaml_list("abnt-autores", authors(project)),
@@ -227,10 +227,18 @@ class DocumentExport
         ("do #{period}º período" if period.present?),
         ("do #{course}" if course.present?)
       ].compact
-      note = affiliations.any? ? "Discente #{affiliations.join(" ")} - FACSUR." : "Discente da #{INSTITUTION}."
+      institution = text(fields["institution"]).strip
+      affiliation = affiliations.join(" ")
+      note = if affiliation.present?
+        "Discente #{affiliation}#{institution.present? ? " - #{institution}" : ""}."
+      elsif institution.present?
+        "Discente da #{institution}."
+      else
+        "Discente."
+      end
       notes = authors(project).map { |author| [ author, note ] }
       teacher = text(fields["teacher"]).strip
-      notes << [ teacher, "Docente da #{INSTITUTION}." ] if teacher.present?
+      notes << [ teacher, "Docente da #{institution}." ] if teacher.present? && institution.present?
       notes
     end
 
@@ -271,9 +279,14 @@ class DocumentExport
       fields = project.fetch("fields")
       title = text(fields["title"]).strip.upcase
       discipline = text(fields["discipline"]).strip
-      note = discipline.present? ?
-        "Case apresentado à disciplina de #{discipline} da #{INSTITUTION}." :
-        "Case acadêmico apresentado à #{INSTITUTION}."
+      institution = text(fields["institution"]).strip
+      note = if discipline.present? && institution.present?
+        "Case apresentado à disciplina de #{discipline} da #{institution}."
+      elsif institution.present?
+        "Case acadêmico apresentado à #{institution}."
+      else
+        "Case acadêmico."
+      end
       [
         '#import "_extensions/abnt/tipos/caso.typ": *',
         "#caso-cabecalho(",

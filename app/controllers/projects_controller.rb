@@ -4,13 +4,14 @@ class ProjectsController < ApplicationController
   include RateLimitable
 
   before_action :authenticate_account!, except: :index
+  before_action :require_institution_profile, only: %i[new create]
   before_action :set_project, only: %i[show update destroy paper_mode export]
   before_action :limit_exports, only: :export
 
   def index
     return redirect_to root_path unless current_account
 
-    @projects = current_account.projects.order(updated_at: :desc).to_a
+    @projects = current_account.projects.includes(full_jev_assessments: :project_revision).order(updated_at: :desc).to_a
   end
 
   def new
@@ -30,6 +31,8 @@ class ProjectsController < ApplicationController
       "shift" => current_account.profile["shift"],
       "year" => Date.current.year.to_s
     }
+    permitted_fields = AcademicWorkflow.field_rules(project_type).keys
+    fields.merge!(hash_parameter(params.dig(:project, :fields)).slice(*permitted_fields))
     delivery_field = {
       "case" => "report_delivery_date",
       "paper_project" => "paper_project_delivery_date"
@@ -95,6 +98,12 @@ class ProjectsController < ApplicationController
 
   def set_project
     @project = current_account.projects.find(params[:id])
+  end
+
+  def require_institution_profile
+    return if current_account.profile["institution"].present?
+
+    redirect_to account_settings_path(anchor: "profile"), alert: "Informe sua faculdade ou instituição antes de criar um projeto."
   end
 
   def persist_project_changes(convert_to_final: false)
@@ -179,5 +188,6 @@ class ProjectsController < ApplicationController
     @progress = @project.progress(@stage["phase"])
     @review_summary = @project.review_summary(@stage["phase"])
     @sources = current_account.sources.order(:title)
+    @jev_assessments = @project.jev_assessments.includes(:project_revision).limit(10)
   end
 end

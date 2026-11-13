@@ -164,7 +164,7 @@
         </fieldset>
       <% end %>
 
-      <section class="assist-panel" data-ai-panel data-project-revision="<%= @project.lock_version %>" data-action-url="<%= "/projects/#{@project.id}/ai/action" %>" data-jev-report-url="<%= "/projects/#{@project.id}/ai/jev-report" %>" data-jev-section-url="<%= "/projects/#{@project.id}/ai/jev-section" %>">
+      <section class="assist-panel" data-ai-panel data-project-revision="<%= @project.lock_version %>" data-action-url="<%= "/projects/#{@project.id}/ai/action" %>" data-jev-report-url="<%= "/projects/#{@project.id}/ai/jev-report" %>" data-jev-section-url="<%= "/projects/#{@project.id}/ai/jev-section" %>" data-jev-assessment-url="<%= "/projects/#{@project.id}/ai/jev-assessment" %>">
         <p class="eyebrow">Apoio acadêmico</p>
         <h3>Assistência com IA</h3>
         <p class="field-hint">A IA usa as respostas salvas. Salve o roteiro antes de analisar. As sugestões só entram no campo quando você escolher usá-las.</p>
@@ -178,12 +178,27 @@
         <p class="field-hint" data-ai-status role="status" aria-live="polite"></p>
         <div class="assist-response" data-ai-response aria-live="polite"></div>
 
-        <% if @project.project_type == "case" %>
-          <div class="jev-tools">
-            <h4>Avaliação formativa</h4>
-            <p class="field-hint">A avaliação usa uma rubrica própria e não representa nota oficial nem substitui a revisão docente.</p>
+        <div class="jev-tools">
+          <h4>Avaliação formativa</h4>
+          <p class="field-hint">A avaliação usa rubricas indicativas, não representa nota oficial e considera somente o texto salvo nesta revisão. O debate do Case não é avaliado por texto.</p>
+          <div class="assist-actions">
+            <label class="jev-section-picker">Rubrica completa
+              <%= select_tag "jev_assessment_stage", options_for_select(
+                case @project.project_type
+                when "case"
+                  [["Relatório do Case", "case_report"], ["Dissertação do Case", "case_dissertation"]]
+                when "paper_project"
+                  [["Projeto de paper", "paper_project"]]
+                else
+                  [["Paper final", "paper_final"]]
+                end
+              ), class: "text-control", data: { jev_assessment_select: true } %>
+            </label>
+            <button class="button button-secondary" type="button" data-jev-assessment>Avaliar etapa</button>
+          </div>
+          <% if @project.project_type == "case" %>
             <div class="assist-actions">
-              <label class="jev-section-picker">Etapa para avaliar
+              <label class="jev-section-picker">Checklist de uma seção
                 <%= select_tag "jev_section", options_for_select([
                   ["Descrição do caso", "case_description"],
                   ["Decisões possíveis", "case_decisions"],
@@ -193,12 +208,27 @@
                 ]), class: "text-control", data: { jev_section_select: true } %>
               </label>
               <button class="button button-secondary" type="button" data-jev-section-action>Avaliar etapa</button>
-              <button class="button button-secondary" type="button" data-jev-report>Avaliar relatório</button>
             </div>
-            <p class="field-hint" data-jev-status role="status" aria-live="polite"></p>
-            <div class="jev-response" data-jev-response aria-live="polite"></div>
-          </div>
-        <% end %>
+          <% end %>
+          <p class="field-hint" data-jev-status role="status" aria-live="polite"></p>
+          <div class="jev-response" data-jev-response aria-live="polite"></div>
+          <% if @jev_assessments.any? %>
+            <details class="jev-history">
+              <summary>Histórico das últimas avaliações</summary>
+              <ol>
+                <% @jev_assessments.each do |assessment| %>
+                  <li>
+                    <strong><%= jev_stage_label(assessment.stage) %></strong> · <%= jev_assessment_score(assessment) %>
+                    <span>Revisão <%= assessment.project_revision.revision %> · <%= assessment.created_at.strftime("%d/%m/%Y %H:%M") %></span>
+                    <% if assessment.result["points_discrepancy"] %>
+                      <span>Os critérios publicados somam <%= assessment.result["assessable_points"] %> pontos, embora a etapa seja declarada como <%= assessment.result["declared_points"] %>.</span>
+                    <% end %>
+                  </li>
+                <% end %>
+              </ol>
+            </details>
+          <% end %>
+        </div>
       </section>
 
       <div class="editor-actions">

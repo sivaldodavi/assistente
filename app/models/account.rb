@@ -9,6 +9,7 @@ class Account < ApplicationRecord
   has_many :sources, dependent: :destroy, inverse_of: :account
   has_many :ai_usage_reservations, dependent: :destroy
   has_many :provider_usages, dependent: :destroy
+  has_many :jev_assessments, dependent: :destroy
   has_many :payment_orders, dependent: :destroy
   has_many :payment_grants, dependent: :destroy
 
@@ -20,7 +21,7 @@ class Account < ApplicationRecord
   validates :google_sub, length: { maximum: 255 }, allow_blank: true
   validates :google_sub, uniqueness: true, allow_blank: true
   validates :role, inclusion: { in: %w[user admin] }
-  validates :plan_code, inclusion: { in: PaymentPackages::DEFINITIONS.keys + [ "livre" ] }
+  validates :plan_code, inclusion: { in: PaymentPackages::PLAN_CODES + [ "livre" ] }
   validates :project_limit, :project_used, :deepseek_limit, :deepseek_used,
     numericality: { only_integer: true, greater_than_or_equal_to: 0 }
 
@@ -46,7 +47,13 @@ class Account < ApplicationRecord
   end
 
   def update_profile!(profile:, name:)
-    update!(name: name.to_s.strip.first(PROFILE_TEXT_LIMIT), profile: normalize_profile(profile))
+    normalized_profile = normalize_profile(profile)
+    if normalized_profile["institution"].blank?
+      errors.add(:base, "Informe sua faculdade ou instituição de ensino.")
+      raise ActiveRecord::RecordInvalid, self
+    end
+
+    update!(name: name.to_s.strip.first(PROFILE_TEXT_LIMIT), profile: normalized_profile)
   end
 
   def accept_terms!(accept:, ai_consent:)
@@ -71,7 +78,7 @@ class Account < ApplicationRecord
 
   def normalize_profile(profile)
     source = profile.respond_to?(:to_h) ? profile.to_h : {}
-    text = %w[city course].index_with do |key|
+    text = %w[institution city course].index_with do |key|
       source[key].to_s.strip.first(PROFILE_TEXT_LIMIT)
     end
     text["period"] = PROFILE_PERIODS.include?(source["period"].to_s) ? source["period"].to_s : ""

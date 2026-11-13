@@ -39,7 +39,7 @@ class AdminController < ApplicationController
   def update_plan
     account = Account.find(params[:id])
     plan_code = params[:plan_code].to_s
-    return redirect_to admin_accounts_path, alert: "Pacote inválido." unless (PaymentPackages::DEFINITIONS.keys + [ "livre" ]).include?(plan_code)
+    return redirect_to admin_accounts_path, alert: "Pacote inválido." unless (PaymentPackages::PLAN_CODES + [ "livre" ]).include?(plan_code)
 
     account.with_lock do
       old_plan = account.plan_code

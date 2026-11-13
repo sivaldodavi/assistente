@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_13_100000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_13_103000) do
   create_table "accounts", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "google_sub"
@@ -64,6 +64,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_13_100000) do
     t.index ["account_id"], name: "index_ai_usage_reservations_on_account_id"
     t.index ["project_id"], name: "index_ai_usage_reservations_on_project_id"
     t.index ["request_id"], name: "index_ai_usage_reservations_on_request_id", unique: true
+  end
+
+  create_table "jev_assessments", force: :cascade do |t|
+    t.integer "account_id", null: false
+    t.integer "project_id", null: false
+    t.integer "project_revision_id", null: false
+    t.string "stage", null: false
+    t.string "rubric_version", null: false
+    t.string "model", null: false
+    t.json "result", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_jev_assessments_on_account_id"
+    t.index ["project_id", "stage", "created_at"], name: "index_jev_assessments_on_project_id_and_stage_and_created_at"
+    t.index ["project_id"], name: "index_jev_assessments_on_project_id"
+    t.index ["project_revision_id"], name: "index_jev_assessments_on_project_revision_id"
   end
 
   create_table "payment_grants", force: :cascade do |t|
@@ -182,6 +198,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_13_100000) do
   add_foreign_key "admin_audit_events", "accounts", column: "target_account_id", on_delete: :nullify
   add_foreign_key "ai_usage_reservations", "accounts"
   add_foreign_key "ai_usage_reservations", "projects"
+  add_foreign_key "jev_assessments", "accounts"
+  add_foreign_key "jev_assessments", "project_revisions", on_delete: :cascade
+  add_foreign_key "jev_assessments", "projects", on_delete: :cascade
   add_foreign_key "payment_grants", "accounts"
   add_foreign_key "payment_grants", "payment_orders"
   add_foreign_key "payment_orders", "accounts"

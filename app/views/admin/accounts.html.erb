@@ -43,7 +43,7 @@
         <div class="admin-account-actions">
           <%= form_with url: admin_account_plan_path(account), method: :patch, class: "admin-inline-form" do |form| %>
             <%= form.label :plan_code, "Pacote" %>
-            <%= form.select :plan_code, [["Sem pacote", "livre"]] + PaymentPackages::DEFINITIONS.map { |code, item| [item[:label], code] }, { selected: account.plan_code }, class: "text-control" %>
+            <%= form.select :plan_code, [["Sem pacote", "livre"]] + PaymentPackages::PLAN_CODES.map { |code| [PaymentPackages.find(code)[:label], code] }, { selected: account.plan_code }, class: "text-control" %>
             <%= form.submit "Salvar", class: "button button-secondary" %>
           <% end %>
 

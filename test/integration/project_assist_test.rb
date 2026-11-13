@@ -91,6 +91,75 @@ class ProjectAssistTest < ActionDispatch::IntegrationTest
     assert_equal "facts-neutral", analysis.dig("criteria", 0, "id")
     assert_equal 4, analysis["criteria"].length
     assert_equal 1, ProviderUsage.where(account: @account, provider: "jev").count
+    assert_equal "case_section:case_description", JevAssessment.sole.stage
+    assert_equal @project.revisions.sole, JevAssessment.sole.project_revision
+  end
+
+  test "Paper Project assessment persists a revision-bound /3 subtotal and flags the declared /4 discrepancy" do
+    project = @account.projects.create!(project_type: "paper_project")
+    client = fake_jev_client
+
+    with_stub(AIProviderSecrets, :load, "fake-secret") do
+      with_stub(JevClient, :new, client) do
+        post "/projects/#{project.id}/ai/jev-assessment",
+          params: { stage: "paper_project", project_revision: project.lock_version },
+          as: :json
+      end
+    end
+
+    assert_response :success
+    analysis = response.parsed_body.fetch("analysis")
+    assert_equal "paper_project", analysis["stage"]
+    assert_equal 3.0, analysis["assessable_points"]
+    assert_equal 2.0, analysis["expected_points"]
+    assert_equal 4.0, analysis["declared_points"]
+    assert_equal true, analysis["points_discrepancy"]
+    assert_nil analysis["grade_range"]
+    assessment = JevAssessment.sole
+    assert_equal project, assessment.project
+    assert_equal project.revisions.sole, assessment.project_revision
+    assert_equal analysis, assessment.result
+  end
+
+  test "Case report assessment calculates its /3.5 text-only subtotal without scoring debate or formatting" do
+    client = fake_jev_client
+
+    with_stub(AIProviderSecrets, :load, "fake-secret") do
+      with_stub(JevClient, :new, client) do
+        post "/projects/#{@project.id}/ai/jev-assessment",
+          params: { stage: "case_report", project_revision: @project.lock_version },
+          as: :json
+      end
+    end
+
+    assert_response :success
+    analysis = response.parsed_body.fetch("analysis")
+    assert_equal 3.5, analysis["assessable_points"]
+    assert_equal 2.33, analysis["expected_points"]
+    assert_equal 0.5, analysis["unassessed_points"]
+    assert_equal 2, analysis.dig("grade_range", "score")
+    assert_equal "case_report", JevAssessment.sole.stage
+  end
+
+  test "Case dissertation assessment excludes the group debate and persists its own rubric" do
+    client = fake_jev_client
+
+    with_stub(AIProviderSecrets, :load, "fake-secret") do
+      with_stub(JevClient, :new, client) do
+        post "/projects/#{@project.id}/ai/jev-assessment",
+          params: { stage: "case_dissertation", project_revision: @project.lock_version },
+          as: :json
+      end
+    end
+
+    assert_response :success
+    analysis = response.parsed_body.fetch("analysis")
+    assert_equal "case_dissertation", analysis["stage"]
+    assert_equal 2.0, analysis["assessable_points"]
+    assert_nil analysis["grade_range"]
+    assert_equal %w[formal_standards legal_foundation structure_and_language],
+      analysis["criteria"].map { |criterion| criterion["id"] }.sort
+    assert_equal "case_dissertation", JevAssessment.sole.stage
   end
 
   test "AI consent is required before either provider can be called" do
@@ -104,6 +173,20 @@ class ProjectAssistTest < ActionDispatch::IntegrationTest
   end
 
   private
+
+  def fake_jev_client
+    client = Object.new
+    client.define_singleton_method(:score) do |_state, questions|
+      {
+        "model" => "fake-jev",
+        "answers" => questions.keys.index_with do
+          { "score" => 2, "confidence" => 0.8, "probabilities" => [ 0.05, 0.15, 0.55, 0.25 ], "observation" => "Evidência parcial." }
+        end,
+        "usage" => { "input_tokens" => 21 }
+      }
+    end
+    client
+  end
 
   def with_stub(receiver, method_name, value)
     original = receiver.method(method_name)

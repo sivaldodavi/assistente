@@ -32,9 +32,9 @@ class PublicPagesTest < ActionDispatch::IntegrationTest
     get pricing_path
 
     assert_response :success
-    assert_select ".package-card", 3
+    assert_select ".package-card", 5
     assert_select "[data-buy-package]", 0
-    assert_select "a[href='#{login_path}']", text: "Entrar para comprar", count: 3
+    assert_select "a[href='#{login_path}']", text: "Entrar para comprar", count: 5
     assert_select "a[href='#{terms_path}']"
     assert_select "a[href='#{privacy_path}']"
     assert_no_provider_names
@@ -48,7 +48,7 @@ class PublicPagesTest < ActionDispatch::IntegrationTest
 
     get pricing_path
     assert_response :success
-    assert_select "form[action='/auth/google_oauth2'][method='post'] button", text: "Entrar para comprar", count: 3
+    assert_select "form[action='/auth/google_oauth2'][method='post'] button", text: "Entrar para comprar", count: 5
     assert_select "a[href='#{login_path}']", count: 0
 
     get projects_path

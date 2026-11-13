@@ -8,6 +8,7 @@
       <p>Encontre seus trabalhos e acompanhe o próximo passo.</p>
     </div>
     <%= link_to "+ Novo projeto", new_project_path, class: "button button-primary" %>
+    <%= link_to "Começar com IA", project_assistant_path, class: "button button-secondary" %>
   </header>
 
   <div class="project-toolbar">
@@ -51,7 +52,14 @@
             <% delivery = next_project_delivery(project) %>
             <% kind = project.project_type == "case" ? "case" : "paper" %>
             <tr data-project-card data-project-kind="<%= kind %>" data-project-status="<%= status_key %>">
-              <td><%= link_to project.title, project_path(project, stage: project.current_stage) %><br><span class="project-type"><%= project_type_label(project.project_type) %></span></td>
+              <td>
+                <%= link_to project.title, project_path(project, stage: project.current_stage) %><br>
+                <span class="project-type"><%= project_type_label(project.project_type) %></span>
+                <% if (assessment = project.latest_jev_assessment) %>
+                  <br><span class="project-jev-score">JEV · <%= jev_stage_label(assessment.stage) %>: <%= jev_assessment_score(assessment) %></span>
+                  <br><span class="project-jev-date">Revisão <%= assessment.project_revision.revision %> · avaliação formativa</span>
+                <% end %>
+              </td>
               <td><span class="status-pill" data-status="<%= status_key %>"><%= status_label %></span></td>
               <td><%= project.progress["done"] %>/<%= project.progress["total"] %> campos</td>
               <td><%= delivery ? "#{delivery[:date].strftime("%d/%m/%Y")} · #{delivery[:label]}" : "—" %></td>

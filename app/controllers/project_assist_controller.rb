@@ -8,7 +8,7 @@ class ProjectAssistController < ApplicationController
   before_action :authenticate_account!
   before_action :set_project
   before_action :require_ai_consent!
-  before_action :limit_ai_requests, only: %i[action jev_report jev_section]
+  before_action :limit_ai_requests, only: %i[action jev_report jev_section jev_assessment]
 
   def action
     body = body_parameters
@@ -57,7 +57,7 @@ class ProjectAssistController < ApplicationController
   end
 
   def jev_report
-    analyze_jev
+    analyze_jev(stage: "case_report")
   end
 
   def jev_section
@@ -65,6 +65,19 @@ class ProjectAssistController < ApplicationController
     return render_error("invalid_section", "Etapa de avaliação inválida.", :bad_request) unless JevRubric::CHECKLISTS.key?(section)
 
     analyze_jev(section:)
+  end
+
+  def jev_assessment
+    body = body_parameters
+    stage = body["stage"].to_s
+    unless JevRubric::STAGES_BY_PROJECT.fetch(@project.project_type, []).include?(stage)
+      return render_error("invalid_assessment_stage", "Etapa de avaliação inválida para este projeto.", :bad_request)
+    end
+    if body["project_revision"].present? && Integer(body["project_revision"]) != @project.lock_version
+      return render json: { error: "stale_project_revision", revision: @project.lock_version }, status: :conflict
+    end
+
+    analyze_jev(stage:)
   end
 
   private
@@ -79,27 +92,40 @@ class ProjectAssistController < ApplicationController
     @project = current_account.projects.find(params[:project_id])
   end
 
-  def analyze_jev(section: nil)
-    return render_error("assessment_case_only", "A avaliação formativa está disponível apenas para Cases.", :bad_request) unless @project.project_type == "case"
+  def analyze_jev(section: nil, stage: nil)
+    return render_error("assessment_case_only", "Esta etapa de avaliação está disponível apenas para Cases.", :bad_request) if section && @project.project_type != "case"
 
     request_id = SecureRandom.uuid
     reserved = false
     completed = false
-    action = section ? "jev:#{section}" : "jev:case_report"
+    action = section ? "jev:#{section}" : "jev:#{stage}"
     AIUsageService.reserve!(account: current_account, project: @project, request_id:, action:)
     reserved = true
     raw = jev_client.score(
       AIWorkflow.prompt_state(@project, sources: selected_sources),
-      AIWorkflow.jev_questions(section)
+      AIWorkflow.jev_questions(section, stage:)
     )
-    analysis = AIWorkflow.normalize_jev_result(raw, section:)
+    analysis = AIWorkflow.normalize_jev_result(raw, section:, stage:)
+    assessment_stage = section ? "case_section:#{section}" : stage
+    analysis["stage"] = assessment_stage
+    analysis["rubric_version"] ||= JevRubric::VERSION
     AIUsageService.record_provider_usage!(
       account: current_account,
       request_id:,
       provider: "jev",
-      operation: section ? "case-section:#{section}" : "case-report",
+      operation: section ? "case-section:#{section}" : stage,
       model: analysis["model"],
       usage: raw["usage"]
+    )
+    revision = @project.revisions.find_by!(revision: @project.lock_version)
+    JevAssessment.create!(
+      account: current_account,
+      project: @project,
+      project_revision: revision,
+      stage: assessment_stage,
+      rubric_version: analysis["rubric_version"],
+      model: analysis["model"],
+      result: analysis
     )
     AIUsageService.finish!(request_id)
     completed = true

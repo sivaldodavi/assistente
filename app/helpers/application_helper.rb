@@ -22,6 +22,24 @@ module ApplicationHelper
     }.fetch(project_type.to_s, project_type.to_s.humanize)
   end
 
+  def jev_stage_label(stage)
+    return "Etapa do relatório" if stage.to_s.start_with?("case_section:")
+
+    {
+      "case_report" => "Relatório do Case",
+      "case_dissertation" => "Dissertação do Case",
+      "paper_project" => "Projeto de paper",
+      "paper_final" => "Paper final"
+    }.fetch(stage.to_s, stage.to_s.humanize)
+  end
+
+  def jev_assessment_score(assessment)
+    result = assessment.result
+    return "Etapa avaliada" unless result["expected_points"] && result["assessable_points"]
+
+    "#{result["expected_points"]}/#{result["assessable_points"]} pontos indicativos"
+  end
+
   def project_status(project)
     section = project.section_for
     return [ "Entregue", "delivered" ] if project.delivered?(section)

@@ -30,7 +30,13 @@
     <% if authenticated_shell %>
       <div class="app-shell">
         <%= render "shared/sidebar" %>
-        <div class="app-main"><%= yield %></div>
+        <div class="app-main">
+          <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-controls="app-sidebar" aria-expanded="true">
+            <span aria-hidden="true">☰</span><span data-sidebar-toggle-label>Ocultar navegação</span>
+          </button>
+          <button class="sidebar-backdrop" type="button" data-sidebar-backdrop aria-label="Fechar menu" hidden></button>
+          <%= yield %>
+        </div>
       </div>
     <% else %>
       <%= yield %>

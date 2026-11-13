@@ -14,8 +14,87 @@ class PaymentsTest < ActionDispatch::IntegrationTest
     assert_select "[data-package-card='avulso_ai']"
     assert_select "[data-package-card='sem_ia']"
     assert_select "[data-package-card='com_ia']"
+    assert_select "[data-package-card='topup_jev']"
+    assert_select "[data-package-card='topup_writing']"
     assert_select "h1", "Escolha o pacote para seu trabalho."
+    assert_select ".discount-badge", text: "50% de desconto", count: 3
+    assert_includes response.body, "R$ 100,00"
+    assert_includes response.body, "R$ 50,00"
+    assert_includes response.body, "R$ 9,90"
+    assert_includes response.body, "20 avaliações formativas adicionais"
+    assert_includes response.body, "20 orientações de escrita adicionais"
+    assert_equal 2, PaymentPackages::DEFINITIONS.values.count { |package| package[:kind] == :topup }
     assert_not_includes response.body, "Mercado Pago"
+  end
+
+  test "Essencial charges the approved promotional price" do
+    gateway = fake_gateway
+    with_stub(MercadoPagoGateway, :new, gateway) do
+      post payments_path, params: {
+        package_code: "sem_ia",
+        quantity: 1,
+        request_id: "c4f6b49b-8786-41f0-81d1-1b3c719d04a2"
+      }, as: :json
+    end
+
+    assert_response :success
+    assert_equal 5_000, PaymentOrder.sole.amount_cents
+    assert_equal 0, PaymentOrder.sole.ai_credits
+    assert_equal 0, PaymentOrder.sole.deepseek_credits
+  end
+
+  test "JEV top-up adds only assessment credits and preserves the account plan" do
+    @account.update!(
+      plan_code: "sem_ia",
+      project_limit: 14,
+      ai_limit: 3,
+      deepseek_limit: 6
+    )
+    order = PaymentService.new(gateway: fake_gateway).create_order!(
+      account: @account,
+      package_code: "topup_jev",
+      quantity: 1,
+      request_id: "cc27061a-9428-46c1-8cde-240cc66f8081"
+    )
+    payment = approved_payment(order).merge("transaction_amount" => 9.9)
+
+    result = PaymentService.new.process_verified_payment(payment)
+    duplicate_result = PaymentService.new.process_verified_payment(payment)
+
+    assert_equal :approved, result
+    assert_equal :duplicate, duplicate_result
+    @account.reload
+    assert_equal "sem_ia", @account.plan_code
+    assert_equal 14, @account.project_limit
+    assert_equal 23, @account.ai_limit
+    assert_equal 6, @account.deepseek_limit
+    assert_equal 20, PaymentGrant.sole.ai_credits
+  end
+
+  test "writing AI top-up adds only writing credits and preserves the account plan" do
+    @account.update!(
+      plan_code: "sem_ia",
+      project_limit: 14,
+      ai_limit: 3,
+      deepseek_limit: 6
+    )
+    order = PaymentService.new(gateway: fake_gateway).create_order!(
+      account: @account,
+      package_code: "topup_writing",
+      quantity: 1,
+      request_id: "3878de49-2b9f-45e8-9d6d-b0a87613d6a8"
+    )
+    payment = approved_payment(order).merge("transaction_amount" => 9.9)
+    service = PaymentService.new
+
+    assert_equal :approved, service.process_verified_payment(payment)
+    assert_equal :duplicate, service.process_verified_payment(payment)
+    @account.reload
+    assert_equal "sem_ia", @account.plan_code
+    assert_equal 14, @account.project_limit
+    assert_equal 3, @account.ai_limit
+    assert_equal 26, @account.deepseek_limit
+    assert_equal 20, PaymentGrant.sole.deepseek_credits
   end
 
   test "Mercado Pago gateway uses the official SDK with a stable idempotency key" do

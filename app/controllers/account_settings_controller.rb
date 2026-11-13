@@ -9,6 +9,7 @@ class AccountSettingsController < ApplicationController
     current_account.update_profile!(
       name: params[:name],
       profile: {
+        "institution" => params[:institution],
         "city" => params[:city],
         "disciplines" => params[:disciplines].to_s.lines,
         "teachers" => params[:teachers].to_s.lines,
@@ -20,6 +21,7 @@ class AccountSettingsController < ApplicationController
     redirect_to account_settings_path(saved: "profile"), notice: "Perfil atualizado."
   rescue ActiveRecord::RecordInvalid
     @account = current_account
+    @account.profile = @account.profile.merge("institution" => params[:institution].to_s)
     render :show, status: :unprocessable_entity
   end
 

@@ -1,0 +1,66 @@
+<% content_for :title, "Criar com orientação de IA — Assistente Acadêmico" %>
+
+<main class="page-shell narrow-shell" data-project-studio data-draft-url="<%= project_assistant_draft_path %>">
+  <%= link_to "← Voltar aos projetos", projects_path, class: "back-link" %>
+  <section class="panel">
+    <p class="eyebrow">Comece com sua ideia</p>
+    <h1>Crie ou organize um trabalho</h1>
+    <p class="muted">Descreva uma ideia ou cole um texto anterior. A IA poderá fazer perguntas e sugerir campos do roteiro; revise e selecione os campos que você quer incluir antes de criar o projeto.</p>
+    <p class="field-hint">O uso de IA pode ser vedado pelas regras da sua disciplina, inclusive em etapas finais. Confira essas regras antes de usar qualquer sugestão.</p>
+
+    <% if current_account.deepseek_credits_remaining.zero? %>
+      <p class="field-hint">Você está sem créditos de orientação por IA. <%= link_to "Ver opções de recarga", plans_path(anchor: "package-topup_writing") %></p>
+    <% else %>
+      <p class="field-hint">Cada solicitação usa 1 crédito de orientação por IA. Você tem <%= current_account.deepseek_credits_remaining %> disponível.</p>
+    <% end %>
+    <% if !current_account.admin? && current_account.project_credits_remaining.zero? %>
+      <p class="field-hint">Você também precisa de um crédito de projeto para salvar o novo trabalho. <%= link_to "Ver pacotes", plans_path %></p>
+    <% end %>
+
+    <form data-studio-request>
+      <div class="field">
+        <label for="studio-project-type">Tipo de trabalho</label>
+        <select id="studio-project-type" class="text-control" data-studio-project-type>
+          <option value="case">Case</option>
+          <option value="paper_project">Projeto de Paper</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="studio-mode">Como quer começar?</label>
+        <select id="studio-mode" class="text-control" data-studio-mode>
+          <option value="guided">Quero desenvolver uma ideia</option>
+          <option value="import">Quero organizar um texto existente</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="studio-prompt">Sua ideia ou orientação</label>
+        <textarea id="studio-prompt" class="text-control" rows="5" maxlength="6000" data-studio-prompt placeholder="Conte o tema, o problema ou o que você já decidiu. Se ainda não souber, diga por onde quer começar."></textarea>
+      </div>
+      <div class="field">
+        <label for="studio-source-text">Texto que você quer organizar (opcional)</label>
+        <textarea id="studio-source-text" class="text-control" rows="8" maxlength="24000" data-studio-source placeholder="Cole aqui um rascunho ou trabalho anterior para receber uma proposta de organização."></textarea>
+        <p class="field-hint">O texto é enviado ao provedor de IA para esta solicitação. O assistente não salva o rascunho recebido automaticamente.</p>
+      </div>
+      <button class="button button-primary" type="submit" <%= "disabled" if current_account.deepseek_credits_remaining.zero? || (!current_account.admin? && current_account.project_credits_remaining.zero?) %>>Pedir orientação</button>
+    </form>
+
+    <p class="field-hint" data-studio-status role="status" aria-live="polite"></p>
+    <section class="studio-results" data-studio-results hidden aria-live="polite">
+      <div class="studio-answer" data-studio-answer></div>
+      <section data-studio-questions-section hidden>
+        <h2>Perguntas para desenvolver sua ideia</h2>
+        <div data-studio-questions></div>
+        <button class="button button-secondary" type="button" data-studio-continue>Continuar com minhas respostas</button>
+      </section>
+      <section data-studio-suggestions-section hidden>
+        <h2>Propostas editáveis para o roteiro</h2>
+        <p class="field-hint">Revise cada texto. Marque apenas os campos que deseja incluir; nada é aplicado sem sua seleção.</p>
+        <div class="studio-suggestions" data-studio-suggestions></div>
+        <%= form_with url: projects_path, scope: :project, class: "studio-create-form", data: { studio_create_form: true } do |form| %>
+          <%= form.hidden_field :project_type, data: { studio_create_type: true } %>
+          <%= form.submit "Criar projeto com os campos selecionados", class: "button button-primary", data: { studio_create_button: true } %>
+        <% end %>
+      </section>
+    </section>
+  </section>
+</main>

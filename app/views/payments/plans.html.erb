@@ -35,13 +35,26 @@
   <section class="package-grid" aria-label="Pacotes disponíveis">
     <% @packages.each do |code, package| %>
       <article class="package-card" id="package-<%= code %>"<% if current_account %> data-package-card="<%= code %>"<% end %>>
-        <p class="eyebrow"><%= package[:label] %></p>
-        <h2><%= number_to_currency(package[:price_cents] / 100.0, unit: "R$ ", separator: ",", delimiter: ".") %></h2>
-        <ul>
-          <li><%= package[:project_credits] %> projetos</li>
-          <li><%= package[:ai_credits] %> avaliações formativas</li>
-          <li><%= package[:deepseek_credits] %> orientações de escrita</li>
-        </ul>
+        <p class="eyebrow"><%= package[:kind] == :topup ? "Recarga avulsa" : package[:label] %></p>
+        <% if package[:regular_price_cents] %>
+          <div class="package-pricing">
+            <span class="discount-badge"><%= PaymentPackages.discount_percent(package) %>% de desconto</span>
+            <p>Preço promocional</p>
+            <del><%= number_to_currency(package[:regular_price_cents] / 100.0, unit: "R$ ", separator: ",", delimiter: ".") %></del>
+            <h2><%= number_to_currency(package[:price_cents] / 100.0, unit: "R$ ", separator: ",", delimiter: ".") %></h2>
+          </div>
+        <% else %>
+          <h2><%= number_to_currency(package[:price_cents] / 100.0, unit: "R$ ", separator: ",", delimiter: ".") %></h2>
+        <% end %>
+        <% if package[:kind] == :topup %>
+          <p><%= package[:description] %>. O saldo é adicionado sem alterar seu pacote.</p>
+        <% else %>
+          <ul>
+            <li><%= package[:project_credits] %> projetos</li>
+            <li><%= package[:ai_credits] %> avaliações formativas</li>
+            <li><%= package[:deepseek_credits] %> orientações de escrita</li>
+          </ul>
+        <% end %>
         <% if public_shell_only? %>
           <p class="field-hint">Compra temporariamente indisponível.</p>
         <% elsif current_account %>

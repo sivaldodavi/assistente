@@ -20,7 +20,7 @@ class AccountSettingsTest < ActionDispatch::IntegrationTest
     assert_redirected_to account_settings_path(saved: "profile")
     @account.reload
     assert_equal "Nome Atualizado", @account.name
-    assert_not_includes @account.profile, "institution"
+    assert_equal "Nome da instituição", @account.profile["institution"]
     assert_equal "10", @account.profile["period"]
     assert_equal "noturno", @account.profile["shift"]
     assert_equal %w[Pesquisa Ética], @account.profile["disciplines"]
@@ -30,7 +30,7 @@ class AccountSettingsTest < ActionDispatch::IntegrationTest
   end
 
   test "does not import singular discipline and professor profile values" do
-    @account.update!(profile: { "discipline" => "Antiga", "professor" => "Antigo" })
+    @account.update!(profile: { "institution" => "Instituição de teste", "discipline" => "Antiga", "professor" => "Antigo" })
     @account.update_profile!(profile: @account.profile, name: @account.name)
 
     assert_empty @account.profile["disciplines"]
@@ -45,8 +45,9 @@ class AccountSettingsTest < ActionDispatch::IntegrationTest
     assert_select "dialog[data-settings-dialog][open]"
     assert_select ".settings-nav a", count: 4
     assert_select "a[href='#preferences']", count: 0
-    assert_select ".settings-package", count: 3
+    assert_select ".settings-package", count: 5
     assert_includes response.body, "R$ 12,00"
+    assert_includes response.body, "R$ 50,00"
     assert_includes response.body, "R$ 69,90"
     assert_includes response.body, "avaliações formativas"
     assert_includes response.body, "orientações de escrita"
@@ -57,8 +58,17 @@ class AccountSettingsTest < ActionDispatch::IntegrationTest
     assert_select "select[name='shift'] option", count: 3
     assert_select "input[name='discipline']", count: 0
     assert_select "input[name='professor']", count: 0
-    assert_select "input[name='institution']", count: 0
+    assert_select "input[name='institution'][required]"
     assert_select "input[name='course']"
+  end
+
+  test "institution is required when saving the academic profile" do
+    post account_update_profile_path, params: { course: "Direito" }
+
+    assert_response :unprocessable_entity
+    assert_select "[role='alert']", text: /instituição/
+    assert_select "input[name='institution'][required]"
+    assert_equal "Instituição de teste", @account.reload.profile["institution"]
   end
 
   test "terms and AI consent are recorded independently" do

@@ -6,6 +6,7 @@
     <p class="eyebrow">Novo roteiro</p>
     <h1>Crie seu próximo trabalho</h1>
     <p class="muted">Escolha um roteiro e defina a data da primeira entrega, se já souber.</p>
+    <p><%= link_to "Ou comece com orientação de IA", project_assistant_path, class: "button button-secondary" %></p>
 
     <% if @project.errors.any? %>
       <div class="alert" role="alert"><%= @project.errors.full_messages.to_sentence %></div>

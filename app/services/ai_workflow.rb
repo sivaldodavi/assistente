@@ -158,12 +158,12 @@ class AIWorkflow
     ids.uniq.select { |id| id.is_a?(String) && id.present? && !PRIVATE_FIELDS.include?(id) }
   end
 
-  def self.normalize_jev_result(raw, section: nil)
-    JevRubric.new.normalize(raw, section:)
+  def self.normalize_jev_result(raw, section: nil, stage: nil)
+    JevRubric.new.normalize(raw, section:, stage:)
   end
 
-  def self.jev_questions(section = nil)
-    JevRubric.new.questions(section)
+  def self.jev_questions(section = nil, stage: nil)
+    JevRubric.new.questions(section, stage:)
   end
 
   def self.text(fields, key, limit = 16_000)

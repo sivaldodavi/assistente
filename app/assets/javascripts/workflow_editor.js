@@ -1,3 +1,67 @@
+(() => {
+  const shell = document.querySelector(".app-shell");
+  const sidebar = document.querySelector("#app-sidebar");
+  const toggle = document.querySelector("[data-sidebar-toggle]");
+  const backdrop = document.querySelector("[data-sidebar-backdrop]");
+  if (!shell || !sidebar || !toggle || !backdrop) return;
+
+  const mobile = window.matchMedia("(max-width: 720px)");
+  shell.classList.add("sidebar-ready");
+  const label = toggle.querySelector("[data-sidebar-toggle-label]");
+  const setExpanded = (expanded) => {
+    toggle.setAttribute("aria-expanded", String(expanded));
+    if (label) label.textContent = mobile.matches
+      ? (expanded ? "Fechar menu" : "Abrir menu")
+      : (expanded ? "Ocultar navegação" : "Mostrar navegação");
+    backdrop.hidden = !mobile.matches || !expanded;
+  };
+  const applyViewport = () => {
+    if (mobile.matches) {
+      shell.classList.remove("is-sidebar-collapsed");
+      sidebar.classList.remove("is-open");
+      setExpanded(false);
+    } else {
+      sidebar.classList.remove("is-open");
+      let collapsed = false;
+      try {
+        collapsed = localStorage.getItem("academic-sidebar-collapsed") === "true";
+      } catch {
+        collapsed = false;
+      }
+      shell.classList.toggle("is-sidebar-collapsed", collapsed);
+      setExpanded(!collapsed);
+    }
+  };
+  const closeMobile = () => {
+    sidebar.classList.remove("is-open");
+    setExpanded(false);
+    toggle.focus();
+  };
+
+  toggle.addEventListener("click", () => {
+    if (mobile.matches) {
+      const expanded = !sidebar.classList.contains("is-open");
+      sidebar.classList.toggle("is-open", expanded);
+      setExpanded(expanded);
+    } else {
+      const collapsed = !shell.classList.contains("is-sidebar-collapsed");
+      shell.classList.toggle("is-sidebar-collapsed", collapsed);
+      try {
+        localStorage.setItem("academic-sidebar-collapsed", String(collapsed));
+      } catch {
+        // The layout still works for this page when storage is unavailable.
+      }
+      setExpanded(!collapsed);
+    }
+  });
+  backdrop.addEventListener("click", closeMobile);
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && mobile.matches && sidebar.classList.contains("is-open")) closeMobile();
+  });
+  mobile.addEventListener("change", applyViewport);
+  applyViewport();
+})();
+
 document.addEventListener("click", (event) => {
   const addButton = event.target.closest("[data-collection-add]");
   if (addButton) {
@@ -212,7 +276,7 @@ document.addEventListener("click", async (event) => {
 
 document.addEventListener("click", async (event) => {
   const actionButton = event.target.closest("[data-ai-action]");
-  const jevButton = event.target.closest("[data-jev-section-action], [data-jev-report]");
+  const jevButton = event.target.closest("[data-jev-section-action], [data-jev-report], [data-jev-assessment]");
   if (!actionButton && !jevButton) return;
 
   const panel = event.target.closest("[data-ai-panel]");
@@ -239,6 +303,12 @@ document.addEventListener("click", async (event) => {
     } else if (jevButton.matches("[data-jev-report]")) {
       url = panel.dataset.jevReportUrl;
       payload = {};
+    } else if (jevButton.matches("[data-jev-assessment]")) {
+      url = panel.dataset.jevAssessmentUrl;
+      payload = {
+        stage: panel.querySelector("[data-jev-assessment-select]").value,
+        project_revision: Number(panel.dataset.projectRevision)
+      };
     } else {
       url = panel.dataset.jevSectionUrl;
       payload = { section: panel.querySelector("[data-jev-section-select]").value };
@@ -278,9 +348,12 @@ function renderAiResponse(output, response) {
   response.suggestions.forEach((suggestion) => {
     const item = document.createElement("div");
     item.className = "assist-suggestion";
+    const origin = document.createElement("p");
+    origin.className = "field-hint";
+    origin.textContent = "Sugestão gerada por IA. Revise e edite antes de usar.";
     const text = document.createElement("p");
     text.textContent = suggestion.text;
-    item.append(text);
+    item.append(origin, text);
 
     const field = document.getElementById(`project_fields_${suggestion.field_id}`);
     if (field) {
@@ -301,7 +374,12 @@ function renderAiResponse(output, response) {
 
 function renderJevAnalysis(output, analysis) {
   const heading = document.createElement("h5");
-  heading.textContent = analysis.section ? "Resultado da etapa" : "Resultado do relatório";
+  heading.textContent = {
+    case_report: "Resultado do relatório do Case",
+    case_dissertation: "Resultado da dissertação do Case",
+    paper_project: "Resultado do Projeto de Paper",
+    paper_final: "Resultado do Paper Final"
+  }[analysis.stage] || (analysis.section ? "Resultado da etapa" : "Resultado do relatório");
   output.append(heading);
 
   (analysis.criteria || []).forEach((criterion) => {
@@ -322,4 +400,216 @@ function renderJevAnalysis(output, analysis) {
     grade.textContent = `Faixa provável: ${analysis.grade_range.score}/3 · conteúdo estimado em ${analysis.expected_points}/${analysis.assessable_points} pontos`;
     output.append(grade);
   }
+
+  if (analysis.expected_points !== undefined) {
+    const points = document.createElement("p");
+    points.textContent = `Subtotal indicativo: ${analysis.expected_points}/${analysis.assessable_points} pontos`;
+    output.append(points);
+  }
+  if (analysis.points_discrepancy) {
+    const note = document.createElement("p");
+    note.className = "field-hint";
+    note.textContent = `Os critérios publicados somam ${analysis.assessable_points} pontos, embora a etapa seja declarada como ${analysis.declared_points}. Nenhum ponto ausente foi estimado.`;
+    output.append(note);
+  }
+  if (analysis.unassessed_points > 0) {
+    const note = document.createElement("p");
+    note.className = "field-hint";
+    note.textContent = `${analysis.unassessed_points} ponto de formatação não é estimado a partir de texto simples; a avaliação do debate também não é inferida.`;
+    output.append(note);
+  }
+}
+
+document.addEventListener("submit", async (event) => {
+  const form = event.target.closest("[data-studio-request]");
+  if (!form) return;
+
+  event.preventDefault();
+  await requestStudioSuggestions(form.closest("[data-project-studio]"), form, false);
+});
+
+document.addEventListener("click", async (event) => {
+  const button = event.target.closest("[data-studio-continue]");
+  if (!button) return;
+
+  const root = button.closest("[data-project-studio]");
+  const form = root.querySelector("[data-studio-request]");
+  await requestStudioSuggestions(root, form, true);
+});
+
+document.addEventListener("submit", (event) => {
+  const form = event.target.closest("[data-studio-create-form]");
+  if (!form) return;
+
+  const root = form.closest("[data-project-studio]");
+  const selected = [...root.querySelectorAll("[data-studio-accept]:checked")];
+  if (!selected.length) {
+    event.preventDefault();
+    root.querySelector("[data-studio-status]").textContent = "Selecione ao menos um campo revisado para criar o projeto.";
+    return;
+  }
+
+  form.querySelectorAll("[data-studio-generated-field]").forEach((input) => input.remove());
+  selected.forEach((checkbox) => {
+    const card = checkbox.closest("[data-studio-field-card]");
+    const input = document.createElement("input");
+    input.type = "hidden";
+    input.name = `project[fields][${checkbox.value}]`;
+    input.value = card.querySelector("[data-studio-field-text]").value;
+    input.dataset.studioGeneratedField = "true";
+    form.append(input);
+  });
+  root.querySelector("[data-studio-create-type]").value = root.querySelector("[data-studio-project-type]").value;
+});
+
+async function requestStudioSuggestions(root, form, continuation) {
+  if (!root || !form) return;
+  const status = root.querySelector("[data-studio-status]");
+  const results = root.querySelector("[data-studio-results]");
+  const prompt = form.querySelector("[data-studio-prompt]").value.trim();
+  const sourceText = form.querySelector("[data-studio-source]").value.trim();
+  const projectType = form.querySelector("[data-studio-project-type]").value;
+  const mode = form.querySelector("[data-studio-mode]").value;
+  let userMessage = prompt;
+
+  if (continuation) {
+    const answers = [...root.querySelectorAll("[data-studio-question-input]")].map((input) => {
+      const question = input.closest("[data-studio-question]").querySelector("[data-studio-question-label]").textContent;
+      return `${question}\n${input.value.trim()}`;
+    }).filter((answer) => answer.trim().length > 0);
+    if (!answers.length) {
+      status.textContent = "Responda ao menos uma pergunta para continuar.";
+      return;
+    }
+    userMessage = answers.join("\n\n");
+  } else if (!prompt && !sourceText) {
+    status.textContent = "Descreva sua ideia ou cole um texto para organizar.";
+    return;
+  }
+
+  const submitButton = form.querySelector('button[type="submit"]');
+  if (submitButton) submitButton.disabled = true;
+  root.querySelector("[data-studio-continue]").disabled = true;
+  status.textContent = "Preparando uma proposta...";
+  captureStudioFields(root);
+  const messages = [...(root._studioMessages || []), { role: "user", content: userMessage }];
+
+  try {
+    const response = await fetch(root.dataset.draftUrl, {
+      method: "POST",
+      credentials: "same-origin",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content
+      },
+      body: JSON.stringify({
+        project_type: projectType,
+        mode,
+        prompt: root.dataset.studioStarted ? "" : prompt,
+        source_text: sourceText,
+        messages
+      })
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.message || "Não foi possível gerar uma proposta.");
+
+    root.dataset.studioStarted = "true";
+    root._studioMessages = [...messages, { role: "assistant", content: result.response.answer }];
+    root._studioSuggestions ||= new Map();
+    result.response.suggestions.forEach((suggestion) => {
+      const previous = root._studioSuggestions.get(suggestion.field_id);
+      const edited = previous && previous.currentText !== previous.originalText;
+      root._studioSuggestions.set(suggestion.field_id, {
+        ...suggestion,
+        originalText: suggestion.text,
+        currentText: edited ? previous.currentText : suggestion.text,
+        selected: previous?.selected === true
+      });
+    });
+    results.hidden = false;
+    const answer = root.querySelector("[data-studio-answer]");
+    answer.textContent = result.response.answer;
+    renderStudioQuestions(root, result.response.questions);
+    renderStudioFields(root);
+    form.querySelector("[data-studio-project-type]").disabled = true;
+    form.querySelector("[data-studio-mode]").disabled = true;
+    status.textContent = "Proposta pronta. Revise as sugestões antes de criar o projeto.";
+  } catch (error) {
+    status.textContent = error.message || "Não foi possível conectar ao serviço de IA.";
+  } finally {
+    if (submitButton) submitButton.disabled = false;
+    root.querySelector("[data-studio-continue]").disabled = false;
+  }
+}
+
+function renderStudioQuestions(root, questions) {
+  const section = root.querySelector("[data-studio-questions-section]");
+  const container = root.querySelector("[data-studio-questions]");
+  container.replaceChildren();
+  section.hidden = !questions.length;
+  questions.forEach((question) => {
+    const item = document.createElement("div");
+    item.className = "field studio-question";
+    item.dataset.studioQuestion = "true";
+    const label = document.createElement("label");
+    label.textContent = question.prompt;
+    label.dataset.studioQuestionLabel = "true";
+    const input = document.createElement("textarea");
+    input.className = "text-control";
+    input.rows = 3;
+    input.maxLength = 2000;
+    input.dataset.studioQuestionInput = "true";
+    item.append(label, input);
+    container.append(item);
+  });
+}
+
+function renderStudioFields(root) {
+  const section = root.querySelector("[data-studio-suggestions-section]");
+  const container = root.querySelector("[data-studio-suggestions]");
+  const suggestions = [...root._studioSuggestions.values()];
+  container.replaceChildren();
+  section.hidden = !suggestions.length;
+  suggestions.forEach((suggestion) => {
+    const card = document.createElement("article");
+    card.className = "studio-suggestion";
+    card.dataset.studioFieldCard = "true";
+    card.dataset.studioFieldId = suggestion.field_id;
+    const title = document.createElement("h3");
+    title.textContent = suggestion.label;
+    const origin = document.createElement("p");
+    origin.className = "field-hint";
+    origin.textContent = suggestion.origin === "from_user_input"
+      ? "A IA classificou esta proposta como apoiada no material fornecido; confira se a correspondência está correta."
+      : "Sugestão gerada pela IA; confira fatos e fundamentos antes de usar.";
+    const input = document.createElement("textarea");
+    input.className = "text-control";
+    input.rows = 5;
+    input.maxLength = suggestion.limit;
+    input.value = suggestion.currentText ?? suggestion.text;
+    input.dataset.studioFieldText = "true";
+    const acceptLabel = document.createElement("label");
+    acceptLabel.className = "studio-accept";
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.value = suggestion.field_id;
+    checkbox.checked = suggestion.selected === true;
+    checkbox.dataset.studioAccept = "true";
+    const acceptText = document.createElement("span");
+    acceptText.textContent = "Incluir este campo no novo projeto";
+    acceptLabel.append(checkbox, acceptText);
+    card.append(title, origin, input, acceptLabel);
+    container.append(card);
+  });
+}
+
+function captureStudioFields(root) {
+  if (!root._studioSuggestions) return;
+  root.querySelectorAll("[data-studio-field-card]").forEach((card) => {
+    const suggestion = root._studioSuggestions.get(card.dataset.studioFieldId);
+    if (!suggestion) return;
+
+    suggestion.currentText = card.querySelector("[data-studio-field-text]").value;
+    suggestion.selected = card.querySelector("[data-studio-accept]").checked;
+  });
 }

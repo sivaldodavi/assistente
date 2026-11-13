@@ -37,6 +37,9 @@ Rails.application.routes.draw do
   post "/projects/:project_id/ai/action", to: "project_assist#action"
   post "/projects/:project_id/ai/jev-report", to: "project_assist#jev_report"
   post "/projects/:project_id/ai/jev-section", to: "project_assist#jev_section"
+  post "/projects/:project_id/ai/jev-assessment", to: "project_assist#jev_assessment"
+  get "/projects/assistant", to: "project_studio#show", as: :project_assistant
+  post "/projects/assistant/draft", to: "project_studio#draft", as: :project_assistant_draft
   resources :projects do
     get :export, on: :member
     patch :paper_mode, on: :member

@@ -15,9 +15,29 @@ class ProjectsTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "h1", "Projetos"
+    assert_select "[data-sidebar-toggle][aria-controls='app-sidebar']"
     assert_select "[data-project-filter]", 3
     assert_select "[data-project-view-button]", 2
     assert_select "a[href='#{new_project_path}']", text: /Novo projeto/
+  end
+
+  test "project cards show the latest JEV subtotal and evaluated revision" do
+    project = create_project!(project_type: "paper_project", title: "Paper avaliado")
+    revision = project.revisions.sole
+    @account.jev_assessments.create!(
+      project:,
+      project_revision: revision,
+      stage: "paper_project",
+      rubric_version: JevRubric::VERSION,
+      model: "fake-jev",
+      result: { "stage" => "paper_project", "expected_points" => 2.25, "assessable_points" => 3.0 }
+    )
+
+    get projects_path
+
+    assert_response :success
+    assert_select ".project-jev-score", text: /JEV · Projeto de paper: 2.25\/3.0 pontos indicativos/
+    assert_select ".project-jev-date", text: /Revisão 0.*avaliação formativa/
   end
 
   test "projects page derives board status from its current stage and delivery" do
@@ -75,10 +95,23 @@ class ProjectsTest < ActionDispatch::IntegrationTest
     assert_equal date, Project.order(:id).last.fields["paper_project_delivery_date"]
   end
 
+  test "new projects require an academic institution in the profile" do
+    @account.update!(profile: {})
+
+    get new_project_path
+    assert_redirected_to account_settings_path(anchor: "profile")
+
+    assert_no_difference("Project.count") do
+      post projects_path, params: { project: { project_type: "case" } }
+    end
+    assert_redirected_to account_settings_path(anchor: "profile")
+  end
+
   test "creates a case and opens the first original stage" do
     @account.update_profile!(
       name: "Ana Estudante",
       profile: {
+        "institution" => "Instituição de teste",
         "disciplines" => [ "Direito Civil" ],
         "teachers" => [ "Professora Exemplo" ],
         "period" => "7",
@@ -184,20 +217,22 @@ class ProjectsTest < ActionDispatch::IntegrationTest
     assert_select "button[data-ai-action='proposal_chat']"
     assert_select "button[data-ai-action='suggest_problem']"
     assert_select "button[data-jev-section-action]"
-    assert_select "button[data-jev-report]"
+    assert_select "button[data-jev-assessment]"
+    assert_select "[data-jev-assessment-url='/projects/#{project.id}/ai/jev-assessment']"
     assert_select "select[data-jev-section-select] option", count: 5
     assert_select "[data-ai-panel]", text: /JEV|DeepSeek|TypeSafe/, count: 0
   end
 
-  test "does not render Case-only JEV controls for a Paper" do
+  test "renders Paper JEV assessment without Case section controls" do
     project = create_project!(project_type: "paper_project")
 
     get project_path(project, stage: "paper_identification")
 
     assert_response :success
     assert_select "[data-ai-panel]"
+    assert_select "button[data-jev-assessment]"
     assert_select "[data-jev-section-action]", count: 0
-    assert_select "[data-jev-report]", count: 0
+    assert_select "select[data-jev-assessment-select] option", text: "Projeto de paper"
   end
 
   test "renders only fixed delivery date fields for Case phases" do

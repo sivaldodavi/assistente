@@ -1,4 +1,15 @@
 class JevRubric
+  VERSION = "2026-11-v1"
+  STAGES_BY_PROJECT = {
+    "case" => %w[case_report case_dissertation],
+    "paper_project" => %w[paper_project],
+    "paper_final" => %w[paper_final]
+  }.freeze
+  ASSESSMENT_STAGES = (
+    STAGES_BY_PROJECT.values.flatten +
+    %w[case_section:case_description case_section:case_decisions case_section:thesis_a case_section:thesis_b case_section:criteria_and_values]
+  ).freeze
+
   GRADE_RANGES = [
     "0 — 0.00 to 0.87 of the 3.50 assessable content points.",
     "1 — 0.88 to 1.75 of the 3.50 assessable content points.",
@@ -36,6 +47,89 @@ class JevRubric
       "title" => "Critérios e valores",
       "max_points" => 0.5,
       "instructions" => "Avalie este critério de 0,5 ponto somente pela rubrica oficial: se a solução jurídica possível é coerente e justificada por critérios normativos ou valores jurídicos. Um glossário separado e abrangente é melhoria opcional do guia, não requisito de pontuação, salvo exigência expressa do professor. Não exija definições de vocabulário jurídico comum nem verifique a correção jurídica dos conceitos ou das fontes."
+    }
+  }.freeze
+
+  ADDITIONAL_RUBRICS = {
+    "case_dissertation" => {
+      "declared_points" => 2.0,
+      "criteria" => {
+        "legal_foundation" => {
+          "title" => "Fundamentação jurídica",
+          "max_points" => 1.0,
+          "instructions" => "Avalie a presença e integração de doutrina, legislação e jurisprudência no texto, considerando sua relação com o caso e a posição defendida. Não verifique externamente a validade das fontes, não decida qual alternativa é juridicamente correta e não pontue debate oral."
+        },
+        "structure_and_language" => {
+          "title" => "Organização textual",
+          "max_points" => 0.5,
+          "instructions" => "Avalie a coerência e a organização lógica do texto e a linguagem técnico-acadêmica. Não infira formatação visual de um texto simples."
+        },
+        "formal_standards" => {
+          "title" => "Estrutura e normas de citação e referência",
+          "max_points" => 0.5,
+          "instructions" => "Avalie somente citações e referências visíveis no texto enviado. Um texto simples não permite conferir diagramação, margens ou paginação. Não verifique a validade externa das referências."
+        }
+      }
+    },
+    "paper_project" => {
+      "declared_points" => 4.0,
+      "criteria" => {
+        "project_structure" => {
+          "title" => "Estrutura do projeto",
+          "max_points" => 1.0,
+          "instructions" => "Avalie delimitação do tema, pergunta investigável, estrutura lógica, justificativa acadêmica, indicação de procedimentos metodológicos e introdução, somente quando esses elementos estiverem presentes no texto. Não invente ou penalize elemento que não foi enviado."
+        },
+        "institutional_sources" => {
+          "title" => "Fontes institucionais indicadas",
+          "max_points" => 0.5,
+          "instructions" => "Conte fontes institucionais distintas e identificáveis no texto: menos de duas não demonstra o mínimo; duas ou três representam atendimento parcial; quatro ou mais podem demonstrar atendimento adequado. Não confirme validade, existência externa ou disponibilidade das fontes, e não invente referências."
+        },
+        "legal_writing_foundation" => {
+          "title" => "Fundamentação e redação jurídica",
+          "max_points" => 1.0,
+          "instructions" => "Avalie se a redação é coesa e tecnicamente adequada e articula doutrina, legislação e jurisprudência ao problema jurídico. Não invente fontes, não confirme atualização externa e não decida a correção jurídica da tese."
+        },
+        "formal_standards" => {
+          "title" => "Elementos formais identificáveis",
+          "max_points" => 0.5,
+          "instructions" => "Avalie somente elementos formais visíveis no conteúdo recebido. Texto simples não permite conferir margens, paginação, fonte ou outros aspectos de diagramação."
+        }
+      }
+    },
+    "paper_final" => {
+      "declared_points" => 4.0,
+      "criteria" => {
+        "introduction" => {
+          "title" => "Introdução e delimitação",
+          "max_points" => 0.5,
+          "instructions" => "Avalie se tema, delimitação, problema, objetivo e percurso do texto são apresentados de modo claro e compatível com o conteúdo fornecido."
+        },
+        "development" => {
+          "title" => "Desenvolvimento e fundamentação",
+          "max_points" => 1.0,
+          "instructions" => "Avalie a organização do desenvolvimento, o uso de fundamentos indicados no texto e sua relação com o problema. Não verifique a validade externa das fontes."
+        },
+        "methodology" => {
+          "title" => "Metodologia",
+          "max_points" => 0.5,
+          "instructions" => "Avalie se a metodologia é explicitada e adequada ao objetivo declarado, somente na medida em que isso possa ser observado no texto."
+        },
+        "analysis" => {
+          "title" => "Análise crítica e argumentação",
+          "max_points" => 1.0,
+          "instructions" => "Avalie a coerência da análise, a articulação entre argumentos e problema e a consideração de perspectivas relevantes, sem decidir a correção jurídica da conclusão."
+        },
+        "conclusion" => {
+          "title" => "Conclusão",
+          "max_points" => 0.5,
+          "instructions" => "Avalie se a conclusão responde ao problema e se decorre dos argumentos apresentados, sem introduzir afirmações sem apoio no texto."
+        },
+        "formal_standards" => {
+          "title" => "Elementos formais identificáveis",
+          "max_points" => 0.5,
+          "instructions" => "Avalie somente elementos formais visíveis no conteúdo recebido. Texto simples não permite conferir margens, paginação, fonte ou outros aspectos de diagramação."
+        }
+      }
     }
   }.freeze
 
@@ -90,26 +184,29 @@ class JevRubric
     "criteria_and_values" => []
   }.freeze
 
-  def questions(section = nil)
+  def questions(section = nil, stage: nil)
     if section
       definition = CHECKLISTS.fetch(section) { raise ArgumentError, "etapa de avaliação inválida" }
       definition.fetch("checks").to_h do |id, _label, instructions|
         [ id, { "type" => "score", "instructions" => instructions, "criteria" => CHECKLIST_LEVELS } ]
       end
     else
-      questions = RUBRIC.to_h do |id, definition|
+      rubric = rubric_for(stage)
+      questions = rubric.to_h do |id, definition|
         [ id, { "type" => "score", "instructions" => definition["instructions"], "criteria" => SCORE_LEVELS } ]
       end
-      questions["grade_range"] = {
+      if (stage || "case_report") == "case_report"
+        questions["grade_range"] = {
         "type" => "score",
         "instructions" => "Estime a faixa mais provável para os 3,5 pontos de conteúdo do relatório usando somente os três critérios avaliáveis: descrição/decisões possíveis (0,5), redação/fundamentação (2,5) e critérios/valores (0,5). Selecione 0 para 0,00–0,87, 1 para 0,88–1,75, 2 para 1,76–2,62 ou 3 para 2,63–3,50. São faixas técnicas indicativas, não cortes definidos pelo manual; a escala probabilística 0–3 por critério também é uma estimativa interna. Siga apenas a rubrica oficial, sem pontuar melhorias opcionais do guia. Exclua o critério formal/ABNT de 0,5, o debate e a dissertação final. Não redija nem reescreva o trabalho, não invente autoridades e não apresente a estimativa como nota oficial. Use apenas o conteúdo enviado.",
         "criteria" => GRADE_RANGES
-      }
+        }
+      end
       questions
     end
   end
 
-  def normalize(raw, section: nil)
+  def normalize(raw, section: nil, stage: nil)
     answers = raw.is_a?(Hash) ? raw["answers"] : nil
     raise ArgumentError, "respostas de avaliação ausentes" unless answers.is_a?(Hash)
 
@@ -121,32 +218,52 @@ class JevRubric
       {
         "model" => raw["model"].presence || "jev-latest",
         "section" => section,
+        "rubric_version" => VERSION,
         "criteria" => criteria,
         "probability_threshold" => 0.7,
         "unassessed_checks" => UNASSESSABLE_CHECKS.fetch(section),
         "usage" => raw["usage"].is_a?(Hash) ? raw["usage"] : {}
       }
     else
-      criteria = RUBRIC.map do |id, definition|
+      rubric = rubric_for(stage)
+      criteria = rubric.map do |id, definition|
         { "id" => id, "title" => definition["title"], "max_points" => definition["max_points"] }.merge(read_score(answers[id]))
       end
       expected_points = criteria.sum do |item|
-        item["max_points"] * ((item["probabilities"][1] + item["probabilities"][2]) / 2 + item["probabilities"][3])
+        expected_fraction = item["probabilities"].each_with_index.sum do |probability, score|
+          probability * score / 3.0
+        end
+        item["max_points"] * expected_fraction
       end
-      {
+      result = {
         "model" => raw["model"].presence || "jev-latest",
+        "stage" => stage || "case_report",
+        "rubric_version" => VERSION,
         "criteria" => criteria,
         "expected_points" => expected_points.round(2),
-        "assessable_points" => RUBRIC.values.sum { |item| item["max_points"] },
-        "grade_range" => { "title" => "Faixa de pontuação provável do conteúdo" }.merge(read_score(answers["grade_range"])),
+        "assessable_points" => rubric.values.sum { |item| item["max_points"] },
         "probability_threshold" => 0.7,
-        "unassessed_points" => 0.5,
+        "unassessed_points" => [ (stage || "case_report") == "case_report" ? 0.5 : 0, 0 ].max,
         "usage" => raw["usage"].is_a?(Hash) ? raw["usage"] : {}
       }
+      if (stage || "case_report") == "case_report"
+        result["grade_range"] = { "title" => "Faixa de pontuação provável do conteúdo" }.merge(read_score(answers["grade_range"]))
+      else
+        definition = ADDITIONAL_RUBRICS.fetch(stage)
+        result["declared_points"] = definition["declared_points"]
+        result["points_discrepancy"] = definition["declared_points"] != result["assessable_points"]
+      end
+      result
     end
   end
 
   private
+
+  def rubric_for(stage)
+    return RUBRIC if (stage || "case_report") == "case_report"
+
+    ADDITIONAL_RUBRICS.fetch(stage) { raise ArgumentError, "etapa de avaliação inválida" }.fetch("criteria")
+  end
 
   def read_score(answer)
     score = answer.is_a?(Hash) ? answer["score"] : nil
