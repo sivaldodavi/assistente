@@ -42,7 +42,34 @@ Ao criar uma nova proposta para que qualquer IA ou desenvolvedor compreenda a id
 
 ---
 
-## 3. Workflow de Aplicação e Remoção
+## 3. Workflow de Aplicação e Remoção (Branch Temporária)
+
+Quando uma IA ou desenvolvedor for implementar uma proposta deste diretório:
+
+1. **Criação de Branch Temporária**:
+   - Criar uma branch dedicada a partir da `main`:
+     ```sh
+     git checkout -b feature/XXX-nome-da-proposta
+     ```
+2. **Leitura e Alinhamento**: Ler o arquivo `docs/propostas/XXX-*.md` e esclarecer as decisões pendentes com o responsável.
+3. **Implementação e Testes**: Desenvolver as alterações, criar migrações, models, views e escrever testes automatizados em `test/` (garantindo 100% de sucesso com `bin/ops verify`).
+4. **Remoção da Proposta**:
+   - Apagar o arquivo da proposta no branch (`git rm docs/propostas/XXX-*.md`).
+   - Atualizar a tabela de índice deste `README.md`.
+5. **Merge e Exclusão da Branch**:
+   - Voltar para a `main` e fazer o merge:
+     ```sh
+     git checkout main
+     git merge --no-ff feature/XXX-nome-da-proposta -m "feat: implementa proposta XXX (nome)"
+     git branch -d feature/XXX-nome-da-proposta
+     ```
+   - O repositório volta a manter exclusivamente a branch `main` limpa.
+6. **Deploy e Release**:
+   - Executar a release automatizada com tag anotada:
+     ```sh
+     bin/ops release vX.Y.Z "resumo da funcionalidade"
+     ```
+
 
 Quando uma IA ou desenvolvedor for implementar uma proposta deste diretório:
 

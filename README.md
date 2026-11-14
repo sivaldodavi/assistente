@@ -149,6 +149,41 @@ Ideias, roadmaps e especificações para fases futuras são mantidas isoladament
 - **Regra de exclusão ao aplicar**: Essa pasta guarda **apenas** propostas pendentes de implementação. Quando uma IA ou desenvolvedor implementar, testar e implantar uma proposta em produção, o respectivo arquivo de proposta (`docs/propostas/XXX-*.md`) **deve ser apagado** do repositório no mesmo commit em que o código for entregue, registrando a nova funcionalidade no `CHANGELOG.md` e na tag da versão.
 - Consulte [`docs/propostas/README.md`](docs/propostas/README.md) para a lista de propostas ativas e o padrão de criação.
 
+
+### Ciclo de Desenvolvimento com Branches para Propostas
+
+Ao implementar qualquer proposta de `docs/propostas/`:
+
+1. **Criar a Branch da Proposta**:
+   - Crie uma branch temporária dedicada para a proposta a partir da `main`:
+     ```sh
+     git checkout -b feature/XXX-nome-da-proposta
+     ```
+2. **Desenvolver, Testar e Validar**:
+   - Desenvolva os arquivos e adicione os testes correspondentes.
+   - Valide localmente e no container:
+     ```sh
+     bin/ops verify
+     ```
+3. **Remover a Proposta e Integrar na `main`**:
+   - Remova o arquivo da proposta (`git rm docs/propostas/XXX-*.md`) e atualize o `docs/propostas/README.md`.
+   - Volte para a `main` e faça o merge sem fast-forward ou squash:
+     ```sh
+     git checkout main
+     git merge --no-ff feature/XXX-nome-da-proposta -m "feat: implementa proposta XXX (nome da proposta)"
+     ```
+4. **Apagar a Branch Imediatamente (Sem Deixar Branches Órfãs)**:
+   - Apague a branch local e remota (caso tenha sido enviada):
+     ```sh
+     git branch -d feature/XXX-nome-da-proposta
+     ```
+   - O repositório volta a manter **exclusivamente a branch `main` limpa**.
+5. **Release e Deploy**:
+   - Execute o ciclo de release e deploy automatizado:
+     ```sh
+     bin/ops release vX.Y.Z "resumo da funcionalidade"
+     ```
+
 ## Git e publicação
 
 O repositório mantém somente a branch compartilhada `main`, com commits Conventional Commits em português. Valide mudanças antes de publicar; nenhum deploy ocorre sem autorização explícita.
