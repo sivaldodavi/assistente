@@ -135,6 +135,14 @@ bin/ops deploy     # Executa verificações, rebuild dos containers e health che
 bin/ops release vX.Y.Z "resumo da release" # Ciclo completo de validação, deploy, commit e tag anotada
 ```
 
+
+### Dados de Demonstração e Testes Visuais (`db:seed:demo`)
+
+Para popular a conta administrativa com projetos de exemplo (um Case com alternativas/datas e um Paper com objetivos/metodologia) sem precisar preencher manualmente:
+```sh
+docker exec assistente-academico-production bin/rails db:seed:demo
+```
+
 ### Propostas Futuras e Roadmaps (`docs/propostas/`)
 
 Ideias, roadmaps e especificações para fases futuras são mantidas isoladamente na pasta [`docs/propostas/`](docs/propostas/).
