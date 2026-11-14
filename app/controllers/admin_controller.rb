@@ -16,6 +16,8 @@ class AdminController < ApplicationController
       pending_payments: PaymentOrder.where(status: %w[created provider_created reconciliation_required]).count,
       ai_requests: AIUsageReservation.where(status: "complete").count
     }
+    @ai_by_provider = ProviderUsage.group(:provider).count
+    @payments_by_status = PaymentOrder.group(:status).count
   end
 
   def accounts

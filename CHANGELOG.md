@@ -2,6 +2,14 @@
 
 Este arquivo registra mudanças relevantes por release. Releases usam tags Git anotadas em SemVer; `v0.1.0` identifica a versão-base implantada (`07dfd91`).
 
+## [0.7.0] - 2026-11-14
+
+### Adicionado
+
+- Cria o utilitário canônico `bin/ops` para automação de testes, lint, health check, deploy e releases em um comando.
+- Adiciona métricas de saúde operacional, contagem de IA por provedor e status de pedidos Pix ao painel `/admin/dashboard`.
+- Registra a proposta `002` para monitoramento de falhas críticas via webhook.
+
 ## [0.6.0] - 2026-11-14
 
 ### Alterado

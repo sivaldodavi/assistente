@@ -61,3 +61,4 @@ Quando uma IA ou desenvolvedor for implementar uma proposta deste diretório:
 | Código | Título | Status | Data de Criação |
 | :--- | :--- | :--- | :--- |
 | `001` | [Promoções, Cupons de Desconto e Créditos Avulsos](001-promocoes-e-cupons.md) | Aguardando Decisão / Fase 2 | 2026-11-14 |
+| `002` | [Monitoramento Operacional e Alertas de Falhas Críticas](002-alertas-monitoramento-webhooks.md) | Rascunho / Proposta | 2026-11-14 |

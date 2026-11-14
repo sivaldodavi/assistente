@@ -1,0 +1,96 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+APP_DIR="/opt/servidor/apps/assistente-academico"
+DEPLOY_DIR="$APP_DIR/deploy/production"
+CONTAINER="assistente-academico-production"
+HOST="trab.sivaldodavi.com.br"
+
+usage() {
+  echo "Uso: bin/ops [test|lint|verify|deploy|health|release <vX.Y.Z> <resumo>]"
+  exit 1
+}
+
+run_test() {
+  echo "==> Rodando suíte de testes (Docker)..."
+  docker run --rm -u 0 -v "$APP_DIR:/rails" -w /rails -e RAILS_ENV=test production-web bin/rails test
+}
+
+run_lint() {
+  echo "==> Rodando RuboCop (Docker)..."
+  docker run --rm -u 0 -v "$APP_DIR:/rails" -w /rails production-web bin/rubocop
+}
+
+run_verify() {
+  run_test
+  run_lint
+  echo "==> Validação completa com sucesso!"
+}
+
+run_health() {
+  echo "==> Verificando health check do container ($CONTAINER)..."
+  local attempts=0
+  local max_attempts=15
+  until docker exec "$CONTAINER" curl -fsS -H "Host: $HOST" -H "X-Forwarded-Proto: https" http://127.0.0.1/up >/dev/null 2>&1; do
+    attempts=$((attempts + 1))
+    if [ "$attempts" -ge "$max_attempts" ]; then
+      echo "Erro: health check falhou após $max_attempts tentativas."
+      docker exec "$CONTAINER" curl -fsS -H "Host: $HOST" -H "X-Forwarded-Proto: https" http://127.0.0.1/up || true
+      return 1
+    fi
+    echo " -> Aguardando subida da aplicação (tentativa $attempts/$max_attempts)..."
+    sleep 2
+  done
+  docker exec "$CONTAINER" curl -fsS -H "Host: $HOST" -H "X-Forwarded-Proto: https" http://127.0.0.1/up
+  echo " -> OK (Serviço ativo e saudável)"
+}
+
+run_deploy() {
+  run_verify
+  echo "==> Reconstruindo imagem Docker de produção e reiniciando container..."
+  cd "$DEPLOY_DIR"
+  docker compose build
+  docker compose up -d
+  run_health
+  echo "==> Deploy em produção concluído com sucesso!"
+}
+
+run_release() {
+  local version="${1:-}"
+  local summary="${2:-}"
+
+  if [[ -z "$version" || -z "$summary" ]]; then
+    echo "Erro: informe a versão e o resumo."
+    echo "Exemplo: bin/ops release v0.7.0 'adiciona painel de saude do sistema'"
+    exit 1
+  fi
+
+  if [[ ! "$version" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    echo "Erro: a versão deve seguir o formato SemVer vX.Y.Z (ex: v0.7.0)"
+    exit 1
+  fi
+
+  echo "==> Iniciando ciclo completo de release $version..."
+  run_deploy
+
+  cd "$APP_DIR"
+  echo "==> Criando commit e tag anotada $version..."
+  git add .
+  if ! git diff --cached --quiet; then
+    git commit -m "chore(release): $version - $summary"
+  fi
+  git tag -a "$version" -m "Release $version: $summary"
+  git push origin main
+  git push origin "$version"
+  echo "==> Release $version publicada e sincronizada no origin com sucesso!"
+}
+
+case "${1:-}" in
+  test) run_test ;;
+  lint) run_lint ;;
+  verify) run_verify ;;
+  health) run_health ;;
+  deploy) run_deploy ;;
+  release) shift; run_release "$@" ;;
+  *) usage ;;
+esac

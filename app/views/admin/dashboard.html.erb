@@ -1,28 +1,93 @@
-<% content_for :title, "Administração — Assistente Acadêmico" %>
+<% content_for :title, "Painel Operacional — Administração" %>
 
 <header class="site-header">
   <%= link_to "Assistente Acadêmico", projects_path, class: "brand" %>
   <div class="header-actions">
+    <%= link_to "Painel", admin_dashboard_path, class: "header-link active" %>
     <%= link_to "Contas", admin_accounts_path, class: "header-link" %>
     <%= link_to "Auditoria", admin_audit_path, class: "header-link" %>
     <%= link_to "Minha conta", account_settings_path, class: "header-link" %>
   </div>
 </header>
 
-<main class="page-shell">
+<main class="page-shell admin-shell">
   <p class="eyebrow">Administração</p>
-  <h1>Painel operacional</h1>
-  <div class="admin-summary-grid">
-    <% @summary.each do |label, value| %>
+  <h1>Painel operacional e saúde do sistema</h1>
+
+  <section class="admin-section" aria-label="Métricas gerais">
+    <div class="admin-summary-grid">
       <article class="admin-summary-card">
-        <span><%= { accounts: "Contas", projects: "Projetos", pending_payments: "Pagamentos pendentes", ai_requests: "Usos de IA" }.fetch(label) %></span>
-        <strong><%= value %></strong>
+        <span>Contas</span>
+        <strong><%= @summary[:accounts] %></strong>
       </article>
-    <% end %>
-  </div>
-  <nav class="admin-links" aria-label="Ferramentas administrativas">
+      <article class="admin-summary-card">
+        <span>Projetos</span>
+        <strong><%= @summary[:projects] %></strong>
+      </article>
+      <article class="admin-summary-card">
+        <span>Pagamentos pendentes</span>
+        <strong><%= @summary[:pending_payments] %></strong>
+      </article>
+      <article class="admin-summary-card">
+        <span>Usos de IA concluídos</span>
+        <strong><%= @summary[:ai_requests] %></strong>
+      </article>
+    </div>
+  </section>
+
+  <section class="admin-section" aria-label="Provedores de IA e Pagamentos">
+    <div class="admin-summary-grid" style="margin-top: 1.5rem;">
+      <article class="admin-summary-card">
+        <span>IA por provedor</span>
+        <div style="margin-top: 0.5rem; font-size: 0.95rem;">
+          <% if @ai_by_provider.any? %>
+            <% @ai_by_provider.each do |provider, count| %>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                <span><%= provider %>:</span>
+                <strong><%= count %></strong>
+              </div>
+            <% end %>
+          <% else %>
+            <p class="muted" style="margin: 0;">Nenhum uso registrado</p>
+          <% end %>
+        </div>
+      </article>
+
+      <article class="admin-summary-card">
+        <span>Pedidos Pix por status</span>
+        <div style="margin-top: 0.5rem; font-size: 0.95rem;">
+          <% if @payments_by_status.any? %>
+            <% @payments_by_status.each do |status, count| %>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                <span><%= status %>:</span>
+                <strong><%= count %></strong>
+              </div>
+            <% end %>
+          <% else %>
+            <p class="muted" style="margin: 0;">Nenhum pedido</p>
+          <% end %>
+        </div>
+      </article>
+
+      <article class="admin-summary-card">
+        <span>Status da infraestrutura</span>
+        <div style="margin-top: 0.5rem; font-size: 0.95rem;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+            <span>Banco SQLite:</span>
+            <strong style="color: #0d9488;">Conectado</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+            <span>Ambiente:</span>
+            <strong><%= Rails.env %></strong>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <nav class="admin-links" aria-label="Ferramentas administrativas" style="margin-top: 2rem;">
     <%= link_to "Gerenciar contas e créditos", admin_accounts_path, class: "button button-primary" %>
-    <%= link_to "Auditoria", admin_audit_path, class: "button button-secondary" %>
+    <%= link_to "Auditoria de ações", admin_audit_path, class: "button button-secondary" %>
     <%= link_to "Uso agregado (JSON)", admin_usage_path, class: "button button-secondary" %>
     <%= link_to "Saúde do banco (JSON)", admin_health_path, class: "button button-secondary" %>
   </nav>

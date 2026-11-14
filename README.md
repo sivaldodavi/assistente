@@ -60,7 +60,7 @@ Os valores de referência dos pacotes-base são o dobro do preço cobrado. Recar
 
 O nome da instituição de ensino é solicitado no perfil e utilizado nas exportações. O uso de IA pode contrariar regras específicas de uma disciplina; a aplicação identifica sugestões, solicita revisão e não afirma conformidade acadêmica.
 
-O projeto usa tags anotadas em SemVer; `v0.1.0` marca a linha de base e `v0.2.0` a `v0.5.2` são versões anteriores. `v0.6.0` é esta versão. Consulte [CHANGELOG.md](CHANGELOG.md) para o histórico.
+O projeto usa tags anotadas em SemVer; `v0.1.0` marca a linha de base e `v0.2.0` a `v0.6.0` são versões anteriores. `v0.7.0` é esta versão. Consulte [CHANGELOG.md](CHANGELOG.md) para o histórico.
 
 As páginas públicas estão em `/`, `/planos` (também `/plans`), `/termos`, `/privacidade` e `/ajuda-ia`. No modo funcional, o login Google e compras Pix ficam disponíveis a contas autenticadas. A política identifica Sivaldo Davi Pereira como responsável e informa `contato@sivaldodavi.com`, contato já publicado no site pessoal do responsável. Os avisos legais continuam sendo um rascunho funcional e devem ser revisados.
 
@@ -121,6 +121,19 @@ Para qualquer IA ou desenvolvedor que for manter ou expandir o Assistente Acadê
   - Reconciliação dupla: Webhook em `/webhooks/mercadopago` e rotina periódica via systemd timer (`bin/rails payments:reconcile`).
 - **Exportação de Documentos (`app/services/document_export_renderer.rb`)**:
   - Renderização acadêmica de prévia HTML e compilação em PDF com suporte a Quarto e Typst.
+
+
+### Utilitário Operacional (`bin/ops`)
+
+Para simplificar a rotina de manutenção, testes e deploys na VPS:
+```sh
+bin/ops test       # Executa a suíte de testes dentro do ambiente Docker
+bin/ops lint       # Executa o RuboCop
+bin/ops verify     # Executa testes e linter
+bin/ops health     # Testa o health check do container ativo (/up)
+bin/ops deploy     # Executa verificações, rebuild dos containers e health check
+bin/ops release vX.Y.Z "resumo da release" # Ciclo completo de validação, deploy, commit e tag anotada
+```
 
 ### Propostas Futuras e Roadmaps (`docs/propostas/`)
 
