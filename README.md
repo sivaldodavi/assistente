@@ -103,6 +103,31 @@ docker cp assistente-academico-production:/tmp/assistente-academico.sqlite3 /opt
 
 Verifique cada cópia com `PRAGMA integrity_check` e teste restaurações em arquivo isolado. O timer preserva sete cópias diárias e os backups anteriores fora do diretório `daily`; não copie o banco ativo com `cp` comum.
 
+
+## Arquitetura e Visão Geral para IAs e Desenvolvedores
+
+Para qualquer IA ou desenvolvedor que for manter ou expandir o Assistente Acadêmico, a arquitetura do sistema segue as convenções canônicas de Rails com serviços dedicados:
+
+- **Workflows Acadêmicos (`app/models/academic_workflow.rb`)**: Define os fluxos guiados para Trabalhos de Conclusão, Cases Jurídicos e Papers. As fases e etapas são organizadas em JSON e traduzidas por helpers dedicados.
+- **Campos e Rascunhos**: Os dados dos projetos são mantidos de forma flexível em campos versionados e serializados, evitando migrações rígidas a cada ajuste de roteiro.
+- **Integração de IA com Fallback Multi-Provedor (`app/services/ai_provider_router.rb`)**:
+  - Provedor primário: DeepSeek.
+  - Fallback secundário: Google Gemini.
+  - Fallback terciário: Anthropic Claude.
+  - Avaliação formativa estruturada: JEV TypeSafe.
+  - Chat contextual: Não persiste histórico no banco; responde sob demanda por etapa ou projeto consumindo créditos da conta.
+- **Financeiro & Pagamentos (`app/services/payment_service.rb`, `PaymentPackages`)**:
+  - Geração de Pix automatizada via Mercado Pago com idempotência por `request_id`.
+  - Reconciliação dupla: Webhook em `/webhooks/mercadopago` e rotina periódica via systemd timer (`bin/rails payments:reconcile`).
+- **Exportação de Documentos (`app/services/document_export_renderer.rb`)**:
+  - Renderização acadêmica de prévia HTML e compilação em PDF com suporte a Quarto e Typst.
+
+### Propostas Futuras e Roadmaps (`docs/propostas/`)
+
+Ideias, roadmaps e especificações para fases futuras são mantidas isoladamente na pasta [`docs/propostas/`](docs/propostas/).
+- **Regra de exclusão ao aplicar**: Essa pasta guarda **apenas** propostas pendentes de implementação. Quando uma IA ou desenvolvedor implementar, testar e implantar uma proposta em produção, o respectivo arquivo de proposta (`docs/propostas/XXX-*.md`) **deve ser apagado** do repositório no mesmo commit em que o código for entregue, registrando a nova funcionalidade no `CHANGELOG.md` e na tag da versão.
+- Consulte [`docs/propostas/README.md`](docs/propostas/README.md) para a lista de propostas ativas e o padrão de criação.
+
 ## Git e publicação
 
 O repositório mantém somente a branch compartilhada `main`, com commits Conventional Commits em português. Valide mudanças antes de publicar; nenhum deploy ocorre sem autorização explícita.

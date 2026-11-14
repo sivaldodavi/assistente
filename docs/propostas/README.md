@@ -1,14 +1,17 @@
-# Propostas e Especificações Futuras (RFCs / Roadmaps)
+# Propostas e Especificações Futuras (docs/propostas/)
 
-Este diretório (`docs/propostas/`) concentra de forma isolada e padronizada todas as especificações técnicas, propostas de melhoria (RFCs) e roadmaps para evolução futura do **Assistente Acadêmico**.
+Este diretório concentra propostas técnicas, especificações de arquitetura e roadmaps para evolução futura do **Assistente Acadêmico**.
 
-O objetivo é separar claramente a documentação do código vigente (em produção) das ideias e planejamentos de fases posteriores, evitando qualquer ambiguidade durante testes, deploys ou auditorias.
+> [!IMPORTANT]
+> **Regra de Ciclo de Vida**:
+> Este diretório armazena **apenas** propostas pendentes (em ideação, rascunho ou aguardando implementação).
+> **Assim que uma proposta for concluída, testada e implantada em produção, seu arquivo Markdown DEVE ser apagado** do repositório, mantendo apenas a referência histórica e o registro do que foi feito no `CHANGELOG.md` e nos commits. Não faz sentido manter arquivos de propostas antigas aqui após estarem prontas no código ativo.
 
 ---
 
 ## 1. Padrão de Nomenclatura
 
-Os arquivos devem seguir o padrão sequencial numérico com slug em minúsculas:
+Os arquivos devem seguir numeração sequencial de 3 dígitos com slug em minúsculas:
 
 ```text
 docs/propostas/XXX-nome-da-proposta.md
@@ -20,19 +23,41 @@ Exemplos:
 
 ---
 
-## 2. Estrutura Recomendada de uma Proposta
+## 2. Estrutura Padrão de cada Proposta
 
-Cada documento deve conter:
-1. **Status**: `[Rascunho | Em Revisão | Aprovado | Implementado | Descartado]`
-2. **Contexto & Motivação**: Qual problema resolve ou que capacidade adiciona.
-3. **Arquitetura & Modelagem**: Alterações de banco de dados, models, controllers e serviços.
-4. **Impactos & Pontos de Atenção**: Integrações externas (ex.: Mercado Pago, provedores de IA), concorrência, migrações de dados ou regressões potenciais.
-5. **Decisões Pendentes**: Perguntas abertas de negócio/produto antes de iniciar a implementação.
+Ao criar uma nova proposta para que qualquer IA ou desenvolvedor compreenda a ideia, use o seguinte esqueleto:
+
+1. **Status**: `[Rascunho | Em Revisão | Aprovado para Implementação]`
+2. **Contexto & Motivação**: O que motivou a proposta e qual benefício traz ao produto.
+3. **Arquitetura Proposta**:
+   - Modelagem de dados (novas tabelas, colunas, chaves estrangeiras).
+   - Fluxos de Controllers, rotas e views.
+   - Serviços / Jobs em segundo plano.
+4. **Pontos de Atenção & Riscos**:
+   - Impactos em integrações externas (Mercado Pago, provedores de IA DeepSeek/Gemini/Claude).
+   - Reconciliação financeira / webhooks.
+   - Concorrência de dados e bloqueios atômicos.
+5. **Critérios de Aceite**: O que precisa estar funcionando e testado para considerar a proposta pronta.
+6. **Decisões Pendentes de Produto**: Perguntas de negócio que o dono do produto deve responder antes ou durante o desenvolvimento.
 
 ---
 
-## 3. Índice de Propostas Ativas
+## 3. Workflow de Aplicação e Remoção
 
-| Código | Título | Status | Data |
+Quando uma IA ou desenvolvedor for implementar uma proposta deste diretório:
+
+1. **Leitura e Alinhamento**: Ler o arquivo `docs/propostas/XXX-*.md` e esclarecer as decisões pendentes com o responsável.
+2. **Implementação e Testes**: Desenvolver as alterações, criar migrações, models, views e escrever testes automatizados em `test/` (garantindo 100% de sucesso na suíte).
+3. **Documentação de Release**: Adicionar a nova funcionalidade ao `CHANGELOG.md` na seção da nova versão e atualizar o `README.md`.
+4. **Remoção da Proposta**:
+   - Apagar o arquivo `docs/propostas/XXX-*.md`.
+   - Atualizar a tabela de índice abaixo.
+5. **Commit & Deploy**: Comitar a remoção do arquivo de proposta juntamente com a entrega do código no Git (`git rm docs/propostas/XXX-*.md`).
+
+---
+
+## 4. Índice de Propostas Pendentes
+
+| Código | Título | Status | Data de Criação |
 | :--- | :--- | :--- | :--- |
-| `001` | [Promoções, Cupons de Desconto e Créditos Avulsos](001-promocoes-e-cupons.md) | Rascunho / Fase 2 | 2026-11-14 |
+| `001` | [Promoções, Cupons de Desconto e Créditos Avulsos](001-promocoes-e-cupons.md) | Aguardando Decisão / Fase 2 | 2026-11-14 |
