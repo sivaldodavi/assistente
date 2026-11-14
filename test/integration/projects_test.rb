@@ -203,7 +203,7 @@ class ProjectsTest < ActionDispatch::IntegrationTest
     get project_path(project, stage: "thesis_argumentation")
 
     assert_response :success
-    assert_select "h2#stage-title", "2.2 · Argumentação das alternativas"
+    assert_select "h2#stage-title", "Argumentação das alternativas"
     assert_select "textarea[name='project[fields][thesis_a]']", count: 0
     assert_select "textarea[name='project[fields][thesis_b]']", count: 0
     assert_select "label.alternative-title", count: 2
@@ -255,7 +255,9 @@ class ProjectsTest < ActionDispatch::IntegrationTest
     get project_path(project, stage: "description")
 
     assert_response :success
-    assert_select "h2#stage-title", "1 · Descrição do caso"
+    assert_select "h2#stage-title", "Descrição do caso"
+    assert_select "nav.editor-stage-list button", text: "02 · Descrição do caso"
+    assert_select ".editor-phase-title", text: "Relatório"
     assert_select "textarea[name='project[fields][facts]']"
     assert_select "nav.editor-stage-list button", count: 10
     assert_select "textarea[name='project[fields][dissertation_intro]']", count: 0
@@ -268,8 +270,8 @@ class ProjectsTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "[data-ai-panel][data-action-url='/projects/#{project.id}/ai/action']"
-    assert_select ".editor-heading-actions a[href='#{chat_path(project_id: project.id, scope: "description")}']", text: "Abrir Chat"
-    assert_select ".editor-heading-actions button[data-jev-assessment][data-jev-assessment-stage='case_report']", text: "Avaliar etapa"
+    assert_select ".stage-actions a[href='#{chat_path(project_id: project.id, scope: "description")}']", text: "Conversar sobre esta etapa"
+    assert_select ".stage-actions button[data-jev-assessment][data-jev-assessment-stage='case_report']", text: "Avaliar relatório"
     assert_select ".assist-panel-summary", text: "Sugestões para o roteiro"
     assert_select ".assist-panel-summary .field-hint", count: 0
     assert_select "button[data-ai-action='proposal_chat']", count: 0
@@ -287,7 +289,7 @@ class ProjectsTest < ActionDispatch::IntegrationTest
     get project_path(project, stage: "debate")
 
     assert_response :success
-    assert_select ".editor-heading-actions a[href='#{chat_path(project_id: project.id, scope: "debate")}']", text: "Abrir Chat"
+    assert_select ".stage-actions a[href='#{chat_path(project_id: project.id, scope: "debate")}']", text: "Conversar sobre esta etapa"
     assert_select "button[data-jev-assessment]", count: 0
   end
 
@@ -298,7 +300,7 @@ class ProjectsTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "[data-ai-panel]"
-    assert_select ".editor-heading-actions button[data-jev-assessment][data-jev-assessment-stage='paper_project']"
+    assert_select ".stage-actions button[data-jev-assessment][data-jev-assessment-stage='paper_project']"
     assert_select "[data-jev-section-action]", count: 0
   end
 

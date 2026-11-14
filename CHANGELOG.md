@@ -2,6 +2,15 @@
 
 Este arquivo registra mudanças relevantes por release. Releases usam tags Git anotadas em SemVer; `v0.1.0` identifica a versão-base implantada (`07dfd91`).
 
+## [0.6.0] - 2026-11-14
+
+### Alterado
+
+- Reorganiza a página de Pacotes: cada plano é selecionado ao clicar, a quantidade aparece no card escolhido e um único resumo gera o Pix.
+- Move "Conversar sobre esta etapa" e "Avaliar relatório" para a própria etapa, e o rótulo de avaliação passa a indicar o documento avaliado.
+- Mostra as fases em português ("Relatório", "Debate", "Dissertação") e remove o número repetido nas etapas.
+- Simplifica o cabeçalho do chat e o aviso de consumo de créditos.
+
 ## [0.5.2] - 2026-11-13
 
 ### Adicionado

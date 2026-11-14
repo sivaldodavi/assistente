@@ -20,6 +20,9 @@ class PaymentsTest < ActionDispatch::IntegrationTest
     assert_select "[data-package-card='topup_jev']", count: 0
     assert_select "[data-package-card='topup_writing']", count: 0
     assert_select "h1", "Pacotes"
+    assert_select "[data-checkout] input[type=radio][data-package-option]", 4
+    assert_select "[data-checkout] [data-buy-package]", 1
+    assert_select "[data-checkout-details][hidden]", 1
     assert_not_includes response.body, "Pagamento único por Pix."
     assert_select ".discount-badge", text: "50% de desconto", count: 3
     assert_includes response.body, "R$ 100,00"
@@ -27,7 +30,7 @@ class PaymentsTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "R$ 9,90"
     assert_includes response.body, "20 créditos de IA adicionais"
     assert_not_includes response.body, "Avaliações formativas não descontam créditos"
-    assert_select "[data-package-card='sem_ia'][data-price-cents='5000'] [data-buy-package]", text: /R\$ 50,00/
+    assert_select "[data-package-card='sem_ia'][data-price-cents='5000']", text: /R\$ 50,00/
     assert_equal 1, PaymentPackages::DEFINITIONS.values.count { |package| package[:kind] == :topup }
     assert_not_includes response.body, "Mercado Pago"
   end

@@ -1,0 +1,2 @@
+<% if package[:regular_price_cents] %><span class="discount-badge"><%= PaymentPackages.discount_percent(package) %>% de desconto</span><% end %>
+<span class="plan-value"><% if package[:regular_price_cents] %><del><%= brl(package[:regular_price_cents]) %></del><% end %><strong><%= brl(package[:price_cents]) %></strong></span>

@@ -18,6 +18,9 @@
   </header>
 <% end %>
 
+<% project_packages, ai_packages = @packages.partition { |_code, package| package[:kind] != :topup } %>
+<% checkout = current_account.present? && !public_shell_only? %>
+
 <main class="page-shell package-page">
   <header class="package-page-heading">
     <h1>Pacotes</h1>
@@ -26,85 +29,53 @@
   <% if public_shell_only? %>
     <p class="field-hint">Login e compras estarão disponíveis depois da validação das integrações.</p>
   <% end %>
-  <% project_packages, ai_packages = @packages.partition { |_code, package| package[:kind] != :topup } %>
-  <section class="package-section" aria-labelledby="project-packages-title">
-    <div class="section-heading">
-      <div>
-        <p class="eyebrow">Projetos</p>
-        <h2 id="project-packages-title">Pacotes para seus trabalhos</h2>
-      </div>
-    </div>
-    <div class="package-grid" aria-label="Pacotes para criar projetos">
-      <% project_packages.each do |code, package| %>
-        <article class="package-card" id="package-<%= code %>" data-price-cents="<%= package[:price_cents] %>"<% if current_account %> data-package-card="<%= code %>"<% end %>>
-          <p class="eyebrow"><%= package[:label] %></p>
-          <% if package[:regular_price_cents] %>
-            <div class="package-pricing">
-              <span class="discount-badge"><%= PaymentPackages.discount_percent(package) %>% de desconto</span>
-              <del><%= number_to_currency(package[:regular_price_cents] / 100.0, unit: "R$ ", separator: ",", delimiter: ".") %></del>
-              <h3><%= number_to_currency(package[:price_cents] / 100.0, unit: "R$ ", separator: ",", delimiter: ".") %></h3>
-            </div>
-          <% else %>
-            <h3><%= number_to_currency(package[:price_cents] / 100.0, unit: "R$ ", separator: ",", delimiter: ".") %></h3>
-          <% end %>
-          <ul>
-            <li><%= package[:project_credits] %> projetos</li>
-            <% if PaymentPackages.ai_credits(package).positive? %>
-              <li><%= PaymentPackages.ai_credits(package) %> créditos de IA</li>
-            <% end %>
-          </ul>
-          <% if public_shell_only? %>
-            <p class="field-hint">Compra temporariamente indisponível.</p>
-          <% elsif current_account %>
-            <label>Quantidade de pacotes
-              <%= select_tag "quantity_#{code}", options_for_select((1..PaymentPackages::MAX_QUANTITY).map { |number| [number, number] }, 1), class: "text-control", data: { package_quantity: true } %>
-            </label>
-            <button class="button button-primary" type="button" data-buy-package="<%= code %>">Gerar Pix — <%= number_to_currency(package[:price_cents] / 100.0, unit: "R$ ", separator: ",", delimiter: ".") %></button>
-            <p class="field-hint" data-payment-status role="status" aria-live="polite"></p>
-            <div class="payment-result" data-payment-result aria-live="polite"></div>
-          <% elsif google_oauth_configured? %>
-            <%= button_to "Entrar para comprar", "/auth/google_oauth2", method: :post, class: "button button-primary" %>
-          <% else %>
-            <%= link_to "Entrar para comprar", login_path, class: "button button-primary" %>
-          <% end %>
-        </article>
-      <% end %>
-    </div>
-  </section>
 
-  <% if ai_packages.any? %>
-    <section class="package-section" aria-labelledby="ai-packages-title">
-      <div class="section-heading">
-        <div>
-          <p class="eyebrow">IA</p>
-          <h2 id="ai-packages-title">Créditos de IA</h2>
-          <p>Use para orientação, sugestões e organização dos seus trabalhos.</p>
-        </div>
-      </div>
-      <div class="package-grid package-grid-topups">
-        <% ai_packages.each do |code, package| %>
-          <article class="package-card" id="package-<%= code %>" data-price-cents="<%= package[:price_cents] %>"<% if current_account %> data-package-card="<%= code %>"<% end %>>
-            <p class="eyebrow"><%= package[:label] %></p>
-            <h3><%= number_to_currency(package[:price_cents] / 100.0, unit: "R$ ", separator: ",", delimiter: ".") %></h3>
-            <p><%= package[:description] %></p>
-            <% if public_shell_only? %>
-              <p class="field-hint">Compra temporariamente indisponível.</p>
-            <% elsif current_account %>
-              <label>Quantidade de pacotes
-                <%= select_tag "quantity_#{code}", options_for_select((1..PaymentPackages::MAX_QUANTITY).map { |number| [number, number] }, 1), class: "text-control", data: { package_quantity: true } %>
-              </label>
-              <button class="button button-primary" type="button" data-buy-package="<%= code %>">Gerar Pix — <%= number_to_currency(package[:price_cents] / 100.0, unit: "R$ ", separator: ",", delimiter: ".") %></button>
-              <p class="field-hint" data-payment-status role="status" aria-live="polite"></p>
-              <div class="payment-result" data-payment-result aria-live="polite"></div>
-            <% elsif google_oauth_configured? %>
-              <%= button_to "Entrar para comprar", "/auth/google_oauth2", method: :post, class: "button button-primary" %>
-            <% else %>
-              <%= link_to "Entrar para comprar", login_path, class: "button button-primary" %>
-            <% end %>
-          </article>
-        <% end %>
-      </div>
-    </section>
+  <% if checkout %>
+    <div class="checkout-layout" data-checkout>
+      <div class="checkout-options" role="radiogroup" aria-label="Pacotes disponíveis">
   <% end %>
+
+        <section class="package-section" aria-labelledby="project-packages-title">
+          <p class="eyebrow">Projetos</p>
+          <h2 id="project-packages-title">Escolha um plano</h2>
+          <div class="package-grid">
+            <% project_packages.each do |code, package| %>
+              <%= render "payments/option", code:, package:, checkout: %>
+            <% end %>
+          </div>
+        </section>
+
+        <% if ai_packages.any? %>
+          <section class="package-section" aria-labelledby="ai-packages-title">
+            <p class="eyebrow">IA</p>
+            <h2 id="ai-packages-title">Créditos de IA</h2>
+            <p class="muted">Use para orientação, sugestões e organização dos seus trabalhos.</p>
+            <div class="package-grid">
+              <% ai_packages.each do |code, package| %>
+                <%= render "payments/option", code:, package:, checkout: %>
+              <% end %>
+            </div>
+          </section>
+        <% end %>
+
+  <% if checkout %>
+      </div>
+
+      <aside class="checkout-summary" aria-label="Resumo da compra">
+        <h2>Resumo</h2>
+        <p class="muted" data-checkout-empty>Escolha um pacote para ver o valor.</p>
+        <div class="checkout-details" data-checkout-details hidden>
+          <p class="checkout-item" data-checkout-item></p>
+          <p class="checkout-total"><span>Total</span><strong data-checkout-total></strong></p>
+          <button class="button button-primary" type="button" data-buy-package disabled>Gerar Pix</button>
+          <p class="field-hint" data-payment-status role="status" aria-live="polite"></p>
+          <div class="payment-result" data-payment-result aria-live="polite"></div>
+        </div>
+        <p class="field-hint">Liberado automaticamente após a confirmação do Pix.</p>
+      </aside>
+    </div>
+    <%= javascript_include_tag "payment_checkout", defer: true %>
+  <% end %>
+
   <p class="field-hint">Ao comprar, você confirma que leu os <%= link_to "termos de uso", terms_path %> e a <%= link_to "política de privacidade", privacy_path %>. Saiba também <%= link_to "como funciona a IA", ai_help_path %>.</p>
 </main>

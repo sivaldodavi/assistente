@@ -23,6 +23,35 @@ module ApplicationHelper
     settings: "M10 3v2 M10 15v2 M3 10h2 M15 10h2 M5.1 5.1l1.4 1.4m7 7 1.4 1.4m0-9.9-1.4 1.4m-7 7-1.4 1.4 M13.5 10a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
   }.freeze
 
+  WORKFLOW_PHASE_LABELS = {
+    "report" => "Relatório",
+    "debate" => "Debate",
+    "dissertation" => "Dissertação",
+    "paper_project" => "Projeto de paper",
+    "paper_final" => "Paper final"
+  }.freeze
+
+  def workflow_phase_label(phase)
+    WORKFLOW_PHASE_LABELS.fetch(phase.to_s, phase.to_s.humanize)
+  end
+
+  # Títulos do roteiro trazem o número no JSON ("1 · Descrição do caso"); a navegação já mostra o número.
+  def stage_display_title(title)
+    title.to_s.sub(/\A[\d.]+ · /, "")
+  end
+
+  def assessment_button_label(project, stage)
+    case project.project_type
+    when "case" then stage["phase"] == "dissertation" ? "Avaliar dissertação" : "Avaliar relatório"
+    when "paper_project" then "Avaliar projeto de paper"
+    else "Avaliar paper final"
+    end
+  end
+
+  def brl(cents)
+    number_to_currency(cents / 100.0, unit: "R$ ", separator: ",", delimiter: ".")
+  end
+
   def project_type_label(project_type)
     {
       "case" => "Case",

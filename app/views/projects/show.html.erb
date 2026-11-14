@@ -6,12 +6,6 @@
       <p class="eyebrow"><%= @project.project_type == "case" ? "Roteiro de Case" : @project.project_type == "paper_final" ? "Paper Final" : "Projeto de Paper" %></p>
       <h1><%= @project.title %></h1>
     </div>
-    <div class="editor-heading-actions" aria-label="Ações do projeto">
-      <%= link_to "Abrir Chat", chat_path(project_id: @project.id, scope: @stage["id"]), class: "button button-secondary" %>
-      <% if @assessment_stage %>
-        <button class="button button-primary" type="button" data-jev-assessment data-jev-assessment-stage="<%= @assessment_stage %>">Avaliar etapa</button>
-      <% end %>
-    </div>
     <div class="progress-chip" aria-label="Progresso dos campos obrigatórios nesta fase">
       <strong><%= @progress["percent"] %>%</strong>
       <span><%= @progress["done"] %>/<%= @progress["total"] %> campos</span>
@@ -42,11 +36,11 @@
     <div class="editor-layout">
       <aside class="editor-stage-sidebar" aria-label="Navegação do roteiro">
         <% @stages.each_with_index.group_by { |stage, _index| stage["phase"] }.each do |phase, phase_stages| %>
-          <section class="editor-phase-group" aria-label="<%= phase.humanize %>">
-            <p class="editor-phase-title"><%= phase.humanize %></p>
-            <nav class="editor-stage-list" aria-label="Etapas de <%= phase.humanize %>">
+          <section class="editor-phase-group" aria-label="<%= workflow_phase_label(phase) %>">
+            <p class="editor-phase-title"><%= workflow_phase_label(phase) %></p>
+            <nav class="editor-stage-list" aria-label="Etapas de <%= workflow_phase_label(phase) %>">
               <% phase_stages.each do |stage, index| %>
-                <%= button_tag "#{format('%02d', index + 1)} · #{stage['title']}",
+                <%= button_tag "#{format('%02d', index + 1)} · #{stage_display_title(stage['title'])}",
                   type: "submit",
                   name: "go_to_stage",
                   value: stage["id"],
@@ -59,9 +53,19 @@
       </aside>
       <div class="editor-stage-content">
       <section class="stage-card" aria-labelledby="stage-title">
-      <p class="eyebrow"><%= @stage["phase"].humanize %> · Etapa <%= format("%02d", @stage_index + 1) %></p>
-      <h2 id="stage-title"><%= @stage["title"] %></h2>
-      <p class="stage-intro"><%= @stage["intro"] %></p>
+      <div class="stage-head">
+        <div>
+          <p class="eyebrow"><%= workflow_phase_label(@stage["phase"]) %> · Etapa <%= format("%02d", @stage_index + 1) %></p>
+          <h2 id="stage-title"><%= stage_display_title(@stage["title"]) %></h2>
+          <p class="stage-intro"><%= @stage["intro"] %></p>
+        </div>
+        <div class="stage-actions">
+          <%= link_to "Conversar sobre esta etapa", chat_path(project_id: @project.id, scope: @stage["id"]), class: "button button-secondary" %>
+          <% if @assessment_stage %>
+            <button class="button button-secondary" type="button" data-jev-assessment data-jev-assessment-stage="<%= @assessment_stage %>"><%= assessment_button_label(@project, @stage) %></button>
+          <% end %>
+        </div>
+      </div>
       <% @project.schedule_warnings.each do |warning| %>
         <p class="flash flash-alert" role="status"><%= warning %></p>
       <% end %>

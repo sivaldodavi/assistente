@@ -1,0 +1,28 @@
+<% ai_count = PaymentPackages.ai_credits(package) %>
+<% detail = package[:kind] == :topup ? package[:description] : [ "#{package[:project_credits]} projetos", (ai_count.positive? ? "#{ai_count} créditos de IA" : nil) ].compact.join(" · ") %>
+<% if checkout %>
+  <label class="package-card plan-option" id="package-<%= code %>" data-package-card="<%= code %>" data-price-cents="<%= package[:price_cents] %>" data-label="<%= package[:label] %>">
+    <input type="radio" name="package_code" value="<%= code %>" data-package-option>
+    <span class="eyebrow"><%= package[:label] %></span>
+    <%= render "payments/price", package: %>
+    <span class="plan-detail"><%= detail %></span>
+    <span class="qty">
+      <button type="button" data-step="-1" aria-label="Diminuir quantidade">−</button>
+      <input type="number" min="1" max="<%= PaymentPackages::MAX_QUANTITY %>" value="1" aria-label="Quantidade de <%= package[:label] %>" data-package-quantity>
+      <button type="button" data-step="1" aria-label="Aumentar quantidade">+</button>
+    </span>
+  </label>
+<% else %>
+  <article class="package-card" id="package-<%= code %>" data-price-cents="<%= package[:price_cents] %>">
+    <p class="eyebrow"><%= package[:label] %></p>
+    <%= render "payments/price", package: %>
+    <p class="plan-detail"><%= detail %></p>
+    <% if public_shell_only? %>
+      <p class="field-hint">Compra temporariamente indisponível.</p>
+    <% elsif google_oauth_configured? %>
+      <%= button_to "Entrar para comprar", "/auth/google_oauth2", method: :post, class: "button button-primary" %>
+    <% else %>
+      <%= link_to "Entrar para comprar", login_path, class: "button button-primary" %>
+    <% end %>
+  </article>
+<% end %>

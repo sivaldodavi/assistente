@@ -2,8 +2,7 @@
 
 <main class="page-shell chat-shell">
   <header class="chat-heading">
-    <p class="eyebrow">Chat com IA</p>
-    <h1>Converse sobre seu trabalho</h1>
+    <h1>Chat com IA</h1>
     <p>Tire dúvidas, discuta uma etapa ou prepare um rascunho.</p>
   </header>
 
@@ -56,7 +55,7 @@
           <button class="button button-primary" type="submit"<%= " disabled" unless @ai_ready && @has_credits %>>Enviar</button>
         </form>
         <p class="field-hint chat-status" data-chat-status role="status" aria-live="polite"></p>
-        <% if @ai_ready && @has_credits %><p class="field-hint">1 crédito de IA por pergunta. A conversa não é salva.</p><% end %>
+        <% if @ai_ready && @has_credits %><p class="field-hint">1 crédito por pergunta · a conversa não é salva</p><% end %>
       </section>
     </div>
   <% else %>
