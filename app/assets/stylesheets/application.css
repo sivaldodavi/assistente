@@ -656,23 +656,24 @@ textarea.text-control { min-height: 116px; resize: vertical; }
   .editor-stage-list .step-nav-item { flex: 0 0 auto; width: auto; }
 }
 
-.public-home { padding-top: clamp(36px, 9vh, 108px); }
+.public-home { max-width: 1280px; padding-top: clamp(36px, 9vh, 108px); }
 .public-hero-actions { align-items: center; display: flex; flex-wrap: wrap; gap: 10px; }
 .public-hero-actions form { margin: 0; }
-.public-hero { align-items: center; display: grid; gap: clamp(32px, 8vw, 100px); grid-template-columns: minmax(0, 1fr) minmax(280px, .75fr); margin: 0 auto; max-width: 1080px; }
+.public-hero { align-items: center; display: grid; gap: clamp(32px, 5vw, 72px); grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); margin: 0 auto; max-width: 1240px; }
 .public-hero-copy h1 { font-size: clamp(2.8rem, 7vw, 5.3rem); letter-spacing: -.055em; line-height: 1.02; margin: 10px 0 20px; max-width: 700px; }
 .public-hero-copy > p:not(.eyebrow):not(.field-hint) { color: var(--muted); font-size: 1.08rem; margin-bottom: 24px; max-width: 520px; }
 .public-hero-copy .field-hint { margin: 8px 0 0; }
 .public-links { display: flex; gap: 18px; margin-top: 40px; }
 .public-links a { color: var(--muted); font-size: .85rem; }
-.public-video { background: var(--paper); border: 1px solid var(--line); border-radius: 22px; box-shadow: 0 24px 70px var(--shadow); padding: clamp(14px, 2.5vw, 20px); }
+.public-video { background: var(--paper); border: 1px solid var(--line); border-radius: 24px; box-shadow: 0 24px 70px var(--shadow); padding: clamp(14px, 2vw, 22px); }
 .public-video .eyebrow { margin: 4px 4px 12px; }
 .public-video-frame { aspect-ratio: 16 / 9; background: var(--ink); border-radius: 14px; overflow: hidden; }
 .public-video-frame iframe { border: 0; display: block; height: 100%; width: 100%; }
 
-@media (max-width: 860px) {
+@media (max-width: 980px) {
   .public-hero { gap: clamp(24px, 5vw, 48px); grid-template-columns: 1fr; }
   .public-hero-copy h1 { font-size: clamp(2.4rem, 10vw, 3.5rem); }
+  .public-video { margin: 8px auto 0; max-width: 640px; width: 100%; }
 }
 .project-empty-state { margin: 36px auto; max-width: 540px; padding: 36px; text-align: center; }
 .project-delivery-hint { color: var(--accent) !important; font-size: .78rem; }
@@ -683,7 +684,6 @@ textarea.text-control { min-height: 116px; resize: vertical; }
 @media (max-width: 720px) {
   .public-hero { grid-template-columns: 1fr; }
   .public-hero-copy h1 { font-size: clamp(2.7rem, 13vw, 4rem); }
-  .public-video { margin-top: 8px; }
   .project-toolbar { align-items: flex-start; }
   .settings-panel { grid-template-columns: 1fr; min-height: 0; }
 }
