@@ -9,7 +9,9 @@ class PublicPagesTest < ActionDispatch::IntegrationTest
     assert_select ".public-hero-actions a[href='#{plans_path}']", text: "Ver pacotes"
     assert_select "a[href='#{ai_help_path}']", text: "Como funciona a IA"
     assert_select "a[href='#{plans_path}']", text: "Pacotes"
-    assert_select ".public-preview li", count: 3
+    assert_select ".public-video iframe", count: 1
+    assert_select ".public-video iframe[allowfullscreen]"
+    assert_match "youtube-nocookie.com/embed/XC6mObyhb8Q", response.body
     assert_select "link[rel='icon'][href='/icon.svg']"
     assert_select "meta[property='og:title'][content='Assistente Acadêmico']"
     assert_select "meta[property='og:image'][content*='social-preview.png']"

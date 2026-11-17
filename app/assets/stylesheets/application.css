@@ -665,17 +665,15 @@ textarea.text-control { min-height: 116px; resize: vertical; }
 .public-hero-copy .field-hint { margin: 8px 0 0; }
 .public-links { display: flex; gap: 18px; margin-top: 40px; }
 .public-links a { color: var(--muted); font-size: .85rem; }
-.public-preview { background: var(--paper); border: 1px solid var(--line); border-radius: 22px; box-shadow: 0 24px 70px var(--shadow); padding: clamp(22px, 4vw, 34px); }
-.public-preview .eyebrow { margin-bottom: 16px; }
+.public-video { background: var(--paper); border: 1px solid var(--line); border-radius: 22px; box-shadow: 0 24px 70px var(--shadow); padding: clamp(14px, 2.5vw, 20px); }
+.public-video .eyebrow { margin: 4px 4px 12px; }
+.public-video-frame { aspect-ratio: 16 / 9; background: var(--ink); border-radius: 14px; overflow: hidden; }
+.public-video-frame iframe { border: 0; display: block; height: 100%; width: 100%; }
 
 @media (max-width: 860px) {
   .public-hero { gap: clamp(24px, 5vw, 48px); grid-template-columns: 1fr; }
   .public-hero-copy h1 { font-size: clamp(2.4rem, 10vw, 3.5rem); }
 }
-.public-preview ol { display: grid; gap: 0; list-style: none; margin: 0; padding: 0; }
-.public-preview li { align-items: center; border-top: 1px solid var(--line); display: flex; gap: 15px; min-height: 68px; }
-.public-preview li span { color: var(--brand-dark); font-size: .74rem; font-weight: 850; }
-.public-preview li strong { font-size: .95rem; }
 .project-empty-state { margin: 36px auto; max-width: 540px; padding: 36px; text-align: center; }
 .project-delivery-hint { color: var(--accent) !important; font-size: .78rem; }
 .project-table .project-type { color: var(--muted); font-size: .76rem; }
@@ -685,7 +683,7 @@ textarea.text-control { min-height: 116px; resize: vertical; }
 @media (max-width: 720px) {
   .public-hero { grid-template-columns: 1fr; }
   .public-hero-copy h1 { font-size: clamp(2.7rem, 13vw, 4rem); }
-  .public-preview { margin-top: 8px; }
+  .public-video { margin-top: 8px; }
   .project-toolbar { align-items: flex-start; }
   .settings-panel { grid-template-columns: 1fr; min-height: 0; }
 }
